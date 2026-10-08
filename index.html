@@ -8,6 +8,10 @@
   --blue:#2f74ff;--blue2:#edf4ff;--green:#20b26c;--orange:#f28a4b;
   --red:#e9564a;--ink:#23344d;--text:#5e6d82;--muted:#8c98a8;
   --line:#e5ebf3;--bg:#f3f6f9;--panel:#fff;--soft:#f8fbfe;
+  /* 状态色：只强调 异常 / 执行中，其余弱化 */
+  --st-run:#2f74ff;--st-exc:#e9564a;
+  --st-pend:#c8894a;--st-pend-soft:#fff7ee;--st-pend-line:#f0d5b4;
+  --st-done:#8b98a9;--st-done-soft:#f1f4f8;--st-done-line:#cdd7e2;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.5 "Microsoft YaHei","PingFang SC",Arial,sans-serif}
@@ -27,16 +31,31 @@ a{text-decoration:none;color:inherit}
 .workbench > .col-consignment{flex:1 1 228px;min-width:228px;max-width:340px}
 .workbench > .col-task{flex:1.4 1 322px;min-width:300px;max-width:520px}
 .workbench > .col-route{flex:2.4 1 640px;min-width:320px}
-.workbench > .col-detail{flex:1 1 306px;min-width:286px;max-width:420px}
+.workbench > .col-detail{flex:1 1 306px;min-width:286px;max-width:420px;transition:flex-basis .24s ease,max-width .24s ease,opacity .18s ease}
+.workbench > .col-detail.collapsed{flex-basis:0;max-width:0;min-width:0;opacity:0;pointer-events:none}
+#fbSplit{transition:flex-basis .24s ease,opacity .18s ease}
+#fbSplit.collapsed{flex-basis:0;opacity:0;pointer-events:none}
+.ph-actions{display:flex;align-items:center;gap:2px}
+.ph-actions .icon-btn{font-size:12px;color:#8b98a9;padding:0 4px}
+.ph-actions .icon-btn:hover{color:var(--blue)}
 .vsplit{flex:0 0 10px;position:relative;cursor:col-resize}
 .vsplit::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:40px;width:3px;border-radius:2px;background:#e2eaf4;transition:.15s}
 .vsplit:hover::after,.vsplit.dragging::after{background:#bcd3f7;height:60px}
 body.resizing-x{cursor:col-resize;user-select:none}
-.panel{min-width:0;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.panel{--col-accent:var(--blue);--col-head:#fff;--col-body:#fff;--col-line:var(--line);
+  min-width:0;background:var(--col-body);border:1px solid var(--col-line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+/* 四列分区配色（方案A） */
+.col-consignment{--col-accent:#4a5fb0;--col-head:#e3e9f7;--col-body:#f0f3fb;--col-line:#d5def1}
+.col-task{--col-accent:#5a7fbe;--col-head:#e7f0fa;--col-body:#f3f8fc;--col-line:#d6e3f2}
+.col-route{--col-accent:#6b5bb5;--col-head:#e6e0f7;--col-body:#f2f0fb;--col-line:#dbd3f1}
+.col-detail{--col-accent:#6b7c92;--col-head:#e4e9ef;--col-body:#f1f4f7;--col-line:#d7dfe8}
 
-.panel-head{height:47px;flex:0 0 auto;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);background:#fff}
+.panel-head{height:47px;flex:0 0 auto;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--col-line);background:var(--col-head)}
 .panel-title{font-weight:700;display:flex;align-items:center;gap:7px;white-space:nowrap}
-.panel-title::before{content:"";width:3px;height:15px;background:var(--blue);border-radius:2px}
+.panel-title::before{content:"";width:3px;height:15px;background:var(--col-accent);border-radius:2px}
+/* 辅助列标题弱化 */
+.col-consignment .panel-title,.col-detail .panel-title{font-size:12px;font-weight:600}
+.count b{color:#d4453a;font-weight:700}
 .count{color:var(--muted);font-size:11px;font-weight:400}
 .panel-body{padding:10px;overflow:auto;min-height:0;flex:1}
 .sub-filter{display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line);overflow:auto;flex:0 0 auto}
@@ -44,10 +63,10 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .filter.active{background:var(--blue);color:#fff}
 .consignment{position:relative;border:1px solid #e7edf4;border-radius:8px;margin-bottom:8px;background:#fff;overflow:hidden;transition:border-color .15s,box-shadow .15s,background .15s}
 .consignment::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#dce6f5;transition:background .15s}
-.consignment.running::before{background:var(--blue)}
-.consignment.pending::before{background:#f4ae78}
-.consignment.done::before{background:var(--green)}
-.consignment.exceptional::before{background:var(--red)}
+.consignment.running::before{background:var(--st-run)}
+.consignment.exception::before{background:var(--st-exc)}
+.consignment.pending::before{background:var(--st-pend-line)}
+.consignment.done::before{background:var(--st-done-line)}
 .consignment:hover{border-color:#b9d2ff;box-shadow:0 4px 14px rgba(47,116,255,.08)}
 .consignment.active{border-color:#7da8ff;background:#f7fbff;box-shadow:0 0 0 2px rgba(47,116,255,.09)}
 .consignment-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
@@ -68,21 +87,19 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .cm-grid > div{display:flex;gap:8px;align-items:baseline}
 .cm-grid label{color:#98a4b4;font-size:9px;flex:0 0 70px}
 .cm-grid span{color:#4e6078;font-size:10px;word-break:break-all;line-height:1.5}
-.cm-attach{margin-top:10px;padding-top:9px;border-top:1px dashed #dce7f5;display:flex;align-items:center;justify-content:space-between}
-.cm-attach > span{color:#7b899c;font-size:10px}
-.cm-attach button{color:#2f74ff;background:#edf4ff;border:1px solid #cadcff;border-radius:4px;padding:4px 8px;font-size:10px}
-.cm-files{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
-.status{flex:0 0 auto;padding:2px 7px;border-radius:10px;font-size:9px;white-space:nowrap}
-.status.running{color:#3478f3;background:#eaf2ff}
-.status.done{color:#20a76a;background:#e6f9ef}
-.status.pending{color:#dc7a43;background:#fff0e7}
-.status.exception{color:#df5347;background:#ffebe9}
+
+.status{flex:0 0 auto;padding:2px 7px;border-radius:10px;font-size:9px;white-space:nowrap;border:1px solid transparent}
+.status.running{color:#fff;background:var(--st-run);border-color:var(--st-run)}
+.status.exception{color:#fff;background:var(--st-exc);border-color:var(--st-exc)}
+.status.pending{color:var(--st-pend);background:var(--st-pend-soft);border-color:var(--st-pend-line)}
+.status.done{color:var(--st-done);background:var(--st-done-soft);border-color:var(--st-done-line)}
 .task-card{border:1px solid #e7edf4;border-left:3px solid #dce6f5;border-radius:6px;padding:10px;margin-bottom:8px;background:#fff;cursor:pointer}
 .task-card:hover{background:#fbfdff}
 .task-card.active{border-color:#7da8ff;border-left-color:var(--blue);box-shadow:0 3px 12px rgba(47,116,255,.1)}
-.task-card.running{border-left-color:var(--blue)}
-.task-card.pending{border-left-color:#f4ae78}
-.task-card.done{border-left-color:var(--green)}
+.task-card.running{border-left-color:var(--st-run)}
+.task-card.exception{border-left-color:var(--st-exc)}
+.task-card.pending{border-left-color:var(--st-pend-line)}
+.task-card.done{border-left-color:var(--st-done-line)}
 .task-head{display:flex;align-items:center;gap:8px}
 .task-id{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .task-mode{flex:0 0 auto;font-size:10px;color:#8b98a9;white-space:nowrap}
@@ -113,6 +130,77 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .rf-port{min-width:0;max-width:100%;font-size:11px;font-weight:600;color:#3f536d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rf-label{flex:0 0 auto;font-style:normal;font-size:9px;color:#9aa6b5;white-space:nowrap}
 .rf-time{flex:0 0 auto;font-size:10px;color:#8b98a9;white-space:nowrap}
+/* 任务卡：按图片样式（标签头 / 进度 / 途经点 / 统计框） */
+.tc-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tc-caret{flex:0 0 auto;width:16px;height:16px;padding:0;border:1px solid #dbe3ec;border-radius:3px;background:#f6f9fc;position:relative}
+.tc-caret::before{content:"";position:absolute;left:50%;top:50%;width:4.5px;height:4.5px;border-right:1.5px solid #6b7c92;border-bottom:1.5px solid #6b7c92;transform:translate(-50%,-70%) rotate(45deg);transition:transform .18s}
+.tc-caret.closed::before{transform:translate(-62%,-50%) rotate(-45deg)}
+.tc-tag{flex:0 0 auto;font-size:9px;line-height:1.75;padding:0 7px;border-radius:3px}
+.tc-tag.t-road{color:#1f8a63;background:#e6f4ef}
+.tc-tag.t-sea{color:#2b6ca8;background:#e6f0fa}
+.tc-tag.t-rail{color:#6b4ee6;background:#efeafd}
+.tc-tag.l-bulk{color:#b8762a;background:#fdf1e3}
+.tc-tag.l-ctn{color:#6b4ee6;background:#f1ecfd}
+.tc-head .status:first-of-type{margin-left:auto}
+.tc-title{display:flex;align-items:center;gap:12px;margin-top:9px}
+.tc-node{flex:1 1 auto;min-width:0;font-size:15px;font-weight:800;color:#1f3a63;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-prog{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px}
+.tc-prog b{font-size:13px;font-weight:800;color:#2b3f59;font-variant-numeric:tabular-nums}
+.tc-prog i{display:block;width:66px;height:6px;border-radius:3px;background:#eaeff5;overflow:hidden}
+.tc-prog i s{display:block;height:100%;border-radius:3px;text-decoration:none}
+.task-card.exception .tc-node,.task-card.exception .tc-prog b{color:#c4463a}
+.tc-prog b.over{color:#e9564a !important}
+.tc-code{margin-top:4px;font-size:10px;color:#9aa6b5;letter-spacing:.2px}
+.tc-detail{margin-top:10px}
+.tc-detail[hidden]{display:none}
+.tc-route{padding-left:1px}
+.tc-stop{position:relative;display:flex;gap:8px;padding-bottom:9px}
+.tc-stop:last-child{padding-bottom:0}
+.tc-stop::before{content:"";position:absolute;left:8px;top:17px;bottom:0;width:1px;background:#dfe7f0}
+.tc-stop:last-child::before{display:none}
+.tc-badge{position:relative;z-index:1;flex:0 0 auto;width:17px;height:17px;border-radius:3px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;line-height:1}
+.tc-stop.origin .tc-badge{background:#2f74ff}
+.tc-stop.via .tc-badge{background:#8b98a9}
+.tc-stop.dest .tc-badge{background:#ee6b3b}
+.tc-line{flex:1;min-width:0;display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px}
+.tc-label{flex:0 0 auto;font-size:9px;color:#9aa6b5}
+.tc-place{font-size:12px;font-weight:600;color:#3f536d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-when{margin-left:auto;font-size:10px;color:#8b98a9;white-space:nowrap}
+.tc-stats{margin-top:10px;padding:8px 10px;border:1px solid #e7edf4;border-radius:6px;background:#fafcfe}
+.tc-stats-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tc-stats-title{font-size:9px;color:#9aa6b5}
+.tc-stats-more{border:0;background:transparent;color:var(--blue);font-size:9px;padding:0;display:inline-flex;align-items:center;gap:3px}
+.tc-stats-more i{width:5px;height:5px;border-right:1.3px solid currentColor;border-bottom:1.3px solid currentColor;transform:rotate(45deg) translate(-1px,-1px);transition:transform .18s}
+.tc-stats-more i.up{transform:rotate(-135deg) translate(-1px,-1px)}
+.tc-cargo{margin-top:8px;padding-top:8px;border-top:1px dashed #eaeff6;display:grid;gap:4px}
+.tc-cargo[hidden]{display:none}
+.tc-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:7px}
+.tc-stats-row span{min-width:0;text-align:center}
+.tc-stats-row b{display:block;font-size:15px;font-weight:800;color:#2b3f59;font-variant-numeric:tabular-nums}
+.tc-stats-row em{display:block;margin-top:2px;font-style:normal;font-size:9px;color:#9aa6b5}
+.tc-detail .cargo-block{margin-top:10px;padding-top:9px}
+/* 任务卡：结论先行 */
+.task-focus{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:8px}
+.tf-node{flex:1 1 auto;min-width:0;font-size:15px;font-weight:800;color:#1f3a63;letter-spacing:-.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tf-pct{flex:0 0 auto;font-size:15px;font-weight:800;color:#2b3f59;font-variant-numeric:tabular-nums}
+.task-card.exception .tf-node{color:#c4463a}
+.task-card.exception .tf-pct{color:#c4463a}
+.task-brief{display:flex;align-items:center;gap:8px;margin-top:8px}
+.tb-text{flex:1 1 auto;min-width:0;font-size:10px;color:#8b98a9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-toggle{flex:0 0 auto;border:0;background:transparent;color:var(--blue);font-size:10px;padding:0;display:inline-flex;align-items:center;gap:3px}
+.tb-toggle i{width:5px;height:5px;border-right:1.4px solid currentColor;border-bottom:1.4px solid currentColor;transform:rotate(45deg) translate(-1px,-1px);transition:transform .18s}
+.tb-toggle i.up{transform:rotate(-135deg) translate(-1px,-1px)}
+.task-extra{margin-top:2px}
+.task-extra[hidden]{display:none}
+.status.overdue{color:#fff;background:#ee6b3b;border-color:#ee6b3b;font-weight:700}
+.task-card .task-extra .task-foot{margin-top:9px}
+/* 已完成折叠行 */
+.done-fold{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:2px 0 8px;padding:8px 10px;border:1px dashed #dfe6ee;border-radius:6px;background:#fafbfd;color:#8b98a9;font-size:10px}
+.done-fold:hover{border-color:#c6d3e2;color:#65778e;background:#f5f8fb}
+.done-fold i{width:5px;height:5px;border-right:1.4px solid currentColor;border-bottom:1.4px solid currentColor;transform:rotate(45deg) translate(-1px,-1px);transition:transform .18s}
+.done-fold i.up{transform:rotate(-135deg) translate(-1px,-1px)}
+.consignment-stat{margin-top:6px;display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#d4453a;background:#fff4f2;border:1px solid #f7d5d0;border-radius:4px;padding:2px 6px}
+.consignment-stat b{font-weight:700}
 .cargo-block{margin-top:9px;padding-top:9px;border-top:1px dashed #eaeff6}
 .cargo-title{color:#8b98a9;font-size:9px;margin-bottom:7px}
 .cargo-list{display:grid;gap:4px}
@@ -127,6 +215,8 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .cr-stats b{font-size:10px;color:#41556f;font-variant-numeric:tabular-nums}
 .task-tabs{padding:0 10px}
 .task-tabs .detail-tab{flex:1;padding:10px 6px}
+.task-tabs{align-items:center;background:var(--col-head)}
+.tab-count{margin-left:auto;padding:0 4px 0 8px;white-space:nowrap}
 .panel-body[hidden],.sub-filter[hidden]{display:none}
 .cost-summary{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 11px;background:#f8fbff;border:1px solid #e5eefb;border-radius:7px;margin-bottom:9px}
 .cost-summary .cs-cell{display:inline-flex;align-items:baseline;gap:5px}
@@ -137,9 +227,10 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .cost-card{border:1px solid #e7edf4;border-left:3px solid #dce6f5;border-radius:6px;padding:9px 10px;margin-bottom:8px;background:#fff;cursor:pointer;transition:.15s}
 .cost-card:hover{background:#fbfdff}
 .cost-card.active{border-color:#7da8ff;border-left-color:var(--blue);box-shadow:0 3px 12px rgba(47,116,255,.1)}
-.cost-card.running{border-left-color:var(--blue)}
-.cost-card.pending{border-left-color:#f4ae78}
-.cost-card.done{border-left-color:var(--green)}
+.cost-card.running{border-left-color:var(--st-run)}
+.cost-card.exception{border-left-color:var(--st-exc)}
+.cost-card.pending{border-left-color:var(--st-pend-line)}
+.cost-card.done{border-left-color:var(--st-done-line)}
 .cost-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .cost-task{font-weight:700;color:#344860;font-size:11px;word-break:break-all}
 .cost-totals{display:flex;gap:16px;margin-top:7px;padding:6px 8px;background:#f7faff;border-radius:5px}
@@ -160,9 +251,19 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .cost-foot small{color:#9aa6b5;font-size:9px}
 .cost-empty{padding:30px 12px;text-align:center;color:#95a2b4;font-size:11px}
 .view-head{display:flex;align-items:center;gap:5px}
-.view-tab{border:1px solid #dfe7f2;background:#fff;color:#687a90;border-radius:4px;padding:4px 9px;font-size:10px;white-space:nowrap}
-.view-tab.active{color:#fff;border-color:var(--blue);background:var(--blue)}
-.route-tools{flex:0 0 auto;padding:7px 10px;border-bottom:1px solid var(--line);background:#fcfdff;display:grid;gap:7px}
+.panel-head.bare{background:transparent;border-bottom:0;height:34px;padding:0 12px}
+.panel-head.bare .count{font-size:11px}
+.view-tab{border:0;background:transparent;color:#65778e;border-radius:6px;padding:5px 11px;font-size:11px;white-space:nowrap;transition:.15s}
+.view-tab:hover{color:#35638f}
+.view-tab.active{color:#fff;background:var(--blue);font-weight:600}
+.canvas-bar{position:absolute;left:12px;right:12px;top:12px;z-index:5;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;pointer-events:none}
+.view-float{display:flex;align-items:center;gap:2px;padding:4px;border-radius:9px;background:rgba(255,255,255,.95);border:1px solid var(--col-line);box-shadow:0 4px 14px rgba(60,95,150,.12);pointer-events:auto}
+.view-float.tools{gap:4px;flex-wrap:wrap}
+.view-float.tools .chip{padding:4px 9px}
+.view-float.tools .tool-btn{background:transparent;border-color:transparent;color:#5f7288}
+.view-float.tools .tool-btn:hover{background:#f1f6fd;border-color:#d3e2f6}
+.view-float .vf-count{font-size:10px;color:#8b98a9;padding:0 8px 0 6px;white-space:nowrap}
+.route-tools{flex:0 0 auto;padding:7px 10px;border-bottom:1px solid var(--col-line);background:transparent;display:grid;gap:7px}
 .chip-row{display:flex;flex-wrap:wrap;gap:5px}
 .chip{display:inline-flex;align-items:center;gap:5px;border:1px solid #e2eaf4;background:#fff;color:#65778e;border-radius:12px;padding:3px 9px;font-size:10px;white-space:nowrap;transition:.15s}
 .chip:hover{border-color:#bcd3f7;color:#3f70d2}
@@ -178,7 +279,7 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .zoom-label{min-width:40px;text-align:center;color:#6c7d93;font-size:10px;font-variant-numeric:tabular-nums}
 .route-body{padding:0;overflow:hidden;display:flex;flex-direction:column}
 .stage-wrap{position:relative;flex:1;min-height:0;overflow:hidden;background:linear-gradient(#f8fbff,#edf4fb);cursor:grab;touch-action:none}
-.stage-wrap.dragging{cursor:grabbing}
+.stage-wrap.dragging{cursor:grabbing;user-select:none}
 .stage-wrap.map-mode{background:#e8eff7}
 .stage-wrap.map-mode::before{display:none}
 .stage-wrap::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(99,126,164,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(99,126,164,.055) 1px,transparent 1px);background-size:36px 36px}
@@ -188,9 +289,10 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .map-tiles{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;background:transparent}
 .map-tile{position:absolute;display:block;width:256px;height:256px;pointer-events:none;user-select:none}
 .map-svg{position:absolute;left:0;top:0;overflow:visible}
-.route-path{fill:none;stroke:#3c83ff;stroke-width:4;stroke-linecap:round;transition:opacity .2s,stroke-width .2s}
-.route-path.pending{stroke:#f2a568}
-.route-path.done{stroke:#20b26c}
+.route-path{fill:none;stroke:var(--st-run);stroke-width:4;stroke-linecap:round;transition:opacity .2s,stroke-width .2s}
+.route-path.exception{stroke:var(--st-exc)}
+.route-path.pending{stroke:var(--st-pend-line)}
+.route-path.done{stroke:var(--st-done-line)}
 .map-point{stroke:#fff;stroke-width:3;transition:opacity .2s}
 .map-point.start{fill:#2f74ff}
 .map-point{r:5px}
@@ -249,21 +351,24 @@ body.resizing-x{cursor:col-resize;user-select:none}
 .detail-actions a,.detail-actions button{flex:1;text-align:center;border:1px solid #cadcff;background:#edf4ff;color:#2f74ff;border-radius:5px;padding:7px 6px;font-size:10px}
 .detail-actions .ghost{border-color:#e2eaf4;background:#fff;color:#65778e}
 .empty{padding:40px 12px;text-align:center;color:#95a2b4}
-.attachments{display:grid;gap:7px;margin-top:10px}
-.attachment-row{display:flex;align-items:center;justify-content:space-between;padding:8px;background:#f7faff;border:1px solid #e5edf7;border-radius:5px;font-size:10px}
-.attachment-row button{border:0;background:transparent;color:var(--blue)}
-.fb-filters{flex:0 0 auto;padding:8px 10px;border-bottom:1px solid var(--line);display:grid;gap:6px;background:#fcfdff}
+
+.fb-filters{flex:0 0 auto;padding:8px 10px;border-bottom:1px solid var(--col-line);display:grid;gap:6px;background:var(--col-head)}
 .fb-filter-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .fb-input{flex:1 1 90px;min-width:0;height:26px;padding:0 7px;border:1px solid #e2eaf4;border-radius:5px;background:#fff;color:#4d6078;font-family:inherit;font-size:10px}
 .fb-input:focus{outline:none;border-color:#9dc0ff;box-shadow:0 0 0 2px #e8f1ff}
 .fb-tilde{flex:0 0 auto;color:#9aa6b5;font-size:10px}
-.fb-search{width:100%;flex:0 0 auto}
+.fb-search-row{display:flex;align-items:center;gap:6px}
+.fb-search{flex:1 1 auto;min-width:0;width:auto}
+.fb-search-row .count{white-space:nowrap}
+.fb-search-row .icon-btn{font-size:12px;color:#8b98a9;padding:0 3px}
+.fb-search-row .icon-btn:hover{color:var(--blue)}
 .fb-card{border:1px solid #e7edf4;border-left:3px solid #dce6f5;border-radius:7px;padding:10px 11px;margin-bottom:8px;background:#fff;cursor:pointer;transition:.15s}
 .fb-card:hover{background:#fbfdff}
 .fb-card.active{border-color:#7da8ff;border-left-color:var(--blue);box-shadow:0 3px 12px rgba(47,116,255,.1)}
-.fb-card.running{border-left-color:var(--blue)}
-.fb-card.pending{border-left-color:#f4ae78}
-.fb-card.done{border-left-color:var(--green)}
+.fb-card.running{border-left-color:var(--st-run)}
+.fb-card.exception{border-left-color:var(--st-exc)}
+.fb-card.pending{border-left-color:var(--st-pend-line)}
+.fb-card.done{border-left-color:var(--st-done-line)}
 .fb-head{display:flex;align-items:center;gap:8px}
 .fb-no{flex:1 1 auto;min-width:0;font-size:11px;font-weight:700;color:#344860;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fb-link{flex:0 0 auto;font-size:10px;color:var(--blue);white-space:nowrap}
@@ -384,6 +489,7 @@ body.locked{overflow:hidden}
       </div>
       <div class="sub-filter">
         <button class="filter active" data-consignment-filter="all">全部</button>
+        <button class="filter" data-consignment-filter="exception">异常</button>
         <button class="filter" data-consignment-filter="running">执行中</button>
         <button class="filter" data-consignment-filter="pending">待下发</button>
         <button class="filter" data-consignment-filter="done">已完成</button>
@@ -393,12 +499,10 @@ body.locked{overflow:hidden}
     <div class="vsplit" data-left="consignment" data-right="task" title="拖动调整宽度"></div>
 
     <section class="panel col-task">
-      <div class="panel-head">
-        <div class="panel-title">运输任务 <span class="count" id="taskCount">（0）</span></div>
-      </div>
       <div class="detail-tabs task-tabs">
         <button class="detail-tab active" data-task-tab="info">任务信息</button>
         <button class="detail-tab" data-task-tab="cost">费用明细</button>
+        <span class="count tab-count" id="taskCount">（0）</span>
       </div>
       <div class="sub-filter" id="taskFilterBar">
         <button class="filter active" data-task-filter="all">全部</button>
@@ -412,30 +516,26 @@ body.locked{overflow:hidden}
     <div class="vsplit" data-left="task" data-right="" title="拖动调整宽度"></div>
 
     <section class="panel route-panel col-route" id="routePanel">
-      <div class="panel-head">
-        <div class="panel-title">物流流向 <span class="count" id="routeCount">（0）</span></div>
-        <div class="view-head">
-          <button class="view-tab active" data-view="flow">流向视图</button>
-          <button class="view-tab" data-view="map">地图视图</button>
-        </div>
-      </div>
 
-      <div class="route-tools">
-        <div class="chip-row" id="productFilter"></div>
-        <div class="tool-row">
-          <button class="chip" id="scopeBtn" data-scope="all">全部委托</button>
-          <span class="spacer"></span>
-          <button class="tool-btn icon" id="zoomOut" title="缩小">−</button>
-          <span class="zoom-label" id="zoomLabel">100%</span>
-          <button class="tool-btn icon" id="zoomIn" title="放大">+</button>
-          <button class="tool-btn" id="fitBtn" title="适应画布">适应画布</button>
-          <button class="tool-btn" id="fullBtn" title="全屏查看">全屏</button>
-          <button class="tool-btn" id="refreshBtn" title="刷新数据">刷新</button>
-        </div>
-      </div>
 
       <div class="panel-body route-body">
         <div class="stage-wrap" id="stageWrap">
+          <div class="canvas-bar" id="canvasBar">
+            <div class="view-float" id="viewFloat">
+              <button class="view-tab active" data-view="flow">流向视图</button>
+              <button class="view-tab" data-view="map">地图视图</button>
+              <span class="vf-count" id="routeCount"></span>
+            </div>
+            <div class="view-float tools">
+              <button class="chip" id="scopeBtn" data-scope="all">全部委托</button>
+              <button class="tool-btn icon" id="zoomOut" title="缩小">−</button>
+              <span class="zoom-label" id="zoomLabel">100%</span>
+              <button class="tool-btn icon" id="zoomIn" title="放大">+</button>
+              <button class="tool-btn" id="fitBtn" title="适应画布">适应画布</button>
+              <button class="tool-btn" id="fullBtn" title="全屏查看">全屏</button>
+              <button class="tool-btn" id="refreshBtn" title="刷新数据">刷新</button>
+            </div>
+          </div>
           <div class="stage" id="stage">
             <div class="map-layer" id="mapLayer" hidden="">
               <div class="map-canvas" id="mapCanvas">
@@ -454,18 +554,14 @@ body.locked{overflow:hidden}
           </div>
         </div>
         <div class="route-hint">
-          <span id="routeHint">滚轮缩放 · 拖动平移 · 双击复位 · 点击空白清除筛选</span>
+          <span id="routeHint">滚轮缩放 · 拖动平移 · 双击复位 · 点击空白清除筛选 · 点击任务查看反馈</span>
           <span id="routeStamp"></span>
         </div>
       </div>
     </section>
-    <div class="vsplit" data-left="" data-right="detail" title="拖动调整宽度"></div>
+    <div class="vsplit" id="fbSplit" data-left="" data-right="detail" title="拖动调整宽度"></div>
 
-    <section class="panel col-detail">
-      <div class="panel-head">
-        <div class="panel-title">任务反馈 <span class="count" id="feedbackCount">（0）</span></div>
-        <button class="icon-btn" id="detailRefresh" title="刷新">↻ 刷新</button>
-      </div>
+    <section class="panel col-detail" id="feedbackPanel">
       <div class="fb-filters">
         <div class="chip-row" id="fbTabs">
           <button class="chip active" data-fb-tab="all">全部</button>
@@ -478,7 +574,12 @@ body.locked{overflow:hidden}
           <span class="fb-tilde">~</span>
           <input type="date" class="fb-input" id="fbTo" title="反馈结束日期">
         </div>
-        <input type="search" class="fb-input fb-search" id="fbQuery" placeholder="按运单号 / 车牌 / 司机筛选" title="按运单号、车牌或司机筛选">
+        <div class="fb-search-row">
+          <input type="search" class="fb-input fb-search" id="fbQuery" placeholder="按运单号 / 车牌 / 司机筛选" title="按运单号、车牌或司机筛选">
+          <span class="count" id="feedbackCount">（0）</span>
+          <button class="icon-btn" id="detailRefresh" title="刷新">↻</button>
+          <button class="icon-btn" id="fbClose" title="收起任务反馈">✕</button>
+        </div>
       </div>
       <div class="panel-body" id="feedbackList"></div>
     </section>
@@ -499,29 +600,36 @@ const PRODUCTS=[
   {name:"钢坯",color:"#e45b9f"}
 ];
 const colorOf=n=>(PRODUCTS.find(p=>p.name===n)||{}).color||"#9aa7ba";
-const STATUS_COLOR={running:"#2f74ff",pending:"#f2a568",done:"#20b26c",exception:"#e9564a"};
+const STATUS_COLOR={running:"#2f74ff",exception:"#e9564a",pending:"#eac79b",done:"#cdd7e2"};
 
 const consignments=[
   {
-    id:"C1", name:"SGNS2609014402", version:"FLMT202609280002（V1.0）",
+    id:"C1", name:"集装箱联运运输0001", version:"FLMT202609280002（V1.0）",
     status:"running", statusText:"执行中", supplier:"厦门明通和供应链有限公司",
     taskIds:["T1","T2","T3","T8"], sales:"简晓剑", department:"业务三部",
     fields:{委托方:"厦门建发生物流有限公司",业务类型:"内贸",业务员核算组:"业务三部",业务员公司:"厦门建发生物流有限公司",作业组织:"单证客服部",作业组织人员:"刘婷",反馈方式:"协同反馈"},
-    attachments:["SGNS2609014402.pdf","SGNS2609014429.pdf"], expanded:true
+    attachments:["集装箱联运运输0001.pdf","集装箱联运运输0002.pdf"], expanded:true
   },
   {
-    id:"C2", name:"SGNS2609014429", version:"FLMT202609280003（V1.0）",
+    id:"C2", name:"集装箱联运运输0002", version:"FLMT202609280003（V1.0）",
     status:"pending", statusText:"待下发", supplier:"厦门海沧物流有限公司",
     taskIds:["T4","T5"], sales:"林哲", department:"业务二部",
     fields:{委托方:"厦门建发生物流有限公司",业务类型:"内贸",业务员核算组:"业务二部",业务员公司:"厦门建发生物流有限公司",作业组织:"调度组",作业组织人员:"陈明",反馈方式:"邮件反馈"},
-    attachments:["SGNS2609014429-合同.pdf"], expanded:false
+    attachments:["集装箱联运运输0002-合同.pdf"], expanded:false
   },
   {
-    id:"C3", name:"SGNS2609014477", version:"FLMT202609280004（V1.1）",
+    id:"C3", name:"集装箱联运运输0003", version:"FLMT202609280004（V1.1）",
     status:"done", statusText:"已完成", supplier:"泉州安通物流有限公司",
     taskIds:["T6","T7"], sales:"吴桐", department:"业务四部",
     fields:{委托方:"厦门建发生物流有限公司",业务类型:"内贸",业务员核算组:"业务四部",业务员公司:"厦门建发生物流有限公司",作业组织:"项目物流部",作业组织人员:"许杰",反馈方式:"协同反馈"},
-    attachments:["SGNS2609014477-签收单.pdf"], expanded:false
+    attachments:["集装箱联运运输0003-签收单.pdf"], expanded:false
+  },
+  {
+    id:"C4", name:"集装箱联运运输0004", version:"FLMT202609280005（V1.0）",
+    status:"exception", statusText:"异常", supplier:"福州顺达物流有限公司",
+    taskIds:["T9"], sales:"赵磊", department:"业务一部",
+    fields:{委托方:"厦门建发生物流有限公司",业务类型:"内贸",业务员核算组:"业务一部",业务员公司:"厦门建发生物流有限公司",作业组织:"调度组",作业组织人员:"郑凯",反馈方式:"协同反馈"},
+    attachments:["集装箱联运运输0004-异常说明.pdf"], expanded:false
   }
 ];
 
@@ -598,17 +706,26 @@ const tasks=[
     {name:"开航",time:"09-28 20:10",desc:"船舶已离港"},
     {name:"抵港",time:"预计 10-03",desc:"待反馈"},
     {name:"签收",time:"",desc:"未反馈"}
+  ]},
+  {id:"T9",cid:"C4",name:"LST202609280105",status:"exception",statusText:"异常",mode:"汽运·集装箱",
+   from:"福州",to:"厦门港",current:"车辆故障，等待换车",progress:18,qty:500,signedQty:0,sourceIds:[],
+   latest:"09-29 08:40",products:["冷轧板卷"],feedbacks:[
+    {name:"派车",time:"09-29 06:30",desc:"车辆已调度，司机赵磊"},
+    {name:"装车",time:"09-29 08:40",desc:"车辆故障，等待换车"},
+    {name:"发运",time:"",desc:"未反馈"},
+    {name:"运抵",time:"",desc:"未反馈"},
+    {name:"签收",time:"",desc:"未反馈"}
   ]}
 ];
 
 /* 任务补充字段：运输类型、装运类别、提货时间、多段目的港、任务商品明细 */
 const TASK_EXT={
   T1:{transportType:"汽运",loadType:"散货",pickupTime:"09-28 08:10",
-      legs:[{port:"厦门港",unloadTime:"09-28 14:00"}],
+      legs:[{port:"厦门港",unloadTime:"10-06 14:00"}],
       cargo:[{name:"热轧钢卷",qty:600,unit:"吨",loaded:600,moving:0,unloaded:0},
              {name:"太阳能光伏组件",qty:200,unit:"吨",loaded:200,moving:0,unloaded:0}]},
   T2:{transportType:"水运",loadType:"集装箱",pickupTime:"09-28 07:40",
-      legs:[{port:"上海港（中转）",unloadTime:"09-29 18:00"},{port:"天津港",unloadTime:"预计 10-01"}],
+      legs:[{port:"上海港（中转）",unloadTime:"09-29 18:00"},{port:"天津港",unloadTime:"预计 10-08"}],
       cargo:[{name:"卷板",qty:1200,unit:"吨",loaded:1200,moving:1200,unloaded:0}]},
   T3:{transportType:"汽运",loadType:"散货",pickupTime:"待确定",
       legs:[{port:"北京仓",unloadTime:"待确定"}],
@@ -626,8 +743,11 @@ const TASK_EXT={
       legs:[{port:"宁波仓",unloadTime:"09-27 10:20"}],
       cargo:[{name:"钢坯",qty:300,unit:"吨",loaded:300,moving:0,unloaded:300}]},
   T8:{transportType:"水运",loadType:"散货",pickupTime:"09-28 12:00",
-      legs:[{port:"日照港",unloadTime:"预计 10-03 06:00"}],
-      cargo:[{name:"热轧钢卷",qty:5000,unit:"吨",loaded:5000,moving:5000,unloaded:0}]}
+      legs:[{port:"日照港",unloadTime:"预计 10-10 06:00"}],
+      cargo:[{name:"热轧钢卷",qty:5000,unit:"吨",loaded:5000,moving:5000,unloaded:0}]},
+  T9:{transportType:"汽运",loadType:"集装箱",pickupTime:"09-29 06:30",
+      legs:[{port:"厦门港",unloadTime:"09-30 18:00"}],
+      cargo:[{name:"冷轧板卷",qty:500,unit:"吨",loaded:250,moving:0,unloaded:0}]}
 };
 tasks.forEach(t=>Object.assign(t,TASK_EXT[t.id]||{}));
 
@@ -640,7 +760,8 @@ const CARRIERS={
   T5:{ctnType:"40HQ",ctnNo:"待装箱",booking:"待订舱",owner:"待定",ship:"待订舱",voyage:"—",ctnCount:"15 箱"},
   T6:{vehicle:"闽E·6K512",driver:"黄小明",phone:"139 0000 2222"},
   T7:{vehicle:"铁路班列 X8012",driver:"王强",phone:"021-5566 7788"},
-  T8:{ship:"闽运5号",voyage:"V2609E",etd:"09-28 18:00",eta:"10-03 06:00"}
+  T8:{ship:"闽运5号",voyage:"V2609E",etd:"09-28 18:00",eta:"10-03 06:00"},
+  T9:{vehicle:"闽A·5K120",driver:"赵磊",phone:"136 0000 7788"}
 };
 
 /* 费用明细演示数据 */
@@ -652,7 +773,8 @@ const COSTS={
   T5:{settle:"预估",items:[{name:"海运费",est:70200,act:0},{name:"订舱费",est:1000,act:0},{name:"港口操作费",est:1800,act:0}]},
   T6:{settle:"已结算",items:[{name:"运输费",est:9000,act:9000},{name:"装车费",est:600,act:600}]},
   T7:{settle:"已结算",items:[{name:"铁路运费",est:15600,act:15600},{name:"装卸费",est:900,act:900}]},
-  T8:{settle:"待对账",items:[{name:"海运费",est:62500,act:0},{name:"装卸费",est:3500,act:0},{name:"港口费",est:1800,act:0}]}
+  T8:{settle:"待对账",items:[{name:"海运费",est:62500,act:0},{name:"装卸费",est:3500,act:0},{name:"港口费",est:1800,act:0}]},
+  T9:{settle:"待对账",items:[{name:"运输费",est:22500,act:0},{name:"提空费",est:800,act:0}]}
 };
 const SETTLE_CLASS={"已结算":"done","已对账":"done","待对账":"running","预估":"pending"};
 const costItems=id=>((COSTS[id]||{}).items||[]);
@@ -661,21 +783,55 @@ const costAct=id=>costItems(id).reduce((s,i)=>s+(i.act||0),0);
 
 /* ============ 状态 ============ */
 const state={consignmentId:null,taskId:null,consignmentFilter:"all",taskFilter:"all",taskTab:"info",
-  view:"flow",productFilter:"all",fbTab:"all",fbFrom:"",fbTo:"",fbQuery:"",scope:"all",zoom:1,panX:0,panY:0};
+  view:"flow",productFilter:"all",fbTab:"all",showDoneTasks:false,showDoneConsignments:false,collapsedTasks:{},cargoOpen:{},fbFrom:"",fbTo:"",fbQuery:"",scope:"all",zoom:1,panX:0,panY:0};
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=n=>Number(n||0).toLocaleString("zh-CN");
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const tasksOf=cid=>cid?tasks.filter(t=>t.cid===cid):tasks.slice();
+/* 演示基准日：与反馈时间同为 09-29 场景 */
+const DEMO_TODAY=new Date(2026,8,29);
+function taskEta(t){
+  const legs=t.legs||[];
+  const raw=String(legs.length?legs[legs.length-1].unloadTime:"");
+  const m=raw.match(/(\d{2})-(\d{2})/);
+  if(!m)return {days:null,label:"待排期"};
+  const due=new Date(2026,+m[1]-1,+m[2]);
+  const days=Math.round((due-DEMO_TODAY)/86400000);
+  return {days,due:m[1]+"-"+m[2],label:days<0?("超期 "+(-days)+" 天"):(days===0?"今日到期":("剩 "+days+" 天"))};
+}
+function isOverdue(t){if(t.status==="done")return false;const e=taskEta(t);return e.days!=null&&e.days<0;}
+/* 关注度：异常 > 超期 > 执行中 > 待下发 > 已完成 */
+function taskRank(t){
+  if(t.status==="exception")return 0;
+  if(isOverdue(t))return 1;
+  if(t.status==="running")return 2;
+  if(t.status==="pending")return 3;
+  return 4;
+}
+function sortByRank(list){
+  return list.slice().sort((a,b)=>{
+    const ra=taskRank(a),rb=taskRank(b);
+    if(ra!==rb)return ra-rb;
+    const ea=taskEta(a).days,eb=taskEta(b).days;
+    if(ea!=null&&eb!=null&&ea!==eb)return ea-eb;
+    if(ea==null&&eb!=null)return 1;
+    if(ea!=null&&eb==null)return -1;
+    return 0;
+  });
+}
+function consignmentRank(c){const l=tasksOf(c.id);return l.length?Math.min.apply(null,l.map(taskRank)):4;}
 const activeConsignment=()=>consignments.find(c=>c.id===state.consignmentId)||consignments[0];
 const activeTask=()=>tasks.find(t=>t.id===state.taskId)||null;
-const signPct=t=>t.qty?Math.round(t.signedQty/t.qty*100):0;
+/* 任务进度 = 已签收数量 / 商品数量 */
+const taskPct=t=>{const st=taskStats(t);return st.qty?Math.round((st.signed||0)/st.qty*100):0;};
+const signPct=taskPct;
 const progressColor=t=>STATUS_COLOR[t.status]||"#9aa7ba";
 
 const consignmentList=$("consignmentList"),taskList=$("taskList"),costList=$("costList"),feedbackList=$("feedbackList");
 const stageWrap=$("stageWrap"),stage=$("stage"),mapLayer=$("mapLayer"),flowLayer=$("flowLayer");
-const routePanel=$("routePanel"),productFilterEl=$("productFilter"),zoomLabel=$("zoomLabel");
+const routePanel=$("routePanel"),zoomLabel=$("zoomLabel");
 
 /* ============ 工具 ============ */
 
@@ -683,7 +839,7 @@ function routeTasks(){
   return state.scope==="all"?tasks.slice():tasksOf(state.consignmentId);
 }
 function matchProduct(t){
-  return state.productFilter==="all"||t.products.includes(state.productFilter);
+  return true;
 }
 function taskOpacity(t){
   if(!matchProduct(t))return .16;
@@ -700,11 +856,26 @@ function stamp(){
 }
 
 /* ============ 渲染：物流委托 ============ */
+function consignmentStat(c){
+  const l=tasksOf(c.id);
+  const od=l.filter(isOverdue).length;
+  const ex=l.filter(t=>t.status==="exception").length;
+  const parts=[];
+  if(ex)parts.push(ex+" 个异常");
+  if(od)parts.push(od+" 个超期");
+  return parts.join(" · ");
+}
 function renderConsignments(){
-  const list=consignments.filter(c=>state.consignmentFilter==="all"||c.status===state.consignmentFilter);
-  $("consignmentCount").textContent=`（${list.length}）`;
+  const matched=consignments.filter(c=>state.consignmentFilter==="all"||c.status===state.consignmentFilter);
+  const list=matched.slice().sort((a,b)=>consignmentRank(a)-consignmentRank(b));
+  const live=list.filter(c=>c.status!=="done");
+  const done=list.filter(c=>c.status==="done");
+  const show=state.showDoneConsignments||!live.length;
+  const visible=live.concat(show?done:[]);
+  const exAll=consignments.filter(c=>c.status==="exception").length;
+  $("consignmentCount").innerHTML=consignments.length+" 个"+(exAll?(" · <b>"+exAll+" 异常</b>"):"");
   if(!list.length){consignmentList.innerHTML='<div class="empty">暂无符合筛选条件的物流委托</div>';return;}
-  consignmentList.innerHTML=list.map(c=>`
+  consignmentList.innerHTML=visible.map(c=>{const stat=consignmentStat(c);return `
     <article class="consignment ${c.status} ${c.id===state.consignmentId?"active":""} ${c.expanded?"open":""}" data-cid="${c.id}">
       <div class="consignment-main">
         <div class="consignment-top">
@@ -712,6 +883,7 @@ function renderConsignments(){
           <span class="status ${c.status}">${esc(c.statusText)}</span>
         </div>
         <div class="consignment-version" title="${esc(c.version)}">${esc(c.version)}</div>
+        ${stat?`<div class="consignment-stat"><b>!</b>${esc(stat)}</div>`:""}
         <div class="consignment-info">
           <div><label>供应商</label><span title="${esc(c.supplier)}">${esc(c.supplier)}</span></div>
           <div><label>业务员</label><span>${esc(c.sales)}</span></div>
@@ -731,12 +903,11 @@ function renderConsignments(){
           <div><label>作业组织人员</label><span>${esc(c.fields["作业组织人员"])}</span></div>
           <div><label>反馈方式</label><span>${esc(c.fields["反馈方式"])}</span></div>
         </div>
-        <div class="cm-attach">
-          <span>附件（${c.attachments.length}）</span>
-          <div class="cm-files">${c.attachments.map(f=>`<button data-file="${esc(f)}">📄 ${esc(f)}</button>`).join("")}</div>
-        </div>
+
       </div>
-    </article>`).join("");
+    </article>`;}).join("")
+    + (done.length&&!show?`<button class="done-fold" data-donetoggle="consignment">已完成 ${done.length} 个委托<i></i></button>`:"")
+    + (done.length&&show&&live.length?`<button class="done-fold open" data-donetoggle="consignment">收起已完成 ${done.length} 个委托<i class="up"></i></button>`:"");
 }
 
 /* ============ 渲染：任务字段与商品明细 ============ */
@@ -757,9 +928,9 @@ function taskRouteFlow(t){
       </div>
     </div>`).join("")}</div>`;
 }
-/* 任务商品明细：列表形式 */
-function cargoList(t){
-  const rows=(t.cargo||[]).map(c=>`
+/* 任务商品明细：列表形式（只输出行，供统计框内嵌） */
+function cargoRows(t){
+  return (t.cargo||[]).map(c=>`
     <div class="cargo-row">
       <span class="cr-name" title="${esc(c.name)}"><i style="background:${colorOf(c.name)}"></i>${esc(c.name)}</span>
       <span class="cr-qty">${fmt(c.qty)}<em>${esc(c.unit)}</em></span>
@@ -769,34 +940,100 @@ function cargoList(t){
         <span><em>目的港已卸</em><b>${fmt(c.unloaded)}</b></span>
       </span>
     </div>`).join("");
-  return `<div class="cargo-block">
-    <div class="cargo-title">任务商品明细</div>
-    <div class="cargo-list">${rows}</div>
-  </div>`;
 }
 
 /* ============ 渲染：运输任务 ============ */
-function renderTasks(){
-  const list=tasksOf(state.consignmentId).filter(t=>state.taskFilter==="all"||t.status===state.taskFilter);
-  $("taskCount").textContent=`（${list.length}）`;
-  if(!list.length){taskList.innerHTML='<div class="empty">当前委托下暂无符合筛选条件的任务</div>';return;}
-  taskList.innerHTML=list.map(t=>`
+/* 途经站点：起运 → 经停* → 目的 */
+const TRANS_CLS={汽运:"road",水运:"sea",铁路:"rail"};
+const LOAD_CLS={散货:"bulk",集装箱:"ctn"};
+function isPortName(n){return /港/.test(String(n||""));}
+function taskStops(t){
+  const legs=t.legs||[];
+  const out=[{kind:"origin",name:t.from,time:t.pickupTime,timeLabel:"提货"}];
+  legs.forEach((l,i)=>{
+    const last=i===legs.length-1;
+    out.push({kind:last?"dest":"via",name:l.port,time:l.unloadTime,timeLabel:last?"卸货":"经停"});
+  });
+  return out;
+}
+function taskStats(t){
+  const c=t.cargo||[];
+  return {
+    qty:c.reduce((s,x)=>s+(x.qty||0),0),
+    moving:c.reduce((s,x)=>s+(x.moving||0),0),
+    signed:t.signedQty||0,
+    unit:(c[0]||{}).unit||"吨"
+  };
+}
+function stopHtml(s){
+  const port=isPortName(s.name);
+  const base=s.kind==="origin"?"起运":(s.kind==="via"?"经停":"目的");
+  const label=base+(port?"港":"点");
+  const badge=s.kind==="origin"?"起":(s.kind==="via"?"经":"终");
+  return `<div class="tc-stop ${s.kind}">
+    <span class="tc-badge">${badge}</span>
+    <span class="tc-line">
+      <span class="tc-label">${label}</span>
+      <span class="tc-place" title="${esc(s.name)}">${esc(s.name||"—")}</span>
+      <span class="tc-when">${esc(s.timeLabel)} ${esc(s.time||"待确定")}</span>
+    </span>
+  </div>`;
+}
+function taskCardHtml(t){
+  const eta=taskEta(t),od=isOverdue(t);
+  const collapsed=!!state.collapsedTasks[t.id];
+  const st=taskStats(t);
+  const tc=TRANS_CLS[t.transportType]||"road";
+  const lc=LOAD_CLS[t.loadType]||"bulk";
+  return `
     <article class="task-card ${t.status} ${t.id===state.taskId?"active":""}" data-tid="${t.id}">
-      <div class="task-head">
-        <span class="task-id">${esc(t.name)}</span>
-        <span class="task-mode">${esc(t.transportType||"—")}·${esc(t.loadType||"—")}</span>
+      <div class="tc-head">
+        <button class="tc-caret${collapsed?" closed":""}" data-more="${t.id}" title="${collapsed?"展开":"收起"}"></button>
+        <span class="tc-tag t-${tc}">${esc(t.transportType||"—")}</span>
+        <span class="tc-tag l-${lc}">${esc(t.loadType||"—")}</span>
+        ${od?`<span class="status overdue">${esc(eta.label)}</span>`:""}
         <span class="status ${t.status}">${esc(t.statusText)}</span>
       </div>
-      ${taskRouteFlow(t)}
-      ${cargoList(t)}
-      <div class="task-progress"><span style="width:${clamp(t.progress,0,100)}%;background:${progressColor(t)}"></span></div>
-      <div class="task-foot"><span>当前：${esc(t.current)}</span><span>${t.progress}%</span></div>
-    </article>`).join("");
+      <div class="tc-title">
+        <span class="tc-node" title="${esc(t.current)}">${esc(t.current)}</span>
+        <span class="tc-prog"><b class="${taskPct(t)>100?"over":""}">${taskPct(t)}%</b><i><s style="width:${clamp(taskPct(t),0,100)}%;background:${taskPct(t)>100?"#e9564a":progressColor(t)}"></s></i></span>
+      </div>
+      <div class="tc-code">${esc(t.name)}</div>
+      <div class="tc-detail"${collapsed?" hidden":""}>
+        <div class="tc-route">${taskStops(t).map(stopHtml).join("")}</div>
+        <div class="tc-stats">
+          <div class="tc-stats-head">
+            <span class="tc-stats-title">商品统计（${esc(st.unit)}）</span>
+            <button class="tc-stats-more" data-cargo="${t.id}">明细<i class="${state.cargoOpen[t.id]?"up":""}"></i></button>
+          </div>
+          <div class="tc-stats-row">
+            <span><b>${fmt(st.qty)}</b><em>商品数量</em></span>
+            <span><b>${fmt(st.moving)}</b><em>运输中</em></span>
+            <span><b>${fmt(st.signed)}</b><em>已签收</em></span>
+          </div>
+          <div class="tc-cargo"${state.cargoOpen[t.id]?"":" hidden"}>${cargoRows(t)}</div>
+        </div>
+      </div>
+    </article>`;
+}
+function renderTasks(){
+  const all=tasksOf(state.consignmentId).filter(t=>state.taskFilter==="all"||t.status===state.taskFilter);
+  const sorted=sortByRank(all);
+  const live=sorted.filter(t=>t.status!=="done");
+  const done=sorted.filter(t=>t.status==="done");
+  const show=state.showDoneTasks||!live.length;
+  const visible=live.concat(show?done:[]);
+  const overN=all.filter(isOverdue).length,runN=all.filter(t=>t.status==="running").length;
+  $("taskCount").innerHTML=all.length+" 个"+(overN?(" · <b>"+overN+" 超期</b>"):"")+(runN?(" · "+runN+" 执行中"):"");
+  if(!all.length){taskList.innerHTML='<div class="empty">当前委托下暂无符合筛选条件的任务</div>';return;}
+  taskList.innerHTML=visible.map(taskCardHtml).join("")
+    + (done.length&&!show?`<button class="done-fold" data-donetoggle="task">已完成 ${done.length} 个任务<i></i></button>`:"")
+    + (done.length&&show&&live.length?`<button class="done-fold open" data-donetoggle="task">收起已完成 ${done.length} 个任务<i class="up"></i></button>`:"");
 }
 
 /* ============ 渲染：费用明细 ============ */
 function renderCost(){
-  const list=tasksOf(state.consignmentId).filter(t=>COSTS[t.id]);
+  const list=sortByRank(tasksOf(state.consignmentId).filter(t=>COSTS[t.id]));
   if(!list.length){costList.innerHTML='<div class="cost-empty">当前委托下暂无费用记录</div>';return;}
   const sumEst=list.reduce((s,t)=>s+costEst(t.id),0);
   const sumAct=list.reduce((s,t)=>s+costAct(t.id),0);
@@ -938,8 +1175,8 @@ function renderFlow(){
       <div class="fn-route"><i></i><span class="fn-city">${esc(t.from)}</span><s></s><i class="end"></i><span class="fn-city">${esc(t.to)}</span></div>
       <div class="fn-tags"><span class="tag">${esc(t.mode)}</span>${t.products.map(pp=>`<span class="tag"><i class="product-dot" style="background:${colorOf(pp)}"></i>${esc(pp)}</span>`).join("")}</div>
       <div class="fn-progress">
-        <div class="fn-bar"><span style="width:${clamp(t.progress,0,100)}%;background:${progressColor(t)}"></span></div>
-        <div class="fn-foot"><span>${esc(t.current)}</span><b class="${sp>100?"over":""}">${fmt(t.signedQty)}/${fmt(t.qty)} 吨 · ${sp}%</b></div>
+        <div class="fn-bar"><span style="width:${clamp(taskPct(t),0,100)}%;background:${taskPct(t)>100?"#e9564a":progressColor(t)}"></span></div>
+        <div class="fn-foot"><span>${esc(t.current)}</span><b class="${sp>100?"over":""}">${fmt(taskStats(t).signed)}/${fmt(taskStats(t).qty)} ${esc(taskStats(t).unit)} · ${sp}%</b></div>
       </div>`;
     node.addEventListener("mouseenter",()=>{
       svg.querySelectorAll(".flow-link").forEach(el=>{
@@ -954,7 +1191,7 @@ function renderFlow(){
 /* ============ 渲染：地图（Web Mercator + 瓦片底图） ============ */
 const PORTS={
   "泉州":[24.87,118.68],"厦门港":[24.48,118.10],"天津港":[38.98,117.72],"北京仓":[39.90,116.40],
-  "福清":[25.72,119.38],"上海港":[31.23,121.50],"漳州":[24.51,117.65],"宁波仓":[29.87,121.55],"日照港":[35.42,119.55]
+  "福清":[25.72,119.38],"上海港":[31.23,121.50],"漳州":[24.51,117.65],"宁波仓":[29.87,121.55],"日照港":[35.42,119.55],"福州":[26.08,119.30]
 };
 const MAP_ZOOM=6;
 const MAP_EXTENT={lonW:106,lonE:126,latS:23.5,latN:41.5};
@@ -1060,7 +1297,7 @@ function fbMetaHtml(t){
 }
 function fbList(){
   const q=(state.fbQuery||"").trim().toLowerCase();
-  return tasksOf(state.consignmentId).filter(t=>{
+  return sortByRank(tasksOf(state.consignmentId).filter(t=>{
     if(state.fbTab==="road"&&t.transportType!=="汽运")return false;
     if(state.fbTab==="seaShip"&&!(t.transportType==="水运"&&t.loadType==="散货"))return false;
     if(state.fbTab==="seaBox"&&!(t.transportType==="水运"&&t.loadType==="集装箱"))return false;
@@ -1073,11 +1310,12 @@ function fbList(){
       if(hay.indexOf(q)<0)return false;
     }
     return true;
-  });
+  }));
 }
 function renderFeedback(){
   const list=fbList();
-  $("feedbackCount").textContent=`（${list.length}）`;
+  const totalFb=list.reduce((s,t)=>s+((t.feedbacks||[]).length),0);
+  $("feedbackCount").textContent=list.length+" 个任务 · "+totalFb+" 条反馈";
   if(!list.length){feedbackList.innerHTML='<div class="empty">暂无符合条件的任务反馈</div>';return;}
   feedbackList.innerHTML=list.map(t=>{
     const steps=t.feedbacks||[];
@@ -1087,6 +1325,7 @@ function renderFeedback(){
     <article class="fb-card ${t.status} ${t.id===state.taskId?"active":""}" data-tid="${t.id}">
       <div class="fb-head">
         <span class="fb-no">${esc(t.name)}</span>
+        ${isOverdue(t)?`<span class="status overdue">${esc(taskEta(t).label)}</span>`:""}
         <span class="status ${t.status}">${esc(t.statusText)}</span>
         <a class="fb-link" href="任务跟踪.html?task=${encodeURIComponent(t.name)}">跟踪 ›</a>
       </div>
@@ -1131,11 +1370,7 @@ function zoomAt(cx,cy,f){
 }
 
 /* ============ 渲染入口 ============ */
-function renderProductFilter(){
-  productFilterEl.innerHTML=[`<button class="chip ${state.productFilter==="all"?"active":""}" data-product="all">全部商品</button>`]
-    .concat(PRODUCTS.map(p=>`<button class="chip ${state.productFilter===p.name?"active":""}" data-product="${esc(p.name)}"><i style="background:${p.color}"></i>${esc(p.name)}</button>`))
-    .join("");
-}
+
 
 function renderRoute(){
   const isMap=state.view==="map";
@@ -1145,7 +1380,8 @@ function renderRoute(){
   const lg=$("mapLegend");if(lg)lg.hidden=!isMap;
   document.querySelectorAll(".view-tab").forEach(b=>b.classList.toggle("active",b.dataset.view===state.view));
   if(state.view==="map")renderMap();else renderFlow();
-  $("routeCount").textContent=`（${routeTasks().length}）`;
+  const rt=routeTasks();
+  $("routeCount").textContent=rt.length+" 个任务 · "+rt.filter(t=>!(t.sourceIds||[]).length).length+" 条链路";
   const btn=$("scopeBtn");
   if(!state.consignmentId){state.scope="all";btn.hidden=true;}
   else{
@@ -1156,6 +1392,14 @@ function renderRoute(){
 }
 
 let pendingFit=true;
+function syncDetailPanel(){
+  const open=!!state.taskId;
+  const chg=open!==state.detailOpen;
+  state.detailOpen=open;
+  $("feedbackPanel").classList.toggle("collapsed",!open);
+  $("fbSplit").classList.toggle("collapsed",!open);
+  return chg;
+}
 function renderAll(){
   renderConsignments();
   renderTasks();
@@ -1166,16 +1410,12 @@ function renderAll(){
   taskList.hidden=state.taskTab!=="info";
   costList.hidden=state.taskTab!=="cost";
   $("taskFilterBar").hidden=state.taskTab!=="info";
+  const detailChanged=syncDetailPanel();
   if(pendingFit){pendingFit=false;requestAnimationFrame(fitStage);}
+  if(detailChanged)setTimeout(fitStage,280);
 }
 
-function clearFilters(){
-  if(state.productFilter==="all")return;
-  state.productFilter="all";
-  renderProductFilter();
-  renderRoute();
-  toast("已清除商品筛选");
-}
+function clearFilters(){}
 
 function refreshData(){
   $("routeStamp").textContent="更新于 "+stamp();
@@ -1184,14 +1424,15 @@ function refreshData(){
 }
 /* ============ 交互事件 ============ */
 consignmentList.addEventListener("click",e=>{
+  const fold=e.target.closest("[data-donetoggle]");
+  if(fold){e.stopPropagation();state.showDoneConsignments=!state.showDoneConsignments;renderConsignments();return;}
   const expand=e.target.closest("[data-expand]");
   if(expand){
     e.stopPropagation();
     const c=consignments.find(x=>x.id===expand.dataset.expand);
     c.expanded=!c.expanded;renderConsignments();return;
   }
-  const file=e.target.closest("[data-file]");
-  if(file){e.stopPropagation();toast("预览 "+file.dataset.file);return;}
+
   const card=e.target.closest("[data-cid]");
   if(!card)return;
   const cid=card.dataset.cid;
@@ -1212,12 +1453,30 @@ consignmentList.addEventListener("click",e=>{
 });
 
 taskList.addEventListener("click",e=>{
+  const more=e.target.closest("[data-more]");
+  if(more){
+    e.stopPropagation();
+    const id=more.dataset.more;
+    if(state.collapsedTasks[id])delete state.collapsedTasks[id];else state.collapsedTasks[id]=true;
+    renderTasks();return;
+  }
+  const cg=e.target.closest("[data-cargo]");
+  if(cg){
+    e.stopPropagation();
+    const id=cg.dataset.cargo;
+    if(state.cargoOpen[id])delete state.cargoOpen[id];else state.cargoOpen[id]=true;
+    renderTasks();return;
+  }
+  const fold=e.target.closest("[data-donetoggle]");
+  if(fold){e.stopPropagation();state.showDoneTasks=!state.showDoneTasks;renderTasks();return;}
   const card=e.target.closest("[data-tid]");
   if(!card)return;
-  state.taskId=card.dataset.tid;renderAll();
+  const id=card.dataset.tid;
+  state.taskId=(state.taskId===id)?null:id;
+  renderAll();
 });
 
-function selectTask(id){state.taskId=id;renderAll();}
+function selectTask(id){state.taskId=(state.taskId===id)?null:id;renderAll();}
 flowLayer.addEventListener("click",e=>{const n=e.target.closest(".flow-node");if(n)selectTask(n.dataset.tid);});
 mapLayer.addEventListener("click",e=>{const n=e.target.closest("[data-task]");if(n)selectTask(n.dataset.task);});
 
@@ -1225,7 +1484,9 @@ feedbackList.addEventListener("click",e=>{
   if(e.target.closest(".fb-link"))return;
   const card=e.target.closest("[data-tid]");
   if(!card)return;
-  state.taskId=card.dataset.tid;renderAll();
+  const id=card.dataset.tid;
+  state.taskId=(state.taskId===id)?null:id;
+  renderAll();
 });
 
 /* 任务反馈筛选 */
@@ -1247,7 +1508,9 @@ document.querySelectorAll("[data-task-tab]").forEach(b=>b.addEventListener("clic
 costList.addEventListener("click",e=>{
   const card=e.target.closest("[data-tid]");
   if(!card)return;
-  state.taskId=card.dataset.tid;renderAll();
+  const id=card.dataset.tid;
+  state.taskId=(state.taskId===id)?null:id;
+  renderAll();
 });
 
 document.querySelectorAll("[data-consignment-filter]").forEach(b=>b.addEventListener("click",()=>{
@@ -1268,13 +1531,7 @@ document.querySelectorAll("[data-task-filter]").forEach(b=>b.addEventListener("c
   renderTasks();
 }));
 
-productFilterEl.addEventListener("click",e=>{
-  const chip=e.target.closest("[data-product]");
-  if(!chip)return;
-  const v=chip.dataset.product;
-  state.productFilter=(v==="all"||state.productFilter===v)?"all":v;
-  renderProductFilter();renderRoute();
-});
+
 
 $("scopeBtn").addEventListener("click",()=>{
   state.scope=state.scope==="all"?"consignment":"all";
@@ -1285,6 +1542,7 @@ $("zoomOut").addEventListener("click",()=>{const r=stageWrap.getBoundingClientRe
 $("fitBtn").addEventListener("click",()=>{fitStage();toast("已适应画布");});
 $("refreshBtn").addEventListener("click",refreshData);
 $("detailRefresh").addEventListener("click",refreshData);
+$("fbClose").addEventListener("click",()=>{state.taskId=null;renderAll();toast("已收起任务反馈");});
 $("fullBtn").addEventListener("click",()=>{
   if(document.fullscreenElement)document.exitFullscreen();
   else if(routePanel.requestFullscreen)routePanel.requestFullscreen();
@@ -1302,28 +1560,30 @@ stageWrap.addEventListener("wheel",e=>{
   zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.12:1/1.12);
 },{passive:false});
 
+/* 拖动平移：不用 setPointerCapture，避免抢走画布内的 click 事件 */
 let drag=null;
 stageWrap.addEventListener("pointerdown",e=>{
   if(e.button!==0)return;
+  if(e.target.closest&&e.target.closest("#canvasBar"))return;
   const hit=e.target.closest?e.target.closest(".flow-node,[data-task]"):null;
   drag={x:e.clientX,y:e.clientY,px:state.panX,py:state.panY,moved:false,id:e.pointerId,interactive:!!hit};
-  try{stageWrap.setPointerCapture(e.pointerId);}catch(_){}
   stageWrap.classList.add("dragging");
 });
-stageWrap.addEventListener("pointermove",e=>{
+function onStagePointerMove(e){
   if(!drag||e.pointerId!==drag.id)return;
   const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
   if(!drag.moved&&Math.abs(dx)+Math.abs(dy)>3)drag.moved=true;
   if(drag.moved){state.panX=drag.px+dx;state.panY=drag.py+dy;applyTransform();}
-});
+}
 function endDrag(e){
   if(!drag||(e&&e.pointerId!==drag.id))return;
   const info=drag;drag=null;
   stageWrap.classList.remove("dragging");
-  if(!info.moved&&!info.interactive)clearFilters();
+  if(!info.moved&&!info.interactive){state.taskId=null;renderAll();clearFilters();}
 }
-stageWrap.addEventListener("pointerup",endDrag);
-stageWrap.addEventListener("pointercancel",endDrag);
+window.addEventListener("pointermove",onStagePointerMove);
+window.addEventListener("pointerup",endDrag);
+window.addEventListener("pointercancel",endDrag);
 stageWrap.addEventListener("dblclick",()=>{fitStage();toast("已复位视图");});
 
 document.addEventListener("keydown",e=>{
@@ -1337,7 +1597,7 @@ document.addEventListener("keydown",e=>{
 
 /* ============ 需求单列表 + 抽屉 ============ */
 const DEMANDS=[
-  {no:"XD20260928001",customer:"厦门建发生物流有限公司",type:"内贸",amount:6000,consignments:3,tasks:7,status:"running",statusText:"执行中"},
+  {no:"XD20260928001",customer:"厦门建发生物流有限公司",type:"内贸",amount:6000,consignments:4,tasks:9,status:"running",statusText:"执行中"},
   {no:"XD20260927008",customer:"福建三钢（集团）有限责任公司",type:"内贸",amount:12400,consignments:5,tasks:9,status:"running",statusText:"执行中"},
   {no:"XD20260927005",customer:"厦门象屿股份有限公司",type:"外贸",amount:8600,consignments:4,tasks:6,status:"pending",statusText:"待下发"},
   {no:"XD20260926003",customer:"泉州城建集团有限公司",type:"内贸",amount:3200,consignments:2,tasks:4,status:"done",statusText:"已完成"},
@@ -1369,7 +1629,7 @@ function renderDemands(){
 
 function openDrawer(d){
   currentDemand=d||DEMANDS[0];
-  state.consignmentId=null;state.taskId=null;state.scope="all";
+  state.consignmentId=null;state.taskId=null;state.scope="all";state.detailOpen=false;state.collapsedTasks={};state.cargoOpen={};
   state.consignmentFilter="all";state.taskFilter="all";state.taskTab="info";
   state.fbTab="all";state.fbFrom="";state.fbTo="";state.fbQuery="";
   $("drawerNo").textContent=currentDemand.no;
@@ -1483,7 +1743,6 @@ window.addEventListener("resize",()=>{
   }
 });
 /* ============ 初始化 ============ */
-renderProductFilter();
 renderDemands();
 $("routeStamp").textContent="更新于 "+stamp();
 function bootDrawer(){setTimeout(()=>openDrawer(DEMANDS[0]),380);}
