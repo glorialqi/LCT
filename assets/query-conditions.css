@@ -133,11 +133,3 @@
 .ct-query-card.query-collapsed .ct-query-actions [data-filter-toggle] {
   display: none !important;
 }
-@media (max-width: 1280px) {
-  .ct-query-card .ct-query-body .grid,
-  .ct-query-card .filter-grid,
-  .ct-query-card .ct-filter-form,
-  .ct-query-card .ct-filter-extended {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  }
-}
