@@ -1,0 +1,143 @@
+/* Shared query-condition module: visual baseline follows Logistics Demand List. */
+.ct-query-card {
+  margin-bottom: 8px !important;
+  overflow: hidden !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 1px 3px rgba(15, 23, 42, .03) !important;
+}
+.ct-query-card .ct-query-head {
+  min-height: 50px !important;
+  height: auto !important;
+  padding: 0 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  background: #fff !important;
+}
+.ct-query-card .ct-query-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.45 !important;
+  white-space: nowrap !important;
+}
+.ct-query-card .ct-query-caret{display:inline-block!important;width:auto!important;height:auto!important;flex:0 0 auto!important;color:#64748b!important;font-size:10px!important;line-height:1!important;transition:transform .15s ease!important}.ct-query-card .ct-query-title svg,
+.ct-query-card .ct-query-title i {
+  width: 12px !important;
+  height: 12px !important;
+  flex: 0 0 12px !important;
+  color: #64748b !important;
+}
+.ct-query-card .ct-query-actions {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex: 0 0 auto !important;
+}
+.ct-query-card .ct-query-actions > button {
+  height: 32px !important;
+  padding: 0 15px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+.ct-query-card .ct-query-body {
+  padding: 12px 20px 8px !important;
+  background: #fff !important;
+}
+.ct-query-card .ct-query-body .grid {
+  gap: 12px 24px !important;
+}
+.ct-query-card .ct-query-body .grid,
+.ct-query-card .filter-grid,
+.ct-query-card .ct-filter-form {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 12px 24px !important;
+}
+.ct-query-card .ct-filter-extended {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 12px 24px !important;
+}
+.ct-query-card label {
+  display: block !important;
+  margin-bottom: 5px !important;
+  color: #64748b !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+}
+.ct-query-card input:not([type="checkbox"]):not([type="radio"]),
+.ct-query-card select {
+  width: 100% !important;
+  height: 38px !important;
+  padding: 0 12px !important;
+  border: 1px solid #d7dfea !important;
+  border-radius: 5px !important;
+  outline: none !important;
+  background: #fff !important;
+  color: #303a47 !important;
+  font-size: 13px !important;
+  line-height: 38px !important;
+  box-shadow: none !important;
+}
+.ct-query-card input::placeholder {
+  color: #a8aeb9 !important;
+}
+.ct-query-card input:focus,
+.ct-query-card select:focus {
+  border-color: #1976e9 !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, .08) !important;
+}
+.ct-query-card .filter-more-row {
+  height: 18px !important;
+  margin-top: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.ct-query-card .filter-more {
+  width: 24px !important;
+  height: 22px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #94a3b8 !important;
+}
+.ct-query-card.query-collapsed .ct-query-body {
+  display: none !important;
+}
+.ct-query-card.query-collapsed .ct-query-head {
+  border-bottom-color: transparent !important;
+}
+.ct-query-card.query-collapsed .ct-query-actions [data-filter-toggle] {
+  display: none !important;
+}
+@media (max-width: 1280px) {
+  .ct-query-card .ct-query-body .grid,
+  .ct-query-card .filter-grid,
+  .ct-query-card .ct-filter-form,
+  .ct-query-card .ct-filter-extended {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
