@@ -502,6 +502,16 @@ html.ct-embedded .main{padding-top:0!important;background:var(--page)!important}
 </style>
   <link rel="stylesheet" href="../assets/query-conditions.css">
   <link rel="stylesheet" href="../assets/component-system.css">
+<style id="latest-demand-sync-style">
+.anchor-section{scroll-margin-top:58px;margin-bottom:12px}.anchor-section:last-child{margin-bottom:0}
+.detail-actions{gap:6px;margin-left:12px;flex-wrap:nowrap}.detail-actions .btn{height:30px;min-height:30px;padding:0 10px;font-size:12px;line-height:1;border-radius:5px}.detail-actions .btn.mini{height:28px;padding:0 9px;font-size:11px}.detail-actions .btn svg{width:12px;height:12px}
+.detail-view-switch{display:inline-flex;align-items:stretch;gap:0;height:36px;padding:0 4px;border:1px solid #dfe5ee;border-radius:7px;background:#f8fafc;box-shadow:none;overflow:hidden}
+.detail-view-tab{position:relative;height:34px;padding:0 14px;border:0!important;border-radius:0;background:transparent!important;color:#64748b;font-size:12px;font-weight:500;box-shadow:none!important;display:inline-flex;align-items:center}
+.detail-view-tab:hover{background:#fff!important;color:#334155}.detail-view-tab.active{background:transparent!important;color:#2563eb;font-weight:600;box-shadow:none!important}.detail-view-tab.active:after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px;background:#2563eb}.detail-view-tab + .detail-view-tab:before{content:"";position:absolute;left:0;top:9px;width:1px;height:16px;background:#e2e8f0}.detail-view-tab .count{color:#94a3b8;font-size:11px;font-weight:400}.detail-view-tab.active .count{color:#2563eb}
+.detail-view-switch + .detail-actions{margin-left:12px;padding-left:12px;border-left:1px solid #dfe5ee}
+.doc-all-card{margin-bottom:0}.doc-query-bar{height:60px;display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid var(--line);background:#fff}.doc-query-title{font-size:13px;font-weight:600;color:#334155;margin-right:8px}.doc-query-field{display:flex;align-items:center;gap:8px;color:#64748b;font-size:12px}.doc-query-field .doc-status-filter{height:34px;min-width:150px}.doc-result-count{margin-left:auto;color:#94a3b8;font-size:11px}.doc-all-table-wrap{height:calc(100vh - 328px);min-height:300px;max-height:650px;overflow:auto}.doc-all-table{min-width:1250px}.doc-all-table th{position:sticky;top:0;z-index:2;background:#f8fafc;height:44px}.doc-all-table td{height:52px;font-size:12px}.doc-number-link{border:0;background:transparent;padding:0;color:#2563eb;font-size:12px;font-weight:500;cursor:pointer;text-align:left}.doc-number-link:hover{text-decoration:underline}
+@media(max-width:1360px){.doc-query-bar{padding:0 14px}.doc-query-field .doc-status-filter{min-width:130px}.doc-all-table-wrap{height:calc(100vh - 330px)}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -1327,6 +1337,36 @@ function customerCard(isExec){
     <section class="goods-panel"><div class="goods-panel-head">商品明细列表</div><div class="goods-table-scroll"><table class="mini-table customer-goods-table"><thead><tr><th style="width:170px">客户订单号</th><th style="width:180px">客户</th><th style="width:150px">商品中文名</th><th style="width:150px">商品描述</th><th style="width:120px">件数/单位</th><th style="width:120px">毛重/单位</th><th style="width:130px">体积/单位</th><th style="width:130px">标准数量/单位</th><th style="width:110px">单件重量</th><th style="width:120px">规格尺寸</th><th style="width:120px">货物单价（元）</th><th style="width:80px">操作</th></tr></thead><tbody><tr class="selected-goods-row"><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td>—</td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit1}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit2}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit3}</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></section>
   </div></div></section>`;
 }
+const docNames={
+  '提单':'水运集装箱提单','代理结算单':'中联铁运代理结算单','客户对账单':'客户应收对账单','供应商对账单':'供应商应付对账单','发票登记单':'增值税发票登记单','付款申请单':'供应商付款申请单','收款认领单':'客户回款认领单'
+};
+function renderDocumentsView(isExec){
+  const docs=isExec?downstreamDocs:[];
+  const rows=docs.map(d=>`<tr data-doc-type="${d.type}"><td>${d.type}</td><td>${docNames[d.type]||d.type}</td><td><button class="doc-number-link" data-doc-open="${d.id}">${d.id}</button></td><td><span class="doc-status ${d.tone}">${d.status}</span></td><td>苏丽蓉</td><td>2026-10-20 09:30</td><td>菜菜菜</td><td>${d.updated}</td><td><button class="btn link" data-doc-open="${d.id}">查看详情</button></td></tr>`).join('');
+  return `<section class="cube-card doc-all-card"><div class="doc-query-bar"><span class="doc-query-title">查询条件</span><label class="doc-query-field"><span>单据类型</span><select id="docTypeFilter" class="doc-status-filter"><option value="all">全部类型</option>${Object.keys(docNames).map(t=>`<option value="${t}">${t}</option>`).join('')}</select></label><span class="doc-result-count" id="docResultCount">共 ${docs.length} 条</span></div><div class="doc-all-table-wrap"><table class="mini-table doc-all-table"><thead><tr><th>单据类型</th><th>单据名称</th><th>单据编号</th><th>状态</th><th>创建人</th><th>创建时间</th><th>修改人</th><th>修改时间</th><th>操作</th></tr></thead><tbody>${rows||'<tr><td colspan="9" class="doc-empty">暂无下游单据</td></tr>'}</tbody></table></div></section>`;
+}
+function renderDetail(page){
+  const isExec=page==='exec';
+  const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
+  const isWater=isExec||createForm.transportType==='水运';
+  const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
+  const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
+  const transport=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}`;
+  const fees=isExec?`${execFeeSection()}${profitCard(true)}`:`${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}`;
+  const records=`${attachmentCard(isExec)}${systemCard(isExec)}`;
+  const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
+  const documents=renderDocumentsView(isExec);
+  const view=state.detailView==='documents'?'documents':'info';
+  const sections=['overview','transport','fees','records','arrangement'];
+  const activeSection=sections.includes(state.detailSection)?state.detailSection:'overview';
+  const nav=[['overview','基础信息'],['transport','运输要求'],['fees','费用与利润'],['records','附件与记录'],['arrangement',`需求安排${isExec?' (1)':' (0)'}`]];
+  return `<div class="detail-scroll"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
+    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span><div class="detail-view-switch"><button class="detail-view-tab ${view==='info'?'active':''}" data-detail-view="info">需求详情</button><button class="detail-view-tab ${view==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?7:0})</span></button></div><div class="detail-actions">${optimizedDetailActions(isExec)}</div></div></section>
+    ${view==='info'?`<div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-scroll-target="section-${id}">${l}</button>`).join('')}</div><section class="anchor-section" id="section-overview">${overview}</section><section class="anchor-section" id="section-transport">${transport}</section><section class="anchor-section" id="section-fees">${fees}</section><section class="anchor-section" id="section-records">${records}</section><section class="anchor-section" id="section-arrangement">${arrangement}</section>`:`<div class="doc-independent-view">${documents}</div>`}
+  </div></div>`;
+}
+document.addEventListener('click',e=>{const btn=e.target.closest('[data-scroll-target]');if(btn){const target=document.getElementById(btn.dataset.scrollTarget);document.querySelectorAll('.detail-section-tab').forEach(b=>b.classList.toggle('active',b===btn));state.detailSection=btn.dataset.scrollTarget.replace('section-','');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});}});
+document.addEventListener('change',e=>{if(e.target.id==='docTypeFilter'){const val=e.target.value;const card=e.target.closest('.doc-all-card');const rows=[...card.querySelectorAll('tbody tr[data-doc-type]')];let count=0;rows.forEach(r=>{const show=val==='all'||r.dataset.docType===val;r.style.display=show?'':'none';if(show)count++;});const label=card.querySelector('#docResultCount');if(label)label.textContent=`共 ${count} 条`;}});
 function render(){
   renderTopTabs();
   renderSidebar();
@@ -1394,69 +1434,3 @@ render();
   <script src="../assets/component-system.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
