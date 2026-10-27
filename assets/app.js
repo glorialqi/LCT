@@ -3,21 +3,25 @@
 
   const pages = {
     "customer-order-list": {
+      domain: "4PL控制塔",
       title: "客户订单列表",
       description: "客户订单查询、客户委托单号与物流安排入口",
       file: "pages/customer-order-list-prototype.html"
     },
     "customer-order": {
+      domain: "4PL控制塔",
       title: "客户订单跟踪",
       description: "客户订单、物流供应商与履约状态总览",
       file: "pages/customer-order-tracking.html"
     },
     "logistics-demand": {
+      domain: "4PL控制塔",
       title: "物流需求列表",
       description: "物流需求查询、状态与列表管理",
       file: "pages/logistics-demand-list-prototype.html"
     },
     "trade-contract": {
+      domain: "股份控制塔",
       title: "贸易合同待办",
       description: "贸易合同销售待办、采购待办与配额调配",
       file: "pages/trade-contract-todo.html"
@@ -27,6 +31,7 @@
   const defaultPage = "customer-order";
   const navItems = Array.from(document.querySelectorAll("[data-page]"));
   const frames = Array.from(document.querySelectorAll(".page-frame[data-page]"));
+  const pageDomain = document.getElementById("pageDomain");
   const pageTitle = document.getElementById("pageTitle");
   const pageDescription = document.getElementById("pageDescription");
   const openStandalone = document.getElementById("openStandalone");
@@ -81,10 +86,11 @@
     });
 
     const config = pages[key];
+    if (pageDomain) pageDomain.textContent = config.domain || "物流控制塔";
     pageTitle.textContent = config.title;
     pageDescription.textContent = config.description;
     openStandalone.href = config.file;
-    document.title = config.title + " · 物流控制塔";
+    document.title = config.title + " · " + (config.domain || "物流控制塔");
     activePage = key;
 
     if ((key === "customer-order-list" || key === "logistics-demand") && previousPage && previousPage !== key) {

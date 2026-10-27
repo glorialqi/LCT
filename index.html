@@ -85,42 +85,48 @@
         </a>
       </div>
 
-      <nav class="main-nav" aria-label="业务页面">
-        <div class="nav-group-title">
-          <span class="nav-icon"><svg><use href="#icon-order"/></svg></span>
-          <span>物流订单管理</span>
-        </div>
+            <nav class="main-nav" aria-label="业务页面">
+        <section class="nav-domain" aria-label="股份控制塔">
+          <div class="nav-domain-title">股份控制塔</div>
+          <a class="nav-entry" href="#trade-contract" data-page="trade-contract" title="贸易合同待办">
+            <span class="nav-icon"><svg><use href="#icon-contract"/></svg></span>
+            <span class="nav-text">贸易合同待办</span>
+          </a>
+        </section>
 
-        <a class="nav-entry" href="#customer-order-list" data-page="customer-order-list" title="客户订单列表">
-          <span class="nav-icon"><svg><use href="#icon-list"/></svg></span>
-          <span class="nav-text">客户订单列表</span>
-        </a>
+        <section class="nav-domain" aria-label="4PL控制塔">
+          <div class="nav-domain-title">4PL控制塔</div>
+          <div class="nav-group-title nav-subgroup-title">
+            <span class="nav-icon"><svg><use href="#icon-order"/></svg></span>
+            <span>物流订单管理</span>
+          </div>
 
-        <a class="nav-entry" href="#customer-order" data-page="customer-order" title="客户订单跟踪">
-          <span class="nav-icon"><svg><use href="#icon-order"/></svg></span>
-          <span class="nav-text">客户订单跟踪</span>
-        </a>
+          <a class="nav-entry" href="#customer-order-list" data-page="customer-order-list" title="客户订单列表">
+            <span class="nav-icon"><svg><use href="#icon-list"/></svg></span>
+            <span class="nav-text">客户订单列表</span>
+          </a>
 
-        <a class="nav-entry" href="#logistics-demand" data-page="logistics-demand" title="物流需求列表">
-          <span class="nav-icon"><svg><use href="#icon-demand"/></svg></span>
-          <span class="nav-text">物流需求列表</span>
-        </a>
+          <a class="nav-entry" href="#customer-order" data-page="customer-order" title="客户订单跟踪">
+            <span class="nav-icon"><svg><use href="#icon-order"/></svg></span>
+            <span class="nav-text">客户订单跟踪</span>
+          </a>
 
-        <a class="nav-entry" href="#trade-contract" data-page="trade-contract" title="贸易合同待办">
-          <span class="nav-icon"><svg><use href="#icon-contract"/></svg></span>
-          <span class="nav-text">贸易合同待办</span>
-        </a>
+          <a class="nav-entry" href="#logistics-demand" data-page="logistics-demand" title="物流需求列表">
+            <span class="nav-icon"><svg><use href="#icon-demand"/></svg></span>
+            <span class="nav-text">物流需求列表</span>
+          </a>
 
-        <div class="nav-entry nav-disabled" aria-disabled="true" title="后续页面，暂未接入">
-          <span class="nav-icon"><svg><use href="#icon-demand"/></svg></span>
-          <span class="nav-text">物流委托列表</span>
-          <span class="nav-tag">待接入</span>
-        </div>
+          <div class="nav-entry nav-disabled" aria-disabled="true" title="后续页面，暂未接入">
+            <span class="nav-icon"><svg><use href="#icon-demand"/></svg></span>
+            <span class="nav-text">物流委托列表</span>
+            <span class="nav-tag">待接入</span>
+          </div>
 
-        <div class="nav-separator"></div>
-        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-truck"/></svg></span><span>运输工作台</span></div>
-        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-database"/></svg></span><span>物流资源池</span></div>
-        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-settings"/></svg></span><span>OMS配置管理</span></div>
+          <div class="nav-separator"></div>
+          <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-truck"/></svg></span><span>运输工作台</span></div>
+          <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-database"/></svg></span><span>物流资源池</span></div>
+          <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-settings"/></svg></span><span>OMS配置管理</span></div>
+        </section>
       </nav>
 
       <div class="sidebar-bottom">
@@ -132,7 +138,7 @@
     <section class="workspace">
       <header class="topbar">
         <div class="breadcrumb-wrap">
-          <div class="breadcrumb"><span>物流控制塔</span><span class="crumb-separator">/</span><strong id="pageTitle">客户订单跟踪</strong></div>
+          <div class="breadcrumb"><span id="pageDomain">4PL控制塔</span><span class="crumb-separator">/</span><strong id="pageTitle">客户订单跟踪</strong></div>
           <p id="pageDescription">客户订单、物流供应商与履约状态总览</p>
         </div>
         <div class="topbar-actions">

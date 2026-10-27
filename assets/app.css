@@ -327,3 +327,34 @@ svg { display: block; }
   :root { --sidebar-width: 210px; }
   .user-copy { display: none; }
 }
+.nav-domain { margin-bottom: 8px; }
+.nav-domain + .nav-domain {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+.nav-domain-title {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  padding: 0 10px;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.nav-domain-title::before {
+  content: "";
+  width: 3px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 2px;
+  background: var(--blue);
+}
+.nav-subgroup-title {
+  height: 34px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+}
