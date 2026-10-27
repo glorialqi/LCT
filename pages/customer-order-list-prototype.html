@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客户订单列表 - OMS原型</title>
+  <link rel="stylesheet" href="../assets/app.css">
+  <style>
+    :root {
+      --detail-blue: #2f74ff;
+      --detail-blue-deep: #1f5fe0;
+      --detail-line: #dde4ee;
+      --detail-ink: #23344d;
+      --detail-muted: #8c98a8;
+      --page: #e9eef5;
+      --ink: #23344d;
+      --text: #5e6d82;
+      --muted: #8c98a8;
+      --line: #dde4ee;
+      --blue: #2f74ff;
+    }
+    body { min-width: 1180px; }
+    button, input, select, textarea { font: inherit; }
+    .detail-scroll { min-height: 0; flex: 1; overflow-y: auto; padding: 14px 18px 40px; background: var(--page); }
+    .page-head { position: relative; z-index: 5; display: flex; align-items: center; gap: 9px; min-height: 52px; margin-bottom: 10px; padding: 0 13px 0 17px; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.04); }
+    .page-title { display: flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 15px; font-weight: 700; white-space: nowrap; }
+    .page-title svg { width: 16px; height: 16px; color: #9ca6b5; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .page-head-spacer { flex: 1; }
+    .detail-btn { height: 30px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #d9dee7; border-radius: 3px; background: #fff; color: #4c5566; font-size: 11px; white-space: nowrap; cursor: pointer; transition: .15s ease; }
+    .detail-btn:hover { border-color: #b7c1d2; background: #fafbfc; }
+    .detail-btn.primary { color: #fff; border-color: var(--detail-blue); background: var(--detail-blue); box-shadow: 0 2px 5px rgba(47,116,255,.18); }
+    .detail-btn.primary:hover { border-color: var(--detail-blue-deep); background: var(--detail-blue-deep); }
+    .detail-btn.outline-primary { color: var(--detail-blue); border-color: #bcd4ff; background: #f8fbff; }
+    .detail-btn.outline-primary:hover { border-color: #8db7ff; background: #f1f7ff; }
+    .detail-section { margin-top: 11px; overflow: visible; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.035); }
+    .detail-section-head { min-height: 37px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid #eef1f5; background: #fafbfc; }
+    .detail-section-title { display: inline-flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 13px; font-weight: 700; }
+    .detail-section-title svg { width: 11px; height: 11px; color: #9ca7b6; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .detail-section-body { padding: 17px 16px 19px; }
+    .form-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); column-gap: 22px; row-gap: 17px; }
+    .span-2 { grid-column: span 2; }
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .field { min-width: 0; }
+    .field-label { min-height: 18px; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: var(--text); font-size: 11px; white-space: nowrap; }
+    .required { color: #e9564a; font-size: 10px; }
+    .field-help { width: 14px; height: 14px; display: inline-grid; place-items: center; border-radius: 50%; color: #9aa6b7; background: #f0f2f5; font-size: 10px; font-weight: 700; cursor: help; }
+    .control { width: 100%; height: 30px; padding: 0 9px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fbfcfd; color: var(--text); font-size: 11px; }
+    .control[readonly] { color: #8d96a7; background: #f5f6f8; }
+    .control::placeholder { color: #b2bac7; }
+    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#9ca6b5 50%),linear-gradient(135deg,#9ca6b5 50%,transparent 50%); background-position: calc(100% - 12px) 12px,calc(100% - 8px) 12px; background-size: 4px 4px,4px 4px; background-repeat: no-repeat; }
+    .status-pill { display: inline-flex; height: 26px; align-items: center; padding: 0 9px; border-radius: 3px; color: #9a6a00; background: #fff6de; font-size: 10px; font-weight: 600; }
+    .multi-control { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fbfcfd; }
+    .mini-tag { display: inline-flex; min-height: 20px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #dbe8ff; border-radius: 3px; color: #3268c4; background: #f1f7ff; font-size: 10px; white-space: nowrap; }
+    .multi-add { height: 20px; padding: 0 5px; border: 0; border-radius: 3px; color: #7e8899; background: transparent; font-size: 10px; cursor: pointer; }
+    .multi-add:hover { color: var(--detail-blue); background: #edf5ff; }
+    .field--new { position: relative; }
+    .field--new::before { content: ""; position: absolute; inset: -8px -9px -8px -9px; z-index: 0; border: 1px dashed #a8c9ff; border-radius: 5px; background: linear-gradient(180deg,rgba(238,245,255,.72),rgba(250,252,255,.28)); pointer-events: none; }
+    .field--new > * { position: relative; z-index: 1; }
+
+    .help-dot { position: relative; }
+    .help-tip { position: absolute; left: 50%; bottom: calc(100% + 7px); z-index: 30; width: 240px; padding: 8px 9px; border: 1px solid #dfe4ec; border-radius: 4px; color: #5f697a; background: #fff; box-shadow: 0 8px 24px rgba(27,42,74,.12); font-size: 10px; line-height: 1.55; opacity: 0; visibility: hidden; transform: translate(-50%,3px); transition: .15s ease; pointer-events: none; }
+    .help-tip::after { content: ""; position: absolute; left: 50%; top: 100%; width: 7px; height: 7px; border-right: 1px solid #dfe4ec; border-bottom: 1px solid #dfe4ec; background: #fff; transform: translate(-50%,-4px) rotate(45deg); }
+    .help-dot:hover .help-tip, .help-dot:focus-within .help-tip { opacity: 1; visibility: visible; transform: translate(-50%,0); }
+    .consignment-editor { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #cbdcfb; border-radius: 3px; background: #fff; transition: .15s ease; }
+    .consignment-editor:focus-within { border-color: #7dabff; box-shadow: 0 0 0 2px rgba(47,116,255,.1); }
+    .consignment-chips { display: flex; min-width: 0; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .consignment-chip { max-width: 100%; display: inline-flex; min-height: 21px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2d62ba; background: #f2f7ff; font-size: 10px; }
+    .consignment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chip-remove { width: 13px; height: 13px; flex: 0 0 13px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #86a7d7; cursor: pointer; }
+    .chip-remove:hover { color: #d84a4a; background: #ffeded; }
+    .chip-remove svg { width: 8px; height: 8px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+    .consignment-input { min-width: 76px; flex: 1; height: 21px; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 10px; outline: none; }
+    .consignment-input::placeholder { color: #aeb7c5; }
+    .consignment-add { height: 21px; flex: 0 0 auto; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #3b73d0; background: #f7fbff; font-size: 10px; cursor: pointer; }
+    .consignment-add:hover { border-color: #9fc3ff; background: #eef6ff; }
+    .consignment-count { margin-left: 2px; color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .field-error { display: none; margin-top: 4px; color: #e9564a; font-size: 10px; }
+    .field-error.show { display: block; }
+    .textarea { min-height: 58px; resize: vertical; padding-top: 7px; }
+    .transport-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px 22px; }
+    .note-card { display: flex; align-items: flex-start; gap: 10px; margin-top: 11px; padding: 11px 13px; border: 1px solid #dbe8fb; border-radius: 4px; color: #536174; background: #f7fbff; font-size: 10px; line-height: 1.65; }
+    .note-card svg { width: 15px; height: 15px; flex: 0 0 15px; margin-top: 1px; color: #4c86e8; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .note-card b { color: #2e5fa9; }
+    .prototype-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid #cfe0fb; border-radius: 17px; color: #356bbd; background: #fff; box-shadow: 0 6px 18px rgba(21,55,114,.12); font-size: 10px; cursor: pointer; }
+    .prototype-toggle:hover { background: #f8fbff; }
+    .prototype-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .prototype-note { position: fixed; right: 20px; bottom: 60px; z-index: 49; width: 330px; padding: 15px 16px; border: 1px solid #dfe5ee; border-radius: 7px; background: #fff; box-shadow: 0 14px 40px rgba(20,38,75,.16); opacity: 0; visibility: hidden; transform: translateY(8px); transition: .18s ease; }
+    .prototype-note.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .prototype-note h3 { margin: 0 0 7px; color: #263247; font-size: 12px; }
+    .prototype-note p { margin: 0 0 8px; color: #687285; font-size: 10px; line-height: 1.7; }
+    .prototype-note ul { margin: 0; padding-left: 15px; color: #687285; font-size: 10px; line-height: 1.75; }
+    .prototype-note b { color: #356bbd; }
+    .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 10px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
+    @media (max-width: 1120px) { body { min-width: 980px; } .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .span-2,.span-4,.span-6 { grid-column: span 3; } }
+    /* Customer order list prototype */
+    .oms-tabs { display:flex; align-items:center; gap:8px; }
+    .oms-home { height:28px; display:inline-flex; align-items:center; padding:0 13px; border-radius:4px; color:#5e6d82; background:#f2f4f7; font-size:12px; }
+    .oms-tab { height:28px; display:inline-flex; align-items:center; gap:8px; padding:0 12px; border-radius:4px; color:#2f74ff; background:#edf4ff; font-size:12px; font-weight:600; }
+    .oms-tab button { width:14px; height:14px; display:grid; place-items:center; padding:0; border:0; border-radius:50%; color:#87a8d8; background:transparent; cursor:pointer; }
+    .oms-tab button:hover { color:#fff; background:#8aaee0; }
+    .oms-tab svg { width:9px; height:9px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+
+    .list-page { padding-bottom:18px; }
+    .query-card, .table-card { border:1px solid var(--detail-line); border-radius:5px; background:#fff; box-shadow:0 3px 10px rgba(22,44,84,.035); }
+    .query-card { margin-top:2px; }
+    .query-head { min-height:49px; display:flex; align-items:center; gap:10px; padding:0 14px; border-bottom:1px solid #edf1f5; }
+    .query-title { display:inline-flex; align-items:center; gap:7px; color:var(--detail-ink); font-size:13px; font-weight:700; }
+    .query-caret { width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #2f74ff; }
+    .query-actions { margin-left:auto; display:flex; align-items:center; gap:7px; }
+    .query-btn { height:31px; padding:0 13px; border:1px solid transparent; border-radius:4px; color:#2f74ff; background:#edf4ff; font-size:11px; font-weight:600; cursor:pointer; }
+    .query-btn:hover { background:#e2efff; }
+    .query-btn.primary { color:#fff; background:#2f74ff; border-color:#2f74ff; }
+    .query-btn.primary:hover { background:#1f62e8; }
+    .query-body { padding:14px 14px 15px; }
+    .query-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px 18px; }
+    .query-field { min-width:0; }
+    .query-field.wide { grid-column:span 2; }
+    .query-field label { display:block; margin-bottom:5px; color:#667387; font-size:11px; line-height:16px; }
+    .query-field input, .query-field select { width:100%; height:31px; padding:0 9px; border:1px solid #dfe5ee; border-radius:4px; color:#465267; background:#fff; font-size:11px; }
+    .query-field input::placeholder { color:#aeb8c6; }
+    .query-field select { appearance:none; background-image:linear-gradient(45deg,transparent 50%,#9aa6b7 50%),linear-gradient(135deg,#9aa6b7 50%,transparent 50%); background-position:calc(100% - 12px) 13px,calc(100% - 8px) 13px; background-size:4px 4px,4px 4px; background-repeat:no-repeat; }
+    .advanced-field { display:none; }
+    .query-body.expanded .advanced-field { display:block; }
+    .date-range { display:flex; align-items:center; gap:6px; }
+    .date-range input { min-width:0; }
+    .date-range span { color:#9aa6b7; font-size:11px; }
+
+    .list-card { margin-top:10px; overflow:hidden; }
+    .list-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:8px; min-height:53px; padding:10px 14px; border-bottom:1px solid #edf1f5; }
+    .list-title { margin-right:auto; color:var(--detail-ink); font-size:13px; font-weight:700; white-space:nowrap; }
+    .toolbar-btn { height:30px; padding:0 12px; border:1px solid #dbe2ec; border-radius:4px; color:#5e6d82; background:#fff; font-size:11px; white-space:nowrap; cursor:pointer; }
+    .toolbar-btn:hover:not(:disabled) { border-color:#9fc0f7; color:#2f74ff; background:#f7fbff; }
+    .toolbar-btn:disabled { color:#b2bac6; background:#fafbfc; cursor:not-allowed; }
+    .toolbar-btn.primary { color:#fff; border-color:#2f74ff; background:#2f74ff; }
+    .toolbar-btn.primary:hover { border-color:#1f62e8; background:#1f62e8; }
+    .status-tabs { display:flex; align-items:center; gap:4px; padding:8px 14px; overflow-x:auto; border-bottom:1px solid #edf1f5; background:#fff; }
+    .status-tab { height:30px; flex:0 0 auto; padding:0 12px; border:1px solid transparent; border-radius:4px; color:#647184; background:transparent; font-size:11px; white-space:nowrap; cursor:pointer; }
+    .status-tab:hover { background:#f7f9fc; }
+    .status-tab.active { color:#2f74ff; border-color:#d7e7ff; background:#edf5ff; font-weight:600; }
+    .table-scroll { max-height:calc(100vh - 340px); min-height:340px; overflow:auto; }
+    .order-table { width:max-content; min-width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; color:#4f5c70; font-size:11px; }
+    .order-table thead th { position:sticky; top:0; z-index:30; height:34px; padding:0 9px; border-bottom:1px solid #e3e8ef; border-right:1px solid #edf1f5; color:#637085; background:#f8fafc; font-weight:500; text-align:left; white-space:nowrap; }
+    .order-table thead th .sort { margin-left:4px; color:#b2bbc8; font-size:9px; }
+    .order-table tbody td { height:42px; padding:5px 9px; border-bottom:1px solid #edf1f5; border-right:1px solid #f1f4f7; background:#fff; vertical-align:middle; white-space:nowrap; }
+    .order-table tbody tr:hover td { background:#f8fbff; }
+    .order-table tbody tr.selected td { background:#f2f7ff; }
+    .col-check { width:38px; min-width:38px; text-align:center; }
+    .col-order { width:180px; min-width:180px; }
+    .col-customer-consignment { width:260px; min-width:260px; }
+    .customer-consignment-cell { max-width:260px; overflow:hidden; text-overflow:ellipsis; }
+    .customer-consignment-cell .ref-no { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .col-status { width:96px; min-width:96px; }
+    .col-customer { width:180px; min-width:180px; }
+    .col-product { width:176px; min-width:176px; }
+    .col-qty { width:100px; min-width:100px; }
+    .col-place { width:170px; min-width:170px; }
+    .col-short { width:112px; min-width:112px; }
+    .col-company { width:190px; min-width:190px; }
+    .col-time { width:150px; min-width:150px; }
+    .col-action { width:130px; min-width:130px; }
+    .sticky-select { position:sticky; left:0; z-index:20; background:#fff; }
+    .sticky-order { position:sticky; left:38px; z-index:20; background:#fff; }
+    .sticky-consignment { position:sticky; left:218px; z-index:20; background:#fff; box-shadow:5px 0 7px -6px rgba(23,42,74,.22); }
+    .order-table thead .sticky-select, .order-table thead .sticky-order, .order-table thead .sticky-consignment { z-index:40; background:#f8fafc; }
+    .order-table tbody tr.selected .sticky-select, .order-table tbody tr.selected .sticky-order, .order-table tbody tr.selected .sticky-consignment { background:#f2f7ff; }
+    .sticky-action { position:sticky; right:0; z-index:21; background:#fff; box-shadow:-5px 0 7px -6px rgba(23,42,74,.22); }
+    .order-table thead .sticky-action { z-index:40; background:#f8fafc; }
+    .order-table tbody tr.selected .sticky-action { background:#f2f7ff; }
+    .order-link { color:#2f74ff; font-weight:600; text-decoration:none; }
+    .order-link:hover { text-decoration:underline; }
+    .ref-list { display:flex; flex-direction:column; gap:3px; align-items:flex-start; }
+    .ref-no { color:#536174; font-variant-numeric:tabular-nums; line-height:16px; }
+    .status-pill { display:inline-flex; min-height:22px; align-items:center; padding:0 7px; border:1px solid; border-radius:10px; font-size:10px; white-space:nowrap; }
+    .status-pill.created { color:#8c6a14; border-color:#ead8a8; background:#fff9eb; }
+    .status-pill.pending { color:#2f74ff; border-color:#bed5ff; background:#edf5ff; }
+    .status-pill.scheduled { color:#6c7b8f; border-color:#d2d9e4; background:#f1f4f8; }
+    .status-pill.rejected { color:#e9564a; border-color:#f3c7c2; background:#fff1ef; }
+    .num { text-align:right; font-variant-numeric:tabular-nums; }
+    .muted { color:#98a4b4; }
+    .empty-dash { color:#aab3c0; }
+    .row-action { height:26px; padding:0 7px; border:1px solid #cfe0ff; border-radius:4px; color:#2f74ff; background:#f8fbff; font-size:10px; cursor:pointer; }
+    .row-action:hover { background:#edf5ff; }
+    .pagination { display:flex; align-items:center; justify-content:flex-end; gap:8px; min-height:45px; padding:0 14px; color:#7d899b; background:#fff; font-size:10px; }
+    .pagination button { min-width:26px; height:26px; border:1px solid #e2e7ee; border-radius:3px; color:#667387; background:#fff; font-size:10px; }
+    .pagination button.active { color:#2f74ff; border-color:#bdd6ff; background:#edf5ff; }
+    .query-empty { display:none; padding:40px 12px; color:#9aa6b6; text-align:center; font-size:11px; }
+    @media (max-width:1250px) { .query-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .query-field.wide { grid-column:span 2; } }
+    @media (max-width:1000px) { .query-grid { grid-template-columns:1fr; } .query-field.wide { grid-column:span 1; } }
+    /* Align query, table and buttons with logistics-demand */
+    :root {
+      --primary:#0065d9; --primary-hover:#0a73eb; --primary-soft:#e7f1ff; --primary-line:#9fc7f7;
+      --page:#edeff2; --text:#23262e; --muted:#686f80; --muted-2:#9aa1af;
+      --line:#e9edf2; --line-dark:#dfe4eb; --field:#f2f3f5; --danger:#e33b3b;
+      --radius:6px; --shadow:0 1px 2px rgba(18,26,42,.025);
+      --detail-blue:#0065d9; --detail-blue-deep:#0a73eb; --detail-line:#e9edf2; --detail-ink:#23262e; --detail-muted:#686f80;
+    }
+    body { color:var(--text); background:var(--page); font-family:"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif; font-size:14px; line-height:1.45; }
+    .detail-scroll { padding:12px 12px 0 8px; background:var(--page); }
+    .list-page { padding-bottom:16px; }
+    .query-card, .table-card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
+    .query-card { margin-bottom:8px; }
+    .query-head { height:50px; padding:0 20px; border-bottom:1px solid var(--line); }
+    .query-title { gap:8px; padding:0; border:0; background:transparent; color:var(--text); font-size:13px; font-weight:600; cursor:pointer; outline:none; }
+    .query-title:focus-visible { border-radius:3px; box-shadow:0 0 0 2px rgba(0,101,217,.16); }
+    .query-caret { width:12px; height:12px; display:grid; place-items:center; border:0; color:#4d5460; font-size:11px; transition:.15s; }
+    .query-title[aria-expanded="true"] .query-caret { transform:rotate(180deg); }
+    .query-caret::before { content:"▼"; }
+    .query-actions { gap:10px; }
+    .btn { height:32px; padding:0 15px; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid #d7dce5; border-radius:6px; background:#fff; color:#424a57; font-size:14px; white-space:nowrap; transition:.15s; cursor:pointer; }
+    .btn:hover:not(:disabled) { border-color:var(--primary-line); color:var(--primary); }
+    .btn.primary { color:#fff; border-color:#0a64f5; background:#0a64f5; }
+    .btn.primary:hover:not(:disabled) { color:#fff; border-color:#095bd6; background:#095bd6; }
+    .btn.outline-primary { color:var(--primary); border-color:var(--primary); background:#fff; }
+    .btn.soft-primary { color:var(--primary); border-color:#c8ddff; background:#f5f8ff; }
+    .btn:disabled { color:#c5cad3; border-color:#e8ebf0; background:#f8f9fb; cursor:not-allowed; }
+    .query-body { padding:12px 20px 8px; }
+    .query-grid { grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px 24px; }
+    .query-field.wide { grid-column:span 2; }
+    .query-field label { margin-bottom:6px; color:var(--muted); font-size:12px; line-height:18px; }
+    .query-field input, .query-field select { height:38px; padding:0 12px; border:1px solid var(--line-dark); border-radius:5px; color:var(--text); background:#fff; font-size:13px; }
+    .query-field input:focus, .query-field select:focus { outline:none; border-color:var(--primary); background:#fff; box-shadow:0 0 0 2px rgba(0,101,217,.08); }
+    .query-field input::placeholder { color:#a8aeb9; }
+    .query-field select { background-color:#fff; }
+    .date-range { gap:8px; }
+    .date-range input { flex:1; }
+    .table-card { display:flex; flex-direction:column; min-height:600px; overflow:hidden; }
+    .status-tabs { height:50px; gap:0; padding:0 20px; overflow-x:auto; border-bottom:1px solid var(--line); }
+    .status-tab { position:relative; height:50px; min-width:auto; padding:0 14px; border:0; border-radius:0; color:#475569; background:transparent; font-size:12px; font-weight:500; }
+    .status-tab:hover { color:var(--primary); background:transparent; }
+    .status-tab.active { color:#2563eb; border:0; background:transparent; font-weight:600; }
+    .status-tab.active::after { content:""; position:absolute; left:10px; right:10px; bottom:0; height:2px; border-radius:2px; background:#2563eb; }
+    .status-spacer { flex:1; }
+    .bulk-actions { display:flex; align-items:center; gap:10px; padding-left:12px; white-space:nowrap; }
+    .bulk-actions .btn { height:30px; padding:0 11px; font-size:12px; border-radius:6px; }
+    .table-scroll { flex:1; min-height:0; max-height:none; overflow:auto; }
+    .order-table { font-size:14px; }
+    .order-table thead th { height:42px; padding:0 14px; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; color:#64748b; background:#f8fafc; font-size:12px; font-weight:600; }
+    .order-table tbody td { height:56px; padding:0 14px; border-right:1px solid #eef2f7; border-bottom:1px solid #eef2f7; color:#303641; background:#fff; font-size:13px; }
+    .order-table tbody tr:nth-child(even) td { background:#fbfcfe; }
+    .order-table tbody tr:hover td { background:#f8fbff; }
+    .col-check { width:52px; min-width:52px; }
+    .sticky-select, .sticky-order, .sticky-consignment { position:static; left:auto; box-shadow:none; background:inherit; }
+    .sticky-action { position:sticky; right:0; z-index:3; background:#fff !important; box-shadow:-6px 0 10px rgba(31,40,55,.035); }
+    .order-table thead .sticky-action { z-index:5; background:#f8f9fa !important; }
+    .order-table tbody tr:nth-child(even) .sticky-action { background:#fafbfc !important; }
+    .order-table tbody tr:hover .sticky-action { background:#f5f9ff !important; }
+    .row-action { height:auto; padding:0; border:0; color:var(--primary); background:transparent; font-size:12px; }
+    .row-action:hover { background:transparent; color:var(--primary-hover); text-decoration:underline; }
+    .pager { height:50px; display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:0 20px; color:#555d6b; border-top:1px solid var(--line); background:#fff; font-size:12px; }
+    .pager button { min-width:28px; height:28px; padding:0 6px; border:1px solid transparent; border-radius:4px; color:#46505e; background:#fff; }
+    .pager button.active { color:var(--primary); border-color:var(--primary); }
+    .pager select { height:28px; padding:0 8px; border:1px solid #e1e5eb; border-radius:4px; color:#4f5765; background:#fff; }
+    .query-empty { padding:40px 12px; color:#9aa1ad; font-size:14px; }
+    .app-shell { grid-template-columns:minmax(0,1fr); }
+    /* Embedded mode for index.html */
+    html.list-embedded body { min-width:0; }
+    html.list-embedded .app-shell { grid-template-columns:minmax(0,1fr); }
+    html.list-embedded .sidebar,
+    html.list-embedded .topbar { display:none; }
+    html.list-embedded .workspace { height:100vh; width:100%; }
+    html.list-embedded .detail-scroll { height:100vh; padding:12px 12px 0 8px; }
+  </style>
+  <script>if (new URLSearchParams(window.location.search).get("embed") === "1") document.documentElement.classList.add("list-embedded");</script>
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="p-logo" viewBox="0 0 24 24"><path d="m12 2.7 8 4.2v9.8l-8 4.6-8-4.6V6.9l8-4.2Z"/><path d="m4.4 7 7.6 4 7.6-4M12 11v9.7"/></symbol>
+    <symbol id="p-order" viewBox="0 0 24 24"><path d="M7 4.5h10a2 2 0 0 1 2 2v13H5v-13a2 2 0 0 1 2-2Z"/><path d="M9 4V2.8h6V4M8.5 9h7M8.5 13h7M8.5 17h4"/></symbol>
+    <symbol id="p-demand" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M9.5 12h5M9.5 15.5h5"/></symbol>
+    <symbol id="p-contract" viewBox="0 0 24 24"><path d="M6 3.5h12v17H6z"/><path d="M9 3.5v3h6v-3M9 11h6M9 15h3.5"/></symbol>
+    <symbol id="p-truck" viewBox="0 0 24 24"><path d="M3.5 6.5h10v10h-10zM13.5 10h3l3 3v3.5h-6z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></symbol>
+    <symbol id="p-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6M4.5 11.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/></symbol>
+    <symbol id="p-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 13.2v-2.4l-2-.7-.6-1.5 1-1.9-1.7-1.7-1.9 1-1.5-.6-.7-2H9.2l-.7 2-1.5.6-1.9-1-1.7 1.7 1 1.9-.6 1.5-2 .7v2.4l2 .7.6 1.5-1 1.9 1.7 1.7 1.9-1 1.5.6.7 2h2.4l.7-2 1.5-.6 1.9 1 1.7-1.7-1-1.9.6-1.5z"/></symbol>
+    <symbol id="p-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="p-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.5 6.3L4 9m2 6a7 7 0 0 0 11.5 2.7L20 15"/></symbol>
+    <symbol id="p-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6H5V6h6"/></symbol>
+    <symbol id="p-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 10.5v5M12 7.5h.01"/></symbol>
+    <symbol id="p-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="p-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="p-link" viewBox="0 0 24 24"><path d="m9.2 14.8 5.6-5.6M7.5 16.5l-1.1 1.1a3.3 3.3 0 0 1-4.7-4.7l3-3a3.3 3.3 0 0 1 4.7 0M16.5 7.5l1.1-1.1a3.3 3.3 0 0 1 4.7 4.7l-3 3a3.3 3.3 0 0 1-4.7 0"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <section class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb-wrap">
+          <div class="oms-tabs">
+            <span class="oms-home">首页</span>
+            <span class="oms-tab">客户订单列表<button type="button" aria-label="关闭客户订单列表标签页"><svg><use href="#p-close"/></svg></button></span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" type="button" title="刷新" aria-label="刷新"><svg><use href="#p-refresh"/></svg></button>
+          <button class="icon-button" type="button" title="在新窗口打开" aria-label="在新窗口打开"><svg><use href="#p-external"/></svg></button>
+          <span class="topbar-divider"></span>
+          <div class="user-chip"><span class="avatar">苏</span><span class="user-copy"><strong>苏丽蓉</strong><small>物流运营</small></span></div>
+        </div>      </header>
+
+            <main class="detail-scroll">
+        <div class="list-page">
+          <section class="query-card" aria-label="查询条件">
+            <div class="query-head">
+              <button class="query-title" id="queryToggle" type="button" aria-expanded="false" aria-controls="queryBody"><span class="query-caret"></span>查询条件</button>
+              <div class="query-actions">
+                <button class="btn soft-primary" id="moreQueryBtn" type="button" data-filter-toggle>查看更多</button>
+                <button class="btn soft-primary" id="resetQueryBtn" type="button">重置</button>
+                <button class="btn primary" id="submitQueryBtn" type="button">查询</button>
+              </div>
+            </div>
+            <div class="query-body" id="queryBody">
+              <div class="query-grid">
+                <div class="query-field"><label for="queryOrderNo">客户订单号</label><input id="queryOrderNo" type="text" placeholder="请输入"></div>
+
+                <div class="query-field"><label for="queryCustomer">客户</label><select id="queryCustomer"><option value="">请选择</option><option>青岛绿洲园花生食品有限公司</option><option>中国重汽集团</option><option>中国宝武钢铁集团有限公司</option><option>浙江吉利控股集团</option><option>厦门象屿股份有限公司</option></select></div>
+                <div class="query-field"><label for="queryBusinessType">业务类型</label><select id="queryBusinessType"><option value="">请选择</option><option>进口</option><option>出口</option><option>内贸</option><option>转口</option></select></div>
+                <div class="query-field"><label for="queryServiceScope">服务范围</label><select id="queryServiceScope"><option value="">请选择</option><option>运输</option><option>报关清关</option><option>仓储</option><option>加工</option></select></div>
+                <div class="query-field"><label for="queryTransportType">运输类型</label><select id="queryTransportType"><option value="">请选择</option><option>汽运</option><option>水运</option><option>铁运</option><option>空运</option><option>多式联运</option></select></div>
+                <div class="query-field"><label for="queryShippingType">航运类型</label><select id="queryShippingType"><option value="">请选择</option><option>散货</option><option>集装箱</option><option>件杂货</option><option>滚装</option></select></div>
+                <div class="query-field advanced-field"><label for="queryShipmentMode">装运方式</label><select id="queryShipmentMode"><option value="">请选择</option><option>直运</option><option>中转</option><option>多式联运</option></select></div>
+                <div class="query-field advanced-field"><label for="queryTradeContractNo">贸易合同号</label><input id="queryTradeContractNo" type="text" placeholder="请输入"></div>
+                <div class="query-field advanced-field"><label for="queryCustomerConsignmentNo">客户委托单号</label><input id="queryCustomerConsignmentNo" type="text" placeholder="精确查询，多个用逗号隔开"></div>
+                <div class="query-field advanced-field"><label for="querySalesCompany">业务员公司</label><select id="querySalesCompany"><option value="">请选择</option><option>厦门建发物流有限公司</option><option>供应链物流科技</option></select></div>
+                <div class="query-field advanced-field"><label for="querySalesDept">业务员部门</label><select id="querySalesDept"><option value="">请选择</option><option>物流运营部</option><option>件杂部</option><option>单证客服部</option></select></div>
+                <div class="query-field advanced-field"><label for="querySalesperson">业务员</label><select id="querySalesperson"><option value="">请选择</option><option>苏丽蓉</option><option>庄巧玲</option><option>刘婷</option></select></div>
+                <div class="query-field advanced-field"><label for="queryCreator">创建人</label><select id="queryCreator"><option value="">请选择</option><option>苏丽蓉</option><option>庄巧玲</option><option>刘婷</option></select></div>
+                <div class="query-field advanced-field wide"><label>创建时间范围</label><div class="date-range"><input type="date" aria-label="创建开始日期"><span>-</span><input type="date" aria-label="创建结束日期"></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="table-card" aria-label="客户订单列表">
+            <div class="status-tabs" role="tablist" aria-label="订单状态">
+              <button class="status-tab active" type="button" data-status="all">全部(901)</button>
+              <button class="status-tab" type="button" data-status="created">创建(37)</button>
+              <button class="status-tab" type="button" data-status="audit">待审核(0)</button>
+              <button class="status-tab" type="button" data-status="rejected">驳回(0)</button>
+              <button class="status-tab" type="button" data-status="unscheduled">待安排(16)</button>
+              <button class="status-tab" type="button" data-status="scheduled">已安排(848)</button>
+              <div class="status-spacer"></div>
+              <div class="bulk-actions">
+                <button class="btn soft-primary action-requires-selection" type="button" disabled>合并/拆分订单</button>
+                <button class="btn outline-primary action-requires-selection" type="button" disabled>取消订单</button>
+                <button class="btn soft-primary action-requires-selection" type="button" disabled>复制订单</button>
+                <button class="btn primary action-requires-selection" type="button" disabled>完结订单</button>
+                <button class="btn outline-primary action-requires-selection" type="button" disabled>取消完结</button>
+                <button class="btn primary" type="button" data-toast="打开新增客户订单页面">新增订单</button>
+              </div>
+            </div>
+            <div class="table-scroll" id="tableScroll">
+              <table class="order-table" id="orderTable">
+                <thead>
+                  <tr>
+                    <th class="col-check sticky-select"><input type="checkbox" id="selectAll" aria-label="全选"></th>
+                    <th class="col-order sticky-order">客户订单号<span class="sort">↕</span></th>
+                    <th class="col-status">状态<span class="sort">↕</span></th>
+                    <th class="col-customer">客户<span class="sort">↕</span></th>
+                    <th class="col-product">商品名称<span class="sort">↕</span></th>
+                    <th class="col-qty num">总数量<span class="sort">↕</span></th>
+                    <th class="col-qty num">已安排数量<span class="sort">↕</span></th>
+                    <th class="col-qty num">未安排数量<span class="sort">↕</span></th>
+                    <th class="col-place">起运地<span class="sort">↕</span></th>
+                    <th class="col-place">目的地<span class="sort">↕</span></th>
+                    <th class="col-short">业务类型<span class="sort">↕</span></th>
+                    <th class="col-short">服务范围<span class="sort">↕</span></th>
+                    <th class="col-short">运输类型<span class="sort">↕</span></th>
+                    <th class="col-short">装运方式<span class="sort">↕</span></th>
+                    <th class="col-short">业务员<span class="sort">↕</span></th>
+                    <th class="col-company">公司<span class="sort">↕</span></th>
+                    <th class="col-short">部门<span class="sort">↕</span></th>
+                    <th class="col-customer-consignment">客户委托单号<span class="sort">↕</span></th>
+                    <th class="col-short">创建人<span class="sort">↕</span></th>
+                    <th class="col-time">创建时间<span class="sort">↕</span></th>
+                    <th class="col-short">修改人<span class="sort">↕</span></th>
+                    <th class="col-time">修改时间<span class="sort">↕</span></th>
+                    <th class="col-action sticky-action">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-status="scheduled" data-order="FCO202610270010" data-consignment="2102957467694845952">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270010"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list">FCO202610270010</a></td><td><span class="status-pill scheduled">已安排</span></td><td>青岛绿洲园花生食品有限公司</td><td>玉米</td><td class="num">10 吨</td><td class="num">10 吨</td><td class="num">0 吨</td><td>上官栗子四果汤(文化宫店)</td><td>厦门港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2102957467694845952">2102957467694845952</span></td><td>苏丽蓉</td><td>2026-10-27 09:42</td><td>苏丽蓉</td><td>2026-10-27 09:42</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270010 的物流安排">查看物流安排</button></td>
+                  </tr>
+                  <tr data-status="scheduled" data-order="FCO202610270009" data-consignment="2102960421436968960">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270009"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list">FCO202610270009</a></td><td><span class="status-pill scheduled">已安排</span></td><td>青岛绿洲园花生食品有限公司</td><td>玉米</td><td class="num">10 吨</td><td class="num">10 吨</td><td class="num">0 吨</td><td>上官栗子四果汤(文化宫店)</td><td>厦门港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2102960421436968960">2102960421436968960</span></td><td>苏丽蓉</td><td>2026-10-27 09:35</td><td>苏丽蓉</td><td>2026-10-27 09:35</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270009 的物流安排">查看物流安排</button></td>
+                  </tr>
+                  <tr data-status="unscheduled" data-order="FCO202610270008" data-consignment="2102960975970095104 2102960975970095105">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270008"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270008&from=customer-order-list">FCO202610270008</a></td><td><span class="status-pill pending">待安排</span></td><td>中国重汽集团</td><td>重卡卡车</td><td class="num">300 台</td><td class="num">0 台</td><td class="num">300 台</td><td>青岛港</td><td>上海港</td><td>出口</td><td>运输</td><td>水运</td><td>件杂货</td><td>庄巧玲</td><td>厦门建发物流有限公司</td><td>件杂部</td><td class="customer-consignment-cell"><span class="ref-no" title="2102960975970095104, 2102960975970095105">2102960975970095104, 2102960975970095105</span></td><td>庄巧玲</td><td>2026-10-26 16:18</td><td>庄巧玲</td><td>2026-10-26 17:02</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270008 的物流安排">查看物流安排</button></td>
+                  </tr>
+                  <tr data-status="created" data-order="FCO202610270007" data-consignment="2104489744589164545">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270007"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270007&from=customer-order-list">FCO202610270007</a></td><td><span class="status-pill created">创建</span></td><td>中国宝武钢铁集团有限公司</td><td>PB粉矿</td><td class="num">8.50 万吨</td><td class="num">0 万吨</td><td class="num">8.50 万吨</td><td>Port Hedland</td><td>舟山鼠浪湖</td><td>进口</td><td>报关清关</td><td>水运</td><td>散货</td><td>刘婷</td><td>厦门建发物流有限公司</td><td>单证客服部</td><td class="customer-consignment-cell"><span class="ref-no" title="2104489744589164545">2104489744589164545</span></td><td>刘婷</td><td>2026-10-26 14:26</td><td>刘婷</td><td>2026-10-26 14:26</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270007 的物流安排">查看物流安排</button></td>
+                  </tr>
+                  <tr data-status="audit" data-order="FCO202610270006" data-consignment="CT-2026-1027-01">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270006"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270006&from=customer-order-list">FCO202610270006</a></td><td><span class="status-pill created">待审核</span></td><td>浙江吉利控股集团</td><td>新能源整车</td><td class="num">450 台</td><td class="num">0 台</td><td class="num">450 台</td><td>宁波梅山港</td><td>比利时安特卫普</td><td>出口</td><td>运输</td><td>水运</td><td>集装箱</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="CT-2026-1027-01">CT-2026-1027-01</span></td><td>苏丽蓉</td><td>2026-10-25 11:20</td><td>苏丽蓉</td><td>2026-10-25 11:20</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270006 的物流安排">查看物流安排</button></td>
+                  </tr>
+                  <tr data-status="rejected" data-order="FCO202610270005" data-consignment="">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270005"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270005&from=customer-order-list">FCO202610270005</a></td><td><span class="status-pill rejected">驳回</span></td><td>厦门象屿股份有限公司</td><td>钢材</td><td class="num">1.20 万吨</td><td class="num">0 万吨</td><td class="num">1.20 万吨</td><td>厦门港</td><td>胡志明港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>庄巧玲</td><td>厦门建发物流有限公司</td><td>件杂部</td><td class="customer-consignment-cell"><span class="empty-dash">--</span></td><td>庄巧玲</td><td>2026-10-24 10:08</td><td>庄巧玲</td><td>2026-10-24 10:08</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270005 的物流安排">查看物流安排</button></td>
+                  </tr>
+                  <tr id="queryEmptyRow" class="query-empty-row" hidden><td colspan="23"><div class="query-empty">未找到匹配的客户订单，请调整查询条件后重试。</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pager"><span id="resultCount">共 6 条</span><button disabled>上一页</button><button class="active">1</button><button disabled>下一页</button><select aria-label="每页条数"><option>20 条/页</option><option>50 条/页</option></select></div>
+          </section>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const queryBody = document.getElementById('queryBody');
+      const moreQueryBtn = document.getElementById('moreQueryBtn');
+      const queryToggle = document.getElementById('queryToggle');
+      const resetQueryBtn = document.getElementById('resetQueryBtn');
+      const submitQueryBtn = document.getElementById('submitQueryBtn');
+      const tbody = document.querySelector('.order-table tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr[data-order]'));
+      const resultCount = document.getElementById('resultCount');
+      const emptyRow = document.getElementById('queryEmptyRow');
+      const selectAll = document.getElementById('selectAll');
+      const rowChecks = Array.from(document.querySelectorAll('.row-check'));
+      const selectionButtons = Array.from(document.querySelectorAll('.action-requires-selection'));
+      const toast = document.getElementById('toast');
+      let toastTimer;
+      let activeStatus = 'all';
+
+      const showToast = (message) => {
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add('show');
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+      };
+
+      const setQueryExpanded = (expanded) => {
+        queryBody.classList.toggle('expanded', expanded);
+        moreQueryBtn.textContent = expanded ? '收起' : '查看更多';
+        moreQueryBtn.setAttribute('aria-expanded', String(expanded));
+        queryToggle.setAttribute('aria-expanded', String(expanded));
+      };
+
+      const updateSelectionActions = () => {
+        const count = rowChecks.filter((checkbox) => checkbox.checked).length;
+        selectionButtons.forEach((button) => { button.disabled = count === 0; });
+        selectAll.checked = count > 0 && count === rowChecks.length;
+        selectAll.indeterminate = count > 0 && count < rowChecks.length;
+        document.querySelectorAll('tr[data-order]').forEach((row) => {
+          const checkbox = row.querySelector('.row-check');
+          row.classList.toggle('selected', !!checkbox?.checked);
+        });
+      };
+
+      const applyFilters = () => {
+        const consignmentInput = document.getElementById('queryCustomerConsignmentNo');
+        const consignmentTokens = (consignmentInput?.value || '')
+          .split(/[,，]/)
+          .map((value) => value.trim().toLowerCase())
+          .filter(Boolean);
+        const queryValues = Array.from(queryBody.querySelectorAll('input, select'))
+          .filter((control) => control !== consignmentInput)
+          .map((control) => control.value.trim())
+          .filter(Boolean)
+          .map((value) => value.toLowerCase());
+        let visible = 0;
+
+        rows.forEach((row) => {
+          const rowText = row.innerText.toLowerCase();
+          const rowConsignments = (row.dataset.consignment || '')
+            .split(/[\s,，]+/)
+            .filter(Boolean)
+            .map((value) => value.toLowerCase());
+          const statusMatched = activeStatus === 'all' || row.dataset.status === activeStatus;
+          const consignmentMatched = consignmentTokens.length === 0 || consignmentTokens.some((token) => rowConsignments.includes(token));
+          const queryMatched = queryValues.every((value) => rowText.includes(value)) && consignmentMatched;
+          const show = statusMatched && queryMatched;
+          row.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        emptyRow.hidden = visible !== 0;
+        resultCount.textContent = '共 ' + visible + ' 条';
+        document.querySelectorAll('.status-tab').forEach((tab) => {
+          tab.classList.toggle('active', tab.dataset.status === activeStatus);
+        });
+      };
+
+      moreQueryBtn.addEventListener('click', () => {
+        setQueryExpanded(!queryBody.classList.contains('expanded'));
+      });
+      queryToggle.addEventListener('click', () => {
+        setQueryExpanded(!queryBody.classList.contains('expanded'));
+      });
+      submitQueryBtn.addEventListener('click', applyFilters);
+      resetQueryBtn.addEventListener('click', () => {
+        queryBody.querySelectorAll('input, select').forEach((control) => {
+          control.value = '';
+        });
+        activeStatus = 'all';
+        applyFilters();
+        showToast('查询条件已重置');
+      });
+      queryBody.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') applyFilters();
+      });
+
+      document.querySelectorAll('.status-tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          activeStatus = tab.dataset.status;
+          applyFilters();
+        });
+      });
+
+      selectAll.addEventListener('change', () => {
+        rowChecks.forEach((checkbox) => { checkbox.checked = selectAll.checked; });
+        updateSelectionActions();
+      });
+      rowChecks.forEach((checkbox) => {
+        checkbox.addEventListener('change', updateSelectionActions);
+      });
+      selectionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const count = rowChecks.filter((checkbox) => checkbox.checked).length;
+          showToast(button.textContent + '：已选择 ' + count + ' 个订单');
+        });
+      });
+
+      document.querySelectorAll('[data-toast]').forEach((button) => {
+        button.addEventListener('click', () => showToast(button.dataset.toast));
+      });
+
+      updateSelectionActions();
+    })();
+  </script>
+</body>
+</html>

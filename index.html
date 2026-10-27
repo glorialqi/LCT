@@ -91,24 +91,20 @@
           <span>物流订单管理</span>
         </div>
 
+        <a class="nav-entry" href="#customer-order-list" data-page="customer-order-list" title="客户订单列表">
+          <span class="nav-icon"><svg><use href="#icon-list"/></svg></span>
+          <span class="nav-text">客户订单列表</span>
+        </a>
+
         <a class="nav-entry" href="#customer-order" data-page="customer-order" title="客户订单跟踪">
           <span class="nav-icon"><svg><use href="#icon-order"/></svg></span>
           <span class="nav-text">客户订单跟踪</span>
         </a>
 
-        <div class="nav-group" data-nav-group="logistics-demand">
-          <button class="nav-entry nav-parent" id="demandMenuToggle" type="button" aria-expanded="false" aria-controls="demandSubmenu" title="物流需求工作台">
-            <span class="nav-icon"><svg><use href="#icon-demand"/></svg></span>
-            <span class="nav-text">物流需求工作台</span>
-            <svg class="nav-chevron"><use href="#icon-chevron"/></svg>
-          </button>
-          <div class="nav-children" id="demandSubmenu">
-            <a class="nav-child" href="#logistics-demand" data-page="logistics-demand" title="物流需求列表">
-              <span class="nav-icon"><svg><use href="#icon-list"/></svg></span>
-              <span class="nav-text">物流需求列表</span>
-            </a>
-          </div>
-        </div>
+        <a class="nav-entry" href="#logistics-demand" data-page="logistics-demand" title="物流需求列表">
+          <span class="nav-icon"><svg><use href="#icon-demand"/></svg></span>
+          <span class="nav-text">物流需求列表</span>
+        </a>
 
         <a class="nav-entry" href="#trade-contract" data-page="trade-contract" title="贸易合同待办">
           <span class="nav-icon"><svg><use href="#icon-contract"/></svg></span>
@@ -156,8 +152,9 @@
       </header>
 
       <div class="page-stage">
+        <iframe class="page-frame" data-page="customer-order-list" src="pages/customer-order-list-prototype.html?embed=1" title="客户订单列表"></iframe>
         <iframe class="page-frame" data-page="customer-order" src="pages/customer-order-tracking.html?embed=1" title="客户订单跟踪"></iframe>
-        <iframe class="page-frame" data-page="logistics-demand" src="pages/logistics-demand.html?embed=1" title="物流需求工作台"></iframe>
+        <iframe class="page-frame" data-page="logistics-demand" src="pages/logistics-demand-list-prototype.html?embed=1" title="物流需求列表"></iframe>
         <iframe class="page-frame" data-page="trade-contract" src="pages/trade-contract-todo.html?embed=1" title="贸易合同待办工作台"></iframe>
         <div class="loading-layer" id="loadingLayer" role="status" aria-live="polite">
           <span class="loading-mark"><i></i><i></i><i></i></span>

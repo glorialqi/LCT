@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客户订单新增 - 客户委托单号原型</title>
+  <link rel="stylesheet" href="../assets/app.css">
+  <style>
+    :root {
+      --detail-blue: #2f74ff;
+      --detail-blue-deep: #1f5fe0;
+      --detail-line: #dde4ee;
+      --detail-ink: #23344d;
+      --detail-muted: #8c98a8;
+      --page: #e9eef5;
+      --ink: #23344d;
+      --text: #5e6d82;
+      --muted: #8c98a8;
+      --line: #dde4ee;
+      --blue: #2f74ff;
+    }
+    body { min-width: 1180px; }
+    button, input, select, textarea { font: inherit; }
+    .detail-scroll { min-height: 0; flex: 1; overflow-y: auto; padding: 14px 18px 40px; background: var(--page); }
+    .page-head { position: relative; z-index: 5; display: flex; align-items: center; gap: 9px; min-height: 52px; margin-bottom: 10px; padding: 0 13px 0 17px; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.04); }
+    .page-title { display: flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 15px; font-weight: 700; white-space: nowrap; }
+    .page-title svg { width: 16px; height: 16px; color: #9ca6b5; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .page-head-spacer { flex: 1; }
+    .detail-btn { height: 30px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #d9dee7; border-radius: 3px; background: #fff; color: #4c5566; font-size: 11px; white-space: nowrap; cursor: pointer; transition: .15s ease; }
+    .detail-btn:hover { border-color: #b7c1d2; background: #fafbfc; }
+    .detail-btn.primary { color: #fff; border-color: var(--detail-blue); background: var(--detail-blue); box-shadow: 0 2px 5px rgba(47,116,255,.18); }
+    .detail-btn.primary:hover { border-color: var(--detail-blue-deep); background: var(--detail-blue-deep); }
+    .detail-btn.outline-primary { color: var(--detail-blue); border-color: #bcd4ff; background: #f8fbff; }
+    .detail-btn.outline-primary:hover { border-color: #8db7ff; background: #f1f7ff; }
+    .detail-section { margin-top: 11px; overflow: visible; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.035); }
+    .detail-section-head { min-height: 37px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid #eef1f5; background: #fafbfc; }
+    .detail-section-title { display: inline-flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 13px; font-weight: 700; }
+    .detail-section-title svg { width: 11px; height: 11px; color: #9ca7b6; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .detail-section-body { padding: 17px 16px 19px; }
+    .form-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); column-gap: 22px; row-gap: 17px; }
+    .span-2 { grid-column: span 2; }
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .field { min-width: 0; }
+    .field-label { min-height: 18px; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: var(--text); font-size: 11px; white-space: nowrap; }
+    .required { color: #e9564a; font-size: 10px; }
+    .field-help { width: 14px; height: 14px; display: inline-grid; place-items: center; border-radius: 50%; color: #9aa6b7; background: #f0f2f5; font-size: 10px; font-weight: 700; cursor: help; }
+    .control { width: 100%; height: 30px; padding: 0 9px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fff; color: var(--text); font-size: 11px; }
+    .control[readonly] { color: #8d96a7; background: #f5f6f8; }
+    .control::placeholder { color: #b2bac7; }
+    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#9ca6b5 50%),linear-gradient(135deg,#9ca6b5 50%,transparent 50%); background-position: calc(100% - 12px) 12px,calc(100% - 8px) 12px; background-size: 4px 4px,4px 4px; background-repeat: no-repeat; }
+    .status-pill { display: inline-flex; height: 26px; align-items: center; padding: 0 9px; border-radius: 3px; color: #9a6a00; background: #fff6de; font-size: 10px; font-weight: 600; }
+    .multi-control { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fff; }
+    .mini-tag { display: inline-flex; min-height: 20px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #dbe8ff; border-radius: 3px; color: #3268c4; background: #f1f7ff; font-size: 10px; white-space: nowrap; }
+    .multi-add { height: 20px; padding: 0 5px; border: 0; border-radius: 3px; color: #7e8899; background: transparent; font-size: 10px; cursor: pointer; }
+    .multi-add:hover { color: var(--detail-blue); background: #edf5ff; }
+    .field--new { position: relative; }
+    .field--new::before { content: ""; position: absolute; inset: -8px -9px -8px -9px; z-index: 0; border: 1px dashed #a8c9ff; border-radius: 5px; background: linear-gradient(180deg,rgba(238,245,255,.72),rgba(250,252,255,.28)); pointer-events: none; }
+    .field--new > * { position: relative; z-index: 1; }
+
+    .help-dot { position: relative; }
+    .help-tip { position: absolute; left: 50%; bottom: calc(100% + 7px); z-index: 30; width: 240px; padding: 8px 9px; border: 1px solid #dfe4ec; border-radius: 4px; color: #5f697a; background: #fff; box-shadow: 0 8px 24px rgba(27,42,74,.12); font-size: 10px; line-height: 1.55; opacity: 0; visibility: hidden; transform: translate(-50%,3px); transition: .15s ease; pointer-events: none; }
+    .help-tip::after { content: ""; position: absolute; left: 50%; top: 100%; width: 7px; height: 7px; border-right: 1px solid #dfe4ec; border-bottom: 1px solid #dfe4ec; background: #fff; transform: translate(-50%,-4px) rotate(45deg); }
+    .help-dot:hover .help-tip, .help-dot:focus-within .help-tip { opacity: 1; visibility: visible; transform: translate(-50%,0); }
+    .consignment-editor { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #cbdcfb; border-radius: 3px; background: #fff; transition: .15s ease; }
+    .consignment-editor:focus-within { border-color: #7dabff; box-shadow: 0 0 0 2px rgba(47,116,255,.1); }
+    .consignment-chips { display: flex; min-width: 0; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .consignment-chip { max-width: 100%; display: inline-flex; min-height: 21px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2d62ba; background: #f2f7ff; font-size: 10px; }
+    .consignment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chip-remove { width: 13px; height: 13px; flex: 0 0 13px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #86a7d7; cursor: pointer; }
+    .chip-remove:hover { color: #d84a4a; background: #ffeded; }
+    .chip-remove svg { width: 8px; height: 8px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+    .consignment-input { min-width: 76px; flex: 1; height: 21px; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 10px; outline: none; }
+    .consignment-input::placeholder { color: #aeb7c5; }
+    .consignment-add { height: 21px; flex: 0 0 auto; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #3b73d0; background: #f7fbff; font-size: 10px; cursor: pointer; }
+    .consignment-add:hover { border-color: #9fc3ff; background: #eef6ff; }
+    .consignment-count { margin-left: 2px; color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .field-error { display: none; margin-top: 4px; color: #e9564a; font-size: 10px; }
+    .field-error.show { display: block; }
+    .textarea { min-height: 58px; resize: vertical; padding-top: 7px; }
+    .transport-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px 22px; }
+    .note-card { display: flex; align-items: flex-start; gap: 10px; margin-top: 11px; padding: 11px 13px; border: 1px solid #dbe8fb; border-radius: 4px; color: #536174; background: #f7fbff; font-size: 10px; line-height: 1.65; }
+    .note-card svg { width: 15px; height: 15px; flex: 0 0 15px; margin-top: 1px; color: #4c86e8; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .note-card b { color: #2e5fa9; }
+    .prototype-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid #cfe0fb; border-radius: 17px; color: #356bbd; background: #fff; box-shadow: 0 6px 18px rgba(21,55,114,.12); font-size: 10px; cursor: pointer; }
+    .prototype-toggle:hover { background: #f8fbff; }
+    .prototype-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .prototype-note { position: fixed; right: 20px; bottom: 60px; z-index: 49; width: 330px; padding: 15px 16px; border: 1px solid #dfe5ee; border-radius: 7px; background: #fff; box-shadow: 0 14px 40px rgba(20,38,75,.16); opacity: 0; visibility: hidden; transform: translateY(8px); transition: .18s ease; }
+    .prototype-note.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .prototype-note h3 { margin: 0 0 7px; color: #263247; font-size: 12px; }
+    .prototype-note p { margin: 0 0 8px; color: #687285; font-size: 10px; line-height: 1.7; }
+    .prototype-note ul { margin: 0; padding-left: 15px; color: #687285; font-size: 10px; line-height: 1.75; }
+    .prototype-note b { color: #356bbd; }
+    .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 10px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
+    @media (max-width: 1120px) { body { min-width: 980px; } .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .span-2,.span-4,.span-6 { grid-column: span 3; } }
+    /* Embedded mode when opened inside index.html */
+    html.detail-embedded body { min-width:0; }
+    html.detail-embedded .app-shell { grid-template-columns:minmax(0,1fr); }
+    html.detail-embedded .sidebar,
+    html.detail-embedded .topbar { display:none; }
+    html.detail-embedded .workspace { height:100vh; width:100%; }
+    html.detail-embedded .detail-scroll { height:100vh; padding:12px 12px 0 8px; }
+  </style>
+  <script>if (window.self !== window.top || new URLSearchParams(window.location.search).get("embed") === "1") document.documentElement.classList.add("detail-embedded");</script>
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="p-logo" viewBox="0 0 24 24"><path d="m12 2.7 8 4.2v9.8l-8 4.6-8-4.6V6.9l8-4.2Z"/><path d="m4.4 7 7.6 4 7.6-4M12 11v9.7"/></symbol>
+    <symbol id="p-order" viewBox="0 0 24 24"><path d="M7 4.5h10a2 2 0 0 1 2 2v13H5v-13a2 2 0 0 1 2-2Z"/><path d="M9 4V2.8h6V4M8.5 9h7M8.5 13h7M8.5 17h4"/></symbol>
+    <symbol id="p-demand" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M9.5 12h5M9.5 15.5h5"/></symbol>
+    <symbol id="p-contract" viewBox="0 0 24 24"><path d="M6 3.5h12v17H6z"/><path d="M9 3.5v3h6v-3M9 11h6M9 15h3.5"/></symbol>
+    <symbol id="p-truck" viewBox="0 0 24 24"><path d="M3.5 6.5h10v10h-10zM13.5 10h3l3 3v3.5h-6z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></symbol>
+    <symbol id="p-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6M4.5 11.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/></symbol>
+    <symbol id="p-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 13.2v-2.4l-2-.7-.6-1.5 1-1.9-1.7-1.7-1.9 1-1.5-.6-.7-2H9.2l-.7 2-1.5.6-1.9-1-1.7 1.7 1 1.9-.6 1.5-2 .7v2.4l2 .7.6 1.5-1 1.9 1.7 1.7 1.9-1 1.5.6.7 2h2.4l.7-2 1.5-.6 1.9 1 1.7-1.7-1-1.9.6-1.5z"/></symbol>
+    <symbol id="p-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="p-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.5 6.3L4 9m2 6a7 7 0 0 0 11.5 2.7L20 15"/></symbol>
+    <symbol id="p-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6H5V6h6"/></symbol>
+    <symbol id="p-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 10.5v5M12 7.5h.01"/></symbol>
+    <symbol id="p-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="p-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="p-link" viewBox="0 0 24 24"><path d="m9.2 14.8 5.6-5.6M7.5 16.5l-1.1 1.1a3.3 3.3 0 0 1-4.7-4.7l3-3a3.3 3.3 0 0 1 4.7 0M16.5 7.5l1.1-1.1a3.3 3.3 0 0 1 4.7 4.7l-3 3a3.3 3.3 0 0 1-4.7 0"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="物流控制塔导航">
+      <div class="brand-row">
+        <a class="brand" href="#" aria-label="物流控制塔首页">
+          <span class="brand-mark"><svg><use href="#p-logo"/></svg></span>
+          <span class="brand-copy"><strong>物流控制塔</strong><small>Logistics Workbench</small></span>
+        </a>
+      </div>
+      <nav class="main-nav" aria-label="业务页面">
+        <div class="nav-group-title"><span class="nav-icon"><svg><use href="#p-order"/></svg></span><span>物流订单管理</span></div>
+        <a class="nav-entry active" href="#" title="客户订单"><span class="nav-icon"><svg><use href="#p-order"/></svg></span><span class="nav-text">客户订单</span></a>
+        <a class="nav-entry" href="#" title="物流需求"><span class="nav-icon"><svg><use href="#p-demand"/></svg></span><span class="nav-text">物流需求</span></a>
+        <a class="nav-entry" href="#" title="物流委托"><span class="nav-icon"><svg><use href="#p-contract"/></svg></span><span class="nav-text">物流委托</span></a>
+        <div class="nav-separator"></div>
+        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-truck"/></svg></span><span>运输工作台</span></div>
+        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-db"/></svg></span><span>物流资源池</span></div>
+        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-settings"/></svg></span><span>OMS配置管理</span></div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="sidebar-action" id="prototypeToggle" type="button" aria-expanded="false">原型说明</button>
+        <div class="sidebar-version">Customer Consignment No. Prototype</div>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb-wrap">
+          <div class="breadcrumb"><span>物流控制塔</span><span class="crumb-separator">/</span><strong>客户订单新增</strong></div>
+          <p>客户订单基础信息、客户委托单号与运输要求</p>
+        </div>
+        <div class="topbar-actions">
+          <span class="prototype-pill"><span></span>HTML 原型</span>
+          <button class="icon-button" type="button" title="刷新" aria-label="刷新"><svg><use href="#p-refresh"/></svg></button>
+          <button class="icon-button" type="button" title="在新窗口打开" aria-label="在新窗口打开"><svg><use href="#p-external"/></svg></button>
+          <span class="topbar-divider"></span>
+          <div class="user-chip"><span class="avatar">苏</span><span class="user-copy"><strong>苏丽蓉</strong><small>物流运营</small></span></div>
+        </div>
+      </header>
+
+      <main class="detail-scroll">
+        <div class="page-head">
+          <div class="page-title">客户订单新增<svg><use href="#p-link"/></svg></div>
+          <div class="page-head-spacer"></div>
+          <button class="detail-btn" id="backToListBtn" type="button">返回</button>
+          <button class="detail-btn" data-toast="草稿已保存">保存</button>
+          <button class="detail-btn outline-primary" data-toast="已提交客户订单">提交</button>
+          <button class="detail-btn primary" data-toast="已提交，进入物流需求填写">提交并填写物流需求</button>
+        </div>
+        <section class="detail-section" aria-labelledby="org-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="org-title"><svg><use href="#p-down"/></svg>组织信息</div></div>
+          <div class="detail-section-body">
+            <div class="form-grid">
+              <div class="field"><div class="field-label">业务员<span class="required">*</span></div><input class="control" value="苏丽蓉" aria-label="业务员"></div>
+              <div class="field"><div class="field-label">部门<span class="required">*</span></div><input class="control" value="物流运营部" aria-label="部门"></div>
+              <div class="field"><div class="field-label">核算组<span class="required">*</span></div><input class="control" value="华东一组" aria-label="核算组"></div>
+              <div class="field"><div class="field-label">公司<span class="required">*</span></div><input class="control" value="厦门建发物流有限公司" aria-label="公司"></div>
+              <div class="field"><div class="field-label">经营单位<span class="required">*</span></div><input class="control" value="4PL 控制塔" aria-label="经营单位"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section" aria-labelledby="basic-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="basic-title"><svg><use href="#p-down"/></svg>基础信息</div></div>
+          <div class="detail-section-body">
+            <div class="form-grid">
+              <div class="field"><div class="field-label">订单号</div><input class="control" value="CO-20261026-001" readonly aria-label="订单号"></div>
+              <div class="field"><div class="field-label">订单状态</div><span class="status-pill">草稿</span></div>
+              <div class="field"><div class="field-label">客户<span class="required">*</span></div><input class="control" value="厦门建发新能源物流有限公司" aria-label="客户"></div>
+              <div class="field"><div class="field-label">客户结算抬头<span class="required">*</span></div><input class="control" value="厦门建发新能源物流有限公司" aria-label="客户结算抬头"></div>
+              <div class="field"><div class="field-label">客户类型<span class="required">*</span></div><select class="control" aria-label="客户类型"><option>外部客户</option><option>内部客户</option></select></div>
+              <div class="field"><div class="field-label">客户联系人</div><input class="control" value="张先生" aria-label="客户联系人"></div>
+
+              <div class="field"><div class="field-label">客户联系人电话</div><input class="control" value="138 0000 0000" aria-label="客户联系人电话"></div>
+              <div class="field"><div class="field-label">客户联系人邮箱</div><input class="control" value="contact@example.com" aria-label="客户联系人邮箱"></div>
+              <div class="field"><div class="field-label">业务类型<span class="required">*</span></div><select class="control" aria-label="业务类型"><option>出口</option><option>进口</option><option>内贸</option><option>转口</option></select></div>
+              <div class="field"><div class="field-label">业务日期<span class="required">*</span></div><input class="control" type="date" value="2026-10-26" aria-label="业务日期"></div>
+              <div class="field"><div class="field-label">项目号</div><input class="control" value="PRJ-2026-018" aria-label="项目号"></div>
+              <div class="field"><div class="field-label">贸易条款</div><select class="control" aria-label="贸易条款"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select></div>
+
+              <div class="field field--new span-2">
+                <div class="field-label">
+                  客户委托单号
+                  <span class="help-dot" tabindex="0" aria-label="客户委托单号说明">
+                    <span class="field-help">i</span>
+                    <span class="help-tip">客户系统中生成的、下发给 4PL 的供应商委托单号。可填写多个，常见情况为 1 个。</span>
+                  </span>
+                  <span class="consignment-count" id="consignmentCount">1 个</span>
+                </div>
+                <div class="consignment-editor" id="consignmentEditor">
+                  <div class="consignment-chips" id="consignmentChips">
+                    <span class="consignment-chip" data-value="2102957467694845952">
+                      <span>2102957467694845952</span>
+                      <button class="chip-remove" type="button" title="删除" aria-label="删除该客户委托单号"><svg><use href="#p-close"/></svg></button>
+                    </span>
+                  </div>
+                  <input class="consignment-input" id="consignmentInput" type="text" placeholder="输入后回车添加" aria-label="输入客户委托单号">
+                  <button class="consignment-add" id="consignmentAdd" type="button">+ 添加</button>
+                </div>
+                <div class="field-error" id="consignmentError">该客户委托单号已存在，请勿重复添加。</div>
+              </div>
+
+              <div class="field span-4">
+                <div class="field-label">服务范围（多选）<span class="required">*</span></div>
+                <div class="multi-control" aria-label="服务范围">
+                  <span class="mini-tag">运输</span>
+                  <span class="mini-tag">报关清关</span>
+                  <span class="mini-tag">仓储</span>
+                  <button class="multi-add" type="button" data-toast="已选服务范围：运输、报关清关、仓储">+ 选择</button>
+                </div>
+              </div>
+
+              <div class="field span-6"><div class="field-label">订单备注</div><textarea class="control textarea" placeholder="请输入" aria-label="订单备注"></textarea></div>
+            </div>
+          </div>
+        </section>
+        <section class="detail-section" aria-labelledby="transport-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="transport-title"><svg><use href="#p-down"/></svg>运输要求</div></div>
+          <div class="detail-section-body">
+            <div class="transport-row">
+              <div class="field"><div class="field-label">运输类型<span class="required">*</span></div><select class="control" aria-label="运输类型"><option>请选择</option><option>汽运</option><option>水运</option><option>铁运</option><option>空运</option></select></div>
+              <div class="field"><div class="field-label">车辆/箱型要求</div><input class="control" placeholder="请输入" aria-label="车辆箱型要求"></div>
+              <div class="field"><div class="field-label">计划运输日期</div><input class="control" type="date" aria-label="计划运输日期"></div>
+            </div>
+            <div class="field" style="margin-top:16px"><div class="field-label">其他特殊要求</div><textarea class="control textarea" placeholder="请输入" aria-label="其他特殊要求"></textarea></div>
+          </div>
+        </section>
+
+        <div class="note-card">
+          <svg><use href="#p-info"/></svg>
+          <div><b>原型说明：</b>客户委托单号位于“基础信息”第 3 行左侧，与“服务范围”同行；采用标准表单控件，不额外增加页面高度。支持回车录入多个单号、删除标签和重复校验。</div>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <aside class="prototype-note" id="prototypeNote" aria-label="原型说明">
+    <h3>为什么放在这里</h3>
+    <p>客户委托单号是可编辑、可多值的业务字段，放在“基础信息”表单栅格内比标题行右侧更符合操作习惯。</p>
+    <ul>
+      <li>与“服务范围”同行，不新增整行。</li>
+      <li>2 列宽度可容纳长数字和多个标签。</li>
+      <li>名称与说明可清楚区别于 4PL 自身的物流委托单号。</li>
+    </ul>
+  </aside>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const chips = document.getElementById('consignmentChips');
+      const editor = document.getElementById('consignmentEditor');
+      const input = document.getElementById('consignmentInput');
+      const addButton = document.getElementById('consignmentAdd');
+      const count = document.getElementById('consignmentCount');
+      const error = document.getElementById('consignmentError');
+      const toast = document.getElementById('toast');
+      let toastTimer;
+
+      const showToast = (message) => {
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add('show');
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+      };
+      const getValues = () => Array.from(chips.querySelectorAll('.consignment-chip')).map((chip) => chip.dataset.value);
+      const updateCount = () => {
+        count.textContent = getValues().length + ' 个';
+        error.classList.remove('show');
+      };
+      const createChip = (value) => {
+        const chip = document.createElement('span');
+        chip.className = 'consignment-chip';
+        chip.dataset.value = value;
+        const text = document.createElement('span');
+        text.textContent = value;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'chip-remove';
+        remove.title = '删除';
+        remove.setAttribute('aria-label', '删除该客户委托单号');
+        remove.innerHTML = '<svg><use href="#p-close"/></svg>';
+        chip.append(text, remove);
+        chips.appendChild(chip);
+      };
+      const addValue = () => {
+        const value = input.value.trim();
+        if (!value) { input.focus(); return; }
+        if (getValues().includes(value)) {
+          error.classList.add('show');
+          input.select();
+          return;
+        }
+        createChip(value);
+        input.value = '';
+        input.focus();
+        updateCount();
+        showToast('已添加客户委托单号');
+      };
+
+      chips.addEventListener('click', (event) => {
+        const remove = event.target.closest('.chip-remove');
+        if (!remove) return;
+        remove.closest('.consignment-chip').remove();
+        updateCount();
+        showToast('已删除客户委托单号');
+      });
+      addButton.addEventListener('click', addValue);
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') { event.preventDefault(); addValue(); }
+        if (event.key === 'Escape') input.blur();
+      });
+      editor.addEventListener('click', (event) => {
+        if (event.target === editor || event.target === chips) input.focus();
+      });
+      const backToListBtn = document.getElementById('backToListBtn');
+      if (backToListBtn) {
+        backToListBtn.addEventListener('click', () => {
+          const params = new URLSearchParams(window.location.search);
+          const fromList = params.get('from') === 'customer-order-list' || document.referrer.includes('customer-order-list-prototype.html');
+          if (fromList && window.history.length > 1) {
+            window.history.back();
+            return;
+          }
+          const embedded = window.self !== window.top || params.get('embed') === '1';
+          window.location.href = 'customer-order-list-prototype.html' + (embedded ? '?embed=1' : '');
+        });
+      }
+      document.querySelectorAll('[data-toast]').forEach((button) => {
+        button.addEventListener('click', () => showToast(button.dataset.toast));
+      });
+      const prototypeToggle = document.getElementById('prototypeToggle');
+      const prototypeNote = document.getElementById('prototypeNote');
+      prototypeToggle.addEventListener('click', () => {
+        const open = prototypeNote.classList.toggle('open');
+        prototypeToggle.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          prototypeNote.classList.remove('open');
+          prototypeToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

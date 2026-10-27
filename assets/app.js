@@ -2,15 +2,20 @@
   "use strict";
 
   const pages = {
+    "customer-order-list": {
+      title: "客户订单列表",
+      description: "客户订单查询、客户委托单号与物流安排入口",
+      file: "pages/customer-order-list-prototype.html"
+    },
     "customer-order": {
       title: "客户订单跟踪",
       description: "客户订单、物流供应商与履约状态总览",
       file: "pages/customer-order-tracking.html"
     },
     "logistics-demand": {
-      title: "物流需求工作台",
-      description: "物流需求列表与需求详情",
-      file: "pages/logistics-demand.html"
+      title: "物流需求列表",
+      description: "物流需求查询、状态与列表管理",
+      file: "pages/logistics-demand-list-prototype.html"
     },
     "trade-contract": {
       title: "贸易合同待办",
@@ -27,8 +32,6 @@
   const openStandalone = document.getElementById("openStandalone");
   const refreshPage = document.getElementById("refreshPage");
   const loadingLayer = document.getElementById("loadingLayer");
-  const demandGroup = document.querySelector('[data-nav-group="logistics-demand"]');
-  const demandToggle = document.getElementById("demandMenuToggle");
   const prototypeInfo = document.getElementById("prototypeInfo");
   const appToast = document.getElementById("appToast");
   const loadedPages = new Set();
@@ -52,18 +55,6 @@
     loadingLayer.classList.add("is-hidden");
   }
 
-  function setDemandExpanded(expanded) {
-    if (!demandGroup || !demandToggle) return;
-    demandGroup.classList.toggle("expanded", expanded);
-    demandToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
-  }
-
-  function syncFrameView(key) {
-    if (key !== "logistics-demand") return;
-    const frame = frames.find((item) => item.dataset.page === key);
-    if (!frame || !frame.contentWindow) return;
-    frame.contentWindow.postMessage({ type: "ct-navigate", view: "list" }, "*");
-  }
 
   function showToast(message) {
     clearTimeout(toastTimer);
@@ -74,6 +65,7 @@
 
   function activatePage(key, updateHash) {
     if (!pages[key]) key = defaultPage;
+    const previousPage = activePage;
 
     navItems.forEach((item) => {
       const active = item.dataset.page === key;
@@ -95,10 +87,12 @@
     document.title = config.title + " · 物流控制塔";
     activePage = key;
 
-    if (key === "logistics-demand") {
-      setDemandExpanded(true);
-      if (loadedPages.has(key)) {
-        window.setTimeout(() => syncFrameView(key), 0);
+    if ((key === "customer-order-list" || key === "logistics-demand") && previousPage && previousPage !== key) {
+      const frame = frames.find((item) => item.dataset.page === key);
+      if (frame) {
+        loadedPages.delete(key);
+        showLoading();
+        frame.src = pages[key].file + "?embed=1&reset=" + Date.now();
       }
     }
 
@@ -117,20 +111,12 @@
     });
   });
 
-  if (demandToggle) {
-    demandToggle.addEventListener("click", () => {
-      setDemandExpanded(demandToggle.getAttribute("aria-expanded") !== "true");
-    });
-  }
 
   frames.forEach((frame) => {
     frame.addEventListener("load", () => {
       loadedPages.add(frame.dataset.page);
       if (frame.dataset.page === activePage) {
         hideLoading();
-        if (frame.dataset.page === "logistics-demand") {
-          window.setTimeout(() => syncFrameView(frame.dataset.page), 0);
-        }
       }
     });
     frame.addEventListener("error", () => {
@@ -157,9 +143,6 @@
     if (event.data && event.data.type === "ct-page-ready") {
       loadedPages.add(event.data.page);
       if (event.data.page === activePage) hideLoading();
-      if (event.data.page === "logistics-demand" && event.data.page === activePage) {
-        syncFrameView("logistics-demand");
-      }
     }
   });
 

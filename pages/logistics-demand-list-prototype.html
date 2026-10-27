@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prototype-view="list">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>物流需求列表 - HTML原型</title>
+  <script>
+    (function () {
+      var view = document.documentElement.dataset.prototypeView || 'list';
+      var embedded = window.self !== window.top || new URLSearchParams(location.search).get('embed') === '1';
+      if (embedded) {
+        document.documentElement.classList.add('ct-embedded');
+        document.documentElement.dataset.ctEmbedded = 'true';
+      }
+      window.addEventListener('load', function () {
+        if (embedded && window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'ct-page-ready', page: 'logistics-demand', view: view }, '*');
+        }
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/logistics-demand-base.css">
+  <link rel="stylesheet" href="../assets/query-conditions.css">
+  <link rel="stylesheet" href="../assets/component-system.css">
+  <link rel="stylesheet" href="../assets/logistics-demand-overrides.css">
+</head>
+<body data-view="list">
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><img src="../assets/otter-logo.png" alt="OTTER"></div>
+    <div class="hamburger" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h16"/><path d="m15 15 3 3-3 3"/></svg></div>
+    <nav class="top-tabs" id="topTabs"></nav>
+    <div class="top-actions">
+      <button class="top-icon" title="全屏" data-toast="已模拟切换全屏"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5"/></svg></button>
+      <button class="top-icon" title="多语言" data-toast="已模拟打开语言切换"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></button>
+      <button class="top-icon" title="消息"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="badge">2</span></button>
+      <button class="top-icon" title="搜索"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+      <button class="top-icon" title="菜单设置"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+      <button class="top-icon" title="主题"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16M8 4v6M16 14v6"/></svg></button>
+      <div class="user"><span class="avatar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span>鲤鱼旗</span></div>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main" id="main"></main>
+  </div>
+</div>
+<div class="toast-host" id="toastHost"></div>
+  <script src="../assets/logistics-demand-app.js"></script>
+  <script src="../assets/component-system.js"></script>
+</body>
+</html>

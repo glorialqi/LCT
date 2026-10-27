@@ -1390,6 +1390,30 @@
       font-size: 11px;
       white-space: nowrap;
     }
+    .logistics-summary-fields { min-width: 0; flex: 1; display: grid; grid-template-columns: minmax(120px, 1.1fr) minmax(120px, 1fr) minmax(120px, 1fr) minmax(100px, .8fr); gap: 0; }
+    .logistics-summary-field { min-width: 0; padding: 0 14px; border-right: 1px solid #edf0f3; }
+    .logistics-summary-field:first-child { padding-left: 0; }
+    .logistics-summary-field:last-child { padding-right: 0; border-right: 0; }
+    .logistics-summary-field > span { display: block; color: #8a95a4; font-size: 10px; line-height: 16px; }
+    .logistics-summary-field > strong { display: block; margin-top: 4px; color: #243140; font-size: 13px; line-height: 20px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-summary-field > strong.logistics-contract-no { margin-top: 3px; color: #0868df; font-family: Consolas, "Microsoft YaHei", monospace; font-size: 14px; }
+    .logistics-summary-top { align-items: center; gap: 18px; }
+    .logistics-summary-toggle { padding-left: 16px; border-left: 1px solid #edf0f3; }
+    .logistics-demand-list { padding: 10px; gap: 8px; }
+    .logistics-demand-item { border-color: #dfe5ec; box-shadow: 0 1px 2px rgba(15, 23, 42, .025); }
+    .logistics-demand-item-head { min-height: 54px; padding: 10px 14px; align-items: flex-start; background: #fff; }
+    .logistics-demand-identity { min-width: 0; flex: 1; }
+    .logistics-demand-title-line { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .logistics-demand-title-line .logistics-demand-no { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-demand-scope { margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-demand-head-actions { align-self: center; }
+    .logistics-demand-body { padding: 0; }
+    .logistics-demand-facts { display: grid; grid-template-columns: minmax(0, 2.1fr) repeat(3, minmax(86px, .65fr)); border-top: 1px solid #edf0f3; background: #fcfdfe; }
+    .logistics-demand-fact { min-width: 0; padding: 10px 14px; border-right: 1px solid #edf0f3; }
+    .logistics-demand-fact:last-child { border-right: 0; }
+    .logistics-demand-fact > span { display: block; color: #8a95a4; font-size: 10px; line-height: 15px; }
+    .logistics-demand-fact > strong { display: block; margin-top: 3px; color: #334050; font-size: 11px; line-height: 17px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 1080px) { .logistics-summary-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; } .logistics-summary-field:nth-child(2) { border-right: 0; } .logistics-summary-field:nth-child(3) { padding-left: 0; } .logistics-demand-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } .logistics-demand-fact:first-child { grid-column: 1 / -1; border-right: 0; border-bottom: 1px solid #edf0f3; } }
     .logistics-section {
       margin-bottom: 14px;
       border: 1px solid #dfe5ec;
@@ -2392,8 +2416,23 @@
       .logistics-service-compact-head { align-items: flex-start; flex-direction: column; gap: 6px; }
       .logistics-service-compact-fields { grid-template-columns: 1fr; }
       .logistics-service-compact-goods { grid-column: auto; }
-    }
-  </style>
+    }    .generate-demand-header > .generate-demand-title { flex: 1; min-width: 0; }
+    .generate-demand-title-row { min-width: 0; display: flex; align-items: center; gap: 12px; }
+    .generate-demand-title-row h3 { flex: 0 0 auto; }
+    .generate-demand-header > .generate-demand-close { margin-left: auto; }
+    .generate-demand-header .generate-demand-risk-wrap { position: relative; display: inline-flex; align-items: center; flex: 0 0 auto; margin: 0; }
+    .generate-demand-risk-tag { height: 24px; padding: 0 9px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #f0cf91; border-radius: 4px; background: #fff8e8; color: #a76500; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: help; outline: none; }
+    .generate-demand-risk-tag:before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #e39b16; }
+    .generate-demand-risk-wrap.danger .generate-demand-risk-tag { border-color: #efc4c7; background: #fff2f2; color: #b13a42; }
+    .generate-demand-risk-wrap.danger .generate-demand-risk-tag:before { background: #d94a52; }
+    .generate-demand-risk-tag:focus-visible { box-shadow: 0 0 0 3px rgba(227, 155, 22, .16); }
+    .generate-demand-risk-tooltip { position: absolute; left: 0; top: calc(100% + 9px); z-index: 30; width: 320px; max-width: calc(100vw - 48px); padding: 11px 13px; border: 1px solid #dfe5ee; border-radius: 6px; background: #fff; box-shadow: 0 10px 26px rgba(15, 23, 42, .16); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s ease, transform .15s ease, visibility .15s; pointer-events: none; text-align: left; }
+    .generate-demand-risk-tooltip:before { content: ""; position: absolute; left: 16px; top: -6px; width: 10px; height: 10px; background: #fff; border-left: 1px solid #dfe5ee; border-top: 1px solid #dfe5ee; transform: rotate(45deg); }
+    .generate-demand-risk-wrap:hover .generate-demand-risk-tooltip, .generate-demand-risk-wrap:focus-within .generate-demand-risk-tooltip { opacity: 1; visibility: visible; transform: translateY(0); }
+    .generate-demand-risk-tooltip strong { display: block; color: #2f3b4c; font-size: 12px; font-weight: 600; line-height: 18px; }
+    .generate-demand-risk-tooltip span { display: block; margin-top: 4px; color: #697587; font-size: 11px; line-height: 1.65; }
+    @media (max-width: 860px) { .generate-demand-title-row { flex-wrap: wrap; gap: 8px; } .generate-demand-risk-tooltip { left: auto; right: 0; } .generate-demand-risk-tooltip:before { left: auto; right: 16px; } }
+</style>
 <!-- 4PL Control Tower embedded mode -->
 <script>
 (function(){
@@ -3039,9 +3078,15 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       <header class="generate-demand-header">
         <div class="generate-demand-title">
           <span class="generate-demand-title-icon"><i data-lucide="ship-wheel"></i></span>
-          <div>
+          <div class="generate-demand-title-row">
             <h3 id="generateDemandTitle">生成物流需求</h3>
-            <p id="generateDemandSubtitle">填写订舱信息并生成物流需求单</p>
+            <div id="demandRiskBar" class="generate-demand-risk-wrap" style="display:none">
+              <span id="demandRiskBadge" class="generate-demand-risk-tag" tabindex="0" aria-describedby="demandRiskTooltip">临期预警</span>
+              <div id="demandRiskTooltip" class="generate-demand-risk-tooltip" role="tooltip">
+                <strong id="demandRiskTitle">预警详情</strong>
+                <span id="demandRiskText">当前记录存在预警，请确认后继续生成。</span>
+              </div>
+            </div>
           </div>
         </div>
         <button type="button" onclick="closeModal('generateDemandModal')" class="generate-demand-close" title="关闭">
@@ -3050,14 +3095,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       </header>
 
       <div class="generate-demand-body">
-        <div id="demandRiskBar" class="generate-demand-risk-bar">
-          <span id="demandRiskIcon" class="generate-demand-risk-icon"><i data-lucide="shield-check"></i></span>
-          <div class="generate-demand-risk-copy">
-            <strong id="demandRiskTitle">风险提示</strong>
-            <span id="demandRiskText">当前记录未命中已配置风险规则。</span>
-          </div>
-          <span id="demandRiskBadge" class="generate-demand-risk-badge">可继续生成</span>
-        </div>
 
         <div id="demandSourceMeta" class="generate-demand-source-meta"></div>
 
@@ -3207,7 +3244,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <span class="logistics-drawer-title-icon"><i data-lucide="clipboard-list"></i></span>
           <div>
             <h3 id="logisticsDrawerTitle">关联物流需求</h3>
-            <p>查看服务要求、物流委托与运输任务执行链路</p>
           </div>
         </div>
         <button type="button" onclick="closeModal('logisticsModal')" class="logistics-drawer-close" title="关闭"><i data-lucide="x"></i></button>
@@ -3215,10 +3251,23 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
       <div class="logistics-drawer-summary">
         <div class="logistics-summary-top">
-          <div>
-            <span class="logistics-contract-label">贸易合同号</span>
-            <strong class="logistics-contract-no" id="logisticsModalContractNo">-</strong>
-            <div class="logistics-summary-subtitle" id="logisticsModalContractMeta">-</div>
+          <div class="logistics-summary-fields">
+            <div class="logistics-summary-field">
+              <span>贸易合同号</span>
+              <strong class="logistics-contract-no" id="logisticsModalContractNo">-</strong>
+            </div>
+            <div class="logistics-summary-field">
+              <span>业务项目号</span>
+              <strong id="logisticsModalProjectNo">-</strong>
+            </div>
+            <div class="logistics-summary-field">
+              <span>关联合同号</span>
+              <strong id="logisticsModalAssociatedContractNo">-</strong>
+            </div>
+            <div class="logistics-summary-field">
+              <span>待安排数量</span>
+              <strong id="logisticsModalPendingQty">-</strong>
+            </div>
           </div>
           <label class="logistics-summary-toggle">
             <input id="showVoidedDemands" type="checkbox" onchange="refreshLogisticsDrawer()" />
@@ -3238,6 +3287,14 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       </div>
 
       <div class="logistics-drawer-content">
+        <section id="logisticsDemandSection" class="logistics-section">
+          <div class="logistics-section-header">
+            <div class="logistics-section-title"><i data-lucide="layers"></i><span>关联物流需求</span></div>
+            <span id="logisticsDemandSectionCount" class="logistics-section-count">0 条</span>
+          </div>
+          <div id="logisticsDemandList" class="logistics-demand-list"></div>
+        </section>
+
         <section class="logistics-section">
           <div class="logistics-section-header">
             <div class="logistics-section-title"><i data-lucide="send"></i><span>服务要求</span></div>
@@ -3415,7 +3472,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             { projectNo: 'PRJ-2026-010', goodscode:"G-02",name: '线性低密度聚乙烯 LLDPE-7042', allocatable: 2000, allocated: 1200, proposed: 800, unit: '吨' }
           ],
           logisticsDemands: [
-            { demandNo: 'LR-20260220-001', status: '处理中', scope: '海运门到门', goodsName: 'HDPE-5000S', goodsDescription: '高密度聚乙烯 HDPE-5000S（2000 吨）', qty: 2000, weight: '2000.00', volume: '3500.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯' }
+            { demandNo: 'LR-20260220-001', status: '处理中', scope: '海运门到门', goodsName: 'HDPE-5000S', goodsDescription: '高密度聚乙烯 HDPE-5000S（2000 吨）', qty: 2000, weight: '2000.00', volume: '3500.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯', createdAt: '2026-02-20 10:32' },
+            { demandNo: 'LR-20260221-006', status: '已接单', scope: '海运订舱 / 港到港', goodsName: 'LLDPE-7042', goodsDescription: '线性低密度聚乙烯 LLDPE-7042（1200 吨）', qty: 1200, weight: '1200.00', volume: '2100.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯', createdAt: '2026-02-21 09:18', goodsDetails: [{ name: '线性低密度聚乙烯 LLDPE-7042', qty: 1200, unit: '吨' }] }
           ]
         },
         {
@@ -5041,14 +5099,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         return;
       }
 
-      if (item.logisticsDemands.some(demand => demand.status !== '作废')) {
-        showToast('当前合同已存在未作废物流需求，禁止重复生成。', 'danger');
-        return;
-      }
 
       const pendingQty = getPendingQty(item);
       if (pendingQty <= 0) {
-        showToast('当前合同无可安排数量，无法生成物流需求。', 'warning');
+        showToast('当前合同待安排数量不足，无法生成物流需求', 'warning');
         return;
       }
 
@@ -5102,8 +5156,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function renderDemandSourceMeta() {
       const item = activeDemandContext.item;
       if (!item) return;
-      document.getElementById('generateDemandSubtitle').textContent =
-        `${getTradeContractType(item)} · ${getMainContractNo(item)} · 录入订舱信息并生成物流需求单`;
+
       const unit = item.goodsLines?.[0]?.unit || '吨';
       document.getElementById('demandSourceMeta').innerHTML = `
         <div class="generate-demand-source-item"><span>贸易合同号</span><strong title="${escapeHtml(getMainContractNo(item))}">${escapeHtml(getMainContractNo(item))}</strong></div>
@@ -5117,33 +5170,27 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function renderDemandRisk() {
       const item = activeDemandContext.item;
       const riskBar = document.getElementById('demandRiskBar');
-      const riskIcon = document.getElementById('demandRiskIcon');
       const riskTitle = document.getElementById('demandRiskTitle');
       const riskText = document.getElementById('demandRiskText');
       const riskBadge = document.getElementById('demandRiskBadge');
+      if (!riskBar || !riskBadge || !riskTitle || !riskText) return;
       const risk = getRiskLabel(item);
       const level = getRiskLevel(item);
       const definition = getRiskDefinition(item);
-
-      riskBar.className = `generate-demand-risk-bar ${level === 'warning' ? 'warning' : level === 'blocking' ? 'danger' : ''}`;
-      if (level === 'warning') {
-        riskIcon.innerHTML = '<i data-lucide="triangle-alert"></i>';
-        riskTitle.textContent = risk;
-        riskText.textContent = definition?.trigger || '当前记录存在提醒风险，请确认后继续生成。';
-        riskBadge.textContent = '提醒风险';
-      } else if (level === 'blocking') {
-        riskIcon.innerHTML = '<i data-lucide="octagon-alert"></i>';
-        riskTitle.textContent = risk;
-        riskText.textContent = definition?.trigger || '当前记录存在阻断风险，无法生成物流需求。';
-        riskBadge.textContent = '阻断风险';
-      } else {
-        riskIcon.innerHTML = '<i data-lucide="shield-check"></i>';
-        riskTitle.textContent = '风险提示';
-        riskText.textContent = '当前记录未命中已配置风险规则，提交前请再次确认路线和商品数量。';
-        riskBadge.textContent = '可继续生成';
+      if (level === 'normal') {
+        riskBar.style.display = 'none';
+        return;
       }
+      const label = risk && risk !== '正常' ? risk : (level === 'blocking' ? '阻断预警' : '临期预警');
+      const detail = [definition?.trigger, definition?.description].filter(Boolean).join('；')
+        || (level === 'blocking' ? '当前记录存在阻断风险，无法生成物流需求。' : '当前记录存在预警信息，请确认后继续生成。');
+      riskBar.style.display = 'inline-flex';
+      riskBar.className = `generate-demand-risk-wrap ${level === 'blocking' ? 'danger' : 'warning'}`;
+      riskBadge.textContent = label;
+      riskBadge.setAttribute('aria-label', `${label}，悬浮查看详情`);
+      riskTitle.textContent = label;
+      riskText.textContent = detail;
     }
-
     function renderDemandRouteFields() {
       const defaults = getDemandRouteDefaults(activeDemandContext.item);
       setDemandFieldValue('demandAssemblyType', defaults.assemblyType);
@@ -5367,13 +5414,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         showToast('已关闭记录必须先取消完结后才能生成物流需求。', 'warning');
         return;
       }
-      if (item.logisticsDemands.some(demand => demand.status !== '作废')) {
-        showToast('当前合同已存在未作废物流需求，禁止重复生成。', 'danger');
-        closeModal('generateDemandModal');
-        return;
-      }
       if (getPendingQty(item) <= 0) {
-        showToast('当前合同无可安排数量，无法生成物流需求。', 'warning');
+        showToast('当前合同待安排数量不足，无法生成物流需求', 'warning');
         closeModal('generateDemandModal');
         return;
       }
@@ -5450,14 +5492,14 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       let count = 0;
       state.selectedRowIds.forEach(id => {
         const item = state.items.find(i => i.id === id);
-        if (item && getDisplayStatus(item) !== '已关闭' && getPendingQty(item) > 0 && !item.logisticsDemands.some(demand => demand.status !== '作废')) {
+        if (item && getDisplayStatus(item) !== '已关闭' && getPendingQty(item) > 0) {
           generateLogisticsDemand(id);
           count++;
         }
       });
 
       if (count > 0) showToast(`批量处理完成！已为 ${count} 条合同生成物流需求`, 'success');
-      else showToast('选中的合同不满足生成条件（拟生成量为0或已关闭）', 'warning');
+      else showToast('选中的合同不满足生成条件（待安排数量不足或已关闭）', 'warning');
     }
 
     function openLogisticsDemandModal(id) {
@@ -5471,9 +5513,15 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         taskMap: new Map()
       };
       document.getElementById('showVoidedDemands').checked = false;
+      const projectDisplay = getProjectDisplay(item) || '-';
+      const associatedContractNo = getAssociatedContractNo(item) || '-';
+      const pendingQty = formatQty(getPendingQty(item), item.goodsLines?.[0]?.unit || '吨');
       document.getElementById('logisticsModalContractNo').textContent = getMainContractNo(item);
-      document.getElementById('logisticsModalContractMeta').textContent =
-        `${getTradeContractType(item)} · 业务项目号 ${getProjectDisplay(item)} · ${item.customer || item.supplier || '-'}`;
+      document.getElementById('logisticsModalProjectNo').textContent = projectDisplay;
+      document.getElementById('logisticsModalProjectNo').title = projectDisplay;
+      document.getElementById('logisticsModalAssociatedContractNo').textContent = associatedContractNo;
+      document.getElementById('logisticsModalAssociatedContractNo').title = associatedContractNo;
+      document.getElementById('logisticsModalPendingQty').textContent = pendingQty;
       refreshLogisticsDrawer();
       openModal('logisticsModal');
       if (window.lucide) lucide.createIcons();
@@ -5503,6 +5551,12 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       });
 
       document.getElementById('logisticsCount').textContent = visibleDemands.length;
+      document.getElementById('logisticsDemandSectionCount').textContent = `${visibleDemands.length} 条`;
+      document.getElementById('logisticsDemandSection').style.display = activeLogisticsContext.demands.length ? '' : 'none';
+      const demandList = document.getElementById('logisticsDemandList');
+      demandList.innerHTML = viewModels.length
+        ? viewModels.map(renderLogisticsDemandSummaryCard).join('')
+        : '<div class="logistics-no-data">当前合同暂无物流需求记录</div>';
       document.getElementById('logisticsServiceCount').textContent = serviceRequirements.length;
       document.getElementById('logisticsCommissionCount').textContent = commissions.length;
       document.getElementById('logisticsTaskCount').textContent = tasks.length;
@@ -5774,6 +5828,54 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       });
 
       return { demand, goodsLines, serviceRequirements };
+    }
+
+    function renderLogisticsDemandSummaryCard(model) {
+      const demand = model.demand || {};
+      const requirements = model.serviceRequirements || [];
+      const commissions = requirements.flatMap(requirement => requirement.commissions || []);
+      const tasks = commissions.flatMap(commission => commission.tasks || []);
+      const goodsMap = new Map();
+      requirements.forEach(requirement => {
+        (requirement.goodsLines || []).forEach(line => {
+          const key = `${line.name}|${line.unit}`;
+          const current = goodsMap.get(key) || { name: line.name, unit: line.unit, qty: 0 };
+          current.qty += Number(line.qty) || 0;
+          goodsMap.set(key, current);
+        });
+      });
+      const goodsText = [...goodsMap.values()]
+        .map(line => `${line.name} ${formatQty(line.qty, line.unit)}`)
+        .join('；') || '暂无商品数量';
+      const statusClass = getLogisticsDemandStatusClass(demand.status);
+      const scope = demand.scope || requirements[0]?.serviceItem || '-';
+      const createdAt = demand.createdAt || requirements[0]?.dispatchTime || '-';
+      return `
+        <article class="logistics-demand-item">
+          <div class="logistics-demand-item-head">
+            <div class="logistics-demand-identity">
+              <div class="logistics-demand-title-line">
+                <span class="logistics-demand-no">${escapeHtml(demand.demandNo || '-')}</span>
+                <span class="logistics-demand-status ${statusClass}">${escapeHtml(demand.status || '待处理')}</span>
+              </div>
+              <div class="logistics-demand-scope">${escapeHtml(scope)} · 创建于 ${escapeHtml(createdAt)}</div>
+            </div>
+            <div class="logistics-demand-head-actions">
+              <button type="button" class="logistics-detail-button" data-demand-no="${escapeHtml(demand.demandNo || '')}" onclick="openLogisticsDemandDetail(this.dataset.demandNo)">
+                <i data-lucide="external-link"></i>查看详情
+              </button>
+            </div>
+          </div>
+          <div class="logistics-demand-body">
+            <div class="logistics-demand-facts">
+              <div class="logistics-demand-fact"><span>商品及数量</span><strong title="${escapeHtml(goodsText)}">${escapeHtml(goodsText)}</strong></div>
+              <div class="logistics-demand-fact"><span>服务要求</span><strong>${requirements.length} 条</strong></div>
+              <div class="logistics-demand-fact"><span>物流委托</span><strong>${commissions.length} 张</strong></div>
+              <div class="logistics-demand-fact"><span>运输任务</span><strong>${tasks.length} 条</strong></div>
+            </div>
+          </div>
+        </article>
+      `;
     }
 
     function renderServiceRequirementCard(requirement) {
