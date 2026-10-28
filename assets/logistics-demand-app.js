@@ -22,7 +22,7 @@ const state = {
   activeRowId: prototypeParams.get('no') || 'FLR202610200038',
   detailView: 'info',
   detailSection: 'overview',
-  docFilter: '提单',
+  docFilter: '提单登记单',
   activeDocId: '',
   docReturnPage: 'exec',
   filterExpanded: false,
@@ -611,7 +611,7 @@ function arrangementReferenceActions(isExec){
     <section class="cube-card"><div class="detail-titlebar">
       <div class="detail-title">${state.detailView==='arrangement'?'':'<span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span>'}<span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div>
       <span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span>
-      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">需求安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?7:0})</span></button></div>
+      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">需求安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?downstreamDocs.length:0})</span></button></div>
       <div class="detail-actions">${state.detailView==='arrangement'?arrangementReferenceActions(isExec):optimizedDetailActions(isExec)}</div>
     </div></section>
     <div class="detail-view-panel ${state.detailView==='info'?'active':''}" data-view-panel="info">${infoCards}</div>
@@ -699,7 +699,7 @@ function renderDetail(page){
     <section class="cube-card"><div class="detail-titlebar">
       <div class="detail-title">${state.detailView==='arrangement'?'':'<span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span>'}<span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div>
       <span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span>
-      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">需求安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?7:0})</span></button></div>
+      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">需求安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?downstreamDocs.length:0})</span></button></div>
       <div class="detail-actions">${state.detailView==='arrangement'?arrangementReferenceActions(isExec):optimizedDetailActions(isExec)}</div>
     </div></section>
     <div class="detail-view-panel ${state.detailView==='info'?'active':''}" data-view-panel="info">${infoView}</div>
@@ -709,15 +709,17 @@ function renderDetail(page){
 }
 document.addEventListener('click',e=>{const t=e.target.closest('[data-detail-section]');if(t){state.detailSection=t.dataset.detailSection;render();}});
 const downstreamDocs=[
-  {id:'BL202610200001',type:'提单',group:'exec',status:'已签发',tone:'success',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'—',currency:'—',updated:'2026-10-20 20:12'},
-  {id:'JS202610200012',type:'代理结算单',group:'settle',status:'待确认',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'15,000.00',currency:'CNY',updated:'2026-10-21 09:36'},
-  {id:'DZ202610200031',type:'客户对账单',group:'settle',status:'已对账',tone:'success',party:'青岛绿洲园花生食品有限公司',related:'FCO202610200037',amount:'19,000.00',currency:'CNY',updated:'2026-10-21 10:18'},
-  {id:'DZ202610200022',type:'供应商对账单',group:'settle',status:'待确认',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'15,000.00',currency:'CNY',updated:'2026-10-21 10:02'},
-  {id:'FP202610200018',type:'发票登记单',group:'tax',status:'已开票',tone:'success',party:'青岛绿洲园花生食品有限公司',related:'FCO202610200037',amount:'19,000.00',currency:'CNY',updated:'2026-10-21 11:05'},
-  {id:'FK202610200009',type:'付款申请单',group:'funds',status:'待审批',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'15,000.00',currency:'CNY',updated:'2026-10-21 11:30'},
-  {id:'SK202610200007',type:'收款认领单',group:'funds',status:'待认领',tone:'info',party:'青岛绿洲园花生食品有限公司',related:'FCO202610200037',amount:'19,000.00',currency:'CNY',updated:'2026-10-21 12:08'}
+  {id:'BL202610200001',type:'提单登记单',group:'exec',status:'已签发',tone:'success',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'—',currency:'—',ownerBlNo:'COSU6439271850',forwarderBlNo:'HBL202610200001',masterAwbNo:'—',ourHouseNo:'SZX202610200001',updated:'2026-10-20 20:12'},
+  {id:'JS202610200012',type:'代理结算单',group:'settle',status:'待确认',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'15,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 09:36'},
+  {id:'DZ202610200031',type:'客户对账单',group:'settle',status:'已对账',tone:'success',party:'青岛绿洲园花生食品有限公司',related:'FCO202610200037',amount:'19,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 10:18'},
+  {id:'DZ202610200022',type:'供应商对账单',group:'settle',status:'待确认',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'15,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 10:02'},
+  {id:'DZ202610200023',type:'代理对账单',group:'settle',status:'待确认',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'8,500.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 10:42'},
+  {id:'CB202610200016',type:'成本发票登记单',group:'tax',status:'已登记',tone:'success',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'12,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 11:12'},
+  {id:'SR202610200018',type:'收入发票登记单',group:'tax',status:'已开票',tone:'success',party:'青岛绿洲园花生食品有限公司',related:'FCO202610200037',amount:'19,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 11:20'},
+  {id:'FK202610200009',type:'付款申请单',group:'funds',status:'待审批',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'15,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 11:30'},
+  {id:'SK202610200007',type:'收款认领单',group:'funds',status:'待认领',tone:'info',party:'青岛绿洲园花生食品有限公司',related:'FCO202610200037',amount:'19,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 12:08'}
 ];
-const docGroups=[['exec','业务执行','提单及运输执行单据'],['settle','结算与对账','代理结算、客户及供应商对账'],['tax','票税','发票登记与税务信息'],['funds','资金','付款申请与收款认领']];
+const docGroups=[['exec','业务执行','提单及运输执行单据'],['settle','结算与对账','代理结算、客户、供应商及代理对账'],['tax','票税','成本及收入发票登记与税务信息'],['funds','资金','付款申请与收款认领']];
 function docTypeButton(type){return `<button class="btn outline-primary mini" data-doc-open="${type}">${type}</button>`}
 function docQuickStrip(types){return `<div class="related-doc-bar"><span class="related-doc-label">下游单据</span>${types.map(docTypeButton).join('')}<button class="btn link" data-detail-view="documents">查看全部</button></div>`}
 function renderDocumentsView(isExec){
@@ -752,11 +754,13 @@ document.addEventListener('click',e=>{
   const filter=e.target.closest('[data-doc-filter]');if(filter){state.docFilter=filter.dataset.docFilter;render();return}
 });
 const docModuleMeta={
-  '提单':{desc:'运输执行与提单信息',icon:'ship',newLabel:'新建提单'},
+  '提单登记单':{desc:'运输执行与提单登记信息',icon:'ship',newLabel:'新建提单登记单'},
   '代理结算单':{desc:'代理费用结算与确认',icon:'money',newLabel:'新建代理结算单'},
   '客户对账单':{desc:'客户应收对账与差异处理',icon:'customer',newLabel:'新建客户对账单'},
   '供应商对账单':{desc:'供应商应付对账与差异处理',icon:'supplier',newLabel:'新建供应商对账单'},
-  '发票登记单':{desc:'发票开具、登记与查验',icon:'file',newLabel:'新建发票登记单'},
+  '代理对账单':{desc:'代理费用对账与差异处理',icon:'money',newLabel:'新建代理对账单'},
+  '成本发票登记单':{desc:'成本进项发票登记与查验',icon:'file',newLabel:'新建成本发票登记单'},
+  '收入发票登记单':{desc:'收入销项发票开具与登记',icon:'file',newLabel:'新建收入发票登记单'},
   '付款申请单':{desc:'供应商付款申请与审批',icon:'money',newLabel:'新建付款申请单'},
   '收款认领单':{desc:'客户回款认领与核销',icon:'money',newLabel:'新建收款认领单'}
 };
@@ -818,12 +822,20 @@ function customerCard(isExec){
   </div></div></section>`;
 }
 const docNames={
-  '提单':'水运集装箱提单','代理结算单':'中联铁运代理结算单','客户对账单':'客户应收对账单','供应商对账单':'供应商应付对账单','发票登记单':'增值税发票登记单','付款申请单':'供应商付款申请单','收款认领单':'客户回款认领单'
+  '提单登记单':'水运集装箱提单登记单',
+  '代理结算单':'代理费用结算单',
+  '客户对账单':'客户应收对账单',
+  '供应商对账单':'供应商应付对账单',
+  '代理对账单':'代理费用对账单',
+  '成本发票登记单':'成本进项发票登记单',
+  '收入发票登记单':'收入销项发票登记单',
+  '付款申请单':'供应商付款申请单',
+  '收款认领单':'客户回款认领单'
 };
 function renderDocumentsView(isExec){
   const docs=isExec?downstreamDocs:[];
-  const rows=docs.map(d=>`<tr data-doc-type="${d.type}"><td>${d.type}</td><td>${docNames[d.type]||d.type}</td><td><button class="doc-number-link" data-doc-open="${d.id}">${d.id}</button></td><td><span class="doc-status ${d.tone}">${d.status}</span></td><td>苏丽蓉</td><td>2026-10-20 09:30</td><td>菜菜菜</td><td>${d.updated}</td><td><button class="btn link" data-doc-open="${d.id}">查看详情</button></td></tr>`).join('');
-  return `<section class="cube-card doc-all-card"><div class="doc-query-bar"><span class="doc-query-title">查询条件</span><label class="doc-query-field"><span>单据类型</span><select id="docTypeFilter" class="doc-status-filter"><option value="all">全部类型</option>${Object.keys(docNames).map(t=>`<option value="${t}">${t}</option>`).join('')}</select></label><span class="doc-result-count" id="docResultCount">共 ${docs.length} 条</span></div><div class="doc-all-table-wrap"><table class="mini-table doc-all-table"><thead><tr><th>单据类型</th><th>单据名称</th><th>单据编号</th><th>状态</th><th>创建人</th><th>创建时间</th><th>修改人</th><th>修改时间</th><th>操作</th></tr></thead><tbody>${rows||'<tr><td colspan="9" class="doc-empty">暂无下游单据</td></tr>'}</tbody></table></div></section>`;
+  const rows=docs.map(d=>`<tr data-doc-type="${d.type}"><td>${d.type}</td><td><button class="doc-number-link" data-doc-open="${d.id}">${d.id}</button></td><td>${docNames[d.type]||d.type}</td><td>${d.ownerBlNo||'—'}</td><td>${d.forwarderBlNo||'—'}</td><td>${d.masterAwbNo||'—'}</td><td>${d.ourHouseNo||'—'}</td><td><span class="doc-status ${d.tone}">${d.status}</span></td><td>苏丽蓉</td><td>2026-10-20 09:30</td><td>菜菜菜</td><td>${d.updated}</td><td><button class="btn link" data-doc-open="${d.id}">查看详情</button></td></tr>`).join('');
+  return `<section class="cube-card doc-all-card"><div class="doc-query-bar"><span class="doc-query-title">查询条件</span><label class="doc-query-field"><span>单据类型</span><select id="docTypeFilter" class="doc-status-filter"><option value="all">全部类型</option>${Object.keys(docNames).map(t=>`<option value="${t}">${t}</option>`).join('')}</select></label><span class="doc-result-count" id="docResultCount">共 ${docs.length} 条</span></div><div class="doc-all-table-wrap"><table class="mini-table doc-all-table"><thead><tr><th>单据类型</th><th>单据编号</th><th>单据名称</th><th>船东提单号</th><th>货代提单号</th><th>航司主单号</th><th>我司分单号</th><th>状态</th><th>创建人</th><th>创建时间</th><th>修改人</th><th>修改时间</th><th>操作</th></tr></thead><tbody>${rows||'<tr><td colspan="13" class="doc-empty">暂无下游单据</td></tr>'}</tbody></table></div></section>`;
 }
 function renderDetail(page){
   const isExec=page==='exec';
@@ -841,7 +853,7 @@ function renderDetail(page){
   const activeSection=sections.includes(state.detailSection)?state.detailSection:'overview';
   const nav=[['overview','基础信息'],['transport','运输要求'],['fees','费用与利润'],['records','附件与记录'],['arrangement',`需求安排${isExec?' (1)':' (0)'}`]];
   return `<div class="detail-scroll"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
-    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span><div class="detail-view-switch"><button class="detail-view-tab ${view==='info'?'active':''}" data-detail-view="info">需求详情</button><button class="detail-view-tab ${view==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?7:0})</span></button></div><div class="detail-actions">${optimizedDetailActions(isExec)}</div></div></section>
+    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span><div class="detail-view-switch"><button class="detail-view-tab ${view==='info'?'active':''}" data-detail-view="info">需求详情</button><button class="detail-view-tab ${view==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?downstreamDocs.length:0})</span></button></div><div class="detail-actions">${optimizedDetailActions(isExec)}</div></div></section>
     ${view==='info'?`<div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-scroll-target="section-${id}">${l}</button>`).join('')}</div><section class="anchor-section" id="section-overview">${overview}</section><section class="anchor-section" id="section-transport">${transport}</section><section class="anchor-section" id="section-fees">${fees}</section><section class="anchor-section" id="section-records">${records}</section><section class="anchor-section" id="section-arrangement">${arrangement}</section>`:`<div class="doc-independent-view">${documents}</div>`}
   </div></div>`;
 }
