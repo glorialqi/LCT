@@ -1,0 +1,90 @@
+@font-face {
+  font-family: "Inter";
+  src: url("vendor/fonts/InterVariable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+}
+
+:root body :is(a, button, input, select, textarea, [role="button"], [tabindex]):focus-visible:not(:disabled) {
+  outline: 2px solid var(--ui-focus, #2563eb) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .16) !important;
+}
+
+:root body :is(input, select, textarea):focus:not(:disabled) {
+  outline: 2px solid var(--ui-focus, #2563eb) !important;
+  outline-offset: 1px !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .16) !important;
+}
+
+::placeholder {
+  color: #5b6778 !important;
+  opacity: 1;
+}
+
+[class~="text-[9px]"],
+[class~="text-[10px]"],
+[class~="text-[10.5px]"],
+[class~="text-[11px]"],
+[class~="text-[11.5px]"] {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.text-slate-300,
+.text-slate-400,
+.text-gray-300,
+.text-gray-400 {
+  color: #5b6778 !important;
+}
+
+.text-slate-500,
+.text-gray-500 {
+  color: #526176 !important;
+}
+
+small {
+  font-size: max(11px, 0.833em);
+}
+
+@media (max-width: 1180px) {
+  body {
+    min-width: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
