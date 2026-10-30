@@ -23,6 +23,9 @@ const state = {
   detailView: 'info',
   detailSection: 'overview',
   docFilter: '提单登记单',
+  docSection: 'bill',
+  paySide: 'recv',
+  paymentFilter: 'all',
   activeDocId: '',
   docReturnPage: 'exec',
   filterExpanded: false,
@@ -57,6 +60,30 @@ const listRows = [
   {no:'FLR202610200036', biz:'内贸2026-10-20', status:'执行中', cat:'running', statusClass:'status-blue', counts:[0,1,0,0], customer:'青岛绿洲园花生食品有限公司', order:'FCO202610200035', recv:'10', pay:'10', profit:'0', type:'水运集装箱', dept:'数字化中心'},
   {no:'FLR202610200035', biz:'内贸2026-10-20', status:'执行中', cat:'running', statusClass:'status-blue', counts:[0,1,0,0], customer:'青岛绿洲园花生食品有限公司', order:'FCO202610200034', recv:'10', pay:'10', profit:'0', type:'水运集装箱', dept:'数字化中心'}
 ];
+
+function getActiveDemandRecord() {
+  return listRows.find((row) => row.no === state.activeRowId)
+    || listRows.find((row) => row.no === 'FLR202610200038')
+    || listRows[0]
+    || {};
+}
+
+function demandBusinessDate(record) {
+  const match = String(record && record.biz || '').match(/\d{4}-\d{2}-\d{2}/);
+  return match ? match[0] : '';
+}
+
+function demandBusinessType(record) {
+  const biz = String(record && record.biz || '');
+  return biz.includes('内贸') ? '内贸' : biz;
+}
+
+function demandLoadType(record) {
+  const type = String(record && record.type || '');
+  if (type.includes('集装箱')) return '集装箱';
+  if (type.includes('散货')) return '散货';
+  return type;
+}
 
 const icons = {
   supplier:'<path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM2 19a6 6 0 0 1 12 0M14 14a5 5 0 0 1 8 4"/>',
@@ -101,7 +128,7 @@ function renderSidebar(){
     <div class="opt-brand"><div class="opt-brand-mark">${icon('order')}</div><div class="opt-brand-copy"><strong>物流控制塔</strong><span>Logistics Workbench</span></div></div>
     ${menuItem('order','物流订单管理')}
     <div class="submenu">
-      <div style="height:30px;padding:5px 10px 3px 27px;color:#94a3b8;font-size:11px">物流需求工作台</div>
+      <div style="height:30px;padding:5px 10px 3px 27px;color:var(--muted);font-size:11px">物流需求工作台</div>
       ${subItem('物流需求列表',state.page==='list','list')}
       ${subItem('需求详情 · 创建',state.page==='create','create')}
       ${subItem('需求详情 · 执行',state.page==='exec'||state.page==='document','exec')}
@@ -117,8 +144,8 @@ function renderSidebar(){
     <button class="btn outline-primary opt-side-bottom" data-toast="已模拟外部动作">外部动作</button>
   `;
 }
-function filterInput(label,placeholder='请输入',value=''){return `<label class="filter-field"><span class="filter-label">${label}</span><input class="filter-control" placeholder="${placeholder}" value="${esc(value)}"></label>`}
-function filterSelect(label,options,placeholder='请选择'){return `<label class="filter-field"><span class="filter-label">${label}</span><select class="filter-control"><option value="">${placeholder}</option>${options.map(o=>`<option>${esc(o)}</option>`).join('')}</select></label>`}
+function filterInput(label,placeholder='请输入',value=''){const id='filter-'+label.replace(/[^\w\u4e00-\u9fa5]+/g,'-');return `<label class="filter-field" for="${id}"><span class="filter-label">${label}</span><input id="${id}" name="${id}" autocomplete="off" class="filter-control" placeholder="${placeholder}" value="${esc(value)}"></label>`}
+function filterSelect(label,options,placeholder='请选择'){const id='filter-'+label.replace(/[^\w\u4e00-\u9fa5]+/g,'-');return `<label class="filter-field" for="${id}"><span class="filter-label">${label}</span><select id="${id}" name="${id}" class="filter-control"><option value="">${placeholder}</option>${options.map(o=>`<option>${esc(o)}</option>`).join('')}</select></label>`}
 
 function renderList(){
   const rows=listRows.filter(r=>state.statusTab==='all'||r.cat===state.statusTab);
@@ -173,7 +200,7 @@ function renderList(){
       <div class="status-tabs">
         ${statusTabs.map(([id,label,count])=>`<button class="status-tab ${state.statusTab===id?'active':''}" data-status-tab="${id}">${label}(${count})</button>`).join('')}
         <div class="status-spacer"></div>
-        <div class="bulk-actions">
+        <div class="bulk-actions logistics-bulk-actions">
           <button class="btn danger" ${selectedCount?'':'disabled'}>删除</button>
           <button class="btn primary ${selectedCount?'':'is-disabled'}" ${selectedCount?'':'disabled'}>审批进度</button>
           <button class="btn primary ${selectedCount?'':'is-disabled'}" ${selectedCount?'':'disabled'}>修改OP</button>
@@ -185,26 +212,26 @@ function renderList(){
         <table class="data-grid">
           <colgroup><col style="width:52px"><col style="width:170px"><col style="width:140px"><col style="width:140px"><col style="width:180px"><col style="width:143px"><col style="width:130px"><col style="width:130px"><col style="width:180px"><col style="width:150px"><col style="width:125px"></colgroup>
           <thead><tr>
-            <th class="check-col"><input type="checkbox" aria-label="全选"></th>
+            <th class="check-col"><input type="checkbox" id="logisticsSelectAll" name="selectAll" aria-label="全选当前物流需求"></th>
             <th>物流需求单号</th><th>委托状态</th><th>状态</th><th>客户信息</th>
             <th>业务预估应收（元）</th><th>业务预估应付（元）</th><th>业务预估利润（元）</th>
             <th>运输/装运类别</th><th>部门</th><th class="action-col">操作</th>
           </tr></thead>
           <tbody>${rows.length?rows.map(r=>`
             <tr data-row-id="${r.no}" data-row-mode="${r.cat==='create'?'create':'exec'}">
-              <td class="check-col"><input type="checkbox" class="row-check" data-row-check="${r.no}" ${state.selectedRows.has(r.no)?'checked':''}></td>
+              <td class="check-col"><input type="checkbox" class="row-check" name="row-${r.no}" aria-label="选择物流需求 ${r.no}" data-row-check="${r.no}" ${state.selectedRows.has(r.no)?'checked':''}></td>
               <td class="no-cell"><strong>${r.no}</strong><span>${r.biz}</span></td>
               <td><div class="count-grid"><span class="c-orange">创建 <b>${r.counts[0]}</b></span><span class="c-blue">执行 <b>${r.counts[1]}</b></span><span class="c-red">异常 <b>${r.counts[2]}</b></span><span class="c-muted">完结 <b>${r.counts[3]}</b></span></div></td>
               <td><span class="${r.statusClass}">${r.status}</span></td>
               <td class="customer-cell" title="${esc(r.customer)}（${r.order}）">${esc(r.customer)}（${r.order}）</td>
               <td>${r.recv}</td><td>${r.pay}</td><td>${r.profit}</td><td>${r.type}</td><td>${r.dept}</td>
               <td class="action-col"><div class="action-stack"><button class="btn link" data-row-open="${r.no}" data-row-mode="${r.cat==='create'?'create':'exec'}" ${r.disableStart&&r.cat!=='create'?'disabled':''}>${r.cat==='create'?'继续编辑':'发起物流安排'}</button><button class="btn link" data-row-open="${r.no}" data-row-mode="${r.cat==='create'?'create':'exec'}">${r.cat==='create'?'查看需求':'查看物流安排'}</button></div></td>
-            </tr>`).join(''):`<tr><td colspan="11" class="empty-cell">暂无数据</td></tr>`}</tbody>
+            </tr>`).join(''):`<tr><td colspan="11" style="padding:0;border-bottom:0"><div class="ui-state-block is-table-inline" data-state="empty" data-density="compact"><div class="ui-state-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></div><div class="ui-state-title">暂无物流需求</div><p class="ui-state-message">调整查询条件或状态筛选后重试。</p></div></td></tr>`}</tbody>
         </table>
       </div>
       <div class="pager">
         <span>共 712 条</span><div class="pages"><button class="page-btn">‹</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button><button class="page-btn">4</button><button class="page-btn">…</button><button class="page-btn">24</button><button class="page-btn">›</button></div>
-        <select><option>30条/页</option><option>50条/页</option></select><span>前往</span><input value="1"><span>页</span>
+        <select aria-label="每页条数" name="pageSize"><option>30条/页</option><option>50条/页</option></select><span>前往</span><input aria-label="前往页码" name="pageNumber" inputmode="numeric" value="1"><span>页</span>
       </div>
     </section>
   </div>`;
@@ -249,14 +276,19 @@ function subCard(title,body,o={}){
   return `<section class="sub-card"><div class="sub-head"><div class="title">${o.noCaret?'':`<button class="collapse-btn" data-collapse aria-label="收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>`}${title}</div>${o.actions?`<div class="head-actions">${o.actions}</div>`:''}</div><div class="sub-body">${body}</div></section>`;
 }
 function customerCard(isExec){
-  const d=isExec?{order:'FCO202610200037',company:'青岛绿洲园花生食品有限公司',date:'2026-10-20',contact:'清清',email:'',sales:'黄瑞钰',agent:'',remark:'自动化订单备注',goods:{no:'FCO202610200037',customer:'青岛绿洲园花生食品有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}}:{order:'FCO202610160032',company:'成都柠檬时光科技有限公司',date:'2026-10-16',contact:'11',email:'',sales:'林美燕',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',goods:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}};
+  const selected = getActiveDemandRecord();
+  const showSelected = isExec || Boolean(prototypeParams.get('no'));
+  const selectedGoods = selected.type && selected.type.includes('集装箱') ? '集装箱货物' : selected.type && selected.type.includes('散货') ? '散货货物' : '—';
+  const d=showSelected?{order:selected.order||'—',company:selected.customer||'—',date:demandBusinessDate(selected),contact:'',email:'',sales:'苏丽蓉',agent:'',remark:selected.biz||'',businessType:demandBusinessType(selected),transportType:selected.type||'',loadType:demandLoadType(selected),goods:{no:selected.order||'—',customer:selected.customer||'—',name:selectedGoods,unit1:'—',unit2:'—',unit3:'—'}}:{order:'FCO202610160032',company:'成都柠檬时光科技有限公司',date:'2026-10-16',contact:'11',email:'',sales:'林美燕',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',businessType:'内贸',transportType:createForm.transportType,loadType:createForm.loadType,goods:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}};
   return `<section class="cube-card"><div class="cube-head"><button class="collapse-btn" data-collapse aria-label="收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="title">客户及商品明细</div></div><div class="cube-body"><div class="customer-layout">
     <div class="related-panel"><div class="related-head"><span>查看关联客户订单 <b>（1）</b></span></div><div class="order-summary"><div class="order-top"><span class="order-no">${d.order} （外部客户）</span><span class="tags">${['运输','内贸',isExec?'水运':createForm.transportType,isExec?'集装箱':createForm.loadType].filter(Boolean).map((t,i)=>`<span class="tag ${i<2?'blue':'cyan'}">${esc(t)}</span>`).join('')}</span></div><div class="company">${d.company}</div><div class="summary-lines"><div class="line"><b>委托方组织：</b><span></span></div><div class="line"><b>结算抬头：</b><span>${d.company}</span></div><div class="line"><b>业务日期：</b><span>${d.date}</span></div><div class="line"><b>联系人：</b><span>${d.contact}</span></div><div class="line"><b>联系邮箱：</b><span>${d.email}</span></div><div class="line"><b>业务员：</b><span>${d.sales}</span></div><div class="line"><b>代理：</b><span>${d.agent}</span></div><div class="line"><b>备注：</b><span>${d.remark}</span></div></div></div></div>
     <div class="goods-panel"><div class="goods-head"><span>商品明细列表</span>${isExec?'':'<button class="btn outline-primary mini" data-toast="已模拟打开商品选择弹窗">选择</button>'}</div><div class="table-scroll"><table class="mini-table" style="min-width:1500px"><thead><tr><th style="width:150px">客户订单号</th><th style="width:180px">客户</th><th style="width:130px">商品中文名</th><th style="width:140px">商品描述</th><th style="width:105px">件数/单位</th><th style="width:105px">毛重/单位</th><th style="width:105px">体积/单位</th><th style="width:125px">标准数量/单位</th><th style="width:100px">单件重量</th><th style="width:120px">单件重量单位</th><th style="width:120px">规格尺寸</th><th style="width:100px">溢装率（%）</th><th style="width:100px">短装率（%）</th><th style="width:130px">货物单价（元）</th><th style="width:140px">货物总价（万元）</th><th style="width:180px">贸易合同号（类型）</th><th style="width:150px">商品英文名</th><th style="width:80px">操作</th></tr></thead><tbody><tr><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td></td><td></td><td>${d.goods.unit1}</td><td>${d.goods.unit2}</td><td>${d.goods.unit3}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></div>
   </div></div></section>`;
 }
 function baseCard(isExec){
-  const v=isExec?{sales:'黄瑞钰',dept:'数字化中心',account:'数字化中心',company:'厦门建发生生物流有限公司',biz:'内贸',date:'2026-10-20',org:'数字化中心',person:'',unit:'供应链物流科技',no:state.activeRowId||'FLR202610200038',remark:'自动化订单备注'}:{sales:'林美燕',dept:'海运部',account:'海运部',company:'厦门建发供应链物流科技有限公司',biz:'内贸',date:'2026-10-16',org:'海运部',person:'',unit:'供应链物流科技',no:state.activeRowId||'FLR202610160032',remark:'自动化订单备注'};
+  const selected = getActiveDemandRecord();
+  const showSelected = isExec || Boolean(prototypeParams.get('no'));
+  const v=showSelected?{sales:'苏丽蓉',dept:selected.dept||'—',account:selected.dept||'—',company:'厦门建发生生物流有限公司',biz:demandBusinessType(selected),date:demandBusinessDate(selected),org:selected.dept||'—',person:'',unit:'供应链物流科技',no:selected.no||state.activeRowId||'—',remark:selected.biz||''}:{sales:'林美燕',dept:'海运部',account:'海运部',company:'厦门建发供应链物流科技有限公司',biz:'内贸',date:'2026-10-16',org:'海运部',person:'',unit:'供应链物流科技',no:state.activeRowId||'FLR202610160032',remark:'自动化订单备注'};
   const body=`<div class="grid-6">
     ${field('业务员',v.sales,{required:true,readonly:true,options:[v.sales]})}
     ${field('部门',v.dept,{required:true,readonly:true,options:[v.dept]})}
@@ -297,7 +329,7 @@ function sendReceiveCard(isExec){
 }
 function feeTable(rows,isExec=false){
   const headers=['','费用科目 *','客户订单号 *','客户','结算对象','税率(%) *','PP/CC','计费单价（含税） *','计费币种 *','计费数量 *','计量单位 *','原币金额（含税）','柜型 *','汇率 *','本位币金额（元）','费用备注','发票类型','是否实报实销 *','操作'];
-  return `<div class="table-scroll"><table class="mini-table fee-table"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr><td class="checkbox-cell"><input type="checkbox"></td>${r.map(v=>`<td><input class="mini-input" value="${esc(v)}" ${isExec?'disabled':''}></td>`).join('')}<td><button class="btn link">复制</button> <button class="btn link" style="color:var(--danger)">删除</button></td></tr>`).join(''):`<tr><td colspan="19" class="empty-cell">暂无数据</td></tr>`}</tbody></table></div>`;
+  return `<div class="table-scroll"><table class="mini-table fee-table"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr><td class="checkbox-cell"><input type="checkbox" aria-label="选择费用行"></td>${r.map(v=>`<td><input class="mini-input" value="${esc(v)}" ${isExec?'disabled':''}></td>`).join('')}<td><button class="btn link">复制</button> <button class="btn link" style="color:var(--danger)">删除</button></td></tr>`).join(''):`<tr><td colspan="19" class="empty-cell">暂无数据</td></tr>`}</tbody></table></div>`;
 }
 function feeCard(isExec,kind){
   const isRecv=kind==='recv';
@@ -339,6 +371,8 @@ function arrangementReferenceActions(isExec){
 }function renderDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
+  const activeRecord=getActiveDemandRecord();
+  const displayStatus=activeRecord.status||(isExec?'执行中':'创建');
   const mainCards=isExec?`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`: `${baseCard(false)}${customerCard(false)}${transportCard(false)}${voyageCard(false)}${containerCard(false)}${sendReceiveCard(false)}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
   return `<div class="detail-scroll ${state.detailView==='arrangement'&&!isExec?'empty-arrangement-scroll':''}"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span class="caret">▼</span><span>物流需求单详情（${no}）</span><span class="expand-icon">⛶</span></div><div class="detail-actions">${detailActions(isExec)}</div></div></section>
@@ -606,12 +640,13 @@ function arrangementReferenceActions(isExec){
     infoCards=`${baseCard(false)}${customerCard(false)}${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
   }
   const documents=renderDocumentsView(isExec);
+  const billList=renderBillList(isExec);
   const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
   return `<div class="detail-scroll ${state.detailView==='arrangement'&&!isExec?'empty-arrangement-scroll':''}"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar">
       <div class="detail-title">${state.detailView==='arrangement'?'':'<span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span>'}<span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div>
       <span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span>
-      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">需求安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?downstreamDocs.length:0})</span></button></div>
+      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">物流安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">实际收付</button></div>
       <div class="detail-actions">${state.detailView==='arrangement'?arrangementReferenceActions(isExec):optimizedDetailActions(isExec)}</div>
     </div></section>
     <div class="detail-view-panel ${state.detailView==='info'?'active':''}" data-view-panel="info">${infoCards}</div>
@@ -682,6 +717,8 @@ function goodsDetailCard(isExec){
 function renderDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
+  const activeRecord=getActiveDemandRecord();
+  const displayStatus=activeRecord.status||(isExec?'执行中':'创建');
   const isWater=isExec||createForm.transportType==='水运';
   const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
@@ -694,12 +731,13 @@ function renderDetail(page){
   const tabs=sections.map(([id,label])=>`<button class="detail-section-tab ${active===id?'active':''}" data-detail-section="${id}">${label}</button>`).join('');
   const infoView=`<div class="detail-section-tabs">${tabs}</div>${sections.map(([id])=>`<div class="detail-section-panel ${active===id?'active':''}" data-section-panel="${id}">${panels[id]}</div>`).join('')}`;
   const documents=renderDocumentsView(isExec);
+  const billList=renderBillList(isExec);
   const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
   return `<div class="detail-scroll ${state.detailView==='arrangement'&&!isExec?'empty-arrangement-scroll':''}"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar">
       <div class="detail-title">${state.detailView==='arrangement'?'':'<span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span>'}<span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div>
       <span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span>
-      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">需求安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?downstreamDocs.length:0})</span></button></div>
+      <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">物流安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">实际收付</button></div>
       <div class="detail-actions">${state.detailView==='arrangement'?arrangementReferenceActions(isExec):optimizedDetailActions(isExec)}</div>
     </div></section>
     <div class="detail-view-panel ${state.detailView==='info'?'active':''}" data-view-panel="info">${infoView}</div>
@@ -740,7 +778,7 @@ function renderDocumentsView(isExec){
 }
 function openDocDrawer(key){
   document.querySelectorAll('.dropdown-menu.open').forEach(m=>m.classList.remove('open'));
-  const doc=downstreamDocs.find(d=>d.id===key)||downstreamDocs.find(d=>d.type===key);
+  const doc=allDocRecords().find(d=>d.id===key)||allDocRecords().find(d=>d.type===key);
   const type=doc?doc.type:key.replace(/^新建/,'');
   const title=doc?`${doc.type} ${doc.id}`:type;
   const overlay=document.createElement('div');overlay.className='doc-drawer-overlay';
@@ -774,20 +812,20 @@ function renderDocumentsView(isExec){
 }
 function openDocDrawer(key){
   document.querySelectorAll('.dropdown-menu.open').forEach(m=>m.classList.remove('open'));
-  const doc=downstreamDocs.find(d=>d.id===key)||downstreamDocs.find(d=>d.type===key);
+  const doc=allDocRecords().find(d=>d.id===key)||allDocRecords().find(d=>d.type===key);
   const type=doc?doc.type:String(key||'').replace(/^新建/,'');
   if(state.page!=='document')state.docReturnPage=state.page;
   state.activeDocId=doc?doc.id:`new:${type}`;state.page='document';render();
 }
 function renderDocumentPage(){
   const raw=String(state.activeDocId||'');
-  const doc=downstreamDocs.find(d=>d.id===raw);
+  const doc=allDocRecords().find(d=>d.id===raw);
   const type=doc?doc.type:raw.replace(/^new:/,'');
   const v=doc||{id:'待生成',type,status:'未创建',tone:'muted',party:'待选择',related:'—',amount:'—',currency:'—',updated:'—'};
-  const actions=`<button class="btn outline-primary" data-doc-back>返回下游单据</button><button class="btn outline-primary" data-toast="已模拟打印">打印</button><div class="dropdown-wrap"><button class="btn primary" data-dropdown>进入单据处理 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-toast="已模拟提交">提交</button><button data-toast="已模拟审核">审核</button><button data-toast="已模拟导出">导出</button></div></div>`;
+  const actions=`<button class="btn outline-primary" data-doc-back>返回实际收付</button><button class="btn outline-primary" data-toast="已模拟打印">打印</button><div class="dropdown-wrap"><button class="btn primary" data-dropdown>进入单据处理 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-toast="已模拟提交">提交</button><button data-toast="已模拟审核">审核</button><button data-toast="已模拟导出">导出</button></div></div>`;
   const steps=['创建','审核','业务处理','完成'];const current=v.status==='未创建'?0:['待确认','待审批','待认领'].includes(v.status)?2:3;
   return `<div class="detail-scroll"><div class="detail-page document-detail-page">
-    <div class="doc-breadcrumb"><button class="btn link" data-doc-back>下游单据</button><span>/</span><span>${type||'单据详情'}</span></div>
+    <div class="doc-breadcrumb"><button class="btn link" data-doc-back>实际收付</button><span>/</span><span>${type||'单据详情'}</span></div>
     <section class="cube-card"><div class="doc-detail-titlebar"><div class="doc-detail-title"><span class="doc-detail-kind">${v.type}</span><h1>${v.id}</h1><span class="doc-status ${v.tone}">${v.status}</span></div><div class="detail-actions">${actions}</div></div></section>
     <div class="doc-detail-summary"><div><span>客户 / 供应商</span><b>${v.party}</b></div><div><span>关联单据</span><b>${v.related}</b></div><div><span>单据金额</span><b>${v.amount==='—'?'—':`${v.currency} ${v.amount}`}</b></div><div><span>更新时间</span><b>${v.updated}</b></div></div>
     <div class="doc-detail-columns"><section class="cube-card"><div class="cube-head"><div class="title">单据基础信息</div></div><div class="cube-body"><div class="grid-4">${field('单据类型',v.type,{readonly:true})}${field('单据编号',v.id,{readonly:true})}${field('单据状态',v.status,{readonly:true})}${field('客户 / 供应商',v.party,{readonly:true})}${field('关联需求','FLR202610200038',{readonly:true})}${field('关联客户订单','FCO202610200037',{readonly:true})}${field('关联物流委托','FLMT202610200038',{readonly:true})}${field('制单人','苏丽蓉',{readonly:true})}</div></div></section><section class="cube-card"><div class="cube-head"><div class="title">金额与结算信息</div></div><div class="cube-body"><div class="grid-4">${field('币种',v.currency,{readonly:true})}${field('含税金额',v.amount,{readonly:true})}${field('税额','—',{readonly:true})}${field('已结算金额','10,000.00',{readonly:true})}${field('未结算金额',v.amount==='—'?'—':'5,000.00',{readonly:true})}${field('对账期间','2026-10',{readonly:true})}${field('发票类型','增值税专用发票',{readonly:true})}${field('结算方式','月结',{readonly:true})}</div></div></section></div>
@@ -807,14 +845,16 @@ function renderDocumentsView(isExec){
   const rows=shown.length?shown.map(d=>`<tr><td><button class="doc-number-link" data-doc-open="${d.id}">${d.id}</button></td>${showType?`<td><span class="doc-type-cell">${icon(d.group==='exec'?'ship':d.group==='settle'?'money':d.group==='tax'?'file':'workbench')}${d.type}</span></td>`:''}<td><span class="doc-status ${d.tone}">${d.status}</span></td><td>${d.party}</td><td>${d.related}</td><td>${d.amount==='—'?'—':`${d.currency} ${d.amount}`}</td><td>${d.updated}</td><td><button class="btn link" data-doc-open="${d.id}">查看详情</button></td></tr>`).join(''):`<tr><td colspan="${showType?8:7}" class="doc-empty">暂无单据，可点击右上角“新建单据”发起</td></tr>`;
   return `<div class="doc-center doc-center-nav">
     <div class="doc-type-nav-row"><div class="doc-type-nav">${nav}</div><div class="dropdown-wrap"><button class="btn primary" data-dropdown>＋ 新建单据 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-doc-open="新建提单">提单</button><button data-doc-open="新建代理结算单">代理结算单</button><button data-doc-open="新建客户对账单">客户对账单</button><button data-doc-open="新建供应商对账单">供应商对账单</button><button data-doc-open="新建发票登记单">发票登记单</button><button data-doc-open="新建付款申请单">付款申请单</button><button data-doc-open="新建收款认领单">收款认领单</button></div></div></div>
-    <section class="cube-card doc-list-card"><div class="doc-list-head"><div class="doc-heading-block"><div class="doc-list-title">${selected}<span>${shown.length}</span></div><div class="doc-list-sub">${pending?`${pending} 条待处理`:'暂无待处理事项'} · 按更新时间倒序</div></div><div class="doc-list-filters"><input class="doc-search" placeholder="搜索单据编号、客户或供应商"><select class="doc-status-filter"><option>全部状态</option><option>待确认</option><option>待审批</option><option>已对账</option><option>已完成</option></select></div></div><div class="doc-fixed-table"><table class="mini-table doc-table"><thead><tr><th>单据编号</th>${showType?'<th>单据类型</th>':''}<th>状态</th><th>客户 / 供应商</th><th>关联单据</th><th>金额</th><th>更新时间</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table></div><div class="doc-pagination"><span>共 ${shown.length} 条</span><button class="page-btn active">1</button><span class="doc-page-size">每页 20 条</span></div></section>
+    <section class="cube-card doc-list-card"><div class="doc-list-head"><div class="doc-heading-block"><div class="doc-list-title">${selected}<span>${shown.length}</span></div><div class="doc-list-sub">${pending?`${pending} 条待处理`:'暂无待处理事项'} · 按更新时间倒序</div></div><div class="doc-list-filters"><input class="doc-search" name="docSearch" aria-label="搜索单据编号、客户或供应商" placeholder="搜索单据编号、客户或供应商"><select class="doc-status-filter" name="docStatus" aria-label="单据状态"><option>全部状态</option><option>待确认</option><option>待审批</option><option>已对账</option><option>已完成</option></select></div></div><div class="doc-fixed-table"><table class="mini-table doc-table"><thead><tr><th>单据编号</th>${showType?'<th>单据类型</th>':''}<th>状态</th><th>客户 / 供应商</th><th>关联单据</th><th>金额</th><th>更新时间</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table></div><div class="doc-pagination"><span>共 ${shown.length} 条</span><button class="page-btn active">1</button><span class="doc-page-size">每页 20 条</span></div></section>
   </div>`;
 }
 document.addEventListener('click',e=>{const t=e.target.closest('[data-doc-type]');if(t){state.docFilter=t.dataset.docType;render();}});
 function customerCard(isExec){
-  const d=isExec?{order:'FCO202610200037',company:'青岛绿洲园花生食品有限公司',date:'2026-10-20',contact:'清清',email:'',sales:'黄瑞钰',agent:'',remark:'自动化订单备注',goods:{no:'FCO202610200037',customer:'青岛绿洲园花生食品有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}}:{order:'FCO202610160032',company:'成都柠檬时光科技有限公司',date:'2026-10-16',contact:'11',email:'',sales:'林美燕',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',goods:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}};
-  const transport=isExec?'水运 集装箱':`${createForm.transportType||'运输'} ${createForm.loadType||''}`.trim();
-  const tags=['运输','内贸',transport].filter(Boolean).map(t=>`<span class="order-tag">${esc(t)}</span>`).join('');
+  const selected = getActiveDemandRecord();
+  const showSelected = isExec || Boolean(prototypeParams.get('no'));
+  const selectedGoods = selected.type && selected.type.includes('集装箱') ? '集装箱货物' : selected.type && selected.type.includes('散货') ? '散货货物' : '—';
+  const d=showSelected?{order:selected.order||'—',company:selected.customer||'—',date:demandBusinessDate(selected),contact:'',email:'',sales:'苏丽蓉',agent:'',remark:selected.biz||'',businessType:demandBusinessType(selected),transportType:selected.type||'',loadType:demandLoadType(selected),goods:{no:selected.order||'—',customer:selected.customer||'—',name:selectedGoods,unit1:'—',unit2:'—',unit3:'—'}}:{order:'FCO202610160032',company:'成都柠檬时光科技有限公司',date:'2026-10-16',contact:'11',email:'',sales:'林美燕',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',businessType:'内贸',transportType:createForm.transportType,loadType:createForm.loadType,goods:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}};
+  const tags=['运输',d.businessType,d.transportType,d.loadType].filter(Boolean).map(t=>`<span class="order-tag">${esc(t)}</span>`).join('');
   const meta=(l,v)=>`<div class="related-meta"><span class="related-meta-label">${l}</span><span class="related-meta-value" title="${esc(v||'')}">${v||'—'}</span></div>`;
   return `<section class="cube-card customer-goods-card"><div class="cube-head"><button class="collapse-btn" data-collapse aria-label="收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="title">客户及商品明细</div></div><div class="cube-body"><div class="customer-goods-layout">
     <section class="related-orders-panel"><div class="related-orders-head">查看关联客户订单 <b>（1）</b></div><div class="related-order-card"><div class="related-order-top"><span class="related-order-no">${d.order}</span><span class="external-client">（外部客户）</span><div class="related-order-tags">${tags}</div></div><div class="related-company-row"><div class="related-company">${d.company}</div><div class="related-meta"><span class="related-meta-label">委托方组织：</span><span class="related-meta-value">—</span></div></div><div class="related-meta-grid">${meta('结算抬头：',d.company)}${meta('业务日期：',d.date)}${meta('联系人：',d.contact)}${meta('联系邮箱：',d.email)}${meta('业务员：',d.sales)}${meta('代理：',d.agent)}${meta('备注：',d.remark)}<div class="related-meta"></div></div></div></section>
@@ -832,32 +872,112 @@ const docNames={
   '付款申请单':'供应商付款申请单',
   '收款认领单':'客户回款认领单'
 };
-function renderDocumentsView(isExec){
-  const docs=isExec?downstreamDocs:[];
-  const rows=docs.map(d=>`<tr data-doc-type="${d.type}"><td>${d.type}</td><td><button class="doc-number-link" data-doc-open="${d.id}">${d.id}</button></td><td>${docNames[d.type]||d.type}</td><td>${d.ownerBlNo||'—'}</td><td>${d.forwarderBlNo||'—'}</td><td>${d.masterAwbNo||'—'}</td><td>${d.ourHouseNo||'—'}</td><td><span class="doc-status ${d.tone}">${d.status}</span></td><td>苏丽蓉</td><td>2026-10-20 09:30</td><td>菜菜菜</td><td>${d.updated}</td><td><button class="btn link" data-doc-open="${d.id}">查看详情</button></td></tr>`).join('');
-  return `<section class="cube-card doc-all-card"><div class="doc-query-bar"><span class="doc-query-title">查询条件</span><label class="doc-query-field"><span>单据类型</span><select id="docTypeFilter" class="doc-status-filter"><option value="all">全部类型</option>${Object.keys(docNames).map(t=>`<option value="${t}">${t}</option>`).join('')}</select></label><span class="doc-result-count" id="docResultCount">共 ${docs.length} 条</span></div><div class="doc-all-table-wrap"><table class="mini-table doc-all-table"><thead><tr><th>单据类型</th><th>单据编号</th><th>单据名称</th><th>船东提单号</th><th>货代提单号</th><th>航司主单号</th><th>我司分单号</th><th>状态</th><th>创建人</th><th>创建时间</th><th>修改人</th><th>修改时间</th><th>操作</th></tr></thead><tbody>${rows||'<tr><td colspan="13" class="doc-empty">暂无下游单据</td></tr>'}</tbody></table></div></section>`;
+const linkedDocs = [
+  { id: 'SR202610200019', type: '收入发票登记单', group: 'tax', status: '已开票', tone: 'success', party: '青岛绿洲园花生食品有限公司', related: 'FCO202610200037', amount: '1,000.00', currency: 'CNY', updated: '2026-10-21 11:26' },
+  { id: 'SK202610200008', type: '收款认领单', group: 'funds', status: '已收款', tone: 'success', party: '青岛绿洲园花生食品有限公司', related: 'FCO202610200037', amount: '1,000.00', currency: 'CNY', updated: '2026-10-21 12:18' },
+  { id: 'SK202610200009', type: '收款认领单', group: 'funds', status: '待收款', tone: 'warning', party: '中联铁运集团有限公司', related: 'FLMT202610200038', amount: '3,000.00', currency: 'CNY', updated: '2026-10-21 12:26' },
+  { id: 'FK202610200010', type: '付款申请单', group: 'funds', status: '已付款', tone: 'success', party: '中联铁运集团有限公司', related: 'FLMT202610200038', amount: '4,000.00', currency: 'CNY', updated: '2026-10-21 11:42' },
+  { id: 'FK202610200011', type: '付款申请单', group: 'funds', status: '待审批', tone: 'warning', party: '中联铁运集团有限公司', related: 'FLMT202610200038', amount: '8,500.00', currency: 'CNY', updated: '2026-10-21 12:05' }
+];
+
+const feeLedger = [
+  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '海运费', currency: 'CNY', amount: '12,000.00', invoiced: '12,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '12,000.00', tone: 'success' }], settled: '12,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '12,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
+  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '港杂费', currency: 'CNY', amount: '4,000.00', invoiced: '4,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '3,000.00', tone: 'success' }, { id: 'SR202610200019', status: '已开票', amount: '1,000.00', tone: 'success' }], settled: '4,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '3,000.00', tone: 'success' }, { id: 'SK202610200008', status: '已收款', amount: '1,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
+  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '报关费', currency: 'CNY', amount: '3,000.00', invoiced: '0.00', invoices: [], settled: '1,500.00', outstanding: '1,500.00', payments: [{ id: 'SK202610200008', status: '部分收款', amount: '1,500.00', tone: 'warning' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '部分收付', tone: 'warning' },
+  { side: 'pay', statementNo: 'DZ202610200022', statementName: '中联铁运集团有限公司 2026-10 应付对账单', statementType: '供应商对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-20', fee: '海运费', currency: 'CNY', amount: '10,000.00', invoiced: '10,000.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '10,000.00', tone: 'success' }], settled: '10,000.00', outstanding: '0.00', payments: [{ id: 'FK202610200009', status: '已付款', amount: '6,000.00', tone: 'success' }, { id: 'FK202610200010', status: '已付款', amount: '4,000.00', tone: 'success' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '已付款', tone: 'success', sourceDoc: 'JS202610200012' },
+  { side: 'pay', statementNo: 'DZ202610200022', statementName: '中联铁运集团有限公司 2026-10 应付对账单', statementType: '供应商对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-20', fee: '港杂费', currency: 'CNY', amount: '5,000.00', invoiced: '5,000.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '5,000.00', tone: 'success' }], settled: '2,000.00', outstanding: '3,000.00', payments: [{ id: 'FK202610200009', status: '部分付款', amount: '2,000.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '部分付款', tone: 'warning', sourceDoc: 'JS202610200012' },
+  { side: 'pay', statementNo: 'DZ202610200023', statementName: '中联铁运集团有限公司 2026-10 代理对账单', statementType: '代理对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-21', fee: '代理费', currency: 'CNY', amount: '5,500.00', invoiced: '5,500.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '5,500.00', tone: 'success' }], settled: '0.00', outstanding: '5,500.00', payments: [{ id: 'FK202610200011', status: '待审批', amount: '0.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '待付款', tone: 'warning', sourceDoc: 'JS202610200012' },
+  { side: 'recv', statementNo: 'DZ202610200023', statementName: '中联铁运集团有限公司 2026-10 代理对账单', statementType: '代理对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-21', fee: '垫付费用', currency: 'CNY', amount: '3,000.00', invoiced: '0.00', invoices: [], settled: '0.00', outstanding: '3,000.00', payments: [{ id: 'SK202610200009', status: '待收款', amount: '0.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '待收款', tone: 'warning', sourceDoc: 'JS202610200012' }
+];
+
+function allDocRecords() {
+  return downstreamDocs.concat(linkedDocs);
 }
+
+function ledgerNum(value) {
+  return Number(String(value || '0').replace(/,/g, '')) || 0;
+}
+
+function ledgerAmount(value) {
+  return ledgerNum(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function renderDocLinkStack(list) {
+  if (!list || !list.length) return '<span class="doc-empty-value">—</span>';
+  return `<div class="doc-link-stack">${list.map(doc => `<div class="doc-link-line"><button class="doc-number-link" data-doc-open="${doc.id}">${doc.id}</button><span class="doc-mini-status ${doc.tone}">${doc.status}</span><span class="doc-link-amount">${doc.amount}</span></div>`).join('')}</div>`;
+}
+
+function renderBillList(isExec) {
+  const docs = isExec ? downstreamDocs.filter(d => d.type === '提单登记单') : [];
+  const rows = docs.map(d => `<tr data-doc-type="${d.type}"><td>${d.type}</td><td><button class="doc-number-link" data-doc-open="${d.id}">${d.id}</button></td><td>${d.ownerBlNo || '—'}</td><td>${d.forwarderBlNo || '—'}</td><td>${d.masterAwbNo || '—'}</td><td>${d.ourHouseNo || '—'}</td><td><span class="doc-status ${d.tone}">${d.status}</span></td><td>苏丽蓉</td><td>2026-10-20 09:30</td><td>菜菜菜</td><td>${d.updated}</td><td><button class="btn link" data-doc-open="${d.id}">查看详情</button></td></tr>`).join('');
+  return `<section class="cube-card doc-all-card"><div class="doc-query-bar"><span class="doc-query-title">提单列表</span><span class="doc-query-hint">仅展示提单登记单</span><span class="doc-result-count">共 ${docs.length} 条</span></div><div class="doc-all-table-wrap"><table class="mini-table doc-all-table"><thead><tr><th>单据类型</th><th>单据编号</th><th>船东提单号</th><th>货代提单号</th><th>航司主单号</th><th>我司分单号</th><th>状态</th><th>创建人</th><th>创建时间</th><th>修改人</th><th>修改时间</th><th>操作</th></tr></thead><tbody>${rows || '<tr><td colspan="12" class="doc-empty">暂无提单登记单</td></tr>'}</tbody></table></div></section>`;
+}
+
+function renderPaymentLedger(isExec) {
+  const filter = state.paymentFilter || 'all';
+  const allRows = isExec ? feeLedger : [];
+  const rows = filter === 'all' ? allRows : allRows.filter(row => row.side === filter);
+  const statementCount = new Set(rows.map(row => row.statementNo)).size;
+  const statsFor = side => {
+    const sideRows = allRows.filter(row => row.side === side);
+    return {
+      total: sideRows.reduce((sum, row) => sum + ledgerNum(row.amount), 0),
+      invoiced: sideRows.reduce((sum, row) => sum + ledgerNum(row.invoiced), 0),
+      settled: sideRows.reduce((sum, row) => sum + ledgerNum(row.settled), 0),
+      outstanding: sideRows.reduce((sum, row) => sum + ledgerNum(row.outstanding), 0)
+    };
+  };
+  const recvStats = statsFor('recv');
+  const payStats = statsFor('pay');
+  const showRecv = filter === 'all' || filter === 'recv';
+  const showPay = filter === 'all' || filter === 'pay';
+  const statGroup = (label, kind, stats) => `<div class="doc-ledger-stat-group"><div class="doc-ledger-stat-label ${kind}">${label}</div><div class="doc-ledger-metric"><span>对账金额</span><b>${ledgerAmount(stats.total)}</b></div><div class="doc-ledger-metric"><span>已开票金额</span><b>${ledgerAmount(stats.invoiced)}</b></div><div class="doc-ledger-metric"><span>已收/已付金额</span><b>${ledgerAmount(stats.settled)}</b></div><div class="doc-ledger-metric"><span>未收/未付金额</span><b>${ledgerAmount(stats.outstanding)}</b></div></div>`;
+  const filterBar = `<div class="doc-query-bar"><span class="doc-query-title">查询条件</span><label class="doc-query-field"><span>收付方向</span><select id="paymentTypeFilter" class="doc-status-filter"><option value="all" ${filter === 'all' ? 'selected' : ''}>全部方向</option><option value="recv" ${filter === 'recv' ? 'selected' : ''}>应收</option><option value="pay" ${filter === 'pay' ? 'selected' : ''}>应付</option></select></label><span class="doc-result-count">共 ${rows.length} 条</span></div>`;
+  const body = rows.map(row => `<tr data-pay-type="${row.side}">
+    <td><div class="doc-statement-line"><button class="doc-number-link" data-doc-open="${row.statementNo}">${row.statementNo}</button><span class="doc-mini-status ${row.statementTone}">${row.statementStatus}</span></div><span class="doc-statement-name">${row.statementName}</span>${row.sourceDoc ? `<span class="doc-cell-sub">关联结算 <button class="doc-number-link" data-doc-open="${row.sourceDoc}">${row.sourceDoc}</button></span>` : ''}</td>
+    <td><span class="doc-mini-status ${row.side === 'recv' ? 'info' : 'warning'}">${row.side === 'recv' ? '应收' : '应付'}</span></td>
+    <td>${row.statementType}</td>
+    <td>${row.party}</td><td>${row.completedAt}</td><td>${row.fee}</td><td>${row.currency}</td>
+    <td class="doc-ledger-number">${row.amount}</td><td class="doc-ledger-number">${row.invoiced}</td>
+    <td>${renderDocLinkStack(row.invoices)}</td><td class="doc-ledger-number">${row.settled}</td><td class="doc-ledger-number ${ledgerNum(row.outstanding) ? 'is-outstanding' : ''}">${row.outstanding}</td>
+    <td>${renderDocLinkStack(row.payments)}</td>
+    <td><button class="btn link" data-doc-open="${row.statementNo}">查看对账单</button></td>
+  </tr>`).join('');
+  return `${filterBar}<div class="doc-ledger-stats ${showRecv && showPay ? '' : 'is-single'}">${showRecv ? statGroup('应收统计', 'recv', recvStats) : ''}${showPay ? statGroup('应付统计', 'pay', payStats) : ''}</div><div class="doc-ledger-meta">${statementCount} 张对账单 · ${rows.length} 条费用行 · 金额单位：CNY</div><div class="doc-all-table-wrap"><table class="mini-table doc-ledger-table"><colgroup><col style="width:180px"><col style="width:82px"><col style="width:104px"><col style="width:185px"><col style="width:110px"><col style="width:90px"><col style="width:64px"><col style="width:105px"><col style="width:105px"><col style="width:230px"><col style="width:115px"><col style="width:115px"><col style="width:230px"><col style="width:100px"></colgroup><thead><tr><th>对账单号</th><th>收付方向</th><th>对账单类型</th><th>结算对象</th><th>对账完成日期</th><th>费目</th><th>币种</th><th>费用金额</th><th>已开票金额</th><th>发票登记</th><th>已收/已付金额</th><th>未收/未付金额</th><th>收款认领 / 付款申请</th><th>操作</th></tr></thead><tbody>${body || '<tr><td colspan="14" class="doc-empty">暂无收付明细</td></tr>'}</tbody></table></div>`;
+}
+
+function renderDocumentsView(isExec) {
+  return `<section class="cube-card doc-all-card doc-hub-card">${renderPaymentLedger(isExec)}</section>`;
+}
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'paymentTypeFilter') { state.paymentFilter = e.target.value; render(); }
+});
+
 function renderDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
+  const activeRecord=getActiveDemandRecord();
+  const displayStatus=activeRecord.status||(isExec?'执行中':'创建');
   const isWater=isExec||createForm.transportType==='水运';
   const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
   const transport=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}`;
   const fees=isExec?`${execFeeSection()}${profitCard(true)}`:`${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}`;
   const records=`${attachmentCard(isExec)}${systemCard(isExec)}`;
+  const billList=renderBillList(isExec);
   const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
   const documents=renderDocumentsView(isExec);
   const view=state.detailView==='documents'?'documents':'info';
-  const sections=['overview','transport','fees','records','arrangement'];
+  const sections=['overview','transport','fees','records','arrangement','bills'];
   const activeSection=sections.includes(state.detailSection)?state.detailSection:'overview';
-  const nav=[['overview','基础信息'],['transport','运输要求'],['fees','费用与利润'],['records','附件与记录'],['arrangement',`需求安排${isExec?' (1)':' (0)'}`]];
+  const nav=[['overview','基础信息'],['transport','运输要求'],['fees','费用与利润'],['records','附件与记录'],['arrangement',`物流安排${isExec?' (1)':' (0)'}`],['bills','提单列表']];
+  const panels={overview,transport,fees,records,arrangement,bills:billList};
   return `<div class="detail-scroll"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
-    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span><div class="detail-view-switch"><button class="detail-view-tab ${view==='info'?'active':''}" data-detail-view="info">需求详情</button><button class="detail-view-tab ${view==='documents'?'active':''}" data-detail-view="documents">下游单据 <span class="count">(${isExec?downstreamDocs.length:0})</span></button></div><div class="detail-actions">${optimizedDetailActions(isExec)}</div></div></section>
-    ${view==='info'?`<div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-scroll-target="section-${id}">${l}</button>`).join('')}</div><section class="anchor-section" id="section-overview">${overview}</section><section class="anchor-section" id="section-transport">${transport}</section><section class="anchor-section" id="section-fees">${fees}</section><section class="anchor-section" id="section-records">${records}</section><section class="anchor-section" id="section-arrangement">${arrangement}</section>`:`<div class="doc-independent-view">${documents}</div>`}
+    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${displayStatus==='执行中'?'running':displayStatus==='创建'?'draft':'status-create'}">${displayStatus}</span><div class="detail-view-switch"><button class="detail-view-tab ${view==='info'?'active':''}" data-detail-view="info">需求详情</button><button class="detail-view-tab ${view==='documents'?'active':''}" data-detail-view="documents">实际收付</button></div><div class="detail-actions">${optimizedDetailActions(isExec)}</div></div></section>
+    ${view==='info'?`<div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-detail-section="${id}">${l}</button>`).join('')}</div><div class="detail-section-panel active" id="section-${activeSection}">${panels[activeSection]||panels.overview}</div>`:`<div class="doc-independent-view">${documents}</div>`}
   </div></div>`;
 }
-document.addEventListener('click',e=>{const btn=e.target.closest('[data-scroll-target]');if(btn){const target=document.getElementById(btn.dataset.scrollTarget);document.querySelectorAll('.detail-section-tab').forEach(b=>b.classList.toggle('active',b===btn));state.detailSection=btn.dataset.scrollTarget.replace('section-','');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});}});
 document.addEventListener('change',e=>{if(e.target.id==='docTypeFilter'){const val=e.target.value;const card=e.target.closest('.doc-all-card');const rows=[...card.querySelectorAll('tbody tr[data-doc-type]')];let count=0;rows.forEach(r=>{const show=val==='all'||r.dataset.docType===val;r.style.display=show?'':'none';if(show)count++;});const label=card.querySelector('#docResultCount');if(label)label.textContent=`共 ${count} 条`;}});
 function render(){
   renderTopTabs();
