@@ -7,26 +7,26 @@
   <link rel="stylesheet" href="../assets/app.css">
   <style>
     :root {
-      --detail-blue: #2f74ff;
-      --detail-blue-deep: #1f5fe0;
+      --detail-blue: #2563eb;
+      --detail-blue-deep: #1d4ed8;
       --detail-line: #dde4ee;
       --detail-ink: #23344d;
-      --detail-muted: #8c98a8;
+      --detail-muted: #5b6778;
       --page: #e9eef5;
       --ink: #23344d;
-      --text: #5e6d82;
-      --muted: #8c98a8;
+      --text: #334155;
+      --muted: #5b6778;
       --line: #dde4ee;
-      --blue: #2f74ff;
+      --blue: #2563eb;
     }
     body { min-width: 1180px; }
     button, input, select, textarea { font: inherit; }
     .detail-scroll { min-height: 0; flex: 1; overflow-y: auto; padding: 14px 18px 40px; background: var(--page); }
     .page-head { position: relative; z-index: 5; display: flex; align-items: center; gap: 9px; min-height: 52px; margin-bottom: 10px; padding: 0 13px 0 17px; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.04); }
     .page-title { display: flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 15px; font-weight: 700; white-space: nowrap; }
-    .page-title svg { width: 16px; height: 16px; color: #9ca6b5; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .page-title svg { width: 16px; height: 16px; color: #64748b; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .page-head-spacer { flex: 1; }
-    .detail-btn { height: 30px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #d9dee7; border-radius: 3px; background: #fff; color: #4c5566; font-size: 11px; white-space: nowrap; cursor: pointer; transition: .15s ease; }
+    .detail-btn { height: 32px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #d9dee7; border-radius: 6px; background: #fff; color: #334155; font-size: 12px; white-space: nowrap; cursor: pointer; transition: .15s ease; }
     .detail-btn:hover { border-color: #b7c1d2; background: #fafbfc; }
     .detail-btn.primary { color: #fff; border-color: var(--detail-blue); background: var(--detail-blue); box-shadow: 0 2px 5px rgba(47,116,255,.18); }
     .detail-btn.primary:hover { border-color: var(--detail-blue-deep); background: var(--detail-blue-deep); }
@@ -35,63 +35,63 @@
     .detail-section { margin-top: 11px; overflow: visible; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.035); }
     .detail-section-head { min-height: 37px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid #eef1f5; background: #fafbfc; }
     .detail-section-title { display: inline-flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 13px; font-weight: 700; }
-    .detail-section-title svg { width: 11px; height: 11px; color: #9ca7b6; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .detail-section-title svg { width: 11px; height: 11px; color: #64748b; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .detail-section-body { padding: 17px 16px 19px; }
     .form-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); column-gap: 22px; row-gap: 17px; }
     .span-2 { grid-column: span 2; }
     .span-4 { grid-column: span 4; }
     .span-6 { grid-column: span 6; }
     .field { min-width: 0; }
-    .field-label { min-height: 18px; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: var(--text); font-size: 11px; white-space: nowrap; }
-    .required { color: #e9564a; font-size: 10px; }
-    .field-help { width: 14px; height: 14px; display: inline-grid; place-items: center; border-radius: 50%; color: #9aa6b7; background: #f0f2f5; font-size: 10px; font-weight: 700; cursor: help; }
-    .control { width: 100%; height: 30px; padding: 0 9px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fff; color: var(--text); font-size: 11px; }
+    .field-label { min-height: 18px; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: var(--text); font-size: 12px; white-space: nowrap; }
+    .required { color: #c62828; font-size: 11px; }
+    .field-help { width: 14px; height: 14px; display: inline-grid; place-items: center; border-radius: 50%; color: #526176; background: #f0f2f5; font-size: 11px; font-weight: 700; cursor: help; }
+    .control { width: 100%; height: 32px; padding: 0 9px; border: 1px solid #d9e1ec; border-radius: 6px; background: #fff; color: var(--text); font-size: 12px; }
     .control[readonly] { color: #8d96a7; background: #f5f6f8; }
-    .control::placeholder { color: #b2bac7; }
-    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#9ca6b5 50%),linear-gradient(135deg,#9ca6b5 50%,transparent 50%); background-position: calc(100% - 12px) 12px,calc(100% - 8px) 12px; background-size: 4px 4px,4px 4px; background-repeat: no-repeat; }
-    .status-pill { display: inline-flex; height: 26px; align-items: center; padding: 0 9px; border-radius: 3px; color: #9a6a00; background: #fff6de; font-size: 10px; font-weight: 600; }
+    .control::placeholder { color: #64748b; }
+    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%); background-position: calc(100% - 12px) 12px,calc(100% - 8px) 12px; background-size: 4px 4px,4px 4px; background-repeat: no-repeat; }
+    .status-pill { display: inline-flex; height: 26px; align-items: center; padding: 0 9px; border-radius: 3px; color: #7c5500; background: #fff6de; font-size: 11px; font-weight: 600; }
     .multi-control { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fff; }
-    .mini-tag { display: inline-flex; min-height: 20px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #dbe8ff; border-radius: 3px; color: #3268c4; background: #f1f7ff; font-size: 10px; white-space: nowrap; }
-    .multi-add { height: 20px; padding: 0 5px; border: 0; border-radius: 3px; color: #7e8899; background: transparent; font-size: 10px; cursor: pointer; }
+    .mini-tag { display: inline-flex; min-height: 20px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #dbe8ff; border-radius: 3px; color: #3268c4; background: #f1f7ff; font-size: 11px; white-space: nowrap; }
+    .multi-add { height: 20px; padding: 0 5px; border: 0; border-radius: 3px; color: #5b6778; background: transparent; font-size: 11px; cursor: pointer; }
     .multi-add:hover { color: var(--detail-blue); background: #edf5ff; }
     .field--new { position: relative; }
     .field--new::before { content: ""; position: absolute; inset: -8px -9px -8px -9px; z-index: 0; border: 1px dashed #a8c9ff; border-radius: 5px; background: linear-gradient(180deg,rgba(238,245,255,.72),rgba(250,252,255,.28)); pointer-events: none; }
     .field--new > * { position: relative; z-index: 1; }
 
     .help-dot { position: relative; }
-    .help-tip { position: absolute; left: 50%; bottom: calc(100% + 7px); z-index: 30; width: 240px; padding: 8px 9px; border: 1px solid #dfe4ec; border-radius: 4px; color: #5f697a; background: #fff; box-shadow: 0 8px 24px rgba(27,42,74,.12); font-size: 10px; line-height: 1.55; opacity: 0; visibility: hidden; transform: translate(-50%,3px); transition: .15s ease; pointer-events: none; }
+    .help-tip { position: absolute; left: 50%; bottom: calc(100% + 7px); z-index: 30; width: 240px; padding: 8px 9px; border: 1px solid #dfe4ec; border-radius: 4px; color: #5f697a; background: #fff; box-shadow: 0 8px 24px rgba(27,42,74,.12); font-size: 11px; line-height: 1.55; opacity: 0; visibility: hidden; transform: translate(-50%,3px); transition: .15s ease; pointer-events: none; }
     .help-tip::after { content: ""; position: absolute; left: 50%; top: 100%; width: 7px; height: 7px; border-right: 1px solid #dfe4ec; border-bottom: 1px solid #dfe4ec; background: #fff; transform: translate(-50%,-4px) rotate(45deg); }
     .help-dot:hover .help-tip, .help-dot:focus-within .help-tip { opacity: 1; visibility: visible; transform: translate(-50%,0); }
     .consignment-editor { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #cbdcfb; border-radius: 3px; background: #fff; transition: .15s ease; }
     .consignment-editor:focus-within { border-color: #7dabff; box-shadow: 0 0 0 2px rgba(47,116,255,.1); }
     .consignment-chips { display: flex; min-width: 0; align-items: center; gap: 5px; flex-wrap: wrap; }
-    .consignment-chip { max-width: 100%; display: inline-flex; min-height: 21px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2d62ba; background: #f2f7ff; font-size: 10px; }
+    .consignment-chip { max-width: 100%; display: inline-flex; min-height: 21px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2d62ba; background: #f2f7ff; font-size: 11px; }
     .consignment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .chip-remove { width: 13px; height: 13px; flex: 0 0 13px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #86a7d7; cursor: pointer; }
     .chip-remove:hover { color: #d84a4a; background: #ffeded; }
     .chip-remove svg { width: 8px; height: 8px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-    .consignment-input { min-width: 76px; flex: 1; height: 21px; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 10px; outline: none; }
-    .consignment-input::placeholder { color: #aeb7c5; }
-    .consignment-add { height: 21px; flex: 0 0 auto; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #3b73d0; background: #f7fbff; font-size: 10px; cursor: pointer; }
+    .consignment-input { min-width: 76px; flex: 1; height: 21px; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 11px; outline: none; }
+    .consignment-input::placeholder { color: #64748b; }
+    .consignment-add { height: 21px; flex: 0 0 auto; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2f64bc; background: #f7fbff; font-size: 11px; cursor: pointer; }
     .consignment-add:hover { border-color: #9fc3ff; background: #eef6ff; }
-    .consignment-count { margin-left: 2px; color: var(--muted); font-size: 10px; white-space: nowrap; }
-    .field-error { display: none; margin-top: 4px; color: #e9564a; font-size: 10px; }
+    .consignment-count { margin-left: 2px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .field-error { display: none; margin-top: 4px; color: #c62828; font-size: 11px; }
     .field-error.show { display: block; }
     .textarea { min-height: 58px; resize: vertical; padding-top: 7px; }
     .transport-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px 22px; }
-    .note-card { display: flex; align-items: flex-start; gap: 10px; margin-top: 11px; padding: 11px 13px; border: 1px solid #dbe8fb; border-radius: 4px; color: #536174; background: #f7fbff; font-size: 10px; line-height: 1.65; }
+    .note-card { display: flex; align-items: flex-start; gap: 10px; margin-top: 11px; padding: 11px 13px; border: 1px solid #dbe8fb; border-radius: 4px; color: #536174; background: #f7fbff; font-size: 11px; line-height: 1.65; }
     .note-card svg { width: 15px; height: 15px; flex: 0 0 15px; margin-top: 1px; color: #4c86e8; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .note-card b { color: #2e5fa9; }
-    .prototype-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid #cfe0fb; border-radius: 17px; color: #356bbd; background: #fff; box-shadow: 0 6px 18px rgba(21,55,114,.12); font-size: 10px; cursor: pointer; }
+    .prototype-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid #cfe0fb; border-radius: 17px; color: #356bbd; background: #fff; box-shadow: 0 6px 18px rgba(21,55,114,.12); font-size: 11px; cursor: pointer; }
     .prototype-toggle:hover { background: #f8fbff; }
     .prototype-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .prototype-note { position: fixed; right: 20px; bottom: 60px; z-index: 49; width: 330px; padding: 15px 16px; border: 1px solid #dfe5ee; border-radius: 7px; background: #fff; box-shadow: 0 14px 40px rgba(20,38,75,.16); opacity: 0; visibility: hidden; transform: translateY(8px); transition: .18s ease; }
     .prototype-note.open { opacity: 1; visibility: visible; transform: translateY(0); }
     .prototype-note h3 { margin: 0 0 7px; color: #263247; font-size: 12px; }
-    .prototype-note p { margin: 0 0 8px; color: #687285; font-size: 10px; line-height: 1.7; }
-    .prototype-note ul { margin: 0; padding-left: 15px; color: #687285; font-size: 10px; line-height: 1.75; }
+    .prototype-note p { margin: 0 0 8px; color: #687285; font-size: 11px; line-height: 1.7; }
+    .prototype-note ul { margin: 0; padding-left: 15px; color: #687285; font-size: 11px; line-height: 1.75; }
     .prototype-note b { color: #356bbd; }
-    .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 10px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
+    .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 11px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
     .toast.show { opacity: 1; transform: translate(-50%,0); }
     @media (max-width: 1120px) { body { min-width: 980px; } .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .span-2,.span-4,.span-6 { grid-column: span 3; } }
     /* Embedded mode when opened inside index.html */
@@ -101,8 +101,82 @@
     html.detail-embedded .topbar { display:none; }
     html.detail-embedded .workspace { height:100vh; width:100%; }
     html.detail-embedded .detail-scroll { height:100vh; padding:12px 12px 0 8px; }
+
+    /* ===== 详情态：状态动作、利润概览与合同信息 ===== */
+    .page-head { flex-wrap:wrap; row-gap:8px; padding-top:8px; padding-bottom:8px; }
+    .head-primary-actions { display:flex; align-items:center; gap:8px; }
+    .edit-actions, .detail-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .detail-actions { display:none; }
+    html.detail-mode .detail-actions { display:flex; }
+    .detail-btn[hidden] { display:none !important; }
+    .detail-btn.danger { color:#c62828; border-color:#efc7c2; background:#fff8f7; }
+    .detail-btn.danger:hover { color:#c62828; border-color:#e7a7a0; background:#fff1ef; }
+    .status-pill[data-status="待签约"] { color:#8a5a00; border:1px solid #efd8a4; background:#fff8e8; }
+    .status-pill[data-status="签约中"] { color:#2563eb; border:1px solid #bed5ff; background:#edf5ff; }
+    .status-pill[data-status="已作废"] { color:#c62828; border:1px solid #efc7c2; background:#fff1ef; }
+    .profit-strip { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); overflow:hidden; border:1px solid #e5eaf1; border-radius:4px; background:#fff; }
+    .profit-metric { min-width:0; padding:14px 16px; border-right:1px solid #eef2f7; }
+    .profit-metric:last-child { border-right:0; }
+    .profit-metric-label { color:var(--detail-muted); font-size:11px; }
+    .profit-metric-value { margin-top:5px; color:var(--detail-ink); font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+    .profit-metric-meta { margin-top:4px; color:#64748b; font-size:11px; }
+    .profit-metric.positive .profit-metric-value { color:#047857; }
+    .profit-meter { display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px dashed #e5eaf1; color:#5b6778; font-size:11px; }
+    .profit-meter-track { flex:1; height:6px; overflow:hidden; border-radius:99px; background:#e9eef5; }
+    .profit-meter-track span { display:block; width:24.1%; height:100%; border-radius:99px; background:#047857; }
+    .contract-meta-grid { display:grid; grid-template-columns:.9fr .8fr .8fr .9fr 1.1fr 1.4fr; gap:14px 16px; }
+    .contract-party-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px 16px; margin-top:16px; padding-top:16px; border-top:1px solid #eef1f5; }
+    .contract-field { min-width:0; }
+    .contract-field label { display:flex; align-items:center; gap:4px; min-height:17px; margin-bottom:5px; color:#475569; font-size:11px; font-weight:500; }
+    .contract-field label .required { font-size:11px; }
+    .contract-value { width:100%; height:32px; padding:0 9px; border:1px solid #dfe5ed; border-radius:4px; color:#334155; background:#fff; font-size:12px; font-variant-numeric:tabular-nums; }
+    .contract-value.is-summary { border-color:#e8ecf2; background:#f5f7fa; color:#526176; }
+    .contract-value:focus { outline:none; border-color:#8db7ff; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .contract-meta-note { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; color:#64748b; font-size:11px; }
+    .contract-meta-note strong { color:#334155; font-weight:600; }
+    html:not(.detail-mode) .detail-only { display:none !important; }
+    .contract-modal-backdrop { position:fixed; inset:0; z-index:120; display:grid; place-items:center; padding:24px; background:rgba(15,23,42,.42); }
+    .contract-modal-backdrop[hidden] { display:none; }
+    .contract-modal { width:min(820px,calc(100vw - 48px)); max-height:calc(100vh - 48px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #dce3ed; border-radius:6px; background:#fff; box-shadow:0 24px 60px rgba(15,23,42,.24); }
+    .contract-modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:16px 18px; border-bottom:1px solid #eef1f5; background:#fafbfc; }
+    .contract-modal-title { color:var(--detail-ink); font-size:15px; font-weight:700; }
+    .contract-modal-subtitle { margin-top:4px; color:#64748b; font-size:11px; }
+    .contract-modal-close { width:28px; height:28px; display:grid; place-items:center; padding:0; border:1px solid #dfe4ec; border-radius:4px; color:#5b6778; background:#fff; cursor:pointer; }
+    .contract-modal-close:hover { color:#334155; border-color:#bdc7d6; background:#f8fafc; }
+    .contract-modal-body { overflow:auto; padding:18px; }
+    .contract-preview-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px 18px; padding:16px; border:1px solid #e5eaf1; border-radius:4px; background:#fbfcfe; }
+    .contract-preview-field label { display:block; margin-bottom:4px; color:#64748b; font-size:11px; }
+    .contract-preview-field strong { display:block; overflow:hidden; color:#23344d; font-size:12px; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
+    .contract-preview-parties { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:16px; }
+    .contract-preview-party { padding:14px 16px; border:1px solid #e5eaf1; border-radius:4px; }
+    .contract-preview-party h4 { margin:0 0 9px; color:#334155; font-size:12px; }
+    .contract-preview-party p { margin:4px 0; color:#5b6778; font-size:11px; line-height:1.55; }
+    .contract-preview-party p b { color:#334155; font-weight:600; }
+    .contract-modal-foot { display:flex; justify-content:flex-end; padding:12px 18px; border-top:1px solid #eef1f5; background:#fafbfc; }
+    .contract-modal-open { overflow:hidden; }
+    @media(max-width:1320px) {
+      .contract-meta-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      .contract-party-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media(max-width:880px) {
+      .profit-strip { grid-template-columns:1fr; }
+      .profit-metric { border-right:0; border-bottom:1px solid #eef2f7; }
+      .profit-metric:last-child { border-bottom:0; }
+      .contract-meta-grid, .contract-party-grid, .contract-preview-grid, .contract-preview-parties { grid-template-columns:1fr; }
+    }
   </style>
-  <script>if (window.self !== window.top || new URLSearchParams(window.location.search).get("embed") === "1") document.documentElement.classList.add("detail-embedded");</script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("no")) document.documentElement.classList.add("detail-mode");
+      if (window.self !== window.top || params.get("embed") === "1") document.documentElement.classList.add("detail-embedded");
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/design-system.css">
+  <link rel="stylesheet" href="../assets/ui-state.css">
+  <link rel="stylesheet" href="../assets/accessibility.css">
+  <link rel="stylesheet" href="../assets/customer-order-feedback.css">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
   <svg class="svg-sprite" aria-hidden="true">
@@ -117,6 +191,8 @@
     <symbol id="p-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.5 6.3L4 9m2 6a7 7 0 0 0 11.5 2.7L20 15"/></symbol>
     <symbol id="p-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6H5V6h6"/></symbol>
     <symbol id="p-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 10.5v5M12 7.5h.01"/></symbol>
+    <symbol id="p-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M9.5 12h5M9.5 15.5h5"/></symbol>
+    <symbol id="p-check" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7"/></symbol>
     <symbol id="p-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
     <symbol id="p-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
     <symbol id="p-link" viewBox="0 0 24 24"><path d="m9.2 14.8 5.6-5.6M7.5 16.5l-1.1 1.1a3.3 3.3 0 0 1-4.7-4.7l3-3a3.3 3.3 0 0 1 4.7 0M16.5 7.5l1.1-1.1a3.3 3.3 0 0 1 4.7 4.7l-3 3a3.3 3.3 0 0 1-4.7 0"/></symbol>
@@ -161,24 +237,49 @@
         </div>
       </header>
 
-      <main class="detail-scroll">
+      <main class="detail-scroll" id="orderDetailForm">
+      <h1 class="sr-only">客户订单新增</h1>
+      <h2 class="sr-only">业务表单</h2>
+      <div data-ui-form-alert hidden></div>
         <div class="page-head">
           <div class="page-title">客户订单新增<svg><use href="#p-link"/></svg></div>
+          <span class="ui-dirty-indicator" id="detailDirtyIndicator" hidden>未保存</span>
           <div class="page-head-spacer"></div>
-          <button class="detail-btn" id="backToListBtn" type="button">返回</button>
-          <button class="detail-btn" data-toast="草稿已保存">保存</button>
-          <button class="detail-btn outline-primary" data-toast="已提交客户订单">提交</button>
-          <button class="detail-btn primary" data-toast="已提交，进入物流需求填写">提交并填写物流需求</button>
+          <div class="head-primary-actions">
+            <button class="detail-btn" id="backToListBtn" type="button">返回</button>
+            <div class="detail-actions" id="detailActions">
+              <button class="detail-btn outline-primary" id="viewContractBtn" type="button">查看合同</button>
+              <button class="detail-btn primary" id="initiateSignBtn" type="button" hidden>发起签署</button>
+              <button class="detail-btn danger" id="voidOrderBtn" type="button" hidden>作废</button>
+              <button class="detail-btn" id="withdrawSignBtn" type="button" hidden>撤销签署</button>
+              <button class="detail-btn primary" id="reclaimOriginalBtn" type="button" hidden>正本回收</button>
+            </div>
+          </div>
+          <div class="edit-actions" id="editActions">
+            <button class="detail-btn" id="saveDraftBtn" type="button">保存</button>
+            <button class="detail-btn outline-primary" id="submitOrderBtn" type="button">提交</button>
+            <button class="detail-btn primary" id="submitFlowBtn" type="button">提交并填写物流需求</button>
+          </div>
+          <div class="edit-actions" id="feedbackPageActions" hidden>
+            <button class="detail-btn" id="previewFeedbackBtn" type="button">预览客户版</button>
+            <button class="detail-btn outline-primary" id="downloadFeedbackBtn" type="button">下载确认单</button>
+            <button class="detail-btn primary" id="sendFeedbackBtn" type="button">反馈客户</button>
+          </div>
         </div>
+        <div class="detail-view-tabs" role="tablist" aria-label="订单详情视图">
+          <button class="detail-view-tab active" id="orderInfoTab" type="button" role="tab" aria-selected="true" aria-controls="orderInfoView" data-detail-tab="order">订单信息</button>
+          <button class="detail-view-tab" id="feedbackTab" type="button" role="tab" aria-selected="false" aria-controls="feedbackView" data-detail-tab="feedback" tabindex="-1">履约反馈</button>
+        </div>
+        <div class="detail-view" id="orderInfoView" role="tabpanel" aria-labelledby="orderInfoTab">
         <section class="detail-section" aria-labelledby="org-title">
           <div class="detail-section-head"><div class="detail-section-title" id="org-title"><svg><use href="#p-down"/></svg>组织信息</div></div>
           <div class="detail-section-body">
             <div class="form-grid">
-              <div class="field"><div class="field-label">业务员<span class="required">*</span></div><input class="control" value="苏丽蓉" aria-label="业务员"></div>
-              <div class="field"><div class="field-label">部门<span class="required">*</span></div><input class="control" value="物流运营部" aria-label="部门"></div>
-              <div class="field"><div class="field-label">核算组<span class="required">*</span></div><input class="control" value="华东一组" aria-label="核算组"></div>
-              <div class="field"><div class="field-label">公司<span class="required">*</span></div><input class="control" value="厦门建发物流有限公司" aria-label="公司"></div>
-              <div class="field"><div class="field-label">经营单位<span class="required">*</span></div><input class="control" value="4PL 控制塔" aria-label="经营单位"></div>
+              <div class="field"><div class="field-label">业务员<span class="required">*</span></div><input class="control" autocomplete="off" value="苏丽蓉" aria-label="业务员"></div>
+              <div class="field"><div class="field-label">部门<span class="required">*</span></div><input class="control" autocomplete="off" value="物流运营部" aria-label="部门"></div>
+              <div class="field"><div class="field-label">核算组<span class="required">*</span></div><input class="control" autocomplete="off" value="华东一组" aria-label="核算组"></div>
+              <div class="field"><div class="field-label">公司<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发物流有限公司" aria-label="公司"></div>
+              <div class="field"><div class="field-label">经营单位<span class="required">*</span></div><input class="control" autocomplete="off" value="4PL 控制塔" aria-label="经营单位"></div>
             </div>
           </div>
         </section>
@@ -187,18 +288,18 @@
           <div class="detail-section-head"><div class="detail-section-title" id="basic-title"><svg><use href="#p-down"/></svg>基础信息</div></div>
           <div class="detail-section-body">
             <div class="form-grid">
-              <div class="field"><div class="field-label">订单号</div><input class="control" value="CO-20261026-001" readonly aria-label="订单号"></div>
+              <div class="field"><div class="field-label">订单号</div><input class="control" autocomplete="off" value="CO-20261026-001" readonly aria-label="订单号"></div>
               <div class="field"><div class="field-label">订单状态</div><span class="status-pill">草稿</span></div>
-              <div class="field"><div class="field-label">客户<span class="required">*</span></div><input class="control" value="厦门建发新能源物流有限公司" aria-label="客户"></div>
-              <div class="field"><div class="field-label">客户结算抬头<span class="required">*</span></div><input class="control" value="厦门建发新能源物流有限公司" aria-label="客户结算抬头"></div>
+              <div class="field"><div class="field-label">客户<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发新能源物流有限公司" aria-label="客户"></div>
+              <div class="field"><div class="field-label">客户结算抬头<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发新能源物流有限公司" aria-label="客户结算抬头"></div>
               <div class="field"><div class="field-label">客户类型<span class="required">*</span></div><select class="control" aria-label="客户类型"><option>外部客户</option><option>内部客户</option></select></div>
-              <div class="field"><div class="field-label">客户联系人</div><input class="control" value="张先生" aria-label="客户联系人"></div>
+              <div class="field"><div class="field-label">客户联系人</div><input class="control" autocomplete="off" value="张先生" aria-label="客户联系人"></div>
 
-              <div class="field"><div class="field-label">客户联系人电话</div><input class="control" value="138 0000 0000" aria-label="客户联系人电话"></div>
-              <div class="field"><div class="field-label">客户联系人邮箱</div><input class="control" value="contact@example.com" aria-label="客户联系人邮箱"></div>
+              <div class="field"><div class="field-label">客户联系人电话</div><input class="control" autocomplete="off" value="138 0000 0000" aria-label="客户联系人电话"></div>
+              <div class="field"><div class="field-label">客户联系人邮箱</div><input class="control" autocomplete="off" value="contact@example.com" aria-label="客户联系人邮箱"></div>
               <div class="field"><div class="field-label">业务类型<span class="required">*</span></div><select class="control" aria-label="业务类型"><option>出口</option><option>进口</option><option>内贸</option><option>转口</option></select></div>
-              <div class="field"><div class="field-label">业务日期<span class="required">*</span></div><input class="control" type="date" value="2026-10-26" aria-label="业务日期"></div>
-              <div class="field"><div class="field-label">项目号</div><input class="control" value="PRJ-2026-018" aria-label="项目号"></div>
+              <div class="field"><div class="field-label">业务日期<span class="required">*</span></div><input class="control" autocomplete="off" type="date" value="2026-10-26" aria-label="业务日期"></div>
+              <div class="field"><div class="field-label">项目号</div><input class="control" autocomplete="off" value="PRJ-2026-018" aria-label="项目号"></div>
               <div class="field"><div class="field-label">贸易条款</div><select class="control" aria-label="贸易条款"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select></div>
 
               <div class="field field--new span-2">
@@ -242,10 +343,66 @@
           <div class="detail-section-body">
             <div class="transport-row">
               <div class="field"><div class="field-label">运输类型<span class="required">*</span></div><select class="control" aria-label="运输类型"><option>请选择</option><option>汽运</option><option>水运</option><option>铁运</option><option>空运</option></select></div>
-              <div class="field"><div class="field-label">车辆/箱型要求</div><input class="control" placeholder="请输入" aria-label="车辆箱型要求"></div>
-              <div class="field"><div class="field-label">计划运输日期</div><input class="control" type="date" aria-label="计划运输日期"></div>
+              <div class="field"><div class="field-label">车辆/箱型要求</div><input class="control" autocomplete="off" placeholder="请输入" aria-label="车辆箱型要求"></div>
+              <div class="field"><div class="field-label">计划运输日期</div><input class="control" autocomplete="off" type="date" aria-label="计划运输日期"></div>
             </div>
             <div class="field" style="margin-top:16px"><div class="field-label">其他特殊要求</div><textarea class="control textarea" placeholder="请输入" aria-label="其他特殊要求"></textarea></div>
+          </div>
+        </section>
+
+        <section class="detail-section detail-only" aria-labelledby="profit-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="profit-title"><svg><use href="#p-down"/></svg>利润仪表盘</div></div>
+          <div class="detail-section-body">
+            <div class="profit-strip">
+              <div class="profit-metric">
+                <div class="profit-metric-label">预估收入</div>
+                <div class="profit-metric-value" data-profit-field="estimatedRevenue">¥4,150,000</div>
+                <div class="profit-metric-meta">按当前合同与报价汇总</div>
+              </div>
+              <div class="profit-metric">
+                <div class="profit-metric-label">预估成本</div>
+                <div class="profit-metric-value" data-profit-field="estimatedCost">¥3,150,000</div>
+                <div class="profit-metric-meta">含供应商预估成本</div>
+              </div>
+              <div class="profit-metric positive">
+                <div class="profit-metric-label">预估毛利</div>
+                <div class="profit-metric-value" data-profit-field="estimatedGross">¥1,000,000</div>
+                <div class="profit-metric-meta">毛利率 <b data-profit-field="margin">24.10%</b></div>
+              </div>
+            </div>
+            <div class="profit-meter">
+              <span>预估毛利率</span>
+              <div class="profit-meter-track" aria-hidden="true"><span></span></div>
+              <strong data-profit-field="marginText">24.10%</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section detail-only" id="contractSection" aria-labelledby="contract-title">
+          <div class="detail-section-head">
+            <div class="detail-section-title" id="contract-title"><svg><use href="#p-down"/></svg>合同信息</div>
+            <div class="page-head-spacer"></div>
+            <span class="contract-meta-note"><strong data-contract-field="version">V1.0</strong><span>合同版本</span></span>
+          </div>
+          <div class="detail-section-body">
+            <div class="contract-meta-grid">
+              <div class="contract-field"><label for="contractNo">合同编号</label><input class="contract-value is-summary" id="contractNo" readonly data-contract-field="no" aria-label="合同编号"></div>
+              <div class="contract-field"><label for="contractVersion">合同版本号</label><input class="contract-value is-summary" id="contractVersion" readonly data-contract-field="version" aria-label="合同版本号"></div>
+              <div class="contract-field"><label for="contractStatus">合同状态</label><input class="contract-value is-summary" id="contractStatus" readonly data-contract-field="status" aria-label="合同状态"></div>
+              <div class="contract-field"><label for="signMethod">签约方式</label><input class="contract-value is-summary" id="signMethod" readonly data-contract-field="signMethod" aria-label="签约方式"></div>
+              <div class="contract-field"><label for="signMode">签约模式<span class="required">*</span></label><input class="contract-value is-summary" id="signMode" readonly data-contract-field="signMode" aria-label="签约模式"></div>
+              <div class="contract-field"><label for="platformCompany">物流平台公司<span class="required">*</span></label><input class="contract-value is-summary" id="platformCompany" readonly data-contract-field="platformCompany" aria-label="物流平台公司"></div>
+            </div>
+            <div class="contract-party-grid">
+              <div class="contract-field"><label for="principalName">委托方联系人<span class="required">*</span></label><input class="contract-value" id="principalName" readonly data-contract-field="principalName" aria-label="委托方联系人"></div>
+              <div class="contract-field"><label for="principalPhone">委托方联系方式<span class="required">*</span></label><input class="contract-value" id="principalPhone" readonly data-contract-field="principalPhone" aria-label="委托方联系方式"></div>
+              <div class="contract-field"><label for="principalAddress">委托方邮寄地址<span class="required">*</span></label><input class="contract-value" id="principalAddress" readonly data-contract-field="principalAddress" aria-label="委托方邮寄地址"></div>
+              <div class="contract-field"><label for="principalEmail">委托方邮箱</label><input class="contract-value" id="principalEmail" readonly data-contract-field="principalEmail" aria-label="委托方邮箱"></div>
+              <div class="contract-field"><label for="counterpartyName">受托方联系人<span class="required">*</span></label><input class="contract-value" id="counterpartyName" readonly data-contract-field="counterpartyName" aria-label="受托方联系人"></div>
+              <div class="contract-field"><label for="counterpartyPhone">受托方联系方式<span class="required">*</span></label><input class="contract-value" id="counterpartyPhone" readonly data-contract-field="counterpartyPhone" aria-label="受托方联系方式"></div>
+              <div class="contract-field"><label for="counterpartyAddress">受托方邮寄地址<span class="required">*</span></label><input class="contract-value" id="counterpartyAddress" readonly data-contract-field="counterpartyAddress" aria-label="受托方邮寄地址"></div>
+              <div class="contract-field"><label for="counterpartyEmail">受托方邮箱</label><input class="contract-value" id="counterpartyEmail" readonly data-contract-field="counterpartyEmail" aria-label="受托方邮箱"></div>
+            </div>
           </div>
         </section>
 
@@ -253,11 +410,66 @@
           <svg><use href="#p-info"/></svg>
           <div><b>原型说明：</b>客户委托单号位于“基础信息”第 3 行左侧，与“服务范围”同行；采用标准表单控件，不额外增加页面高度。支持回车录入多个单号、删除标签和重复校验。</div>
         </div>
+        </div>
+        <section class="detail-view feedback-view" id="feedbackView" role="tabpanel" aria-labelledby="feedbackTab" hidden>
+          <div class="feedback-overview">
+            <div class="feedback-overview-head">
+              <div>
+                <div class="feedback-title-row"><h2 class="feedback-title">履约反馈</h2><span class="feedback-release-state" id="feedbackReleaseState">已反馈客户</span><span class="feedback-version" id="feedbackVersion">V1.2</span></div>
+                <p class="feedback-meta"><span id="feedbackUpdatedAt">最后更新 2026-11-01 14:30</span><span>客户可见范围：<strong>履约、港口作业、验收与费用结果</strong></span></p>
+              </div>
+              <div class="feedback-context-actions">
+                <button class="detail-btn" id="viewFeedbackRecordsBtn" type="button">查看反馈记录</button>
+                <button class="detail-btn outline-primary" id="editFeedbackBtn" type="button">修改</button>
+                <button class="detail-btn primary" id="startAcceptanceBtn" type="button">发起验收申请</button>
+              </div>
+            </div>
+            <div class="feedback-rail-wrap"><div class="feedback-rail" id="feedbackRail" role="tablist" aria-label="履约作业节点"></div></div>
+          </div>
+          
+          <div class="feedback-main-grid">
+            <section class="feedback-detail" aria-labelledby="feedbackDetailTitle">
+              <div class="feedback-detail-head"><div><h2 class="feedback-detail-title" id="feedbackDetailTitle">节点详情</h2></div><span class="feedback-state" id="feedbackDetailState"></span><span class="feedback-detail-time" id="feedbackDetailTime"></span></div>
+              <div class="feedback-detail-body" id="feedbackDetailBody"></div>
+            </section>
+          </div></section>
       </main>
     </section>
   </div>
 
-  <aside class="prototype-note" id="prototypeNote" aria-label="原型说明">
+  <div class="feedback-preview-backdrop" id="feedbackPreviewBackdrop" hidden>
+    <section class="feedback-preview" role="dialog" aria-modal="true" aria-labelledby="feedbackPreviewTitle">
+      <div class="feedback-preview-head"><div><h2 class="feedback-preview-title" id="feedbackPreviewTitle">客户版履约反馈</h2><p class="feedback-preview-subtitle" id="feedbackPreviewSubtitle"></p></div><button class="feedback-preview-close" id="feedbackPreviewClose" type="button" aria-label="关闭预览"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-preview-body" id="feedbackPreviewBody"></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackPreviewCancel" type="button">关闭</button><button class="detail-btn primary" id="feedbackPreviewPrimary" type="button">确认反馈</button></div>
+    </section>
+  </div>
+
+  <div class="feedback-edit-backdrop" id="feedbackEditBackdrop" hidden>
+    <section class="feedback-edit-panel" role="dialog" aria-modal="true" aria-labelledby="feedbackEditTitle">
+      <div class="feedback-preview-head">
+        <div><h2 class="feedback-preview-title" id="feedbackEditTitle">修改履约信息</h2><p class="feedback-preview-subtitle">可同时修改订舱确认、宣船及航次确认、到港/靠泊/装船/离港信息。</p></div>
+        <button class="feedback-preview-close" id="feedbackEditClose" type="button" aria-label="关闭修改"><svg><use href="#p-close"/></svg></button>
+      </div>
+      <div class="feedback-edit-body" id="feedbackEditBody"></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackEditCancel" type="button">取消</button><button class="detail-btn primary" id="feedbackEditSave" type="button">保存修改</button></div>
+    </section>
+  </div>
+
+  <div class="feedback-records-backdrop" id="feedbackRecordsBackdrop" hidden>
+    <section class="feedback-records-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackRecordsTitle">
+      <div class="feedback-records-dialog-head"><div><h2 class="feedback-preview-title" id="feedbackRecordsTitle">反馈记录</h2><p class="feedback-preview-subtitle">按时间倒序展示当前订单的反馈更新记录。</p></div><button class="feedback-preview-close" id="feedbackRecordsClose" type="button" aria-label="关闭反馈记录"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-records-dialog-body"><ol class="feedback-record-list" id="feedbackRecordsList"></ol></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackRecordsDone" type="button">关闭</button></div>
+    </section>
+  </div>
+  <div class="feedback-records-backdrop" id="feedbackAcceptanceBackdrop" hidden>
+    <section class="feedback-records-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackAcceptanceTitle">
+      <div class="feedback-records-dialog-head"><div><h2 class="feedback-preview-title" id="feedbackAcceptanceTitle">发起验收申请</h2><p class="feedback-preview-subtitle">请确认以下商品明细后发起验收申请。</p></div><button class="feedback-preview-close" id="feedbackAcceptanceClose" type="button" aria-label="关闭验收申请"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-records-dialog-body" id="feedbackAcceptanceBody"></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackAcceptanceCancel" type="button">取消</button><button class="detail-btn primary" id="feedbackAcceptanceSubmit" type="button">确认发起</button></div>
+    </section>
+  </div>  <aside class="prototype-note" id="prototypeNote" aria-label="原型说明">
     <h3>为什么放在这里</h3>
     <p>客户委托单号是可编辑、可多值的业务字段，放在“基础信息”表单栅格内比标题行右侧更符合操作习惯。</p>
     <ul>
@@ -268,6 +480,44 @@
   </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <div class="contract-modal-backdrop" id="contractDialog" hidden>
+    <section class="contract-modal" role="dialog" aria-modal="true" aria-labelledby="contractDialogTitle" tabindex="-1">
+      <div class="contract-modal-head">
+        <div>
+          <div class="contract-modal-title" id="contractDialogTitle">合同详情</div>
+          <div class="contract-modal-subtitle" data-contract-preview="no">CON2026103000247 · V1.0</div>
+        </div>
+        <button class="contract-modal-close" id="contractDialogClose" type="button" title="关闭合同详情" aria-label="关闭合同详情">✕</button>
+      </div>
+      <div class="contract-modal-body">
+        <div class="contract-preview-grid">
+          <div class="contract-preview-field"><label>合同状态</label><strong data-contract-preview="status">创建</strong></div>
+          <div class="contract-preview-field"><label>签约方式</label><strong data-contract-preview="signMethod">线下签约</strong></div>
+          <div class="contract-preview-field"><label>签约模式</label><strong data-contract-preview="signMode">物流平台公司签约</strong></div>
+          <div class="contract-preview-field"><label>物流平台公司</label><strong data-contract-preview="platformCompany">厦门建发供应链物流科技有限公司</strong></div>
+        </div>
+        <div class="contract-preview-parties">
+          <div class="contract-preview-party">
+            <h4>委托方</h4>
+            <p><b>联系人：</b><span data-contract-preview="principalName">梁露</span></p>
+            <p><b>联系方式：</b><span data-contract-preview="principalPhone">0592-259-2236</span></p>
+            <p><b>邮寄地址：</b><span data-contract-preview="principalAddress">中国厦门市环岛东路1699号建发国际大厦27楼</span></p>
+            <p><b>邮箱：</b><span data-contract-preview="principalEmail">lianglu@endlogistics.com</span></p>
+          </div>
+          <div class="contract-preview-party">
+            <h4>受托方</h4>
+            <p><b>联系人：</b><span data-contract-preview="counterpartyName">王保君</span></p>
+            <p><b>联系方式：</b><span data-contract-preview="counterpartyPhone">15064886112</span></p>
+            <p><b>邮寄地址：</b><span data-contract-preview="counterpartyAddress">亚洲/中国/山东省/青岛市/黄岛区 山东省青岛市黄岛区</span></p>
+            <p><b>邮箱：</b><span data-contract-preview="counterpartyEmail">Richlay@zg-express.com</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="contract-modal-foot"><button class="detail-btn" id="contractDialogDone" type="button">关闭</button></div>
+    </section>
+  </div>
+
+  <script src="../assets/prototype-data.js"></script>
   <script>
     (() => {
       const chips = document.getElementById('consignmentChips');
@@ -339,13 +589,16 @@
       if (backToListBtn) {
         backToListBtn.addEventListener('click', () => {
           const params = new URLSearchParams(window.location.search);
-          const fromList = params.get('from') === 'customer-order-list' || document.referrer.includes('customer-order-list-prototype.html');
-          if (fromList && window.history.length > 1) {
+          const from = params.get('from') || '';
+          const cameFromList = from === 'customer-order-list' || document.referrer.includes('customer-order-list-prototype.html');
+          const cameFromTracking = from === 'customer-order-tracking' || document.referrer.includes('customer-order-tracking.html');
+          if ((cameFromList || cameFromTracking) && window.history.length > 1) {
             window.history.back();
             return;
           }
           const embedded = window.self !== window.top || params.get('embed') === '1';
-          window.location.href = 'customer-order-list-prototype.html' + (embedded ? '?embed=1' : '');
+          const target = cameFromTracking ? 'customer-order-tracking.html' : 'customer-order-list-prototype.html';
+          window.location.href = target + (embedded ? '?embed=1' : '');
         });
       }
       document.querySelectorAll('[data-toast]').forEach((button) => {
@@ -365,5 +618,84 @@
       });
     })();
   </script>
+  <script src="../assets/ui-state.js"></script>
+  <script src="../assets/customer-order-detail.js"></script>
+  <script src="../assets/customer-order-feedback.js"></script>
+  <script>
+    (() => {
+      const scope = document.getElementById('orderDetailForm');
+      if (!scope || !window.UIState) return;
+      const dirty = UIState.watchDirty(scope, document.getElementById('detailDirtyIndicator'));
+
+      scope.querySelectorAll('.field').forEach((field) => {
+        if (!field.querySelector('.required')) return;
+        const control = field.querySelector('input:not([type="hidden"]), select, textarea');
+        if (control && !control.disabled && !control.readOnly) control.required = true;
+      });
+
+      scope.querySelectorAll('input, select, textarea').forEach((control) => {
+        control.addEventListener('blur', () => {
+          if (control.disabled || control.readOnly) return;
+          if (control.required && !control.value.trim()) {
+            UIState.setFieldState(control, 'invalid', (control.tagName === 'SELECT' ? '请选择' : '请填写') + (control.getAttribute('aria-label') || '此项'));
+          } else if (control.getAttribute('aria-invalid') === 'true') {
+            UIState.clearFieldState(control);
+          }
+        });
+        control.addEventListener('input', () => {
+          if (control.getAttribute('aria-invalid') === 'true' && control.value.trim()) UIState.clearFieldState(control);
+        });
+      });
+
+      const simulate = (button, validate, successMessage) => {
+        if (button.disabled) return;
+        const requiredPermission = validate ? 'customerOrders.submit' : 'customerOrders.edit';
+        if (window.PrototypeAccess && !window.PrototypeAccess.can(requiredPermission)) {
+          UIState.showFormAlert(scope, 'error', '当前角色没有执行此操作的权限。');
+          return;
+        }
+        const injectedFailure = window.PrototypeRuntime && window.PrototypeRuntime.consumeFailure(validate ? 'orderSubmit' : 'orderSave');
+        if (injectedFailure === 'timeout') {
+          UIState.showFormAlert(scope, 'error', '请求超时，当前草稿已保留。请稍后重试。');
+          return;
+        }
+        if (!navigator.onLine) {
+          UIState.showFormAlert(scope, 'error', '网络连接已断开，当前草稿已保留。恢复网络后请重新提交。');
+          return;
+        }
+        window.__orderSubmitAttempts = (window.__orderSubmitAttempts || 0) + 1;
+        UIState.clearFormAlert(scope);
+        if (validate) {
+          const result = UIState.validateRequired(scope);
+          if (!result.valid) {
+            UIState.showFormAlert(scope, 'error', `请先修正 ${result.invalidCount} 个必填字段，再提交订单。`);
+            return;
+          }
+        }
+        UIState.setButtonLoading(button, true, '处理中');
+        UIState.setFormDisabled(scope, true);
+        window.setTimeout(() => {
+          UIState.setFormDisabled(scope, false);
+          UIState.setButtonLoading(button, false);
+          UIState.showFormAlert(scope, 'success', successMessage);
+          dirty.markClean();
+        }, 700);
+      };
+
+      document.getElementById('saveDraftBtn').addEventListener('click', (event) => {
+        simulate(event.currentTarget, false, '草稿已保存，未保存标记已清除。');
+      });
+      document.getElementById('submitOrderBtn').addEventListener('click', (event) => {
+        simulate(event.currentTarget, true, '客户订单已提交，后续可继续安排物流。');
+      });
+      document.getElementById('submitFlowBtn').addEventListener('click', (event) => {
+        simulate(event.currentTarget, true, '客户订单已提交，可继续填写物流需求。');
+      });
+    })();
+  </script>
+  <script src="../assets/prototype-access.js"></script>
 </body>
 </html>
+
+
+

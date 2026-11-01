@@ -961,9 +961,7 @@ input:where([type='button'], [type='reset'], [type='submit']),
 
 </script>
     <!-- FontAwesome 6.4.0 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/vendor/fontawesome/css/all.min.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1849,10 +1847,14 @@ body.locked{overflow:hidden}
 <!-- 4PL Control Tower embedded mode -->
 <script>
 (function(){
-  var embedded = window.self !== window.top || new URLSearchParams(location.search).get('embed') === '1';
+  var params = new URLSearchParams(location.search);
+  var embedded = window.self !== window.top || params.get('embed') === '1';
   if (embedded) {
     document.documentElement.classList.add('ct-embedded');
     document.documentElement.dataset.ctEmbedded = 'true';
+  }
+  if (params.get('panorama') === '1') {
+    document.documentElement.classList.add('panorama-mode');
   }
   window.addEventListener('load', function(){
     if (embedded && window.parent && window.parent !== window) {
@@ -1874,8 +1876,21 @@ html.ct-embedded .main { min-width:0 !important; width:auto !important; }
 html.ct-embedded .ct-main { position:fixed !important; left:0 !important; top:0 !important; right:0 !important; bottom:0 !important; }
 html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{background:#f3f5f8!important}
 </style>
+<style id="panorama-component-style">
+html.panorama-mode,
+html.panorama-mode body { width:100% !important; height:100% !important; min-width:0 !important; margin:0 !important; overflow:hidden !important; background:var(--bg) !important; }
+html.panorama-mode body > header,
+html.panorama-mode body > main { display:none !important; }
+html.panorama-mode .drawer-mask { display:none !important; }
+html.panorama-mode .drawer { position:absolute !important; inset:0 !important; width:100% !important; max-width:none !important; transform:none !important; visibility:visible !important; box-shadow:none !important; }
+html.panorama-mode .drawer[aria-hidden="true"] { visibility:visible !important; }
+</style>
   <link rel="stylesheet" href="../assets/query-conditions.css">
   <link rel="stylesheet" href="../assets/component-system.css">
+  <link rel="stylesheet" href="../assets/design-system.css">
+  <link rel="stylesheet" href="../assets/ui-state.css">
+  <link rel="stylesheet" href="../assets/accessibility.css">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 </head>
 <body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden">
 
@@ -1887,6 +1902,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
             <div>
                 <div class="flex items-center space-x-2">
                     <h1 class="font-bold text-slate-800 text-base tracking-tight">4PL控制塔客户订单跟踪台账</h1>
+                    <h2 class="sr-only">订单台账内容</h2>
                     <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-full border border-blue-200">企业级台账</span>
                 </div>
             </div>
@@ -1911,23 +1927,26 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                 </div>
             </div>
             <div id="queryBody" class="ct-query-body px-5 pb-1">
+
                 <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-x-4 gap-y-3">
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">客户订单号</label><input type="text" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="请输入"></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">客户</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>中央汇金投资有限责任公司</option><option>中国宝武钢铁集团有限公司</option><option>中国石油天然气股份有限公司</option><option>三一重工股份有限公司</option></select></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">业务类型</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>出口</option><option>进口</option><option>转口</option><option>内贸</option><option>境外内贸</option></select></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">服务范围</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>运输</option><option>报关清关</option><option>仓储</option><option>加工</option></select></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">运输类型</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>汽运</option><option>水运</option><option>铁运</option><option>多式联运</option></select></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">航运类型</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>散货</option><option>集装箱</option><option>件杂货</option><option>滚装</option></select></div></div>
+                    <div><label for="query-order-no" class="block text-[11px] leading-4 text-slate-500 mb-1">客户订单号</label><input id="query-order-no" name="orderNo" autocomplete="off" type="text" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="请输入"></div>
+                    <div><label for="query-customer" class="block text-[11px] leading-4 text-slate-500 mb-1">客户</label><select id="query-customer" name="customer" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>中央汇金投资有限责任公司</option><option>中国宝武钢铁集团有限公司</option><option>中国石油天然气股份有限公司</option><option>三一重工股份有限公司</option></select></div>
+                    <div><label for="query-business-type" class="block text-[11px] leading-4 text-slate-500 mb-1">业务类型</label><select id="query-business-type" name="businessType" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>出口</option><option>进口</option><option>转口</option><option>内贸</option><option>境外内贸</option></select></div>
+                    <div><label for="query-service-scope" class="block text-[11px] leading-4 text-slate-500 mb-1">服务范围</label><select id="query-service-scope" name="serviceScope" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>运输</option><option>报关清关</option><option>仓储</option><option>加工</option></select></div>
+                    <div><label for="query-transport-type" class="block text-[11px] leading-4 text-slate-500 mb-1">运输类型</label><select id="query-transport-type" name="transportType" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>汽运</option><option>水运</option><option>铁运</option><option>多式联运</option></select></div>
+                    <div><label for="query-shipping-type" class="block text-[11px] leading-4 text-slate-500 mb-1">航运类型</label><select id="query-shipping-type" name="shippingType" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>散货</option><option>集装箱</option><option>件杂货</option><option>滚装</option></select></div>
+                </div>
                 <div id="advanced-filter-panel" class="hidden mt-3">
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-x-4 gap-y-3">
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">装运类型</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>散货</option><option>集装箱</option><option>件杂货</option></select></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">贸易合同号</label><input type="text" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="请输入"></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">业务员公司</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>厦门建发亚投新能源物流有限公司</option><option>供应链物流科技</option></select></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">业务员部门</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>件杂部</option><option>单证客服部</option><option>调度组</option></select></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">业务员</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>庄巧玲</option><option>王静铭</option><option>刘婷</option></select></div>
-                        <div class="col-span-2"><label class="block text-[11px] leading-4 text-slate-500 mb-1">业务日期范围</label><div class="flex items-center gap-2"><input type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"><span class="text-slate-400 text-xs">~</span><input type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"></div></div>
-                        <div><label class="block text-[11px] leading-4 text-slate-500 mb-1">创建人</label><select class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>苏丽蓉</option><option>菜菜菜</option><option>庄巧玲</option></select></div>
-                        <div class="col-span-2"><label class="block text-[11px] leading-4 text-slate-500 mb-1">创建时间范围</label><div class="flex items-center gap-2"><input type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"><span class="text-slate-400 text-xs">~</span><input type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"></div></div></div>
+                        <div><label for="query-shipment-type" class="block text-[11px] leading-4 text-slate-500 mb-1">装运类型</label><select id="query-shipment-type" name="shipmentType" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>散货</option><option>集装箱</option><option>件杂货</option></select></div>
+                        <div><label for="query-trade-contract" class="block text-[11px] leading-4 text-slate-500 mb-1">贸易合同号</label><input id="query-trade-contract" name="tradeContractNo" autocomplete="off" type="text" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="请输入"></div>
+                        <div><label for="query-sales-company" class="block text-[11px] leading-4 text-slate-500 mb-1">业务员公司</label><select id="query-sales-company" name="salesCompany" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>厦门建发亚投新能源物流有限公司</option><option>供应链物流科技</option></select></div>
+                        <div><label for="query-sales-department" class="block text-[11px] leading-4 text-slate-500 mb-1">业务员部门</label><select id="query-sales-department" name="salesDepartment" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>件杂部</option><option>单证客服部</option><option>调度组</option></select></div>
+                        <div><label for="query-salesperson" class="block text-[11px] leading-4 text-slate-500 mb-1">业务员</label><select id="query-salesperson" name="salesperson" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>庄巧玲</option><option>王静铭</option><option>刘婷</option></select></div>
+                        <div class="col-span-2"><label class="block text-[11px] leading-4 text-slate-500 mb-1">业务日期范围</label><div class="flex items-center gap-2"><input id="query-business-date-from" name="businessDateFrom" aria-label="业务日期起" type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"><span class="text-slate-400 text-xs">~</span><input id="query-business-date-to" name="businessDateTo" aria-label="业务日期止" type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"></div></div>
+                        <div><label for="query-creator" class="block text-[11px] leading-4 text-slate-500 mb-1">创建人</label><select id="query-creator" name="creator" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"><option value="">请选择</option><option>苏丽蓉</option><option>菜菜菜</option><option>庄巧玲</option></select></div>
+                        <div class="col-span-2"><label class="block text-[11px] leading-4 text-slate-500 mb-1">创建时间范围</label><div class="flex items-center gap-2"><input id="query-created-date-from" name="createdDateFrom" aria-label="创建时间起" type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"><span class="text-slate-400 text-xs">~</span><input id="query-created-date-to" name="createdDateTo" aria-label="创建时间止" type="date" class="w-full h-7 px-2 text-[11.5px] bg-white border border-slate-200 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 flex-1"></div></div>
+                    </div>
                 </div>
                 <div class="flex justify-center">
                     <button onclick="toggleAdvancedFilter()" class="px-8 py-1 text-slate-300 hover:text-blue-500 transition" aria-label="展开更多条件">
@@ -1947,9 +1966,9 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
             </div>
         </div>
 
-<div class="flex-1 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="flex-1 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col ui-table-state-host" id="trackingTableHost">
             <div class="overflow-x-auto overflow-y-auto flex-1 custom-scrollbar">
-                <table class="w-full text-left text-xs border-collapse min-w-[1700px]">
+                <table class="ct-data-table tracking-table w-full text-left text-xs border-collapse min-w-[1700px]">
                     <thead class="bg-slate-50 text-slate-500 font-medium sticky top-0 z-30 border-b border-slate-200 shadow-sm">
                         <tr>
                             <th class="py-3 px-4 min-w-[200px]">客户订单与业务分类</th>
@@ -1974,7 +1993,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                         <tr class="row-hover transition" data-status="in_progress" data-type="bulk" data-unpaid="true">
                             <td class="py-3 px-4">
                                 <div class="flex flex-col space-y-1.5">
-                                    <a href="客户订单详情页.html?no=CO-20260901-BULK" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260901-BULK</a>
+                                    <a href="customer-order-detail-prototype.html?no=CO-20260901-BULK&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260901-BULK</a>
                                     <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="中国宝武钢铁集团有限公司">中国宝武钢铁集团有限公司</span>
                                     <div class="flex items-center space-x-1 pt-0.5">
                                         <span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">进口</span>
@@ -2062,7 +2081,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                         <tr class="row-hover transition" data-status="completed" data-type="bulk" data-unpaid="false">
                             <td class="py-3 px-4">
                                 <div class="flex flex-col space-y-1.5">
-                                    <a href="客户订单详情页.html?no=CO-20260903-DOMESTIC" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260903-DOMESTIC</a>
+                                    <a href="customer-order-detail-prototype.html?no=CO-20260903-DOMESTIC&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260903-DOMESTIC</a>
                                     <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="中国石油天然气股份有限公司">中国石油天然气股份有限公司</span>
                                     <div class="flex items-center space-x-1 pt-0.5">
                                         <span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">内贸</span>
@@ -2143,7 +2162,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                         <tr class="row-hover transition" data-status="in_progress" data-type="bulk" data-unpaid="true">
                             <td class="py-3 px-4">
                                 <div class="flex flex-col space-y-1.5">
-                                    <a href="客户订单详情页.html?no=CO-20260904-BREAKBULK" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260904-BREAKBULK</a>
+                                    <a href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260904-BREAKBULK</a>
                                     <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="中国重汽集团 (SINOTRUK)">中国重汽集团 (SINOTRUK)</span>
                                     <div class="flex items-center space-x-1 pt-0.5">
                                         <span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">出口</span>
@@ -2238,7 +2257,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                         <tr class="row-hover transition" data-status="pending" data-type="container" data-unpaid="true">
                             <td class="py-3 px-4">
                                 <div class="flex flex-col space-y-1.5">
-                                    <a href="客户订单详情页.html?no=CO-20260905-PENDING" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260905-PENDING</a>
+                                    <a href="customer-order-detail-prototype.html?no=CO-20260905-PENDING&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260905-PENDING</a>
                                     <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="浙江吉利控股集团">浙江吉利控股集团有限公司</span>
                                     <div class="flex items-center space-x-1 pt-0.5">
                                         <span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">出口</span>
@@ -2322,7 +2341,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                         <tr class="row-hover transition" data-status="in_progress" data-type="container" data-unpaid="true">
                             <td class="py-3 px-4">
                                 <div class="flex flex-col space-y-1.5">
-                                    <a href="客户订单详情页.html?no=CO-20260902-CONTAINER" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260902-CONTAINER</a>
+                                    <a href="customer-order-detail-prototype.html?no=CO-20260902-CONTAINER&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260902-CONTAINER</a>
                                     <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="三一重工股份有限公司">三一重工股份有限公司</span>
                                     <div class="flex items-center space-x-1 pt-0.5">
                                         <span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">出口</span>
@@ -2410,7 +2429,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                         <tr class="row-hover transition" data-status="pending" data-type="bulk" data-unpaid="true">
                             <td class="py-3 px-4">
                                 <div class="flex flex-col space-y-1.5">
-                                    <a href="客户订单详情页.html?no=CO-20260906-QUOTING" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260906-QUOTING</a>
+                                    <a href="customer-order-detail-prototype.html?no=CO-20260906-QUOTING&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20260906-QUOTING</a>
                                     <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="鞍钢集团有限公司">鞍钢集团有限公司</span>
                                     <div class="flex items-center space-x-1 pt-0.5">
                                         <span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">出口</span>
@@ -2496,7 +2515,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                                                     <tr class="row-hover transition" data-status="in_progress" data-type="bulk" data-unpaid="true">
                                 <td class="py-3 px-4">
                                     <div class="flex flex-col space-y-1.5">
-                                        <a href="客户订单详情页.html?no=CO-20261021-EMPTYCONS" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20261021-EMPTYCONS</a>
+                                        <a href="customer-order-detail-prototype.html?no=CO-20261021-EMPTYCONS&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20261021-EMPTYCONS</a>
                                         <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="厦门象屿股份有限公司">厦门象屿股份有限公司</span>
                                         <div class="flex items-center space-x-1 pt-0.5"><span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">出口</span><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-[10px] font-medium">水运</span><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-medium">散货</span></div>
                                     </div>
@@ -2516,7 +2535,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                             <tr class="row-hover transition" data-status="in_progress" data-type="bulk" data-unpaid="true">
                                 <td class="py-3 px-4">
                                     <div class="flex flex-col space-y-1.5">
-                                        <a href="客户订单详情页.html?no=CO-20261021-CANCELLED" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20261021-CANCELLED</a>
+                                        <a href="customer-order-detail-prototype.html?no=CO-20261021-CANCELLED&from=customer-order-tracking" class="font-bold text-blue-600 text-xs hover:underline tracking-wide">CO-20261021-CANCELLED</a>
                                         <span class="font-bold text-slate-800 text-xs truncate max-w-[170px]" title="福建三钢（集团）有限责任公司">福建三钢（集团）有限责任公司</span>
                                         <div class="flex items-center space-x-1 pt-0.5"><span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px] font-medium">内贸</span><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-[10px] font-medium">汽运</span><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-medium">散货</span></div>
                                     </div>
@@ -2550,10 +2569,10 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
     </main>
 
 <div class="drawer-mask" id="drawerMask"></div>
-<aside class="drawer" id="drawer" aria-hidden="true" aria-label="查看物流委托">
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drawerTitle" tabindex="-1">
   <div class="drawer-head">
     <div class="drawer-heading">
-      <span class="drawer-badge">全景跟踪</span>
+      <span class="drawer-badge" id="drawerTitle">全景跟踪</span>
       <div class="drawer-meta">
         <b id="drawerNo">XD20260928001</b>
         <span id="drawerCustomer">厦门建发生物流有限公司</span>
@@ -2565,7 +2584,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
         <button class="mode-tab active" data-mode="track">物流进度跟踪查询</button>
         <button class="mode-tab" data-mode="profit">客户订单利润分析</button>
       </div>
-      <button class="drawer-close" id="drawerClose" title="关闭">✕</button>
+      <button class="drawer-close" id="drawerClose" title="关闭" aria-label="关闭全景跟踪">✕</button>
     </div>
   </div>
   <div class="drawer-body">
@@ -2977,6 +2996,7 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
 </aside>
 
 <div class="toast" id="toast"></div>
+  <script src="../assets/prototype-data.js"></script>
     <script>
         // 高级筛选面板显隐切换
         function toggleQueryBody() {
@@ -3022,6 +3042,22 @@ html.ct-embedded body > main{padding:16px!important}html.ct-embedded body{backgr
                     row.classList.add('hidden');
                 }
             });
+
+            const visibleRows = Array.from(rows).filter(row => !row.classList.contains('hidden'));
+            const tableHost = document.getElementById('trackingTableHost');
+            if (window.UIState && tableHost) {
+                if (visibleRows.length === 0) {
+                    UIState.setTableState(tableHost, {
+                        state: 'empty',
+                        title: '当前状态下暂无订单',
+                        message: '切换履约状态，或回到“全部”查看全部订单。',
+                        actionLabel: '查看全部',
+                        onAction: () => filterStatus('all')
+                    });
+                } else {
+                    UIState.clearTableState(tableHost);
+                }
+            }
         }
 
         // 简易前端关键字搜索
@@ -4683,6 +4719,7 @@ if($("fbVendorBtn")){$("fbVendorBtn").textContent="全部供应商";$("fbVendorB
   applyReconState(orderId);
   drawerEl.classList.add("show");
   drawerEl.setAttribute("aria-hidden","false");
+  setTimeout(() => $("drawerClose")?.focus(), 0);
   maskEl.classList.add("show");
   document.body.classList.add("locked");
   // 先让抽屉进入可见状态，再渲染内容，避免在隐藏状态下渲染
@@ -4692,7 +4729,10 @@ if($("fbVendorBtn")){$("fbVendorBtn").textContent="全部供应商";$("fbVendorB
     requestAnimationFrame(fitStage);
   });
 }
-window.closeDrawer=function(){
+window.closeDrawer=function(){  if(new URLSearchParams(location.search).get("panorama")==="1"){
+    if(window.parent&&window.parent!==window)window.parent.postMessage({type:"close-demand-panorama"},"*");
+    return;
+  }
   drawerEl.classList.remove("show");
   drawerEl.setAttribute("aria-hidden","true");
   maskEl.classList.remove("show");
@@ -4836,7 +4876,213 @@ window.addEventListener("resize",()=>{
             updateTableVisibility();
         }
 if(document.getElementById('section-est-rec'))updateTableVisibility();
+        window.__orderDataMap = orderDataMap;
 </script>
-  <script src="../assets/component-system.js"></script>
+  <script>
+document.addEventListener('click', function (event) {
+  const link = event.target.closest('#order-table-body a[href*="customer-order-detail-prototype.html"]');
+  if (!link || !window.PrototypeData) return;
+  const no = new URL(link.href, window.location.href).searchParams.get('no');
+  const detail = no && window.__orderDataMap ? window.__orderDataMap[no] : null;
+  if (!detail) return;
+  const row = link.closest('tr');
+  const cells = row ? Array.from(row.cells).map((cell) => cell.innerText.trim()) : [];
+  const parts = String(detail.type || '').split('/').map((item) => item.trim()).filter(Boolean);
+  const route = String(detail.route || '').split('->').map((item) => item.trim()).filter(Boolean);
+  const dateMatch = String(no).match(/CO-(\d{4})(\d{2})(\d{2})/);
+  const businessDate = dateMatch ? `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}` : '';
+  const cargo = detail.cargoes && detail.cargoes[0] ? detail.cargoes[0] : null;
+  window.PrototypeData.rememberSelectedOrder({
+    no,
+    status: detail.status || '',
+    customer: detail.client || '',
+    goods: cargo ? cargo.name : '',
+    total: cargo ? cargo.qty : '',
+    origin: route[0] || '',
+    destination: route.length > 1 ? route[route.length - 1] : '',
+    businessType: parts[0] || '',
+    serviceScope: ['运输'],
+    transportType: parts[1] || '',
+    loadType: parts[2] || '',
+    sales: cells[8] || '',
+    department: cells[9] || '',
+    company: cells[10] || '',
+    consignments: [],
+    businessDate,
+    projectNo: '',
+    tradeTerm: '',
+    contact: '',
+    phone: '',
+    email: '',
+    remark: detail.route || ''
+  });
+});
+  </script>
+  <script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  if (params.get('panorama') !== '1') return;
+  document.documentElement.classList.add('panorama-mode');
+  let snapshot = null;
+  try {
+    const raw = sessionStorage.getItem('customerOrderPanoramaSnapshot');
+    snapshot = raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    snapshot = null;
+  }
+  if (!snapshot) {
+    snapshot = {
+      orderNo: params.get('no') || 'FCO202610280021',
+      orderStatus: '已安排',
+      customer: '青岛绿洲园花生食品有限公司',
+      demandNo: 'XQ202610280031',
+      products: ['脱皮花生仁'],
+      qty: 60,
+      loadType: '集装箱',
+      pickupDate: '2026-11-03',
+      createdAt: '2026-10-28 10:02',
+      logisticsDemands: []
+    };
+  }
+
+  function statusMeta(text, fallback) {
+    const label = text || fallback || '待处理';
+    if (/完成|已确认|已签收|已关闭/.test(label)) return { cls: 'done', text: label };
+    if (/异常|驳回|失败/.test(label)) return { cls: 'exception', text: label };
+    if (/执行|运输|已安排/.test(label)) return { cls: 'running', text: label };
+    return { cls: 'pending', text: label };
+  }
+  function parseQty(value) {
+    const number = Number(String(value == null ? '' : value).replace(/[^0-9.\-]/g, ''));
+    return Number.isFinite(number) && number > 0 ? number : 1;
+  }
+  function feedbackNames(type) {
+    if (type === '水运') return ['宣船', '船舶到港', '装船', '发运', '抵港', '卸货', '签收'];
+    if (type === '空运') return ['订舱', '过磅', '发运', '到港', '签收'];
+    if (type === '铁路') return ['计划', '装车', '发运', '到站', '签收'];
+    return ['派车计划', '装车', '发运', '运抵', '签收'];
+  }
+
+  const newConsignments = [];
+  const newTasks = [];
+  let consignmentSeq = 1;
+  let taskSeq = 1;
+  const products = Array.isArray(snapshot.products) && snapshot.products.length ? snapshot.products : ['商品'];
+  const totalQty = parseQty(snapshot.qty);
+  const demands = Array.isArray(snapshot.logisticsDemands) ? snapshot.logisticsDemands : [];
+
+  demands.forEach(function(demandItem){
+    const delegations = Array.isArray(demandItem.delegations) ? demandItem.delegations : [];
+    delegations.forEach(function(delegation){
+      const cid = 'P' + consignmentSeq++;
+      const cMeta = statusMeta(delegation.status, demandItem.status);
+      const taskTypes = Array.isArray(delegation.taskTypes) && delegation.taskTypes.length ? delegation.taskTypes : ['汽运'];
+      const taskIds = [];
+      const taskQty = Math.max(1, totalQty / taskTypes.length);
+      taskTypes.forEach(function(type, taskIndex){
+        const tid = 'PT' + taskSeq++;
+        const tMeta = statusMeta(delegation.status, demandItem.status);
+        const done = tMeta.cls === 'done';
+        const running = tMeta.cls === 'running';
+        const steps = feedbackNames(type);
+        const lastDone = done ? steps.length - 1 : running ? Math.min(2, steps.length - 2) : -1;
+        const feedbacks = steps.map(function(name, index){
+          return { name: name, time: index <= lastDone ? (demandItem.planDate || snapshot.pickupDate || '2026-10-29') + ' 09:00' : '', desc: index <= lastDone ? '已反馈' : '未反馈' };
+        });
+        const cargoQty = Math.max(1, taskQty / Math.max(1, products.length));
+        const task = {
+          id: tid,
+          taskId: String(delegation.no || 'FLST') + '-' + String(taskIndex + 1).padStart(2, '0'),
+          cid: cid,
+          name: String(delegation.no || 'FLST') + ' · ' + type,
+          status: tMeta.cls,
+          statusText: tMeta.text,
+          mode: type + '·' + (snapshot.loadType || '件杂货'),
+          from: demandItem.origin || '起运地',
+          to: demandItem.destination || '目的地',
+          current: done ? '签收' : running ? (steps[Math.min(lastDone + 1, steps.length - 1)] || '执行中') : '',
+          progress: done ? 100 : running ? 60 : 0,
+          qty: taskQty,
+          signedQty: done ? taskQty : running ? Math.round(taskQty * 0.6) : 0,
+          sourceIds: [],
+          latest: done ? '10-30 16:20' : running ? '10-29 13:20' : '尚未反馈',
+          products: products,
+          accept: done ? '确认通过' : '待确认',
+          issueTime: snapshot.createdAt || '',
+          finishTime: done ? '2026-10-30 16:20' : '',
+          feedbacks: feedbacks,
+          transportType: type,
+          loadType: snapshot.loadType || '件杂货',
+          pickupTime: demandItem.planDate || snapshot.pickupDate || '',
+          legs: [{ port: demandItem.destination || '目的地', unloadTime: done ? '2026-10-30 16:20' : '' }],
+          cargo: products.map(function(product){
+            return { name: product, qty: cargoQty, unit: '吨', loaded: cargoQty, moving: running ? cargoQty * 0.6 : 0, unloaded: done ? cargoQty : 0 };
+          }),
+          fbRows: products.map(function(product){
+            return { name: product, addr: demandItem.origin || '', qty: cargoQty, loaded: cargoQty, signed: done ? cargoQty : 0 };
+          })
+        };
+        TASK_EXT[tid] = {
+          transportType: type,
+          loadType: snapshot.loadType || '件杂货',
+          pickupTime: demandItem.planDate || snapshot.pickupDate || '',
+          legs: task.legs,
+          cargo: task.cargo,
+          fbRows: task.fbRows
+        };
+        newTasks.push(task);
+        taskIds.push(tid);
+      });
+      newConsignments.push({
+        id: cid,
+        entrustId: delegation.no || ('WT' + cid),
+        name: delegation.name || delegation.no || '物流委托',
+        version: (delegation.no || '物流委托') + '（' + (delegation.version || 'V1') + '）',
+        status: cMeta.cls,
+        statusText: cMeta.text,
+        supplier: delegation.supplier || '--',
+        taskIds: taskIds,
+        sales: '苏丽蓉',
+        department: '物流运营',
+        fields: {
+          委托方: snapshot.customer || '--',
+          业务类型: '出口',
+          业务员核算组: '供应链物流综合',
+          业务员公司: '厦门建发生物流有限公司',
+          作业组织: '数字化中心',
+          作业组织人员: '黄瑞钰',
+          反馈方式: '自反馈'
+        },
+        attachments: [],
+        expanded: true
+      });
+    });
+  });
+
+  consignments.splice(0, consignments.length);
+  Array.prototype.push.apply(consignments, newConsignments);
+  tasks.splice(0, tasks.length);
+  Array.prototype.push.apply(tasks, newTasks);
+  tasks.forEach(function(task){ Object.assign(task, TASK_EXT[task.id] || {}); });
+
+  const orderMeta = statusMeta(snapshot.orderStatus, '执行中');
+  DEMANDS.unshift({
+    no: snapshot.orderNo,
+    customer: snapshot.customer || '--',
+    type: '内贸',
+    amount: 0,
+    consignments: newConsignments.length,
+    tasks: newTasks.length,
+    status: orderMeta.cls,
+    statusText: orderMeta.text
+  });
+  currentDemand = DEMANDS[0];
+  requestAnimationFrame(function(){ window.openDrawer(snapshot.orderNo); });
+})();
+</script><script src="../assets/component-system.js"></script>
+  <script src="../assets/ui-state.js"></script>
+  <script src="../assets/prototype-access.js"></script>
 </body>
 </html>
+
+

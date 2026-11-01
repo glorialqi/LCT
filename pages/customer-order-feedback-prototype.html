@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>履约反馈 - 4PL控制塔</title>
+  <script>
+    (function () {
+      var embedded = window.self !== window.top || new URLSearchParams(window.location.search).get('embed') === '1';
+      if (embedded) document.documentElement.classList.add('demand-embedded');
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/app.css">
+  <link rel="stylesheet" href="../assets/component-system.css">
+  <link rel="stylesheet" href="../assets/design-system.css">
+  <link rel="stylesheet" href="../assets/ui-state.css">
+  <link rel="stylesheet" href="../assets/accessibility.css">
+  <link rel="stylesheet" href="../assets/customer-demand.css">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+</head>
+<body class="demand-prototype">
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="p-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="p-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.5 6.3L4 9m2 6a7 7 0 0 0 11.5 2.7L20 15"/></symbol>
+    <symbol id="p-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6H5V6h6"/></symbol>
+    <symbol id="p-link" viewBox="0 0 24 24"><path d="m9.2 14.8 5.6-5.6M7.5 16.5l-1.1 1.1a3.3 3.3 0 0 1-4.7-4.7l3-3a3.3 3.3 0 0 1 4.7 0M16.5 7.5l1.1-1.1a3.3 3.3 0 0 1 4.7 4.7l-3 3a3.3 3.3 0 0 1-4.7 0"/></symbol>
+    <symbol id="p-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M9.5 12h5M9.5 15.5h5"/></symbol>
+  </svg>
+
+  <div class="app-shell demand-app-shell">
+    <section class="workspace demand-workspace">
+      <header class="topbar demand-topbar">
+        <div class="breadcrumb-wrap">
+          <div class="oms-tabs">
+            <span class="oms-home">首页</span>
+            <span class="oms-tab"><a id="breadcrumbDemandLink" href="customer-demand-list-prototype.html">客户需求列表</a><button type="button" aria-label="关闭客户需求列表标签页"><svg><use href="#p-close"/></svg></button></span>
+            <span class="oms-tab">履约反馈<button type="button" aria-label="关闭履约反馈标签页"><svg><use href="#p-close"/></svg></button></span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" id="topRefreshBtn" type="button" title="刷新" aria-label="刷新"><svg><use href="#p-refresh"/></svg></button>
+          <a class="icon-button" id="topExternalLink" href="customer-order-feedback-prototype.html" target="_blank" rel="noopener" title="在新窗口打开" aria-label="在新窗口打开"><svg><use href="#p-external"/></svg></a>
+          <span class="topbar-divider"></span>
+          <div class="user-chip"><span class="avatar">苏</span><span class="user-copy"><strong>苏丽蓉</strong><small>物流运营</small></span></div>
+        </div>
+      </header>
+
+      <main class="demand-content">
+        <section class="demand-page-head" aria-labelledby="feedbackPageTitle">
+          <div class="demand-page-identity">
+            <div class="demand-title-line">
+              <h1 id="feedbackPageTitle">履约反馈 <span id="feedbackOrderNo">--</span></h1>
+              <span class="status done" id="feedbackOrderStatus">--</span>
+            </div>
+            <div class="demand-meta-line">
+              <span>客户 <strong id="feedbackCustomer">--</strong></span>
+              <span>来源需求 <strong id="feedbackDemandNo">--</strong></span>
+              <span>客户合同 <strong id="feedbackContractNo">--</strong></span>
+            </div>
+          </div>
+          <div class="demand-head-actions">
+            <a class="btn outline-primary" id="backToDemandBtn" href="customer-demand-list-prototype.html">返回客户需求</a>
+          </div>
+        </section>
+
+        <section class="demand-section" aria-labelledby="feedbackRecordsTitle">
+          <div class="demand-section-head">
+            <h2 class="demand-section-title" id="feedbackRecordsTitle"><svg><use href="#p-link"/></svg>履约反馈记录 <small id="feedbackCountLabel">0 条</small></h2>
+            <span class="status running">只读</span>
+          </div>
+          <div class="demand-section-body">
+            <div class="demand-helper-strip"><span aria-hidden="true">i</span><span>履约反馈来源于客户订单关联物流任务的跟踪登记，展示订舱、提单、集装箱、船舶及一般反馈。</span></div>
+            <div id="feedbackList" class="demand-feedback-list"></div>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <div class="demand-toast" id="demandToast" role="status" aria-live="polite"></div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var embedded = window.self !== window.top || params.get('embed') === '1';
+      var defaultBack = 'customer-demand-detail-v3-prototype.html?no=XQ202610280031&status=received' + (embedded ? '&embed=1' : '');
+      var from = params.get('from') || defaultBack;
+      var no = params.get('no') || 'FCO202610280021';
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
+          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+        });
+      }
+
+      function fallbackSnapshot() {
+        return {
+          orderNo: no,
+          status: '已安排',
+          statusTone: 'done',
+          customer: '青岛绿洲园花生食品有限公司',
+          demandNo: 'XQ202610280031',
+          contractNo: no === 'FCO202610280021' ? 'HT2026-0821' : '--',
+          feedbacks: no === 'FCO202610280021' ? [
+            {
+              id: 'FB20261030001', type: '订舱信息', taskNo: 'FLST202609040056', status: '已提交', statusTone: 'running',
+              submitter: '苏丽蓉', submittedAt: '2026-10-29 13:20', summary: '订舱单已提交，等待船东确认放舱',
+              fields: [['订舱单号', 'DCD202609140023'], ['船名/航次', 'MSC ANNA / V.102E'], ['起运港', '青岛港'], ['目的港', '胡志明港']]
+            },
+            {
+              id: 'FB20261030002', type: '集装箱信息', taskNo: 'FLST202609040056', status: '已反馈', statusTone: 'done',
+              submitter: '苏丽蓉', submittedAt: '2026-10-29 16:20', summary: '已完成装柜并登记箱号',
+              fields: [['箱号', 'TCLU1234567 / TCLU7654321'], ['装箱总件数', '2400 袋'], ['装箱总毛重', '60 吨']]
+            }
+          ] : []
+        };
+      }
+
+      var snapshot = null;
+      try {
+        var stored = sessionStorage.getItem('customerOrderFeedbackSnapshot');
+        snapshot = stored ? JSON.parse(stored) : null;
+      } catch (error) {
+        snapshot = null;
+      }
+      if (!snapshot || snapshot.orderNo !== no) snapshot = fallbackSnapshot();
+
+      document.getElementById('feedbackOrderNo').textContent = snapshot.orderNo || no;
+      document.getElementById('feedbackOrderStatus').textContent = snapshot.status || '--';
+      document.getElementById('feedbackOrderStatus').className = 'status ' + (snapshot.statusTone || 'done');
+      document.getElementById('feedbackCustomer').textContent = snapshot.customer || '--';
+      document.getElementById('feedbackDemandNo').textContent = snapshot.demandNo || '--';
+      document.getElementById('feedbackContractNo').textContent = snapshot.contractNo || '--';
+      document.getElementById('feedbackCountLabel').textContent = (snapshot.feedbacks || []).length + ' 条';
+      document.getElementById('backToDemandBtn').href = from;
+      document.getElementById('breadcrumbDemandLink').href = from;
+      document.getElementById('topExternalLink').href = window.location.href;
+
+      var feedbacks = Array.isArray(snapshot.feedbacks) ? snapshot.feedbacks : [];
+      var list = document.getElementById('feedbackList');
+      list.innerHTML = feedbacks.length ? feedbacks.map(function (feedback, index) {
+        var fields = Array.isArray(feedback.fields) ? feedback.fields : [];
+        return '<details class="demand-feedback-card" ' + (index === 0 ? 'open' : '') + '>' +
+          '<summary><div class="demand-feedback-summary-main"><span class="demand-feedback-type">' + escapeHtml(feedback.type) + '</span>' +
+          '<strong>' + escapeHtml(feedback.summary) + '</strong></div>' +
+          '<div class="demand-feedback-summary-meta"><span class="status ' + escapeHtml(feedback.statusTone || 'pending') + '">' + escapeHtml(feedback.status) + '</span>' +
+          '<span>' + escapeHtml(feedback.taskNo) + '</span><span>' + escapeHtml(feedback.submitter) + ' · ' + escapeHtml(feedback.submittedAt) + '</span></div></summary>' +
+          '<div class="demand-feedback-body"><div class="demand-feedback-grid">' + fields.map(function (field) {
+            return '<div class="demand-feedback-field"><span>' + escapeHtml(field[0]) + '</span><strong title="' + escapeHtml(field[1]) + '">' + escapeHtml(field[1]) + '</strong></div>';
+          }).join('') + '</div><div class="demand-feedback-foot"><span>反馈编号 ' + escapeHtml(feedback.id) + '</span>' +
+          '<button class="btn link" type="button" data-attachment="' + escapeHtml(feedback.id) + '_feedback.pdf">查看来源附件</button></div></div></details>';
+      }).join('') : '<div class="demand-empty-inline">该客户订单暂无履约反馈记录。请前往任务跟踪页面登记订舱、提单、集装箱或船舶反馈。</div>';
+
+      document.addEventListener('click', function (event) {
+        var attachment = event.target.closest('[data-attachment]');
+        if (attachment) {
+          var toast = document.getElementById('demandToast');
+          toast.textContent = '已在原型中模拟打开附件：' + attachment.dataset.attachment;
+          toast.classList.add('show');
+          window.setTimeout(function () { toast.classList.remove('show'); }, 2200);
+        }
+      });
+      document.getElementById('topRefreshBtn').addEventListener('click', function () { window.location.reload(); });
+    })();
+  </script>
+</body>
+</html>

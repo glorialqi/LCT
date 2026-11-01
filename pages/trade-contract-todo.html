@@ -2082,6 +2082,8 @@
       .generate-demand-field.demand-supplier-row-start { grid-column: 1; grid-row: 2; }
       .generate-demand-field.demand-supplier-merchant-field { grid-column: 2; grid-row: 2; }
     }
+    .generate-demand-supplier-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 640px) { .generate-demand-supplier-grid { grid-template-columns: 1fr; } }
     .generate-demand-form-grid {
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -2611,6 +2613,108 @@
     .task-detail-field strong { font-size: 12px; line-height: 20px; font-weight: 500; }
     @media (max-width: 1100px) {
       .logistics-drawer { width: 100vw; min-width: 0; }
+    }
+    /* One-screen logistics demand form at all screen sizes */
+
+      #generateDemandModal { padding: 8px !important; }
+      #generateDemandModal .generate-demand-shell {
+        width: min(1480px, calc(100vw - 16px));
+        height: auto;
+        max-height: calc(100vh - 16px);
+        min-height: 0;
+      }
+      #generateDemandModal .generate-demand-header { min-height: 50px; padding: 0 18px; }
+      #generateDemandModal .generate-demand-body {
+        min-height: 0;
+        padding: 8px 12px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto;
+        gap: 8px 10px;
+        align-content: start;
+        flex: 0 0 auto;
+        overflow: hidden;
+      }
+      #generateDemandModal #demandSourceMeta { grid-column: 1 / -1; margin-top: 0; padding: 5px 9px; gap: 4px 14px; }
+      #generateDemandModal .generate-demand-source-item span { font-size: 10px; }
+      #generateDemandModal .generate-demand-source-item strong { font-size: 11px; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section { margin-top: 0; min-width: 0; align-self: start; height: auto; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(1) { align-self: start; height: auto; display: block; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(1) { grid-column: 1; grid-row: auto; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(2) { grid-column: 1; grid-row: auto; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(2) { order: 3; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(3) { grid-column: 1; grid-row: auto; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(3) { order: 2; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(4) { grid-column: 1; grid-row: auto; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(4) { order: 4; }
+      #generateDemandModal .generate-demand-section-head { min-height: 30px; padding: 0 10px; }
+      #generateDemandModal .generate-demand-section-title { gap: 6px; font-size: 12px; }
+      #generateDemandModal .generate-demand-section-title svg { width: 14px; height: 14px; }
+      #generateDemandModal .generate-demand-section-subtitle { display: none; }
+      #generateDemandModal .generate-demand-section-body { padding: 7px 9px; }
+      #generateDemandModal .demand-contract-toggle { min-height: 30px; padding: 0 10px; }
+      #generateDemandModal .demand-contract-toggle strong { font-size: 12px; }
+      #generateDemandModal .demand-contract-toggle span { font-size: 10px; }
+      #generateDemandModal .demand-contract-toggle .toggle-copy svg,
+      #generateDemandModal .demand-contract-toggle > svg { width: 14px; height: 14px; }
+      #generateDemandModal .generate-demand-contract-grid {
+        padding: 7px 9px;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 10px 10px;
+        align-content: start;
+      }
+      #generateDemandModal .generate-demand-readonly-field span { font-size: 10px; line-height: 14px; }
+      #generateDemandModal .generate-demand-readonly-field strong { margin-top: 1px; font-size: 11px; line-height: 16px; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(2) .generate-demand-form-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px 9px; }
+      #generateDemandModal .generate-demand-body > .generate-demand-section:nth-of-type(3) .generate-demand-form-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px 9px; }
+      #generateDemandModal .generate-demand-field.demand-supplier-row-start,
+      #generateDemandModal .generate-demand-field.demand-supplier-merchant-field { grid-column: auto; grid-row: auto; }
+      #generateDemandModal .generate-demand-field { gap: 3px; }
+      #generateDemandModal .generate-demand-field label { font-size: 10px; line-height: 14px; }
+      #generateDemandModal .generate-demand-field input,
+      #generateDemandModal .generate-demand-field select,
+      #generateDemandModal .generate-demand-field textarea { height: 26px; min-height: 26px; padding: 0 7px; font-size: 11px; }
+      #generateDemandModal .generate-demand-field textarea { padding: 4px 7px; resize: none; line-height: 16px; }
+      #generateDemandModal .generate-demand-goods-wrap { overflow: hidden; }
+      #generateDemandModal .generate-demand-goods-table { min-width: 0; font-size: 11px; }
+      #generateDemandModal .generate-demand-goods-table th { height: 26px; padding: 0 7px; font-size: 10px; }
+      #generateDemandModal .generate-demand-goods-table td { min-height: 30px; padding: 3px 7px; font-size: 11px; }
+      #generateDemandModal .generate-demand-goods-table input { width: 86px; height: 24px; padding: 0 6px; font-size: 11px; }
+      #generateDemandModal .demand-remove-line { min-height: 24px; padding: 0 6px; font-size: 10px; }
+      #generateDemandModal .demand-goods-empty { padding: 12px; }
+      #generateDemandModal .generate-demand-footer { min-height: 48px; padding: 0 14px; }
+      #generateDemandModal .generate-demand-actions button { min-height: 30px; padding: 0 14px; }
+    /* Searchable single-select fields */
+    .demand-search-select { position: relative; min-width: 0; }
+    .demand-search-select > input { padding-right: 28px; cursor: text; }
+    .demand-search-arrow { position: absolute; right: 8px; top: 50%; width: 13px; height: 13px; transform: translateY(-50%); color: #8490a0; pointer-events: none; }
+    .demand-search-options { position: absolute; left: 0; right: 0; top: calc(100% + 3px); z-index: 120; display: none; max-height: 172px; padding: 4px; overflow-y: auto; border: 1px solid #d5dee8; border-radius: 5px; background: #fff; box-shadow: 0 8px 20px rgba(15, 23, 42, .14); }
+    .demand-search-select.open .demand-search-options { display: block; }
+    .demand-search-option { width: 100%; min-height: 28px; padding: 5px 8px; border: 0; border-radius: 3px; background: transparent; color: #334050; font-size: 11px; line-height: 18px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+    .demand-search-option:hover,
+    .demand-search-option.active { background: #eef5ff; color: #0868df; }
+    .demand-search-empty { padding: 8px; color: #8a95a4; font-size: 11px; text-align: center; }
+    .demand-multi-select { position: relative; min-width: 0; }
+    .demand-multi-control { min-height: 26px; padding: 2px 28px 2px 4px; display: flex; align-items: center; gap: 4px; overflow: hidden; border: 1px solid #d4dce6; border-radius: 5px; background: #fff; cursor: text; }
+    .demand-multi-control:focus-within { border-color: #1976e9; box-shadow: 0 0 0 2px rgba(8, 104, 223, .08); }
+    .demand-multi-tags { display: flex; align-items: center; gap: 3px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+    .demand-multi-tags::-webkit-scrollbar { display: none; }
+    .demand-multi-tags:empty { display: none; }
+    .demand-multi-tag { min-height: 20px; padding: 0 4px 0 6px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #d8e6f7; border-radius: 3px; background: #eef5ff; color: #355f91; font-size: 9px; white-space: nowrap; }
+    .demand-multi-tag button { width: 14px; height: 14px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 0; background: transparent; color: #6c87a7; font-size: 12px; line-height: 1; cursor: pointer; }
+    .demand-multi-tag button:hover { color: #c13d43; }
+    .demand-multi-select .demand-multi-search { flex: 1 0 82px; width: auto; min-width: 70px; height: 20px !important; min-height: 20px !important; padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; font-size: 10px !important; }
+    .demand-multi-options { min-width: 300px; }
+    .demand-multi-option { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .demand-multi-option .receiver-name { color: #2f3b4c; font-weight: 500; }
+    .demand-multi-option .receiver-email { color: #7d8998; font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
+    @media (min-width: 1200px) and (min-height: 680px) {
+      #generateDemandModal .demand-search-options { max-height: 136px; }
+      #generateDemandModal .demand-search-option { min-height: 24px; padding: 3px 7px; font-size: 10px; line-height: 16px; }
+    }
+    @media (max-height: 900px) {
+      #generateDemandModal .generate-demand-shell { height: calc(100vh - 16px); max-height: calc(100vh - 16px); }
+      #generateDemandModal .generate-demand-body { flex: 1 1 auto; overflow-y: auto; scrollbar-width: thin; }
     }
 </style>
 <!-- 4PL Control Tower embedded mode -->
@@ -3272,14 +3376,51 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       <div class="generate-demand-body">
 
         <div id="demandSourceMeta" class="generate-demand-source-meta"></div>
-
         <section class="generate-demand-section">
+          <button type="button" id="demandContractToggle" class="demand-contract-toggle expanded" onclick="toggleDemandContractInfo()">
+            <span class="toggle-copy">
+              <i data-lucide="file-text"></i>
+              <strong>基础信息</strong>
+              <span>合同与商品基础信息，只读核对</span>
+            </span>
+            <i id="demandContractToggleIcon" data-lucide="chevron-down"></i>
+          </button>
+          <div id="demandContractGrid" class="generate-demand-contract-grid"></div>
+        </section>
+
+                        <section class="generate-demand-section">
+          <div class="generate-demand-section-head">
+            <div class="generate-demand-section-title"><i data-lucide="truck"></i>供应商信息</div>
+            <span class="generate-demand-section-subtitle">带红色星号的字段为必填项</span>
+          </div>
+          <div class="generate-demand-section-body">
+            <div class="generate-demand-form-grid generate-demand-supplier-grid">
+              <div class="generate-demand-field">
+                <label for="demandLogisticsSupplier">物流供应商<span class="generate-demand-required">*</span></label>
+                <select id="demandLogisticsSupplier" data-demand-required="true" onchange="handleDemandLogisticsSupplierChange(this)">
+                  <option value="">请选择</option>
+                </select>
+              </div>
+              <div class="generate-demand-field">
+                <label for="demandSupplierMerchant">供应商商户<span class="generate-demand-required">*</span></label>
+                <select id="demandSupplierMerchant" data-demand-required="true" onchange="clearDemandFieldError(this)">
+                  <option value="">请选择</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+<section class="generate-demand-section">
           <div class="generate-demand-section-head">
             <div class="generate-demand-section-title"><i data-lucide="route"></i>路线与船期</div>
             <span class="generate-demand-section-subtitle">带红色星号的字段为必填项</span>
           </div>
           <div class="generate-demand-section-body">
             <div class="generate-demand-form-grid">
+              <div class="generate-demand-field">
+                <label for="demandLatestShipmentDate">实际最迟装运日期</label>
+                <input id="demandLatestShipmentDate" type="date" />
+              </div>
               <div class="generate-demand-field">
                 <label for="demandAssemblyType">装配类型<span class="generate-demand-required">*</span></label>
                 <select id="demandAssemblyType" data-demand-required="true" onchange="clearDemandFieldError(this)">
@@ -3318,21 +3459,41 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <label for="demandVesselAge">船龄要求</label>
                 <input id="demandVesselAge" type="text" placeholder="例如：不超过20年" />
               </div>
+              <div class="generate-demand-field span-3">
+                <label for="demandRemarks">其他特殊要求</label>
+                <textarea id="demandRemarks" placeholder="请输入其他特殊要求或运输补充说明"></textarea>
+              </div>
               <div class="generate-demand-field">
                 <label for="demandOriginPort">实际起运港<span class="generate-demand-required">*</span></label>
-                <input id="demandOriginPort" type="text" data-demand-required="true" placeholder="请输入实际起运港" oninput="clearDemandFieldError(this)" />
+                <div class="demand-search-select" data-demand-search-select>
+                  <input id="demandOriginPort" type="text" data-demand-required="true" autocomplete="off" placeholder="搜索或选择实际起运港" onfocus="openDemandSearchSelect(this)" oninput="filterDemandSearchSelect(this); clearDemandFieldError(this)" onkeydown="handleDemandSearchKeydown(event, this)" onblur="handleDemandSearchBlur(this)" />
+                  <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+                  <div class="demand-search-options" role="listbox"></div>
+                </div>
               </div>
               <div class="generate-demand-field">
                 <label for="demandLoadingTerminal">装港码头<span class="generate-demand-required">*</span></label>
-                <input id="demandLoadingTerminal" type="text" data-demand-required="true" placeholder="请输入装港码头" oninput="clearDemandFieldError(this)" />
+                <div class="demand-search-select" data-demand-search-select>
+                  <input id="demandLoadingTerminal" type="text" data-demand-required="true" autocomplete="off" placeholder="搜索或选择装港码头" onfocus="openDemandSearchSelect(this)" oninput="filterDemandSearchSelect(this); clearDemandFieldError(this)" onkeydown="handleDemandSearchKeydown(event, this)" onblur="handleDemandSearchBlur(this)" />
+                  <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+                  <div class="demand-search-options" role="listbox"></div>
+                </div>
               </div>
               <div class="generate-demand-field">
                 <label for="demandDestinationPort">实际目的港<span class="generate-demand-required">*</span></label>
-                <input id="demandDestinationPort" type="text" data-demand-required="true" placeholder="请输入实际目的港" oninput="clearDemandFieldError(this)" />
+                <div class="demand-search-select" data-demand-search-select>
+                  <input id="demandDestinationPort" type="text" data-demand-required="true" autocomplete="off" placeholder="搜索或选择实际目的港" onfocus="openDemandSearchSelect(this)" oninput="filterDemandSearchSelect(this); clearDemandFieldError(this)" onkeydown="handleDemandSearchKeydown(event, this)" onblur="handleDemandSearchBlur(this)" />
+                  <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+                  <div class="demand-search-options" role="listbox"></div>
+                </div>
               </div>
               <div class="generate-demand-field">
                 <label for="demandDischargeTerminal">卸港码头<span class="generate-demand-required">*</span></label>
-                <input id="demandDischargeTerminal" type="text" data-demand-required="true" placeholder="请输入卸港码头" oninput="clearDemandFieldError(this)" />
+                <div class="demand-search-select" data-demand-search-select>
+                  <input id="demandDischargeTerminal" type="text" data-demand-required="true" autocomplete="off" placeholder="搜索或选择卸港码头" onfocus="openDemandSearchSelect(this)" oninput="filterDemandSearchSelect(this); clearDemandFieldError(this)" onkeydown="handleDemandSearchKeydown(event, this)" onblur="handleDemandSearchBlur(this)" />
+                  <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+                  <div class="demand-search-options" role="listbox"></div>
+                </div>
               </div>
               <div class="generate-demand-field">
                 <label for="demandDirectNavigation">是否直航<span class="generate-demand-required">*</span></label>
@@ -3344,68 +3505,23 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               </div>
               <div class="generate-demand-field">
                 <label for="demandDocumentOfficer">委托方单证员<span class="generate-demand-required">*</span></label>
-                <input id="demandDocumentOfficer" type="text" data-demand-required="true" placeholder="请输入委托方单证员" oninput="clearDemandFieldError(this)" />
+                <div class="demand-search-select" data-demand-search-select>
+                  <input id="demandDocumentOfficer" type="text" data-demand-required="true" autocomplete="off" placeholder="搜索或选择委托方单证员" onfocus="openDemandSearchSelect(this)" oninput="filterDemandSearchSelect(this); clearDemandFieldError(this)" onkeydown="handleDemandSearchKeydown(event, this)" onblur="handleDemandSearchBlur(this)" />
+                  <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+                  <div class="demand-search-options" role="listbox"></div>
+                </div>
               </div>
-              <div class="generate-demand-field span-3">
-                <label for="demandEmailReceivers">邮件接收人</label>
-                <input id="demandEmailReceivers" type="text" placeholder="可填写多个邮箱，以分号分隔" />
-              </div>
-              <div class="generate-demand-field span-3">
-                <label for="demandRemarks">备注</label>
-                <textarea id="demandRemarks" placeholder="请输入订舱或运输补充说明"></textarea>
-              </div>
-            </div>
-          </div>
-        </section>
-
-                        <section class="generate-demand-section">
-          <div class="generate-demand-section-head">
-            <div class="generate-demand-section-title"><i data-lucide="building-2"></i>组织与供应商信息</div>
-            <span class="generate-demand-section-subtitle">带红色星号的字段为必填项</span>
-          </div>
-          <div class="generate-demand-section-body">
-            <div class="generate-demand-form-grid">
-              <div class="generate-demand-field">
-                <label for="demandBusinessSalesman">业务员<span class="generate-demand-required">*</span></label>
-                <select id="demandBusinessSalesman" data-demand-required="true" onchange="clearDemandFieldError(this)">
-                  <option value="">请选择</option>
-                </select>
-              </div>
-              <div class="generate-demand-field">
-                <label for="demandBusinessDepartment">业务员部门<span class="generate-demand-required">*</span></label>
-                <select id="demandBusinessDepartment" data-demand-required="true" onchange="clearDemandFieldError(this)">
-                  <option value="">请选择</option>
-                </select>
-              </div>
-              <div class="generate-demand-field">
-                <label for="demandOperatingUnit">经营单位<span class="generate-demand-required">*</span></label>
-                <select id="demandOperatingUnit" data-demand-required="true" onchange="clearDemandFieldError(this)">
-                  <option value="">请选择</option>
-                </select>
-              </div>
-              <div class="generate-demand-field">
-                <label for="demandAccountingGroup">核算组<span class="generate-demand-required">*</span></label>
-                <select id="demandAccountingGroup" data-demand-required="true" onchange="clearDemandFieldError(this)">
-                  <option value="">请选择</option>
-                </select>
-              </div>
-              <div class="generate-demand-field">
-                <label for="demandSalesmanCompany">业务员公司<span class="generate-demand-required">*</span></label>
-                <select id="demandSalesmanCompany" data-demand-required="true" onchange="clearDemandFieldError(this)">
-                  <option value="">请选择</option>
-                </select>
-              </div>
-              <div class="generate-demand-field demand-supplier-row-start">
-                <label for="demandLogisticsSupplier">物流供应商<span class="generate-demand-required">*</span></label>
-                <select id="demandLogisticsSupplier" data-demand-required="true" onchange="handleDemandLogisticsSupplierChange(this)">
-                  <option value="">请选择</option>
-                </select>
-              </div>
-              <div class="generate-demand-field demand-supplier-merchant-field">
-                <label for="demandSupplierMerchant">供应商商户<span class="generate-demand-required">*</span></label>
-                <select id="demandSupplierMerchant" data-demand-required="true" onchange="clearDemandFieldError(this)">
-                  <option value="">请选择</option>
-                </select>
+              <div class="generate-demand-field span-2">
+                <label for="demandEmailReceiverSearch">邮件接收人</label>
+                <div class="demand-multi-select" data-demand-multi-select>
+                  <div class="demand-multi-control" onclick="openDemandEmailReceiverSelect()">
+                    <div id="demandEmailReceiverTags" class="demand-multi-tags"></div>
+                    <input id="demandEmailReceiverSearch" type="text" autocomplete="off" placeholder="搜索姓名或邮箱" onfocus="openDemandEmailReceiverSelect()" oninput="filterDemandEmailReceiverOptions(this.value)" onkeydown="handleDemandEmailReceiverKeydown(event)" onblur="handleDemandEmailReceiverBlur()" />
+                  </div>
+                  <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+                  <div id="demandEmailReceiverOptions" class="demand-search-options demand-multi-options" role="listbox"></div>
+                </div>
+                <input id="demandEmailReceivers" type="hidden" />
               </div>
             </div>
           </div>
@@ -3436,18 +3552,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           </div>
         </section>
 
-        <section class="generate-demand-section">
-          <button type="button" id="demandContractToggle" class="demand-contract-toggle" onclick="toggleDemandContractInfo()">
-            <span class="toggle-copy">
-              <i data-lucide="file-text"></i>
-              <strong>合同相关信息</strong>
-              <span>默认收起，只读核对</span>
-            </span>
-            <i id="demandContractToggleIcon" data-lucide="chevron-down"></i>
-          </button>
-          <div id="demandContractGrid" class="generate-demand-contract-grid hidden"></div>
-        </section>
-      </div>
+              </div>
 
       <footer class="generate-demand-footer">
         <div class="generate-demand-totals">
@@ -3489,7 +3594,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         <div class="logistics-summary-top">
           <div class="logistics-summary-fields">
             <div class="logistics-summary-field">
-              <span>贸易合同号</span>
+              <span>销售合同号</span>
               <strong class="logistics-contract-no" id="logisticsModalContractNo">-</strong>
             </div>
             <div class="logistics-summary-field">
@@ -3497,7 +3602,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <strong id="logisticsModalProjectNo">-</strong>
             </div>
             <div class="logistics-summary-field">
-              <span>关联合同号</span>
+              <span>采购合同号</span>
               <strong id="logisticsModalAssociatedContractNo">-</strong>
             </div>
             <div class="logistics-summary-field">
@@ -3538,7 +3643,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     <section class="tracking-modal-panel task-detail-panel" role="dialog" aria-modal="true" aria-labelledby="taskDetailModalTitle">
       <header class="tracking-modal-header">
         <div>
-          <h4 id="taskDetailModalTitle">运输任务详情</h4>
+          <h4 id="taskDetailModalTitle">运输任务 / 订舱信息</h4>
           <p id="taskDetailModalSubtitle">-</p>
         </div>
         <button type="button" onclick="closeModal('taskDetailModal')" class="logistics-drawer-close" title="关闭"><i data-lucide="x"></i></button>
@@ -3644,8 +3749,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             { projectNo: 'PRJ-2026-010', goodscode:"G-02",name: '线性低密度聚乙烯 LLDPE-7042', allocatable: 2000, allocated: 1200, proposed: 800, unit: '吨' }
           ],
           logisticsDemands: [
-            { demandNo: 'LR-20260220-001', status: '处理中', scope: '海运门到门', goodsName: 'HDPE-5000S', goodsDescription: '高密度聚乙烯 HDPE-5000S（2000 吨）', qty: 2000, weight: '2000.00', volume: '3500.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯', createdAt: '2026-02-20 10:32' },
-            { demandNo: 'LR-20260221-006', status: '已接单', scope: '海运订舱 / 港到港', goodsName: 'LLDPE-7042', goodsDescription: '线性低密度聚乙烯 LLDPE-7042（1200 吨）', qty: 1200, weight: '1200.00', volume: '2100.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯', createdAt: '2026-02-21 09:18', goodsDetails: [{ name: '线性低密度聚乙烯 LLDPE-7042', qty: 1200, unit: '吨' }] }
+            { demandNo: 'LR-20260220-001', status: '处理中', scope: '海运门到门', goodsName: 'HDPE-5000S', goodsDescription: '高密度聚乙烯 HDPE-5000S（2000 吨）', qty: 2000, weight: '2000.00', volume: '3500.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯', createdAt: '2026-02-20 10:32', latestShipmentDate: '2026-03-15' },
+            { demandNo: 'LR-20260221-006', status: '已接单', scope: '海运订舱 / 港到港', goodsName: 'LLDPE-7042', goodsDescription: '线性低密度聚乙烯 LLDPE-7042（1200 吨）', qty: 1200, weight: '1200.00', volume: '2100.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯', createdAt: '2026-02-21 09:18', latestShipmentDate: '2026-03-31', goodsDetails: [{ name: '线性低密度聚乙烯 LLDPE-7042', qty: 1200, unit: '吨' }] }
           ]
         },
         {
@@ -5280,6 +5385,14 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     // --- Logistics Demand Actions ---
 
     function generateLogisticsDemand(id) {
+      if (window.PrototypeAccess && !window.PrototypeAccess.can('trade.generate')) {
+        window.PrototypeAccess.deny('生成物流需求');
+        return;
+      }
+      if (!navigator.onLine) {
+        showToast('网络连接已断开，暂时无法生成物流需求。', 'danger');
+        return;
+      }
       const item = state.items.find(i => i.id === id);
       if (!item) return;
 
@@ -5318,6 +5431,115 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       if (window.lucide) lucide.createIcons();
     }
 
+    const DEMAND_SEARCH_OPTIONS = {
+      demandOriginPort: ['厦门港', '天津港', '上海港', '宁波港', '青岛港', '深圳港', '大连港'],
+      demandLoadingTerminal: ['海沧码头', '东渡码头', '天津港码头', '宁波北仑码头', '青岛前湾码头', '上海洋山码头'],
+      demandDestinationPort: ['大连港', '鹿特丹港', '安特卫普港', '汉堡港', '洛杉矶港', '新加坡港', '上海港'],
+      demandDischargeTerminal: ['指定卸港码头', '鹿特丹ECT码头', '安特卫普码头', '大连港码头', '汉堡港码头', '洛杉矶港码头'],
+      demandDocumentOfficer: ['张伟', '刘洋', '李明', '王芳', '赵宁', '陈晨', '周凯', '高原', '郑诗煌']
+    };
+
+    const DEMAND_EMAIL_RECEIVER_OPTIONS = [
+      { name: '物流单证组', email: 'shipping@cnd.com.cn' },
+      { name: '郑诗煌', email: 'zhengshihuang@cnd.com.cn' },
+      { name: '李杰', email: 'lijie@cnd.com.cn' },
+      { name: '高美燕', email: 'gaomeiyan@cnd.com.cn' },
+      { name: '张伟', email: 'zhangwei@cnd.com.cn' },
+      { name: '刘洋', email: 'liuyang@cnd.com.cn' },
+      { name: '财务共享中心', email: 'finance@cnd.com.cn' }
+    ];
+    function getDemandSearchOptions(input) {
+      const current = String(input?.dataset.previousValue || '').trim();
+      return [...new Set([current, ...(DEMAND_SEARCH_OPTIONS[input?.id] || [])].filter(Boolean))];
+    }
+
+    function renderDemandSearchOptions(input, query = '') {
+      const wrapper = input?.closest('.demand-search-select');
+      const list = wrapper?.querySelector('.demand-search-options');
+      if (!wrapper || !list) return;
+      const keyword = String(query || '').trim().toLowerCase();
+      const options = getDemandSearchOptions(input).filter(value => !keyword || value.toLowerCase().includes(keyword));
+      list.innerHTML = options.length
+        ? options.map((value, index) => `<button type="button" class="demand-search-option ${index === 0 ? 'active' : ''}" data-value="${escapeHtml(value)}" onmousedown="selectDemandSearchOption(event, this)">${escapeHtml(value)}</button>`).join('')
+        : '<div class="demand-search-empty">无匹配选项</div>';
+    }
+
+    function closeDemandSearchSelect(input, restoreInvalid = true) {
+      const wrapper = input?.closest('.demand-search-select');
+      if (!wrapper) return;
+      if (restoreInvalid) {
+        const value = String(input.value || '').trim();
+        if (value && !getDemandSearchOptions(input).includes(value)) input.value = input.dataset.previousValue || '';
+      }
+      wrapper.classList.remove('open');
+      input.setAttribute('aria-expanded', 'false');
+    }
+
+    function openDemandSearchSelect(input) {
+      document.querySelectorAll('#generateDemandModal .demand-search-select.open').forEach(wrapper => {
+        const otherInput = wrapper.querySelector('input');
+        if (otherInput && otherInput !== input) closeDemandSearchSelect(otherInput);
+      });
+      const wrapper = input.closest('.demand-search-select');
+      if (!wrapper) return;
+      input.dataset.previousValue = input.value || '';
+      wrapper.classList.add('open');
+      input.setAttribute('aria-expanded', 'true');
+      renderDemandSearchOptions(input, '');
+    }
+
+    function filterDemandSearchSelect(input) {
+      const wrapper = input.closest('.demand-search-select');
+      if (!wrapper?.classList.contains('open')) openDemandSearchSelect(input);
+      renderDemandSearchOptions(input, '');
+    }
+
+    function handleDemandSearchBlur(input) {
+      window.setTimeout(() => {
+        const wrapper = input.closest('.demand-search-select');
+        if (!wrapper?.contains(document.activeElement)) closeDemandSearchSelect(input);
+      }, 80);
+    }
+
+    function selectDemandSearchOption(event, option) {
+      event.preventDefault();
+      const wrapper = option.closest('.demand-search-select');
+      const input = wrapper?.querySelector('input');
+      if (!input) return;
+      input.value = option.dataset.value || '';
+      input.dataset.previousValue = input.value;
+      clearDemandFieldError(input);
+      closeDemandSearchSelect(input, false);
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      input.blur();
+    }
+
+    function handleDemandSearchKeydown(event, input) {
+      if (event.key === 'Escape') {
+        closeDemandSearchSelect(input);
+        return;
+      }
+      if (!['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) return;
+      event.preventDefault();
+      const wrapper = input.closest('.demand-search-select');
+      if (!wrapper) return;
+      if (!wrapper.classList.contains('open')) openDemandSearchSelect(input);
+      const options = [...wrapper.querySelectorAll('.demand-search-option')];
+      if (!options.length) return;
+      const activeIndex = Math.max(0, options.findIndex(option => option.classList.contains('active')));
+      let nextIndex = activeIndex;
+      if (event.key === 'ArrowDown') nextIndex = (activeIndex + 1) % options.length;
+      if (event.key === 'ArrowUp') nextIndex = (activeIndex - 1 + options.length) % options.length;
+      options.forEach(option => option.classList.remove('active'));
+      options[nextIndex].classList.add('active');
+      if (event.key === 'Enter') {
+        const active = options[nextIndex];
+        input.value = active.dataset.value || '';
+        input.dataset.previousValue = input.value;
+        clearDemandFieldError(input);
+        closeDemandSearchSelect(input, false);
+      }
+    }
     const DEMAND_SUPPLIER_MERCHANTS = {
       '安捷通物流有限公司': '安捷通物流主体商户',
       '中远海运物流供应链有限公司': '中远海运物流主体商户',
@@ -5329,6 +5551,130 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       return String(item?.salesman || '').split(/[（(]/)[0].trim().split(/\s+/)[0] || '';
     }
 
+    function normalizeDemandEmailList(value) {
+      return [...new Set(String(value || '').split(/[;；,，]+/).map(item => item.trim()).filter(Boolean))];
+    }
+
+    function getDemandSelectedEmails() {
+      return normalizeDemandEmailList(document.getElementById('demandEmailReceivers')?.value);
+    }
+
+    function getDemandReceiverMeta(email) {
+      return DEMAND_EMAIL_RECEIVER_OPTIONS.find(option => option.email.toLowerCase() === String(email || '').toLowerCase())
+        || { name: email, email };
+    }
+
+    function renderDemandEmailReceiverTags() {
+      const tags = document.getElementById('demandEmailReceiverTags');
+      if (!tags) return;
+      tags.innerHTML = getDemandSelectedEmails().map(email => {
+        const receiver = getDemandReceiverMeta(email);
+        return `<span class="demand-multi-tag" title="${escapeHtml(receiver.name)} · ${escapeHtml(receiver.email)}">
+          ${escapeHtml(receiver.name)} · ${escapeHtml(receiver.email)}
+          <button type="button" data-email="${escapeHtml(receiver.email)}" onclick="removeDemandEmailReceiver(event, this.dataset.email)" aria-label="移除 ${escapeHtml(receiver.name)}">×</button>
+        </span>`;
+      }).join('');
+    }
+
+    function renderDemandEmailReceiverOptions(query = '') {
+      const list = document.getElementById('demandEmailReceiverOptions');
+      if (!list) return;
+      const keyword = String(query || '').trim().toLowerCase();
+      const selected = new Set(getDemandSelectedEmails().map(email => email.toLowerCase()));
+      const options = DEMAND_EMAIL_RECEIVER_OPTIONS.filter(option => {
+        if (selected.has(option.email.toLowerCase())) return false;
+        return !keyword || option.name.toLowerCase().includes(keyword) || option.email.toLowerCase().includes(keyword);
+      });
+      list.innerHTML = options.length
+        ? options.map((option, index) => `<button type="button" class="demand-search-option demand-multi-option ${index === 0 ? 'active' : ''}" data-email="${escapeHtml(option.email)}" onmousedown="selectDemandEmailReceiver(event, this.dataset.email)">
+            <span class="receiver-name">${escapeHtml(option.name)}</span>
+            <span class="receiver-email">${escapeHtml(option.email)}</span>
+          </button>`).join('')
+        : '<div class="demand-search-empty">无匹配接收人</div>';
+    }
+
+    function openDemandEmailReceiverSelect() {
+      document.querySelectorAll('#generateDemandModal .demand-search-select.open').forEach(wrapper => {
+        const input = wrapper.querySelector('input');
+        if (input) closeDemandSearchSelect(input);
+      });
+      const wrapper = document.querySelector('#generateDemandModal [data-demand-multi-select]');
+      const search = document.getElementById('demandEmailReceiverSearch');
+      if (!wrapper || !search) return;
+      wrapper.classList.add('open');
+      search.focus();
+      renderDemandEmailReceiverOptions('');
+    }
+
+    function filterDemandEmailReceiverOptions(value) {
+      const wrapper = document.querySelector('#generateDemandModal [data-demand-multi-select]');
+      if (!wrapper?.classList.contains('open')) openDemandEmailReceiverSelect();
+      renderDemandEmailReceiverOptions(value);
+    }
+
+    function handleDemandEmailReceiverBlur() {
+      window.setTimeout(() => {
+        const wrapper = document.querySelector('#generateDemandModal [data-demand-multi-select]');
+        if (!wrapper?.contains(document.activeElement)) {
+          wrapper?.classList.remove('open');
+          const search = document.getElementById('demandEmailReceiverSearch');
+          if (search) search.value = '';
+        }
+      }, 100);
+    }
+
+    function selectDemandEmailReceiver(event, email) {
+      event.preventDefault();
+      const hidden = document.getElementById('demandEmailReceivers');
+      const search = document.getElementById('demandEmailReceiverSearch');
+      const selected = normalizeDemandEmailList(hidden?.value);
+      if (hidden && !selected.some(item => item.toLowerCase() === String(email).toLowerCase())) {
+        hidden.value = [...selected, email].join(';');
+      }
+      renderDemandEmailReceiverTags();
+      if (search) {
+        search.value = '';
+        search.focus();
+      }
+      renderDemandEmailReceiverOptions('');
+    }
+
+    function removeDemandEmailReceiver(event, email) {
+      event.preventDefault();
+      event.stopPropagation();
+      const hidden = document.getElementById('demandEmailReceivers');
+      if (!hidden) return;
+      hidden.value = getDemandSelectedEmails().filter(item => item.toLowerCase() !== String(email).toLowerCase()).join(';');
+      renderDemandEmailReceiverTags();
+      const search = document.getElementById('demandEmailReceiverSearch');
+      renderDemandEmailReceiverOptions(search?.value || '');
+    }
+
+    function handleDemandEmailReceiverKeydown(event) {
+      const wrapper = document.querySelector('#generateDemandModal [data-demand-multi-select]');
+      if (event.key === 'Escape') {
+        wrapper?.classList.remove('open');
+        return;
+      }
+      if (!['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) return;
+      event.preventDefault();
+      if (!wrapper?.classList.contains('open')) openDemandEmailReceiverSelect();
+      const options = [...document.querySelectorAll('#demandEmailReceiverOptions .demand-multi-option')];
+      if (!options.length) return;
+      const activeIndex = Math.max(0, options.findIndex(option => option.classList.contains('active')));
+      let nextIndex = activeIndex;
+      if (event.key === 'ArrowDown') nextIndex = (activeIndex + 1) % options.length;
+      if (event.key === 'ArrowUp') nextIndex = (activeIndex - 1 + options.length) % options.length;
+      options.forEach(option => option.classList.remove('active'));
+      options[nextIndex].classList.add('active');
+      if (event.key === 'Enter') selectDemandEmailReceiver(event, options[nextIndex].dataset.email);
+    }
+
+    function setDemandEmailReceiverValue(value) {
+      const hidden = document.getElementById('demandEmailReceivers');
+      if (hidden) hidden.value = normalizeDemandEmailList(value).join(';');
+      renderDemandEmailReceiverTags();
+    }
     function populateDemandSelect(id, options, selectedValue) {
       const field = document.getElementById(id);
       if (!field) return;
@@ -5343,19 +5689,11 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function renderDemandOrganizationFields() {
       const item = activeDemandContext.item;
       if (!item) return;
-      const salesman = getDemandSalesmanName(item);
       const logisticsSupplier = item.logisticsSupplier || '安捷通物流有限公司';
       const supplierMerchant = item.supplierMerchant || DEMAND_SUPPLIER_MERCHANTS[logisticsSupplier] || '';
-
-      populateDemandSelect('demandBusinessSalesman', ['张伟', '刘洋', '李明', '王芳', '赵宁', '陈晨'], salesman);
-      populateDemandSelect('demandBusinessDepartment', ['国际业务二部', '化工业务部', '汽车业务部', '装备业务部', '海外业务部'], item.department || '国际业务二部');
-      populateDemandSelect('demandOperatingUnit', ['建发能源', '建发化工', '建发汽车', '建发装备', '建发海外'], item.operatingUnit || '建发能源');
-      populateDemandSelect('demandAccountingGroup', ['化工核算组', '制冷剂核算组', '汽车零部件核算组', '机械设备核算组', '钢材核算组'], item.accountingGroup || '化工核算组');
-      populateDemandSelect('demandSalesmanCompany', ['厦门建发股份有限公司', '厦门建发物流有限公司', '建发物流（上海）有限公司'], item.companyTitle || '厦门建发股份有限公司');
       populateDemandSelect('demandLogisticsSupplier', Object.keys(DEMAND_SUPPLIER_MERCHANTS), logisticsSupplier);
       populateDemandSelect('demandSupplierMerchant', Object.values(DEMAND_SUPPLIER_MERCHANTS), supplierMerchant);
     }
-
     function handleDemandLogisticsSupplierChange(field) {
       clearDemandFieldError(field);
       const merchantField = document.getElementById('demandSupplierMerchant');
@@ -5379,6 +5717,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         destinationPort: item.destinationPort || (item.type === 'dest' ? '鹿特丹港' : '大连港'),
         dischargeTerminal: item.dischargeTerminal || '指定卸港码头',
         directNavigation: item.directNavigation || '否',
+        latestShipmentDate: item.shipmentDeadline || item.latestShipmentDate || '',
         documentOfficer: item.documentOfficer || salesmanName,
         emailReceivers: item.emailReceivers || 'shipping@cnd.com.cn',
         remarks: item.remarks || ''
@@ -5386,18 +5725,21 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     }
 
     function setDemandFieldValue(id, value) {
+      if (id === 'demandEmailReceivers') {
+        setDemandEmailReceiverValue(value);
+        return;
+      }
       const field = document.getElementById(id);
       if (field) field.value = value ?? '';
     }
-
     function renderDemandSourceMeta() {
       const item = activeDemandContext.item;
       if (!item) return;
 
       const unit = item.goodsLines?.[0]?.unit || '吨';
       document.getElementById('demandSourceMeta').innerHTML = `
-        <div class="generate-demand-source-item"><span>贸易合同号</span><strong title="${escapeHtml(getMainContractNo(item))}">${escapeHtml(getMainContractNo(item))}</strong></div>
-        <div class="generate-demand-source-item"><span>关联合同号</span><strong title="${escapeHtml(getAssociatedContractNo(item))}">${escapeHtml(getAssociatedContractNo(item))}</strong></div>
+        <div class="generate-demand-source-item"><span>销售合同号</span><strong title="${escapeHtml(getMainContractNo(item))}">${escapeHtml(getMainContractNo(item))}</strong></div>
+        <div class="generate-demand-source-item"><span>采购合同号</span><strong title="${escapeHtml(getAssociatedContractNo(item))}">${escapeHtml(getAssociatedContractNo(item))}</strong></div>
         <div class="generate-demand-source-item"><span>业务项目号</span><strong title="${escapeHtml(getProjectDisplay(item))}">${escapeHtml(getProjectDisplay(item))}</strong></div>
         <div class="generate-demand-source-item"><span>贸易供应商</span><strong title="${escapeHtml(item.supplier)}">${escapeHtml(item.supplier)}</strong></div>
         <div class="generate-demand-source-item"><span>当前待安排</span><strong>${formatQty(Math.max(0, getPendingQty(item)), unit)}</strong></div>
@@ -5441,6 +5783,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       setDemandFieldValue('demandDestinationPort', defaults.destinationPort);
       setDemandFieldValue('demandDischargeTerminal', defaults.dischargeTerminal);
       setDemandFieldValue('demandDirectNavigation', defaults.directNavigation);
+      setDemandFieldValue('demandLatestShipmentDate', defaults.latestShipmentDate);
       setDemandFieldValue('demandDocumentOfficer', defaults.documentOfficer);
       setDemandFieldValue('demandEmailReceivers', defaults.emailReceivers);
       setDemandFieldValue('demandRemarks', defaults.remarks);
@@ -5456,29 +5799,29 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const item = activeDemandContext.item;
       if (!item) return;
       const fields = [
+        ['服务要求编号', getDemandContractFieldValue(item, 'serviceRequirementNo', '提交后自动生成')],
         ['委托方经营单位', getDemandContractFieldValue(item, 'operatingUnit')],
         ['委托方核算组', getDemandContractFieldValue(item, 'accountingGroup')],
+        ['委托方部门', getDemandContractFieldValue(item, 'department')],
         ['委托方业务员', getDemandContractFieldValue(item, 'salesman')],
         ['合同抬头', getDemandContractFieldValue(item, 'companyTitle')],
-        ['销售合同号', getDemandContractFieldValue(item, 'salesNo')],
         ['客户', getDemandContractFieldValue(item, 'customer')],
         ['结算方式', getDemandContractFieldValue(item, 'settlementMethod')],
         ['收证情况', getDemandContractFieldValue(item, 'receiptStatus')],
-        ['开证情况', '无'],
+        ['开证情况', getDemandContractFieldValue(item, 'creditOpeningStatus')],
         ['是否控单业务', getDemandContractFieldValue(item, 'controlledOrder')],
-        ['货前收款比例', getDemandContractFieldValue(item, 'prepaymentRatio')],
-        ['预付收款情况', '无'],
+        ['贷前收款比例', getDemandContractFieldValue(item, 'prepaymentRatio')],
+        ['预付收款情况', getDemandContractFieldValue(item, 'prepaymentStatus')],
         ['销售价格条款', getDemandContractFieldValue(item, 'salesTerms')],
         ['采购价格条款', getDemandContractFieldValue(item, 'purchaseTerms')],
-        ['采购合同号', getDemandContractFieldValue(item, 'purchaseNo')],
-        ['贸易供应商', getDemandContractFieldValue(item, 'supplier')],
         ['对内交货期', getDemandContractFieldValue(item, 'internalDeliveryDate')],
-        ['最迟装运期', getDemandContractFieldValue(item, 'shipmentDeadline')],
+        ['最迟装运日期', getDemandContractFieldValue(item, 'shipmentDeadline')],
         ['贸易类型', getDemandContractFieldValue(item, 'tradeType')],
         ['运费测算单价', getDemandContractFieldValue(item, 'freightUnitPrice')],
+        ['合同数量', formatQty(getContractQty(item))],
+        ['品名', getGoodsSummary(item)],
         ['是否我司派船', getDemandContractFieldValue(item, 'dispatchedByUs')],
-        ['港杂预估单价', getDemandContractFieldValue(item, 'portMiscUnitPrice')]
-      ];
+        ['港杂预估单价', getDemandContractFieldValue(item, 'portMiscUnitPrice')]      ];
       document.getElementById('demandContractGrid').innerHTML = fields.map(([label, value]) => `
         <div class="generate-demand-readonly-field">
           <span>${escapeHtml(label)}</span>
@@ -5490,8 +5833,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function resetDemandContractInfo() {
       const grid = document.getElementById('demandContractGrid');
       const toggle = document.getElementById('demandContractToggle');
-      if (grid) grid.classList.add('hidden');
-      if (toggle) toggle.classList.remove('expanded');
+      if (grid) grid.classList.remove('hidden');
+      if (toggle) toggle.classList.add('expanded');
     }
 
     function toggleDemandContractInfo() {
@@ -5633,7 +5976,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const ids = [
         'demandAssemblyType', 'demandDischargeTerms', 'demandCoilWeight', 'demandProfileLength',
         'demandCertificateRequirement', 'demandVesselAge', 'demandOriginPort', 'demandLoadingTerminal',
-        'demandDestinationPort', 'demandDischargeTerminal', 'demandDirectNavigation',
+        'demandDestinationPort', 'demandDischargeTerminal', 'demandDirectNavigation', 'demandLatestShipmentDate',
         'demandDocumentOfficer', 'demandEmailReceivers', 'demandRemarks'
       ];
       return ids.reduce((payload, id) => {
@@ -5645,17 +5988,31 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
     function getDemandOrganizationPayload() {
       const value = id => document.getElementById(id)?.value || '';
+      const item = activeDemandContext.item || {};
       return {
-        salesman: value('demandBusinessSalesman'),
-        department: value('demandBusinessDepartment'),
-        operatingUnit: value('demandOperatingUnit'),
-        accountingGroup: value('demandAccountingGroup'),
-        salesmanCompany: value('demandSalesmanCompany'),
+        salesman: getDemandSalesmanName(item),
+        department: item.department || '',
+        operatingUnit: item.operatingUnit || '',
+        accountingGroup: item.accountingGroup || '',
+        salesmanCompany: item.companyTitle || '',
         logisticsSupplier: value('demandLogisticsSupplier'),
         supplierMerchant: value('demandSupplierMerchant')
       };
     }
     function confirmGenerateLogisticsDemand() {
+      if (window.PrototypeAccess && !window.PrototypeAccess.can('trade.generate')) {
+        window.PrototypeAccess.deny('生成物流需求');
+        return;
+      }
+      const injectedFailure = window.PrototypeRuntime && window.PrototypeRuntime.consumeFailure('logisticsGenerate');
+      if (injectedFailure === 'timeout') {
+        showToast('生成物流需求请求超时，当前填写内容已保留，请重试。', 'danger');
+        return;
+      }
+      if (!navigator.onLine) {
+        showToast('网络连接已断开，物流需求尚未生成，请恢复网络后重试。', 'danger');
+        return;
+      }
       const item = activeDemandContext.item;
       if (!item) return;
       if (!validateDemandForm()) return;
@@ -5880,6 +6237,41 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         dynamicUpdatedAt: '待安排',
         latestTracking: '尚未产生运输动态',
         latestTrackingTime: '待安排',
+        bookingAgreementNo: '待填写',
+        bookingForwarder: '待安排',
+        category: '海运订舱',
+        bookingManager: '待分派',
+        bookingOperator: '待分派',
+        inquiryMethod: '待确认',
+        principalOperatingUnit: '厦门建发物流有限公司',
+        principalAccountingGroup: '物流核算组',
+        outboundQty: 0,
+        loadRate: '—',
+        dischargeRate: '—',
+        height: '—',
+        freight: 0,
+        freightTerms: '待确认',
+        freightPaymentTerm: '月结',
+        totalFreight: 0,
+        netFreight: 0,
+        otherFees: 0,
+        demurrageFee: 0,
+        freightInvoice: '未开票',
+        commissionRate: '—',
+        commissionAmount: 0,
+        isCqd: '否',
+        isLashingIncluded: '否',
+        loadingPortAgent: '待安排',
+        dischargePortAgent: '待安排',
+        portArea: '待安排',
+        groundForwarder: '待安排',
+        isDeparted: '否',
+        waitingDays: 0,
+        overdueDays: 0,
+        additionalTerms: '无',
+        remark: '无',
+        declarationInfo: '待宣舱',
+        documentStatus: '未提交',
         trackings: [],
         ...overrides
       };
@@ -6040,6 +6432,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       }
 
       serviceRequirements.forEach(requirement => {
+        requirement.latestShipmentDate = requirement.latestShipmentDate || demand.routeInfo?.latestShipmentDate || demand.latestShipmentDate || item.shipmentDeadline || '-';
         (requirement.commissions || []).forEach(commission => {
           commission.requirement = requirement;
         });
@@ -6135,6 +6528,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <span class="logistics-service-inline-divider"></span>
             <span class="logistics-service-inline-field">服务 <strong>${escapeHtml(requirement.serviceItem)}</strong></span>
             <span class="logistics-service-inline-field">场景 <strong>${escapeHtml(requirement.extensionScene)}</strong></span>
+            <span class="logistics-service-inline-divider"></span>
+            <span class="logistics-service-inline-field">最迟装运日期 <strong>${escapeHtml(requirement.latestShipmentDate || '-')}</strong></span>
 
           </div>
           <div class="logistics-service-secondary">
@@ -6218,7 +6613,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <div class="logistics-task-tracking-time">${escapeHtml(task.latestTrackingTime)} · 动态 ${escapeHtml(task.dynamicUpdatedAt)}</div>
           </div>
           <div class="logistics-task-node-actions">
-            <button type="button" class="logistics-task-action" data-task-key="${taskKey}" onclick="openTransportTaskDetail(this.dataset.taskKey)"><i data-lucide="external-link"></i>任务详情</button>
+            <button type="button" class="logistics-task-action" data-task-key="${taskKey}" onclick="openTransportTaskDetail(this.dataset.taskKey)"><i data-lucide="external-link"></i>订舱信息</button>
             <button type="button" class="logistics-task-action" data-task-key="${taskKey}" onclick="openTrackingTimeline(this.dataset.taskKey)"><i data-lucide="history"></i>跟踪</button>
           </div>
         </article>
@@ -6338,7 +6733,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <div class="logistics-track-time">${escapeHtml(task.latestTrackingTime)} · 动态 ${escapeHtml(task.dynamicUpdatedAt)}</div>
           </td>
           <td class="logistics-task-actions-cell">
-            <button type="button" class="logistics-task-action" data-task-key="${taskKey}" onclick="openTransportTaskDetail(this.dataset.taskKey)"><i data-lucide="external-link"></i>任务详情</button>
+            <button type="button" class="logistics-task-action" data-task-key="${taskKey}" onclick="openTransportTaskDetail(this.dataset.taskKey)"><i data-lucide="external-link"></i>订舱信息</button>
             <button type="button" class="logistics-task-action" data-task-key="${taskKey}" onclick="openTrackingTimeline(this.dataset.taskKey)"><i data-lucide="history"></i>跟踪</button>
           </td>
         </tr>
@@ -6371,31 +6766,66 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       if (!task) return;
       document.getElementById('taskDetailModalSubtitle').textContent = `${task.taskNo} · ${task.taskName}`;
       const fields = [
-        ['订舱状态', task.bookingStatus],
-        ['宣舱情况', task.declarationStatus],
-        ['订舱数量', formatQty(task.bookingQty, task.qtyUnit || '吨')],
-        ['未订舱数量', formatQty(task.unbookedQty, task.qtyUnit || '吨')],
-        ['装船数量', formatQty(task.shippedQty, task.qtyUnit || '吨')],
-        ['船名', task.vesselName],
+        ['订舱协议号', task.bookingAgreementNo],
+        ['运费', formatQty(task.freight)],
         ['船只 IMO', task.imo],
-        ['MMSI', task.mmsi],
+        ['装港代理', task.loadingPortAgent],
+        ['离装港时间', task.departLoadPortTime],
+        ['动态跟踪', task.latestTracking],
+        ['受托方核算组', task.principalAccountingGroup],
+        ['订舱数量', formatQty(task.bookingQty, task.qtyUnit || '吨')],
+        ['宣舱情况', task.declarationStatus],
+        ['是否 CQD', task.isCqd],
+        ['附加条款', task.additionalTerms],
+        ['净运费', formatQty(task.netFreight)],
+        ['ATA', task.ata],
+        ['船舶动态更新时间', task.dynamicUpdatedAt],
+        ['修改后最迟装运期', task.revisedDeadline],
+        ['订舱货代', task.bookingForwarder],
+        ['运费条款', task.freightTerms],
+        ['港区', task.portArea],
+        ['卸港代理', task.dischargePortAgent],
+        ['是否离港', task.isDeparted],
         ['航线名称', task.routeName],
+        ['订舱经理', task.bookingManager],
+        ['未订舱数量', formatQty(task.unbookedQty, task.qtyUnit || '吨')],
+        ['备注', task.remark],
+        ['装率', task.loadRate],
+        ['运费账期', task.freightPaymentTerm],
+        ['其他费用', formatQty(task.otherFees)],
+        ['ETB', task.etb],
+        ['等泊时间（天）', task.waitingDays],
+        ['询价方式', task.inquiryMethod],
+        ['分类', task.category],
+        ['订舱状态', task.bookingStatus],
+        ['地面货代', task.groundForwarder],
+        ['到装港时间', task.loadPortTime],
+        ['靠泊时间', task.berthTime],
+        ['订舱操作员', task.bookingOperator],
+        ['出仓数量', formatQty(task.outboundQty, task.qtyUnit || '吨')],
+        ['运费总价', formatQty(task.totalFreight)],
+        ['层高', task.height],
+        ['卸率', task.dischargeRate],
+        ['佣金比例', task.commissionRate],
+        ['MMSI', task.mmsi],
+        ['ATB', task.atb],
+        ['预计超期/超期时间（天）', task.overdueDays],
         ['Laycan', task.laycan],
-        ['修改后 LAYCAN', task.revisedLaycan],
+        ['船名', task.vesselName],
+        ['宣舱信息', task.declarationInfo || task.declarationStatus],
+        ['订单跟踪记录', `${(task.trackings || []).length} 条`],
+        ['运费发票', task.freightInvoice],
+        ['受托方经营单位', task.principalOperatingUnit],
+        ['装船数量', formatQty(task.shippedQty, task.qtyUnit || '吨')],
+        ['状态', task.documentStatus || task.bookingStatus],
+        ['延滞费', formatQty(task.demurrageFee)],
+        ['是否含绑', task.isLashingIncluded],
+        ['佣金金额', formatQty(task.commissionAmount)],
         ['ETA', task.eta],
         ['ETD', task.etd],
-        ['ATA', task.ata],
-        ['ETB', task.etb],
-        ['ATB', task.atb],
-        ['靠泊时间', task.berthTime],
-        ['到装港时间', task.loadPortTime],
-        ['离装港时间', task.departLoadPortTime],
-        ['修改后最迟装运期', task.revisedDeadline],
-        ['船舶动态更新时间', task.dynamicUpdatedAt],
-        ['最新订单跟踪', task.latestTracking],
+        ['修改后 LAYCAN', task.revisedLaycan],
         ['所属物流委托', task.commission.commissionName],
-        ['物流供应商', task.commission.supplier],
-      ];
+        ['物流供应商', task.commission.supplier]      ];
       document.getElementById('taskDetailContent').innerHTML = `
         <div class="task-detail-grid">
           ${fields.map(([label, value]) => `<div class="task-detail-field ${label === '最新订单跟踪' ? 'wide' : ''}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value || '待安排')}</strong></div>`).join('')}
@@ -6676,6 +7106,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     }
 
     function confirmManualPullIn() {
+      if (window.PrototypeAccess && !window.PrototypeAccess.can('trade.pull')) {
+        window.PrototypeAccess.deny('手动拉入');
+        return;
+      }
+      const injectedFailure = window.PrototypeRuntime && window.PrototypeRuntime.consumeFailure('tradePull');
+      if (injectedFailure === 'timeout') {
+        showToast('手动拉入请求超时，合同仍在当前列表，请重试。', 'danger');
+        return;
+      }
+      if (!navigator.onLine) {
+        showToast('网络连接已断开，合同尚未拉入，请恢复网络后重试。', 'danger');
+        return;
+      }
       const selectedIds = Array.from(state.manualSelectedIds);
       if (selectedIds.length === 0) {
         showToast('请选择需要拉入的控制塔合同', 'warning');
@@ -6788,5 +7231,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
   </script>
   <script src="../assets/component-system.js"></script>
   <script src="../assets/ui-state.js"></script>
+  <script src="../assets/prototype-access.js"></script>
 </body>
 </html>

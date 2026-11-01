@@ -7,26 +7,26 @@
   <link rel="stylesheet" href="../assets/app.css">
   <style>
     :root {
-      --detail-blue: #2f74ff;
-      --detail-blue-deep: #1f5fe0;
+      --detail-blue: #2563eb;
+      --detail-blue-deep: #1d4ed8;
       --detail-line: #dde4ee;
       --detail-ink: #23344d;
-      --detail-muted: #8c98a8;
+      --detail-muted: #5b6778;
       --page: #e9eef5;
       --ink: #23344d;
-      --text: #5e6d82;
-      --muted: #8c98a8;
+      --text: #334155;
+      --muted: #5b6778;
       --line: #dde4ee;
-      --blue: #2f74ff;
+      --blue: #2563eb;
     }
     body { min-width: 1180px; }
     button, input, select, textarea { font: inherit; }
     .detail-scroll { min-height: 0; flex: 1; overflow-y: auto; padding: 14px 18px 40px; background: var(--page); }
     .page-head { position: relative; z-index: 5; display: flex; align-items: center; gap: 9px; min-height: 52px; margin-bottom: 10px; padding: 0 13px 0 17px; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.04); }
     .page-title { display: flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 15px; font-weight: 700; white-space: nowrap; }
-    .page-title svg { width: 16px; height: 16px; color: #9ca6b5; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .page-title svg { width: 16px; height: 16px; color: #64748b; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .page-head-spacer { flex: 1; }
-    .detail-btn { height: 30px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #d9dee7; border-radius: 3px; background: #fff; color: #4c5566; font-size: 11px; white-space: nowrap; cursor: pointer; transition: .15s ease; }
+    .detail-btn { height: 32px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #d9dee7; border-radius: 6px; background: #fff; color: #334155; font-size: 12px; white-space: nowrap; cursor: pointer; transition: .15s ease; }
     .detail-btn:hover { border-color: #b7c1d2; background: #fafbfc; }
     .detail-btn.primary { color: #fff; border-color: var(--detail-blue); background: var(--detail-blue); box-shadow: 0 2px 5px rgba(47,116,255,.18); }
     .detail-btn.primary:hover { border-color: var(--detail-blue-deep); background: var(--detail-blue-deep); }
@@ -35,69 +35,69 @@
     .detail-section { margin-top: 11px; overflow: visible; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.035); }
     .detail-section-head { min-height: 37px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid #eef1f5; background: #fafbfc; }
     .detail-section-title { display: inline-flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 13px; font-weight: 700; }
-    .detail-section-title svg { width: 11px; height: 11px; color: #9ca7b6; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .detail-section-title svg { width: 11px; height: 11px; color: #64748b; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .detail-section-body { padding: 17px 16px 19px; }
     .form-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); column-gap: 22px; row-gap: 17px; }
     .span-2 { grid-column: span 2; }
     .span-4 { grid-column: span 4; }
     .span-6 { grid-column: span 6; }
     .field { min-width: 0; }
-    .field-label { min-height: 18px; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: var(--text); font-size: 11px; white-space: nowrap; }
-    .required { color: #e9564a; font-size: 10px; }
-    .field-help { width: 14px; height: 14px; display: inline-grid; place-items: center; border-radius: 50%; color: #9aa6b7; background: #f0f2f5; font-size: 10px; font-weight: 700; cursor: help; }
-    .control { width: 100%; height: 30px; padding: 0 9px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fbfcfd; color: var(--text); font-size: 11px; }
+    .field-label { min-height: 18px; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: var(--text); font-size: 12px; white-space: nowrap; }
+    .required { color: #c62828; font-size: 11px; }
+    .field-help { width: 14px; height: 14px; display: inline-grid; place-items: center; border-radius: 50%; color: #526176; background: #f0f2f5; font-size: 11px; font-weight: 700; cursor: help; }
+    .control { width: 100%; height: 32px; padding: 0 9px; border: 1px solid #d9e1ec; border-radius: 6px; background: #fff; color: var(--text); font-size: 12px; }
     .control[readonly] { color: #8d96a7; background: #f5f6f8; }
-    .control::placeholder { color: #b2bac7; }
-    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#9ca6b5 50%),linear-gradient(135deg,#9ca6b5 50%,transparent 50%); background-position: calc(100% - 12px) 12px,calc(100% - 8px) 12px; background-size: 4px 4px,4px 4px; background-repeat: no-repeat; }
-    .status-pill { display: inline-flex; height: 26px; align-items: center; padding: 0 9px; border-radius: 3px; color: #9a6a00; background: #fff6de; font-size: 10px; font-weight: 600; }
+    .control::placeholder { color: #64748b; }
+    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%); background-position: calc(100% - 12px) 12px,calc(100% - 8px) 12px; background-size: 4px 4px,4px 4px; background-repeat: no-repeat; }
+    .status-pill { display: inline-flex; height: 26px; align-items: center; padding: 0 9px; border-radius: 3px; color: #7c5500; background: #fff6de; font-size: 11px; font-weight: 600; }
     .multi-control { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fbfcfd; }
-    .mini-tag { display: inline-flex; min-height: 20px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #dbe8ff; border-radius: 3px; color: #3268c4; background: #f1f7ff; font-size: 10px; white-space: nowrap; }
-    .multi-add { height: 20px; padding: 0 5px; border: 0; border-radius: 3px; color: #7e8899; background: transparent; font-size: 10px; cursor: pointer; }
+    .mini-tag { display: inline-flex; min-height: 20px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #dbe8ff; border-radius: 3px; color: #3268c4; background: #f1f7ff; font-size: 11px; white-space: nowrap; }
+    .multi-add { height: 20px; padding: 0 5px; border: 0; border-radius: 3px; color: #5b6778; background: transparent; font-size: 11px; cursor: pointer; }
     .multi-add:hover { color: var(--detail-blue); background: #edf5ff; }
     .field--new { position: relative; }
     .field--new::before { content: ""; position: absolute; inset: -8px -9px -8px -9px; z-index: 0; border: 1px dashed #a8c9ff; border-radius: 5px; background: linear-gradient(180deg,rgba(238,245,255,.72),rgba(250,252,255,.28)); pointer-events: none; }
     .field--new > * { position: relative; z-index: 1; }
 
     .help-dot { position: relative; }
-    .help-tip { position: absolute; left: 50%; bottom: calc(100% + 7px); z-index: 30; width: 240px; padding: 8px 9px; border: 1px solid #dfe4ec; border-radius: 4px; color: #5f697a; background: #fff; box-shadow: 0 8px 24px rgba(27,42,74,.12); font-size: 10px; line-height: 1.55; opacity: 0; visibility: hidden; transform: translate(-50%,3px); transition: .15s ease; pointer-events: none; }
+    .help-tip { position: absolute; left: 50%; bottom: calc(100% + 7px); z-index: 30; width: 240px; padding: 8px 9px; border: 1px solid #dfe4ec; border-radius: 4px; color: #5f697a; background: #fff; box-shadow: 0 8px 24px rgba(27,42,74,.12); font-size: 11px; line-height: 1.55; opacity: 0; visibility: hidden; transform: translate(-50%,3px); transition: .15s ease; pointer-events: none; }
     .help-tip::after { content: ""; position: absolute; left: 50%; top: 100%; width: 7px; height: 7px; border-right: 1px solid #dfe4ec; border-bottom: 1px solid #dfe4ec; background: #fff; transform: translate(-50%,-4px) rotate(45deg); }
     .help-dot:hover .help-tip, .help-dot:focus-within .help-tip { opacity: 1; visibility: visible; transform: translate(-50%,0); }
     .consignment-editor { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #cbdcfb; border-radius: 3px; background: #fff; transition: .15s ease; }
     .consignment-editor:focus-within { border-color: #7dabff; box-shadow: 0 0 0 2px rgba(47,116,255,.1); }
     .consignment-chips { display: flex; min-width: 0; align-items: center; gap: 5px; flex-wrap: wrap; }
-    .consignment-chip { max-width: 100%; display: inline-flex; min-height: 21px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2d62ba; background: #f2f7ff; font-size: 10px; }
+    .consignment-chip { max-width: 100%; display: inline-flex; min-height: 21px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2d62ba; background: #f2f7ff; font-size: 11px; }
     .consignment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .chip-remove { width: 13px; height: 13px; flex: 0 0 13px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #86a7d7; cursor: pointer; }
     .chip-remove:hover { color: #d84a4a; background: #ffeded; }
     .chip-remove svg { width: 8px; height: 8px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-    .consignment-input { min-width: 76px; flex: 1; height: 21px; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 10px; outline: none; }
-    .consignment-input::placeholder { color: #aeb7c5; }
-    .consignment-add { height: 21px; flex: 0 0 auto; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #3b73d0; background: #f7fbff; font-size: 10px; cursor: pointer; }
+    .consignment-input { min-width: 76px; flex: 1; height: 21px; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 11px; outline: none; }
+    .consignment-input::placeholder { color: #64748b; }
+    .consignment-add { height: 21px; flex: 0 0 auto; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2f64bc; background: #f7fbff; font-size: 11px; cursor: pointer; }
     .consignment-add:hover { border-color: #9fc3ff; background: #eef6ff; }
-    .consignment-count { margin-left: 2px; color: var(--muted); font-size: 10px; white-space: nowrap; }
-    .field-error { display: none; margin-top: 4px; color: #e9564a; font-size: 10px; }
+    .consignment-count { margin-left: 2px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .field-error { display: none; margin-top: 4px; color: #c62828; font-size: 11px; }
     .field-error.show { display: block; }
     .textarea { min-height: 58px; resize: vertical; padding-top: 7px; }
     .transport-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px 22px; }
-    .note-card { display: flex; align-items: flex-start; gap: 10px; margin-top: 11px; padding: 11px 13px; border: 1px solid #dbe8fb; border-radius: 4px; color: #536174; background: #f7fbff; font-size: 10px; line-height: 1.65; }
+    .note-card { display: flex; align-items: flex-start; gap: 10px; margin-top: 11px; padding: 11px 13px; border: 1px solid #dbe8fb; border-radius: 4px; color: #536174; background: #f7fbff; font-size: 11px; line-height: 1.65; }
     .note-card svg { width: 15px; height: 15px; flex: 0 0 15px; margin-top: 1px; color: #4c86e8; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .note-card b { color: #2e5fa9; }
-    .prototype-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid #cfe0fb; border-radius: 17px; color: #356bbd; background: #fff; box-shadow: 0 6px 18px rgba(21,55,114,.12); font-size: 10px; cursor: pointer; }
+    .prototype-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid #cfe0fb; border-radius: 17px; color: #356bbd; background: #fff; box-shadow: 0 6px 18px rgba(21,55,114,.12); font-size: 11px; cursor: pointer; }
     .prototype-toggle:hover { background: #f8fbff; }
     .prototype-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .prototype-note { position: fixed; right: 20px; bottom: 60px; z-index: 49; width: 330px; padding: 15px 16px; border: 1px solid #dfe5ee; border-radius: 7px; background: #fff; box-shadow: 0 14px 40px rgba(20,38,75,.16); opacity: 0; visibility: hidden; transform: translateY(8px); transition: .18s ease; }
     .prototype-note.open { opacity: 1; visibility: visible; transform: translateY(0); }
     .prototype-note h3 { margin: 0 0 7px; color: #263247; font-size: 12px; }
-    .prototype-note p { margin: 0 0 8px; color: #687285; font-size: 10px; line-height: 1.7; }
-    .prototype-note ul { margin: 0; padding-left: 15px; color: #687285; font-size: 10px; line-height: 1.75; }
+    .prototype-note p { margin: 0 0 8px; color: #687285; font-size: 11px; line-height: 1.7; }
+    .prototype-note ul { margin: 0; padding-left: 15px; color: #687285; font-size: 11px; line-height: 1.75; }
     .prototype-note b { color: #356bbd; }
-    .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 10px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
+    .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 11px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
     .toast.show { opacity: 1; transform: translate(-50%,0); }
     @media (max-width: 1120px) { body { min-width: 980px; } .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .span-2,.span-4,.span-6 { grid-column: span 3; } }
     /* Customer order list prototype */
     .oms-tabs { display:flex; align-items:center; gap:8px; }
     .oms-home { height:28px; display:inline-flex; align-items:center; padding:0 13px; border-radius:4px; color:#5e6d82; background:#f2f4f7; font-size:12px; }
-    .oms-tab { height:28px; display:inline-flex; align-items:center; gap:8px; padding:0 12px; border-radius:4px; color:#2f74ff; background:#edf4ff; font-size:12px; font-weight:600; }
+    .oms-tab { height:28px; display:inline-flex; align-items:center; gap:8px; padding:0 12px; border-radius:4px; color:#2563eb; background:#edf4ff; font-size:12px; font-weight:600; }
     .oms-tab button { width:14px; height:14px; display:grid; place-items:center; padding:0; border:0; border-radius:50%; color:#87a8d8; background:transparent; cursor:pointer; }
     .oms-tab button:hover { color:#fff; background:#8aaee0; }
     .oms-tab svg { width:9px; height:9px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
@@ -107,42 +107,42 @@
     .query-card { margin-top:2px; }
     .query-head { min-height:49px; display:flex; align-items:center; gap:10px; padding:0 14px; border-bottom:1px solid #edf1f5; }
     .query-title { display:inline-flex; align-items:center; gap:7px; color:var(--detail-ink); font-size:13px; font-weight:700; }
-    .query-caret { width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #2f74ff; }
+    .query-caret { width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #2563eb; }
     .query-actions { margin-left:auto; display:flex; align-items:center; gap:7px; }
-    .query-btn { height:31px; padding:0 13px; border:1px solid transparent; border-radius:4px; color:#2f74ff; background:#edf4ff; font-size:11px; font-weight:600; cursor:pointer; }
+    .query-btn { height:32px; padding:0 13px; border:1px solid transparent; border-radius:6px; color:#2563eb; background:#edf4ff; font-size:12px; font-weight:600; cursor:pointer; }
     .query-btn:hover { background:#e2efff; }
-    .query-btn.primary { color:#fff; background:#2f74ff; border-color:#2f74ff; }
+    .query-btn.primary { color:#fff; background:#2563eb; border-color:#2563eb; }
     .query-btn.primary:hover { background:#1f62e8; }
     .query-body { padding:14px 14px 15px; }
     .query-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px 18px; }
     .query-field { min-width:0; }
     .query-field.wide { grid-column:span 2; }
-    .query-field label { display:block; margin-bottom:5px; color:#667387; font-size:11px; line-height:16px; }
-    .query-field input, .query-field select { width:100%; height:31px; padding:0 9px; border:1px solid #dfe5ee; border-radius:4px; color:#465267; background:#fff; font-size:11px; }
-    .query-field input::placeholder { color:#aeb8c6; }
-    .query-field select { appearance:none; background-image:linear-gradient(45deg,transparent 50%,#9aa6b7 50%),linear-gradient(135deg,#9aa6b7 50%,transparent 50%); background-position:calc(100% - 12px) 13px,calc(100% - 8px) 13px; background-size:4px 4px,4px 4px; background-repeat:no-repeat; }
+    .query-field label { display:block; margin-bottom:5px; color:#526176; font-size:12px; line-height:16px; }
+    .query-field input, .query-field select { width:100%; height:32px; padding:0 9px; border:1px solid #d9e1ec; border-radius:6px; color:#334155; background:#fff; font-size:12px; }
+    .query-field input::placeholder { color:#64748b; }
+    .query-field select { appearance:none; background-image:linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%); background-position:calc(100% - 12px) 13px,calc(100% - 8px) 13px; background-size:4px 4px,4px 4px; background-repeat:no-repeat; }
     .advanced-field { display:none; }
     .query-body.expanded .advanced-field { display:block; }
     .date-range { display:flex; align-items:center; gap:6px; }
     .date-range input { min-width:0; }
-    .date-range span { color:#9aa6b7; font-size:11px; }
+    .date-range span { color:#64748b; font-size:11px; }
 
     .list-card { margin-top:10px; overflow:hidden; }
     .list-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:8px; min-height:53px; padding:10px 14px; border-bottom:1px solid #edf1f5; }
     .list-title { margin-right:auto; color:var(--detail-ink); font-size:13px; font-weight:700; white-space:nowrap; }
     .toolbar-btn { height:30px; padding:0 12px; border:1px solid #dbe2ec; border-radius:4px; color:#5e6d82; background:#fff; font-size:11px; white-space:nowrap; cursor:pointer; }
-    .toolbar-btn:hover:not(:disabled) { border-color:#9fc0f7; color:#2f74ff; background:#f7fbff; }
+    .toolbar-btn:hover:not(:disabled) { border-color:#9fc0f7; color:#2563eb; background:#f7fbff; }
     .toolbar-btn:disabled { color:#b2bac6; background:#fafbfc; cursor:not-allowed; }
-    .toolbar-btn.primary { color:#fff; border-color:#2f74ff; background:#2f74ff; }
+    .toolbar-btn.primary { color:#fff; border-color:#2563eb; background:#2563eb; }
     .toolbar-btn.primary:hover { border-color:#1f62e8; background:#1f62e8; }
     .status-tabs { display:flex; align-items:center; gap:4px; padding:8px 14px; overflow-x:auto; border-bottom:1px solid #edf1f5; background:#fff; }
-    .status-tab { height:30px; flex:0 0 auto; padding:0 12px; border:1px solid transparent; border-radius:4px; color:#647184; background:transparent; font-size:11px; white-space:nowrap; cursor:pointer; }
+    .status-tab { height:32px; flex:0 0 auto; padding:0 12px; border:1px solid transparent; border-radius:6px; color:#526176; background:transparent; font-size:12px; white-space:nowrap; cursor:pointer; }
     .status-tab:hover { background:#f7f9fc; }
-    .status-tab.active { color:#2f74ff; border-color:#d7e7ff; background:#edf5ff; font-weight:600; }
+    .status-tab.active { color:#2563eb; border-color:#d7e7ff; background:#edf5ff; font-weight:600; }
     .table-scroll { max-height:calc(100vh - 340px); min-height:340px; overflow:auto; }
-    .order-table { width:max-content; min-width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; color:#4f5c70; font-size:11px; }
+    .order-table { width:max-content; min-width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; color:#334155; font-size:12px; }
     .order-table thead th { position:sticky; top:0; z-index:30; height:34px; padding:0 9px; border-bottom:1px solid #e3e8ef; border-right:1px solid #edf1f5; color:#637085; background:#f8fafc; font-weight:500; text-align:left; white-space:nowrap; }
-    .order-table thead th .sort { margin-left:4px; color:#b2bbc8; font-size:9px; }
+    .order-table thead th .sort { margin-left:4px; color:#64748b; font-size: 11px; }
     .order-table tbody td { height:42px; padding:5px 9px; border-bottom:1px solid #edf1f5; border-right:1px solid #f1f4f7; background:#fff; vertical-align:middle; white-space:nowrap; }
     .order-table tbody tr:hover td { background:#f8fbff; }
     .order-table tbody tr.selected td { background:#f2f7ff; }
@@ -168,24 +168,27 @@
     .sticky-action { position:sticky; right:0; z-index:21; background:#fff; box-shadow:-5px 0 7px -6px rgba(23,42,74,.22); }
     .order-table thead .sticky-action { z-index:40; background:#f8fafc; }
     .order-table tbody tr.selected .sticky-action { background:#f2f7ff; }
-    .order-link { color:#2f74ff; font-weight:600; text-decoration:none; }
+    .order-link { color:#2563eb; font-weight:600; text-decoration:none; }
     .order-link:hover { text-decoration:underline; }
     .ref-list { display:flex; flex-direction:column; gap:3px; align-items:flex-start; }
     .ref-no { color:#536174; font-variant-numeric:tabular-nums; line-height:16px; }
-    .status-pill { display:inline-flex; min-height:22px; align-items:center; padding:0 7px; border:1px solid; border-radius:10px; font-size:10px; white-space:nowrap; }
+    .status-pill { display:inline-flex; min-height:22px; align-items:center; padding:0 7px; border:1px solid; border-radius:10px; font-size: 11px; white-space:nowrap; }
     .status-pill.created { color:#8c6a14; border-color:#ead8a8; background:#fff9eb; }
-    .status-pill.pending { color:#2f74ff; border-color:#bed5ff; background:#edf5ff; }
-    .status-pill.scheduled { color:#6c7b8f; border-color:#d2d9e4; background:#f1f4f8; }
-    .status-pill.rejected { color:#e9564a; border-color:#f3c7c2; background:#fff1ef; }
+    .status-pill.pending { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
+    .status-pill.scheduled { color:#526176; border-color:#d2d9e4; background:#f1f4f8; }
+    .status-pill.rejected { color:#c62828; border-color:#f3c7c2; background:#fff1ef; }
+    .status-pill.to-sign { color:#8a5a00; border-color:#efd8a4; background:#fff8e8; }
+    .status-pill.signing { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
+    .status-pill.running { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
     .num { text-align:right; font-variant-numeric:tabular-nums; }
     .muted { color:#98a4b4; }
-    .empty-dash { color:#aab3c0; }
-    .row-action { height:26px; padding:0 7px; border:1px solid #cfe0ff; border-radius:4px; color:#2f74ff; background:#f8fbff; font-size:10px; cursor:pointer; }
+    .empty-dash { color:#5b6778; }
+    .row-action { height:26px; padding:0 7px; border:1px solid #cfe0ff; border-radius:4px; color:#2563eb; background:#f8fbff; font-size: 11px; cursor:pointer; }
     .row-action:hover { background:#edf5ff; }
-    .pagination { display:flex; align-items:center; justify-content:flex-end; gap:8px; min-height:45px; padding:0 14px; color:#7d899b; background:#fff; font-size:10px; }
-    .pagination button { min-width:26px; height:26px; border:1px solid #e2e7ee; border-radius:3px; color:#667387; background:#fff; font-size:10px; }
-    .pagination button.active { color:#2f74ff; border-color:#bdd6ff; background:#edf5ff; }
-    .query-empty { display:none; padding:40px 12px; color:#9aa6b6; text-align:center; font-size:11px; }
+    .pagination { display:flex; align-items:center; justify-content:flex-end; gap:8px; min-height:45px; padding:0 14px; color:#7d899b; background:#fff; font-size: 11px; }
+    .pagination button { min-width:26px; height:26px; border:1px solid #e2e7ee; border-radius:3px; color:#667387; background:#fff; font-size: 11px; }
+    .pagination button.active { color:#2563eb; border-color:#bdd6ff; background:#edf5ff; }
+    .query-empty { display:block; width:100%; padding:54px 16px; color:#526176; text-align:center; font-size:14px; }
     @media (max-width:1250px) { .query-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .query-field.wide { grid-column:span 2; } }
     @media (max-width:1000px) { .query-grid { grid-template-columns:1fr; } .query-field.wide { grid-column:span 1; } }
     /* Align query, table and buttons with logistics-demand */
@@ -263,8 +266,13 @@
     html.list-embedded .detail-scroll { height:100vh; padding:12px 12px 0 8px; }
   </style>
   <script>if (new URLSearchParams(window.location.search).get("embed") === "1") document.documentElement.classList.add("list-embedded");</script>
+  <link rel="stylesheet" href="../assets/design-system.css">
+  <link rel="stylesheet" href="../assets/ui-state.css">
+  <link rel="stylesheet" href="../assets/accessibility.css">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
+<h1 class="sr-only">客户订单列表</h1>
   <svg class="svg-sprite" aria-hidden="true">
     <symbol id="p-logo" viewBox="0 0 24 24"><path d="m12 2.7 8 4.2v9.8l-8 4.6-8-4.6V6.9l8-4.2Z"/><path d="m4.4 7 7.6 4 7.6-4M12 11v9.7"/></symbol>
     <symbol id="p-order" viewBox="0 0 24 24"><path d="M7 4.5h10a2 2 0 0 1 2 2v13H5v-13a2 2 0 0 1 2-2Z"/><path d="M9 4V2.8h6V4M8.5 9h7M8.5 13h7M8.5 17h4"/></symbol>
@@ -330,12 +338,14 @@
             </div>
           </section>
 
-          <section class="table-card" aria-label="客户订单列表">
+          <section class="table-card ui-table-state-host" id="orderTableHost" aria-label="客户订单列表">
             <div class="status-tabs" role="tablist" aria-label="订单状态">
-              <button class="status-tab active" type="button" data-status="all">全部(901)</button>
+              <button class="status-tab active" type="button" data-status="all">全部(920)</button>
               <button class="status-tab" type="button" data-status="created">创建(37)</button>
               <button class="status-tab" type="button" data-status="audit">待审核(0)</button>
               <button class="status-tab" type="button" data-status="rejected">驳回(0)</button>
+              <button class="status-tab" type="button" data-status="to-sign">待签约(12)</button>
+              <button class="status-tab" type="button" data-status="signing">签约中(7)</button>
               <button class="status-tab" type="button" data-status="unscheduled">待安排(16)</button>
               <button class="status-tab" type="button" data-status="scheduled">已安排(848)</button>
               <div class="status-spacer"></div>
@@ -378,7 +388,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr data-status="scheduled" data-order="FCO202610270010" data-consignment="2102957467694845952">
+                  <tr data-status="scheduled" data-order="CO-20260904-BREAKBULK" data-consignment="">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 CO-20260904-BREAKBULK"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list&view=feedback">CO-20260904-BREAKBULK</a></td><td><span class="status-pill running">履约中</span></td><td>中国重汽集团</td><td>重卡卡车</td><td class="num">300 台</td><td class="num">300 台</td><td class="num">0 台</td><td>青岛港件杂货码头</td><td>东非蒙巴萨港</td><td>出口</td><td>运输</td><td>水运</td><td>件杂货</td><td>庄巧玲</td><td>厦门建发亚投新能源物流有限公司</td><td>件杂部</td><td class="customer-consignment-cell"><span class="empty-dash">--</span></td><td>庄巧玲</td><td>2026-10-28 09:20</td><td>庄巧玲</td><td>2026-11-01 14:30</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 CO-20260904-BREAKBULK 的履约反馈">查看履约反馈</button></td>
+                  </tr>                  <tr data-status="scheduled" data-order="FCO202610270010" data-consignment="2102957467694845952">
                     <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270010"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list">FCO202610270010</a></td><td><span class="status-pill scheduled">已安排</span></td><td>青岛绿洲园花生食品有限公司</td><td>玉米</td><td class="num">10 吨</td><td class="num">10 吨</td><td class="num">0 吨</td><td>上官栗子四果汤(文化宫店)</td><td>厦门港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2102957467694845952">2102957467694845952</span></td><td>苏丽蓉</td><td>2026-10-27 09:42</td><td>苏丽蓉</td><td>2026-10-27 09:42</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270010 的物流安排">查看物流安排</button></td>
                   </tr>
                   <tr data-status="scheduled" data-order="FCO202610270009" data-consignment="2102960421436968960">
@@ -396,11 +408,18 @@
                   <tr data-status="rejected" data-order="FCO202610270005" data-consignment="">
                     <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270005"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270005&from=customer-order-list">FCO202610270005</a></td><td><span class="status-pill rejected">驳回</span></td><td>厦门象屿股份有限公司</td><td>钢材</td><td class="num">1.20 万吨</td><td class="num">0 万吨</td><td class="num">1.20 万吨</td><td>厦门港</td><td>胡志明港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>庄巧玲</td><td>厦门建发物流有限公司</td><td>件杂部</td><td class="customer-consignment-cell"><span class="empty-dash">--</span></td><td>庄巧玲</td><td>2026-10-24 10:08</td><td>庄巧玲</td><td>2026-10-24 10:08</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270005 的物流安排">查看物流安排</button></td>
                   </tr>
-                  <tr id="queryEmptyRow" class="query-empty-row" hidden><td colspan="23"><div class="query-empty">未找到匹配的客户订单，请调整查询条件后重试。</div></td></tr>
+
+                  <tr data-status="to-sign" data-order="FCO202610270004" data-consignment="2103654897215401984">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270004"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list">FCO202610270004</a></td><td><span class="status-pill to-sign">待签约</span></td><td>山东港口国际贸易集团有限公司</td><td>进口纸浆</td><td class="num">1.20 万吨</td><td class="num">0 万吨</td><td class="num">1.20 万吨</td><td>青岛港</td><td>日照港</td><td>进口</td><td>运输</td><td>水运</td><td>散货</td><td>梁露</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2103654897215401984">2103654897215401984</span></td><td>梁露</td><td>2026-10-23 10:18</td><td>梁露</td><td>2026-10-23 10:18</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270004 的订单详情">查看详情</button></td>
+                  </tr>
+                  <tr data-status="signing" data-order="FCO202610270003" data-consignment="2103652106571845520">
+                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270003"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list">FCO202610270003</a></td><td><span class="status-pill signing">签约中</span></td><td>青岛港国际股份有限公司</td><td>铁矿石</td><td class="num">2.50 万吨</td><td class="num">0 万吨</td><td class="num">2.50 万吨</td><td>青岛港</td><td>日照港</td><td>内贸</td><td>运输</td><td>水运</td><td>散货</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2103652106571845520">2103652106571845520</span></td><td>苏丽蓉</td><td>2026-10-22 15:46</td><td>苏丽蓉</td><td>2026-10-22 16:20</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270003 的订单详情">查看详情</button></td>
+                  </tr>
                 </tbody>
               </table>
-            </div>
-            <div class="pager"><span id="resultCount">共 6 条</span><button disabled>上一页</button><button class="active">1</button><button disabled>下一页</button><select aria-label="每页条数"><option>20 条/页</option><option>50 条/页</option></select></div>
+                <div id="queryEmptyState" class="query-empty" hidden role="status" aria-live="polite">未找到匹配的客户订单，请调整查询条件后重试。</div>
+              </div>
+              <div class="pager"><span id="resultCount" aria-live="polite">共 9 条</span><button disabled>上一页</button><button class="active">1</button><button disabled>下一页</button><select aria-label="每页条数"><option>20 条/页</option><option>50 条/页</option></select></div>
           </section>
         </div>
       </main>
@@ -409,6 +428,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="../assets/prototype-data.js"></script>
   <script>
     (() => {
       const queryBody = document.getElementById('queryBody');
@@ -419,7 +439,8 @@
       const tbody = document.querySelector('.order-table tbody');
       const rows = Array.from(tbody.querySelectorAll('tr[data-order]'));
       const resultCount = document.getElementById('resultCount');
-      const emptyRow = document.getElementById('queryEmptyRow');
+      const tableHost = document.getElementById('orderTableHost');
+      const emptyState = document.getElementById('queryEmptyState');
       const selectAll = document.getElementById('selectAll');
       const rowChecks = Array.from(document.querySelectorAll('.row-check'));
       const selectionButtons = Array.from(document.querySelectorAll('.action-requires-selection'));
@@ -441,14 +462,16 @@
         queryToggle.setAttribute('aria-expanded', String(expanded));
       };
 
+      const visibleRowChecks = () => rowChecks.filter((checkbox) => !checkbox.closest('tr').hidden);
+      const checkedVisibleCount = () => visibleRowChecks().filter((checkbox) => checkbox.checked).length;
       const updateSelectionActions = () => {
-        const count = rowChecks.filter((checkbox) => checkbox.checked).length;
+        const count = checkedVisibleCount();
         selectionButtons.forEach((button) => { button.disabled = count === 0; });
-        selectAll.checked = count > 0 && count === rowChecks.length;
-        selectAll.indeterminate = count > 0 && count < rowChecks.length;
+        selectAll.checked = count > 0 && count === visibleRowChecks().length;
+        selectAll.indeterminate = count > 0 && count < visibleRowChecks().length;
         document.querySelectorAll('tr[data-order]').forEach((row) => {
           const checkbox = row.querySelector('.row-check');
-          row.classList.toggle('selected', !!checkbox?.checked);
+          row.classList.toggle('selected', !!checkbox?.checked && !row.hidden);
         });
       };
 
@@ -479,12 +502,87 @@
           if (show) visible += 1;
         });
 
-        emptyRow.hidden = visible !== 0;
+        rowChecks.forEach((checkbox) => {
+          if (checkbox.closest('tr').hidden) checkbox.checked = false;
+        });
+        emptyState.hidden = visible !== 0;
         resultCount.textContent = '共 ' + visible + ' 条';
         document.querySelectorAll('.status-tab').forEach((tab) => {
           tab.classList.toggle('active', tab.dataset.status === activeStatus);
         });
+        updateSelectionActions();
       };
+
+      const parseOrderRecord = (row) => {
+        if (!row) return null;
+        const cells = Array.from(row.cells).map((cell) => cell.innerText.trim());
+        return {
+          no: row.dataset.order || cells[1] || '',
+          status: cells[2] || '',
+          customer: cells[3] || '',
+          goods: cells[4] || '',
+          total: cells[5] || '',
+          scheduled: cells[6] || '',
+          unscheduled: cells[7] || '',
+          origin: cells[8] || '',
+          destination: cells[9] || '',
+          businessType: cells[10] || '',
+          serviceScope: (cells[11] || '').split(/[、,，\s]+/).filter(Boolean),
+          transportType: cells[12] || '',
+          loadType: cells[13] || '',
+          sales: cells[14] || '',
+          company: cells[15] || '',
+          department: cells[16] || '',
+          consignments: (row.dataset.consignment || '').split(/[\s,，]+/).filter(Boolean),
+          businessDate: (cells[19] || '').split(' ')[0],
+          updated: cells[21] || '',
+          projectNo: '',
+          tradeTerm: 'FOB',
+          contact: '',
+          phone: '',
+          email: '',
+          remark: ''
+        };
+      };
+
+      const captureListState = () => {
+        if (!window.PrototypeData) return;
+        window.PrototypeData.saveListState({
+          fields: Array.from(queryBody.querySelectorAll('input, select')).map((control) => ({ id: control.id, value: control.value })),
+          expanded: queryBody.classList.contains('expanded'),
+          activeStatus,
+          selected: rowChecks.filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.closest('tr').dataset.order),
+          scrollY: window.scrollY || document.documentElement.scrollTop || 0
+        });
+      };
+
+      const restoreListState = () => {
+        if (!window.PrototypeData) return;
+        const saved = window.PrototypeData.readListState();
+        if (!saved) return;
+        (saved.fields || []).forEach((field) => {
+          const control = field.id ? document.getElementById(field.id) : null;
+          if (control) control.value = field.value || '';
+        });
+        setQueryExpanded(Boolean(saved.expanded));
+        activeStatus = saved.activeStatus || 'all';
+        const selected = new Set(saved.selected || []);
+        rowChecks.forEach((checkbox) => {
+          checkbox.checked = selected.has(checkbox.closest('tr').dataset.order);
+        });
+        applyFilters();
+        window.requestAnimationFrame(() => window.scrollTo(0, Number(saved.scrollY) || 0));
+      };
+
+      document.querySelectorAll('.order-link').forEach((link) => {
+        link.addEventListener('click', () => {
+          const row = link.closest('tr[data-order]');
+          const record = parseOrderRecord(row);
+          if (record && window.PrototypeData) window.PrototypeData.rememberSelectedOrder(record);
+          captureListState();
+        });
+      });
+      window.addEventListener('pagehide', captureListState);
 
       moreQueryBtn.addEventListener('click', () => {
         setQueryExpanded(!queryBody.classList.contains('expanded'));
@@ -492,28 +590,90 @@
       queryToggle.addEventListener('click', () => {
         setQueryExpanded(!queryBody.classList.contains('expanded'));
       });
-      submitQueryBtn.addEventListener('click', applyFilters);
+      const runQuery = () => {
+        if (!window.UIState) {
+          applyFilters();
+          return;
+        }
+        const injectedFailure = window.PrototypeRuntime && window.PrototypeRuntime.consumeFailure('orderQuery');
+        if (injectedFailure === 'timeout') {
+          UIState.setTableState(tableHost, {
+            state: 'error',
+            preserveHeader: true,
+            title: '查询请求超时',
+            message: '查询条件已保留，请点击重试重新加载。',
+            actionLabel: '重新查询',
+            onAction: () => runQuery()
+          });
+          captureListState();
+          return;
+        }
+        if (!navigator.onLine) {
+          UIState.setTableState(tableHost, {
+            state: 'offline',
+            preserveHeader: true,
+            title: '网络连接已断开',
+            message: '恢复网络后点击重新连接，当前查询条件不会丢失。',
+            actionLabel: '重新连接',
+            onAction: () => runQuery()
+          });
+          captureListState();
+          return;
+        }
+        UIState.setButtonLoading(submitQueryBtn, true, '查询中');
+        UIState.setTableState(tableHost, {
+          state: 'loading',
+          title: '正在查询客户订单…',
+          message: '正在应用筛选条件，请稍候。',
+          rows: 5
+        });
+        window.setTimeout(() => {
+          applyFilters();
+          UIState.clearTableState(tableHost);
+          UIState.setButtonLoading(submitQueryBtn, false);
+        }, 360);
+      };
+
+      window.addEventListener('offline', () => {
+        if (!window.UIState) return;
+        UIState.setTableState(tableHost, {
+          state: 'offline',
+          preserveHeader: true,
+          title: '网络连接已断开',
+          message: '恢复网络后点击重新连接，当前查询条件不会丢失。',
+          actionLabel: '重新连接',
+          onAction: () => runQuery()
+        });
+        captureListState();
+      });
+      window.addEventListener('online', () => showToast('网络已恢复，请点击“重新连接”继续查询'));
+
+      submitQueryBtn.addEventListener('click', runQuery);
       resetQueryBtn.addEventListener('click', () => {
         queryBody.querySelectorAll('input, select').forEach((control) => {
           control.value = '';
         });
         activeStatus = 'all';
         applyFilters();
+        captureListState();
         showToast('查询条件已重置');
       });
       queryBody.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') applyFilters();
+        if (event.key === 'Enter') runQuery();
       });
 
       document.querySelectorAll('.status-tab').forEach((tab) => {
         tab.addEventListener('click', () => {
           activeStatus = tab.dataset.status;
           applyFilters();
+          captureListState();
         });
       });
 
       selectAll.addEventListener('change', () => {
-        rowChecks.forEach((checkbox) => { checkbox.checked = selectAll.checked; });
+        rowChecks.forEach((checkbox) => {
+          if (!checkbox.closest('tr').hidden) checkbox.checked = selectAll.checked;
+        });
         updateSelectionActions();
       });
       rowChecks.forEach((checkbox) => {
@@ -521,7 +681,7 @@
       });
       selectionButtons.forEach((button) => {
         button.addEventListener('click', () => {
-          const count = rowChecks.filter((checkbox) => checkbox.checked).length;
+          const count = checkedVisibleCount();
           showToast(button.textContent + '：已选择 ' + count + ' 个订单');
         });
       });
@@ -530,8 +690,15 @@
         button.addEventListener('click', () => showToast(button.dataset.toast));
       });
 
+      restoreListState();
       updateSelectionActions();
     })();
   </script>
+  <script src="../assets/ui-state.js"></script>
+  <script src="../assets/prototype-access.js"></script>
 </body>
 </html>
+
+
+
+

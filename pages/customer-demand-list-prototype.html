@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>客户需求列表 - 4PL控制塔</title>
+  <script>
+    (function () {
+      var embedded = window.self !== window.top || new URLSearchParams(window.location.search).get('embed') === '1';
+      if (embedded) document.documentElement.classList.add('demand-embedded');
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/app.css">
+  <link rel="stylesheet" href="../assets/component-system.css">
+  <link rel="stylesheet" href="../assets/query-conditions.css">
+  <link rel="stylesheet" href="../assets/design-system.css">
+  <link rel="stylesheet" href="../assets/ui-state.css">
+  <link rel="stylesheet" href="../assets/accessibility.css">
+  <link rel="stylesheet" href="../assets/customer-demand.css">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+</head>
+<body class="demand-prototype">
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="p-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="p-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.5 6.3L4 9m2 6a7 7 0 0 0 11.5 2.7L20 15"/></symbol>
+    <symbol id="p-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6H5V6h6"/></symbol>
+    <symbol id="p-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="p-merge" viewBox="0 0 24 24"><path d="M5 5h5l2 3 2-3h5M5 19h5l2-3 2 3h5M12 8v8"/></symbol>
+  </svg>
+
+  <div class="app-shell demand-app-shell">
+    <section class="workspace demand-workspace">
+      <header class="topbar demand-topbar">
+        <div class="breadcrumb-wrap">
+          <div class="oms-tabs">
+            <span class="oms-home">首页</span>
+            <span class="oms-tab">客户需求列表<button type="button" aria-label="关闭客户需求列表标签页"><svg><use href="#p-close"/></svg></button></span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" id="topRefreshBtn" type="button" title="刷新" aria-label="刷新"><svg><use href="#p-refresh"/></svg></button>
+          <a class="icon-button" id="topExternalLink" href="customer-demand-list-prototype.html" target="_blank" rel="noopener" title="在新窗口打开" aria-label="在新窗口打开"><svg><use href="#p-external"/></svg></a>
+          <span class="topbar-divider"></span>
+          <div class="user-chip"><span class="avatar">苏</span><span class="user-copy"><strong>苏丽蓉</strong><small>物流运营</small></span></div>
+        </div>
+      </header>
+
+      <main class="demand-content">
+        <div class="demand-list-page">
+          <section class="ct-query-card" aria-label="客户需求查询条件">
+            <div class="ct-query-head">
+              <button class="ct-query-title" id="queryToggle" type="button" aria-expanded="true" aria-controls="queryBody"><span class="ct-query-caret" aria-hidden="true">▼</span>查询条件</button>
+              <div class="ct-query-actions">
+                <button class="btn soft-primary" id="moreQueryBtn" type="button" aria-expanded="false">查看更多</button>
+                <button class="btn soft-primary" id="resetQueryBtn" type="button">重置</button>
+                <button class="btn primary" id="submitQueryBtn" type="button">查询</button>
+              </div>
+            </div>
+            <form class="ct-query-body" id="demandQueryForm" novalidate>
+              <div id="queryBody" class="filter-grid">
+                <div class="query-field">
+                  <label for="queryDemandNo">客户需求单号</label>
+                  <input id="queryDemandNo" type="text" placeholder="请输入客户需求单号" autocomplete="off">
+                </div>
+                <div class="query-field">
+                  <label for="queryCustomer">客户</label>
+                  <select id="queryCustomer">
+                    <option value="">请选择</option>
+                    <option>青岛绿洲园花生食品有限公司</option>
+                    <option>厦门象屿股份有限公司</option>
+                    <option>上海远洋供应链有限公司</option>
+                    <option>广州南沙国际物流有限公司</option>
+                    <option>宁波中远海运集装箱运输有限公司</option>
+                    <option>苏州工业园区华贸有限公司</option>
+                  </select>
+                </div>
+                <div class="query-field">
+                  <label for="queryServiceReq">来源服务要求号</label>
+                  <input id="queryServiceReq" type="text" placeholder="请输入服务要求号" autocomplete="off">
+                </div>
+                <div class="query-field">
+                  <label for="queryVersion">当前版本</label>
+                  <select id="queryVersion"><option value="">请选择</option><option>V1</option><option>V2</option><option>V3</option><option>V4</option></select>
+                </div>
+                <div class="query-field">
+                  <label for="queryProgress">订单生成进度</label>
+                  <select id="queryProgress"><option value="">请选择</option><option value="none">未生成</option><option value="partial">部分生成</option><option value="complete">已全部生成</option><option value="over">已全部生成 · 超额</option></select>
+                </div>
+                <div class="query-field">
+                  <label for="queryContact">客户联系人</label>
+                  <input id="queryContact" type="text" placeholder="请输入联系人" autocomplete="off">
+                </div>
+                <div class="query-field extended-filter" hidden>
+                  <label for="queryBizType">业务类型</label>
+                  <select id="queryBizType"><option value="">请选择</option><option>出口</option><option>进口</option><option>内贸</option></select>
+                </div>
+                <div class="query-field extended-filter" hidden>
+                  <label for="queryServiceScope">服务范围</label>
+                  <select id="queryServiceScope"><option value="">请选择</option><option>运输</option><option>仓储</option><option>报关清关</option></select>
+                </div>
+                <div class="query-field extended-filter" hidden>
+                  <label for="queryTransportType">运输类型</label>
+                  <select id="queryTransportType"><option value="">请选择</option><option>水运</option><option>汽运</option><option>铁运</option></select>
+                </div>
+                <div class="query-field extended-filter" hidden>
+                  <label for="querySourceSystem">来源系统</label>
+                  <select id="querySourceSystem"><option value="">请选择</option><option>SSP</option><option>物流控制塔</option></select>
+                </div>
+                <div class="query-field extended-filter" hidden>
+                  <label for="queryCreatedFrom">创建日期（开始）</label>
+                  <input id="queryCreatedFrom" type="date">
+                </div>
+                <div class="query-field extended-filter" hidden>
+                  <label for="queryCreatedTo">创建日期（结束）</label>
+                  <input id="queryCreatedTo" type="date">
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <section class="demand-table-card" aria-label="客户需求列表">
+            <div class="status-tabs" role="tablist" aria-label="客户需求状态">
+              <button class="status-tab active" type="button" data-status="all" role="tab" aria-selected="true">全部(0)</button>
+              <button class="status-tab" type="button" data-status="created" role="tab" aria-selected="false">创建(0)</button>
+              <button class="status-tab" type="button" data-status="pending" role="tab" aria-selected="false">待接收(0)</button>
+              <button class="status-tab" type="button" data-status="received" role="tab" aria-selected="false">执行中(0)</button>
+              <button class="status-tab" type="button" data-status="rejected" role="tab" aria-selected="false">已驳回(0)</button>
+              <button class="status-tab" type="button" data-status="completed" role="tab" aria-selected="false">已完成(0)</button>
+              <span class="status-spacer"></span>
+              <span class="demand-result-hint" id="scrollHint">横向滚动查看更多字段</span>
+            </div>
+            <div class="demand-list-commandbar" aria-label="客户需求列表操作">
+              <div class="demand-list-commandbar-actions">
+                <button class="demand-command-btn" id="relationBtn" type="button" disabled title="选择 1 条需求拆分，选择 2 条及以上需求合并">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#p-merge"/></svg>
+                  <span id="relationBtnLabel">合并/拆分</span>
+                </button>
+                <button class="demand-command-btn" id="addDemandBtn" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#p-plus"/></svg>
+                  新增
+                </button>
+              </div>
+            </div>            <div class="demand-table-scroll demand-list-table-scroll ui-table-state-host" id="demandTableHost" role="region" aria-label="客户需求表格，可横向滚动" tabindex="0">
+              <table class="demand-table demand-list-table" aria-label="客户需求列表">
+                <thead>
+                  <tr>
+                    <th class="sticky-check"><input id="selectAll" type="checkbox" aria-label="选择当前页全部客户需求"></th>
+                    <th class="sticky-no">客户需求单号</th>
+                    <th>需求状态</th>
+                    <th>订单生成进度</th>
+                    <th>当前版本</th>
+                    <th>客户</th>
+                    <th>来源服务要求号</th>
+                    <th class="num">需求行数</th>
+                    <th class="num">超额行数</th>
+                    <th class="num">客户订单数</th>
+                    <th>客户联系人</th>
+                    <th>接收时间</th>
+                    <th>最近更新</th>
+                    <th class="sticky-action">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="demandTableBody"></tbody>
+              </table>
+            </div>
+            <div class="pager" aria-label="客户需求分页">
+              <span class="demand-pager-summary" id="pagerSummary">共 0 条</span>
+              <div class="demand-pager-pages" id="pagerPages"></div>
+              <button id="prevPageBtn" type="button" aria-label="上一页">上一页</button>
+              <button id="nextPageBtn" type="button" aria-label="下一页">下一页</button>
+              <select id="pageSizeSelect" aria-label="每页条数"><option value="20">20 条/页</option><option value="50">50 条/页</option></select>
+            </div>
+          </section>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <dialog class="demand-dialog" id="relationDialog" aria-labelledby="relationDialogTitle"></dialog>
+  <div class="demand-toast" id="demandToast" role="status" aria-live="polite"></div>
+  <script src="../assets/ui-state.js"></script>
+  <script src="../assets/component-system.js"></script>
+  <script src="../assets/customer-demand-common.js"></script>
+  <script src="../assets/customer-demand-list.js"></script>
+</body>
+</html>
+
+
+
+
+
+

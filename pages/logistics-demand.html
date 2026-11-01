@@ -505,10 +505,10 @@ html.ct-embedded .main{padding-top:0!important;background:var(--page)!important}
 <style id="latest-demand-sync-style">
 .anchor-section{scroll-margin-top:58px;margin-bottom:12px}.anchor-section:last-child{margin-bottom:0}
 .detail-actions{gap:6px;margin-left:12px;flex-wrap:nowrap}.detail-actions .btn{height:30px;min-height:30px;padding:0 10px;font-size:12px;line-height:1;border-radius:5px}.detail-actions .btn.mini{height:28px;padding:0 9px;font-size:11px}.detail-actions .btn svg{width:12px;height:12px}
-.detail-view-switch{display:inline-flex;align-items:stretch;gap:0;height:36px;padding:0 4px;border:1px solid #dfe5ee;border-radius:7px;background:#f8fafc;box-shadow:none;overflow:hidden}
-.detail-view-tab{position:relative;height:34px;padding:0 14px;border:0!important;border-radius:0;background:transparent!important;color:#64748b;font-size:12px;font-weight:500;box-shadow:none!important;display:inline-flex;align-items:center}
-.detail-view-tab:hover{background:#fff!important;color:#334155}.detail-view-tab.active{background:transparent!important;color:#2563eb;font-weight:600;box-shadow:none!important}.detail-view-tab.active:after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px;background:#2563eb}.detail-view-tab + .detail-view-tab:before{content:"";position:absolute;left:0;top:9px;width:1px;height:16px;background:#e2e8f0}.detail-view-tab .count{color:#94a3b8;font-size:11px;font-weight:400}.detail-view-tab.active .count{color:#2563eb}
-.detail-view-switch + .detail-actions{margin-left:12px;padding-left:12px;border-left:1px solid #dfe5ee}
+.detail-view-switch{display:inline-flex;align-items:stretch;gap:2px;height:40px;padding:2px;border:1px solid #cbd5e1;border-radius:8px;background:#f1f5f9;box-shadow:inset 0 1px 2px rgba(15,23,42,.04);overflow:hidden}
+.detail-view-tab{position:relative;min-width:96px;height:36px;padding:0 16px;border:0!important;border-radius:6px 6px 0 0;background:transparent!important;color:#475569;font-size:13px;font-weight:500;box-shadow:none!important;display:inline-flex;align-items:center;justify-content:center}
+.detail-view-tab:hover{background:#fff!important;color:#1d4ed8}.detail-view-tab.active{background:#eaf3ff!important;color:#1d4ed8;font-weight:700;box-shadow:inset 0 -3px 0 #2563eb!important}.detail-view-tab.active:after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:3px;border-radius:3px;background:#2563eb}.detail-view-tab:focus-visible{outline:2px solid #93c5fd;outline-offset:-2px}.detail-view-tab + .detail-view-tab:before{content:"";position:absolute;left:-1px;top:9px;width:1px;height:16px;background:#cbd5e1}.detail-view-tab .count{color:#64748b;font-size:11px;font-weight:500}.detail-view-tab.active .count{color:#1d4ed8}
+.detail-view-switch + .detail-actions{margin-left:16px;padding-left:16px;border-left:1px solid #cbd5e1}
 .doc-all-card{margin-bottom:0}.doc-query-bar{height:60px;display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid var(--line);background:#fff}.doc-query-title{font-size:13px;font-weight:600;color:#334155;margin-right:8px}.doc-query-field{display:flex;align-items:center;gap:8px;color:#64748b;font-size:12px}.doc-query-field .doc-status-filter{height:34px;min-width:150px}.doc-result-count{margin-left:auto;color:#94a3b8;font-size:11px}.doc-all-table-wrap{height:calc(100vh - 328px);min-height:300px;max-height:650px;overflow:auto}.doc-all-table{min-width:1740px}.doc-all-table th{position:sticky;top:0;z-index:2;background:#f8fafc;height:44px}.doc-all-table td{height:52px;font-size:12px}.doc-all-table th:nth-child(1),.doc-all-table td:nth-child(1){width:132px}.doc-all-table th:nth-child(8),.doc-all-table td:nth-child(8){width:92px}.doc-all-table th:nth-child(9),.doc-all-table td:nth-child(9){width:96px}.doc-all-table th:nth-child(11),.doc-all-table td:nth-child(11){width:96px}.doc-number-link{border:0;background:transparent;padding:0;color:#2563eb;font-size:12px;font-weight:500;cursor:pointer;text-align:left}.doc-number-link:hover{text-decoration:underline}
 @media(max-width:1360px){.doc-query-bar{padding:0 14px}.doc-query-field .doc-status-filter{min-width:130px}.doc-all-table-wrap{height:calc(100vh - 330px)}}
 </style>
@@ -541,7 +541,6 @@ html.ct-embedded .main{padding-top:0!important;background:var(--page)!important}
 const state = {
   page: 'list',
   activeRowId: 'FLR202610200038',
-  detailView: 'info',
   detailSection: 'overview',
   docFilter: '提单登记单',
   docSection: 'bill',
@@ -825,10 +824,16 @@ function feeTable(rows,isExec=false){
 }
 function feeCard(isExec,kind){
   const isRecv=kind==='recv';
-  const rows=isExec?[]:isRecv?[['操作费','FCO202610160032','成都柠檬时光科技有限公司','成都柠檬时光科技有限公司','6.00','到收','100.00','人民币','100.00','柜','10000.00','20RF','1.00','10000.00','','','否'],['运费','FCO202610160032','青岛绿洲园花生食品有限公司','青岛绿洲园花生食品有限公司','9.00','到付','80.00','人民币','100.00','吨','','','1.00','9000.00','','','否']]:[['运费','FCO202610160032','青岛绿洲园花生食品有限公司','青岛绿洲园花生食品有限公司','9.00','预付','80.00','人民币','100.00','吨','','','1.00','8000.00','','','否'],['运费','FCO202610160032','青岛绿洲园花生食品有限公司','青岛绿洲园花生食品有限公司','9.00','预付','70.00','人民币','100.00','吨','','','1.00','7000.00','','','否']];
+  const rows=isRecv?[['操作费','FCO202610160032','成都柠檬时光科技有限公司','成都柠檬时光科技有限公司','6.00','到收','100.00','人民币','100.00','柜','10000.00','20RF','1.00','10000.00','','','否'],['运费','FCO202610160032','青岛绿洲园花生食品有限公司','青岛绿洲园花生食品有限公司','9.00','到付','80.00','人民币','100.00','吨','','','1.00','9000.00','','','否']]:[['运费','FCO202610160032','青岛绿洲园花生食品有限公司','青岛绿洲园花生食品有限公司','9.00','预付','80.00','人民币','100.00','吨','','','1.00','8000.00','','','否'],['运费','FCO202610160032','青岛绿洲园花生食品有限公司','青岛绿洲园花生食品有限公司','9.00','预付','70.00','人民币','100.00','吨','','','1.00','7000.00','','','否']];
   const title=isRecv?'业务预估应收':'业务预估应付';
   const actions=isExec?'':`<button class="btn outline-primary mini" data-toast="已模拟新增费用项">添加</button><button class="btn outline-primary mini" disabled>${isRecv?'拷贝到业务预估应付':'拷贝到业务预估应收'}</button><button class="btn outline-primary mini" data-toast="已模拟拷贝其他业务费用">${isRecv?'拷贝其他业务预估应收':'拷贝其他业务预估应付'}</button><button class="btn outline-primary mini" data-toast="已模拟带入集装箱费用">带入集装箱</button>`;
   return cubeCard(title,feeTable(rows,isExec),{actions,className:'TaskCargoFormList'});
+}
+function executionFeeCard(isExec,kind){
+  const isRecv=kind==='recv';
+  const title=isRecv?'执行侧应收':'执行侧预估应付';
+  const action=isExec?`<button class="btn outline-primary mini" data-toast="已模拟维护${isRecv?'执行侧应收':'执行侧应付'}">维护${isRecv?'执行侧应收':'执行侧应付'}</button>`:'';
+  return cubeCard(title,feeTable([],true),{actions:action,className:'exec-fee-card'});
 }
 function profitCard(isExec){
   const row=isExec?['人民币','10.00','10.00','0.00','0.00','0.00','0.00']:['人民币','19,000.00','15,000.00','4,000.00','0.00','0.00','0.00'];
@@ -845,8 +850,8 @@ function systemCard(isExec){
   return cubeCard('系统信息',`<div class="grid-6">${labels.map((l,i)=>field(l,v[i],{readonly:true})).join('')}</div>`);
 }
 function detailActions(isExec){
-  if(!isExec)return `<button class="btn outline-primary" data-go="list">返回</button><button class="btn outline-primary" data-toast="已模拟打印">打印</button><button class="btn primary" disabled>修改OP</button><button class="btn danger" data-toast="已模拟删除确认">删除</button><button class="btn primary" data-toast="已模拟打开审批进度">审批进度</button><button class="btn outline-primary" data-toast="已模拟提交审批">提交审批</button><button class="btn outline-primary" data-collapse-all>收起</button>`;
-  return `<button class="btn outline-primary" data-go="list">返回</button><button class="btn outline-primary" data-toast="已模拟打印">打印</button><button class="btn primary" data-toast="已模拟进入修改OP">修改OP</button><button class="btn outline-primary" data-toast="已模拟完结需求">完结</button><div class="dropdown-wrap"><button class="btn outline-primary" data-dropdown>发起对账 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-toast="已模拟发起客户对账">客户对账</button><button data-toast="已模拟发起供应商对账">供应商对账</button><button data-toast="已模拟打开对账记录">对账记录</button></div></div><button class="btn primary" data-toast="已模拟打开审批进度">审批进度</button><button class="btn outline-primary" data-collapse-all>收起</button>`;
+  if(!isExec)return `<button class="btn outline-primary" data-go="list">返回</button><button class="btn outline-primary" data-toast="已模拟打印">打印</button><button class="btn primary" disabled>修改OP</button><button class="btn danger" data-toast="已模拟删除确认">删除</button><button class="btn primary" data-toast="已模拟打开需求单审批进度">需求单审批进度</button><button class="btn outline-primary" data-toast="已模拟提交审批">提交审批</button><button class="btn outline-primary" data-collapse-all>收起</button>`;
+  return `<button class="btn outline-primary" data-go="list">返回</button><button class="btn outline-primary" data-toast="已模拟打印">打印</button><button class="btn primary" data-toast="已模拟进入修改OP">修改OP</button><button class="btn outline-primary" data-toast="已模拟完结需求">完结</button><div class="dropdown-wrap"><button class="btn outline-primary" data-dropdown>发起对账 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-toast="已模拟发起客户对账">客户对账</button><button data-toast="已模拟发起供应商对账">供应商对账</button><button data-toast="已模拟打开对账记录">对账记录</button></div></div><button class="btn primary" data-toast="已模拟打开需求单审批进度">需求单审批进度</button><button class="btn outline-primary" data-collapse-all>收起</button>`;
 }
 function execFeeSection(){
   const isExecTab=state.execFeeTab==='exec';
@@ -860,7 +865,7 @@ function execFeeSection(){
 function arrangementReferenceActions(isExec){
   const primary=isExec?'完结需求':'提交审批';
   return `<button class="btn outline-primary" data-toast="已模拟${primary}">${primary}</button><button class="btn danger" data-toast="已模拟删除确认">删除</button><button class="btn outline-primary" data-go="list">返回</button>`;
-}function renderDetail(page){
+}function renderLegacyDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   const mainCards=isExec?`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`: `${baseCard(false)}${customerCard(false)}${transportCard(false)}${voyageCard(false)}${containerCard(false)}${sendReceiveCard(false)}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
@@ -1048,7 +1053,7 @@ function editableVoyageCard(){
 function arrangementReferenceActions(isExec){
   const primary=isExec?'完结需求':'提交审批';
   return `<button class="btn outline-primary" data-toast="已模拟${primary}">${primary}</button><button class="btn danger" data-toast="已模拟删除确认">删除</button><button class="btn outline-primary" data-go="list">返回</button>`;
-}function renderDetail(page){
+}function renderLegacyDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   let mainCards;
@@ -1109,16 +1114,31 @@ document.addEventListener('change',e=>{
   createForm[key]=val;
 });
 document.addEventListener('input',e=>{const el=e.target.closest('[data-field]');if(el&&state.page==='create')createForm[el.dataset.field]=el.value});
-function optimizedDetailActions(isExec){
-  if(state.detailView==='arrangement')return `<button class="btn outline-primary" data-toast="已模拟完结需求">完结需求</button><button class="btn danger" data-toast="已模拟删除确认">删除</button><button class="btn outline-primary" data-go="list">返回</button>`;
-  const more=`<div class="dropdown-wrap"><button class="btn outline-primary" data-dropdown>更多操作 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-toast="已模拟打印">打印</button><button data-toast="已模拟打开审批进度">审批进度</button><button data-toast="已模拟进入修改OP">修改OP</button><button data-collapse-all>收起全部</button></div></div>`;
-  if(isExec)return `<button class="btn outline-primary" data-toast="已模拟完结需求">完结需求</button><div class="dropdown-wrap"><button class="btn outline-primary" data-dropdown>发起对账 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-toast="已模拟发起客户对账">客户对账</button><button data-toast="已模拟发起供应商对账">供应商对账</button><button data-toast="已模拟打开对账记录">对账记录</button></div></div>${more}<button class="btn outline-primary" data-go="list">返回</button>`;
-  return `<button class="btn primary" data-toast="已模拟提交审批">提交审批</button><button class="btn danger" data-toast="已模拟删除确认">删除</button>${more}<button class="btn outline-primary" data-go="list">返回</button>`;
+function optimizedDetailActions(isExec, status){
+  if(state.detailView==='arrangement')return `<button class="btn primary" data-toast="已模拟完结需求">完结需求</button><button class="btn danger" data-toast="已模拟删除确认">删除</button><button class="btn outline-primary" data-go="list">返回</button>`;
+  const actionStatus=status||(isExec?'执行中':'创建');
+  const back=`<button class="btn outline-primary" data-go="list">返回</button>`;
+  const print=`<button class="btn outline-primary" data-toast="已模拟打印">打印</button>`;
+  const modifyDisabled=`<button class="btn primary" disabled>修改OP</button>`;
+  const modify=`<button class="btn primary" data-toast="已模拟进入修改OP">修改OP</button>`;
+  const approval=`<button class="btn primary" data-toast="已模拟打开需求单审批进度">需求单审批进度</button>`;
+  const submit=`<button class="btn outline-primary" data-toast="已模拟提交审批">提交审批</button>`;
+  const reconcile=`<div class="dropdown-wrap"><button class="btn outline-primary" data-dropdown>发起对账 <span style="font-size:10px">⌄</span></button><div class="dropdown-menu"><button data-toast="已模拟发起客户对账">发起客户对账</button><button data-toast="已模拟发起供应商对账">发起供应商对账</button><button data-toast="已模拟发起代理对账">发起代理对账</button></div></div>`;
+  const complete=`<button class="btn outline-primary" data-toast="已模拟完结需求">完结</button>`;
+  const cancelComplete=`<button class="btn outline-primary" data-toast="已模拟取消完结">取消完结</button>`;
+  const voidButton=`<button class="btn danger-solid" data-toast="已模拟作废">作废</button>`;
+  if(actionStatus==='待审核')return back+print+modifyDisabled+approval+`<button class="btn danger" data-toast="已模拟撤销审批">撤销审批</button>`;
+  if(actionStatus==='驳回'||actionStatus==='审批驳回')return back+print+modifyDisabled+approval+submit;
+  if(actionStatus==='待安排')return back+print+modify+complete+reconcile+voidButton+approval;
+  if(actionStatus==='执行中')return back+print+modify+complete+reconcile+approval;
+  if(actionStatus==='已完结')return back+print+modifyDisabled+cancelComplete+reconcile+approval;
+  if(actionStatus==='作废')return back+modifyDisabled+approval;
+  return back+print+modifyDisabled+`<button class="btn danger" data-toast="已模拟删除确认">删除</button>`+approval+submit;
 }
 function arrangementReferenceActions(isExec){
   const primary=isExec?'完结需求':'提交审批';
   return `<button class="btn outline-primary" data-toast="已模拟${primary}">${primary}</button><button class="btn danger" data-toast="已模拟删除确认">删除</button><button class="btn outline-primary" data-go="list">返回</button>`;
-}function renderDetail(page){
+}function renderLegacyDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   let infoCards;
@@ -1186,7 +1206,7 @@ function renderExecutionLower(){
   return `<div class="execution-ref-layout">
     <aside class="execution-tree-card"><div class="execution-tree-head"><span>执行结构</span><button class="btn link" data-toast="已模拟收起执行结构">«</button></div><div class="execution-tree-list"><button class="exec-delegation-node">${icon('order')}<span>ui自动化物流安排510309</span></button><button class="exec-task-node active">${icon('ship')}<span>华东物流运营中心 / 上海调度组 → 客户收货仓</span></button></div><button class="exec-add-delegation" data-toast="已模拟新增委托">＋ 新增委托</button></aside>
     <section class="delegation-ref-card">
-      <div class="delegation-ref-head"><span class="tag" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe">执行中</span><h3>ui自动化物流安排510309</h3><span class="delegation-code">FLMT202610200038 · V1.0</span><div class="delegation-ref-actions"><button class="btn outline-primary mini" data-toast="已模拟打开合同信息">合同信息</button><button class="btn outline-primary mini" data-toast="已模拟打开审批进度">审批进度</button><button class="btn outline-primary mini" data-toast="已模拟打开附件">附件</button><button class="btn outline-primary mini" data-toast="已模拟打开历史版本">历史版本</button><button class="btn primary mini" data-toast="已模拟提交审批">提交审批</button><button class="btn outline-primary mini" data-toast="已模拟复制委托">复制</button><button class="btn danger mini" data-toast="已模拟删除委托">删除</button></div></div>
+      <div class="delegation-ref-head"><span class="tag" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe">执行中</span><h3>ui自动化物流安排510309</h3><span class="delegation-code">FLMT202610200038 · V1.0</span><div class="delegation-ref-actions"><button class="btn outline-primary mini" data-toast="已模拟打开合同信息">合同信息</button><button class="btn outline-primary mini" data-toast="已模拟打开需求单审批进度">需求单审批进度</button><button class="btn outline-primary mini" data-toast="已模拟打开附件">附件</button><button class="btn outline-primary mini" data-toast="已模拟打开历史版本">历史版本</button><button class="btn primary mini" data-toast="已模拟提交审批">提交审批</button><button class="btn outline-primary mini" data-toast="已模拟复制委托">复制</button><button class="btn danger mini" data-toast="已模拟删除委托">删除</button></div></div>
       <div class="delegation-ref-meta"><span>来源 <b>控制塔</b></span><span>业务员 <b>黄瑞钰</b></span><span>部门 <b>数字化中心</b></span><span>经营单位 <b>供应链物流科技</b></span><span>核算组织 <b>数字化中心</b></span><span>公司 <b>厦门建发生生物流有限公司</b></span><span>创建 <b>苏丽蓉 · 2026-10-20 19:51:35</b></span><span>修改 <b>菜菜菜 · 2026-10-20 19:53:25</b></span></div>
       <div class="delegation-ref-body"><section class="ref-subcard"><div class="ref-subhead">委托基础信息 <span>⌄</span></div><div class="grid-6">${fields}</div></section><div class="ref-task-list-title">任务列表 <span>1</span></div>${renderReferenceTask()}</div>
     </section>
@@ -1204,7 +1224,7 @@ function goodsDetailCard(isExec){
   const body=`<div class="goods-summary-bar"><span>共 <b>1</b> 条商品</span><span>标准数量 <b>1 ${g.u3}</b></span><span>毛重 <b>—</b></span><span>体积 <b>—</b></span><span>货值 <b>—</b></span></div><div class="table-scroll goods-table-scroll"><table class="mini-table" style="min-width:1500px"><thead><tr><th style="width:150px">客户订单号</th><th style="width:180px">客户</th><th style="width:130px">商品中文名</th><th style="width:140px">商品描述</th><th style="width:105px">件数/单位</th><th style="width:105px">毛重/单位</th><th style="width:105px">体积/单位</th><th style="width:125px">标准数量/单位</th><th style="width:100px">单件重量</th><th style="width:120px">单件重量单位</th><th style="width:120px">规格尺寸</th><th style="width:100px">溢装率（%）</th><th style="width:100px">短装率（%）</th><th style="width:130px">货物单价（元）</th><th style="width:140px">货物总价（万元）</th><th style="width:180px">贸易合同号（类型）</th><th style="width:150px">商品英文名</th><th style="width:80px">操作</th></tr></thead><tbody><tr><td>${g.no}</td><td>${g.customer}</td><td>${g.name}</td><td></td><td></td><td>${g.u1}</td><td>${g.u2}</td><td>${g.u3}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div>`;
   return cubeCard('商品明细列表',body,{actions:isExec?'':'<button class="btn outline-primary mini" data-toast="已模拟打开商品选择弹窗">选择商品</button>'});
 }
-function renderDetail(page){
+function renderLegacyDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   const isWater=isExec||createForm.transportType==='水运';
@@ -1226,7 +1246,7 @@ function renderDetail(page){
       <div class="detail-title">${state.detailView==='arrangement'?'':'<span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span>'}<span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div>
       <span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span>
       <div class="detail-view-switch"><button class="detail-view-tab ${state.detailView==='info'?'active':''}" data-detail-view="info">需求与服务要求</button><button class="detail-view-tab ${state.detailView==='arrangement'?'active':''}" data-detail-view="arrangement">物流安排 <span class="count">(${isExec?1:0})</span></button><button class="detail-view-tab ${state.detailView==='documents'?'active':''}" data-detail-view="documents">实际收付</button></div>
-      <div class="detail-actions">${state.detailView==='arrangement'?arrangementReferenceActions(isExec):optimizedDetailActions(isExec)}</div>
+      <div class="detail-actions">${state.detailView==='arrangement'?arrangementReferenceActions(isExec):optimizedDetailActions(isExec, displayStatus)}</div>
     </div></section>
     <div class="detail-view-panel ${state.detailView==='info'?'active':''}" data-view-panel="info">${infoView}</div>
     <div class="detail-view-panel ${state.detailView==='arrangement'?'active':''}" data-view-panel="arrangement">${arrangement}</div>
@@ -1433,7 +1453,7 @@ function renderPaymentLedger(isExec) {
 }
 
 function renderDocumentsView(isExec) {
-  return `<section class="cube-card doc-all-card doc-hub-card">${renderPaymentLedger(isExec)}</section>`;
+  return `<section class="cube-card doc-all-card doc-hub-card">${renderPaymentLedger(isExec).replace('<span class="doc-query-title">查询条件</span>','<span class="doc-query-title">实际收付</span>')}</section>`;
 }
 
 document.addEventListener('change', e => {
@@ -1443,23 +1463,25 @@ document.addEventListener('change', e => {
 function renderDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
+  const activeRecord=listRows.find(item=>item.no===state.activeRowId)||{status:isExec?'执行中':'创建'};
+  const displayStatus=activeRecord.status||(isExec?'执行中':'创建');
   const isWater=isExec||createForm.transportType==='水运';
   const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
   const transport=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}`;
-  const fees=isExec?`${execFeeSection()}${profitCard(true)}`:`${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}`;
+  const demand=`${overview}${transport}${feeCard(isExec,'recv')}${feeCard(isExec,'pay')}${profitCard(isExec)}`.replaceAll('客户及商品明细','客户与商品明细').replace('收发通信息','收发通');
+  const documents=renderDocumentsView(isExec);
+  const fees=`${executionFeeCard(isExec,'recv')}${executionFeeCard(isExec,'pay')}${documents}${profitCard(isExec)}`;
   const records=`${attachmentCard(isExec)}${systemCard(isExec)}`;
   const billList=renderBillList(isExec);
   const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
-  const documents=renderDocumentsView(isExec);
-  const view=state.detailView==='documents'?'documents':'info';
-  const sections=['overview','transport','fees','records','arrangement','bills'];
-  const activeSection=sections.includes(state.detailSection)?state.detailSection:'overview';
-  const nav=[['overview','基础信息'],['transport','运输要求'],['fees','费用与利润'],['records','附件与记录'],['arrangement',`物流安排${isExec?' (1)':' (0)'}`],['bills','提单列表']];
-  const panels={overview,transport,fees,records,arrangement,bills:billList};
+  const sections=['demand','fees','records','arrangement','bills'];
+  const activeSection=sections.includes(state.detailSection)?state.detailSection:'demand';
+  const nav=[['demand','需求详情'],['fees','费用与利润'],['records','附件与记录'],['arrangement','物流安排'],['bills','提单列表']];
+  const panels={demand,fees,records,arrangement,bills:billList};
   return `<div class="detail-scroll"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
-    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${isExec?'running':'draft'}">${isExec?'执行中':'创建'}</span><div class="detail-view-switch"><button class="detail-view-tab ${view==='info'?'active':''}" data-detail-view="info">需求详情</button><button class="detail-view-tab ${view==='documents'?'active':''}" data-detail-view="documents">实际收付</button></div><div class="detail-actions">${optimizedDetailActions(isExec)}</div></div></section>
-    ${view==='info'?`<div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-detail-section="${id}">${l}</button>`).join('')}</div><div class="detail-section-panel active" id="section-${activeSection}">${panels[activeSection]||panels.overview}</div>`:`<div class="doc-independent-view">${documents}</div>`}
+    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${displayStatus==='执行中'?'running':displayStatus==='创建'?'draft':'status-create'}">${displayStatus}</span><div class="detail-actions">${optimizedDetailActions(isExec, displayStatus)}</div></div></section>
+    <div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-detail-section="${id}">${l}</button>`).join('')}</div><div class="detail-section-panel active" id="section-${activeSection}">${panels[activeSection]||panels.overview}</div>
   </div></div>`;
 }
 document.addEventListener('change',e=>{if(e.target.id==='docTypeFilter'){const val=e.target.value;const card=e.target.closest('.doc-all-card');const rows=[...card.querySelectorAll('tbody tr[data-doc-type]')];let count=0;rows.forEach(r=>{const show=val==='all'||r.dataset.docType===val;r.style.display=show?'':'none';if(show)count++;});const label=card.querySelector('#docResultCount');if(label)label.textContent=`共 ${count} 条`;}});
@@ -1468,6 +1490,7 @@ function render(){
   renderSidebar();
   const main=document.getElementById('main');
   main.innerHTML=state.page==='list'?renderList():state.page==='document'?renderDocumentPage():renderDetail(state.page);
+  main.querySelectorAll('.detail-view-switch').forEach(el=>el.remove());
   state.dropdownOpen=false;
 }
 document.addEventListener('click',e=>{
