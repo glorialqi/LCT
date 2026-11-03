@@ -471,6 +471,149 @@ body{background:var(--page);color:var(--text);font-family:var(--font)}
 .goods-cell-value{display:inline-flex;align-items:center;min-height:32px;padding:0 9px;border-radius:4px;background:#f5f6f8;color:#596270;max-width:145px;overflow:hidden;text-overflow:ellipsis}
 .goods-unit{display:inline-block;margin-left:4px;color:#737c89;font-size:12px}
 @media(max-width:1360px){.customer-goods-layout{grid-template-columns:410px minmax(0,1fr)}.related-order-card{min-height:190px}.order-tag{padding:0 7px}.related-meta-grid{gap:8px 14px}}
+
+/* 执行侧预估应收 / 应付：合并对账、开票与收付款信息 */
+.exec-finance-section{overflow:hidden;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.025)}
+.exec-finance-head{display:flex;min-height:50px;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-bottom:1px solid #f1f5f9;background:#fff}
+.exec-finance-title{display:flex;min-width:0;align-items:center;gap:8px;margin:0;color:#0f172a;font-size:13px;font-weight:600}
+.exec-finance-title svg{width:15px;height:15px;flex:0 0 15px;color:#64748b}
+.exec-finance-direction{display:inline-flex;height:20px;align-items:center;padding:0 7px;border-radius:4px;font-size:10px;font-weight:600}
+.exec-finance-direction.recv{background:#eff6ff;color:#2563eb}
+.exec-finance-direction.pay{background:#fff7ed;color:#c2410c}
+.exec-finance-head-meta{display:flex;align-items:center;gap:10px;color:#64748b;font-size:11px;white-space:nowrap}
+.exec-finance-body{padding:12px 16px 16px}
+.exec-finance-toolbar{display:flex;min-height:34px;align-items:center;justify-content:space-between;gap:12px;color:#64748b;font-size:11px}
+.exec-finance-table-wrap{overflow:auto;border:1px solid #e2e8f0;border-radius:6px}
+.exec-finance-table{width:100%;min-width:1450px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+.exec-finance-table th{height:40px;padding:0 10px;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:11px;font-weight:600;text-align:left;white-space:nowrap}
+.exec-finance-table td{height:52px;padding:9px 10px;border-bottom:1px solid #eef2f7;color:#334155;font-size:12px;line-height:1.45;vertical-align:top}
+.exec-finance-table tbody tr:last-child td{border-bottom:0}
+.exec-finance-table tbody tr:nth-child(even) td{background:#fbfcfe}
+.exec-finance-table tbody tr:hover td{background:#f8fbff}
+.exec-finance-primary,.exec-finance-ref,.exec-finance-stack,.exec-finance-balance{display:grid;min-width:0;gap:4px}
+.exec-finance-primary strong,.exec-finance-ref-title strong,.exec-finance-line strong,.exec-finance-balance strong{color:#334155;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.exec-finance-primary span,.exec-finance-ref-meta,.exec-finance-ref-name,.exec-finance-label,.exec-finance-balance span{color:#64748b;font-size:11px;line-height:1.45}
+.exec-finance-ref-title{display:flex;min-width:0;flex-wrap:wrap;align-items:center;gap:4px 6px}
+.exec-finance-ref-name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}
+.exec-finance-line{display:flex;align-items:baseline;justify-content:space-between;gap:8px;white-space:nowrap}
+.exec-finance-balance strong{font-size:12px}
+.exec-finance-balance.is-outstanding strong{color:#dc2626}
+.exec-finance-empty{display:inline-flex;min-height:22px;align-items:center;color:#94a3b8;font-size:11px}
+.exec-finance-ref-list{display:grid;min-width:0;gap:6px}
+.exec-finance-empty-row{height:72px!important;text-align:center;vertical-align:middle!important;color:#94a3b8!important;font-size:12px!important}
+.exec-finance-table .doc-number-link{font-size:11px}
+.exec-finance-table .doc-mini-status{font-size:10px}
+.exec-finance-table .doc-status{font-size:10px;white-space:nowrap}
+@media(max-width:1360px){.exec-finance-body{padding:10px 12px 14px}.exec-finance-head{padding:0 12px}.exec-finance-head-meta>span:first-child{display:none}}
+
+
+/* 需求详情二级页签：与一级页签同排，仅当前一级页签下显示 */
+.detail-subtabs-divider{flex:0 0 1px;align-self:center;width:1px;height:20px;margin-left:auto;margin-right:8px;background:#e2e8f0}
+.detail-demand-subtabs{display:flex;flex:0 0 auto;align-items:center;gap:2px}
+.detail-demand-subtab{position:relative;height:34px;padding:0 11px;border:0;border-radius:5px;background:transparent;color:#64748b;font-size:12px;font-weight:500;white-space:nowrap}
+.detail-demand-subtab:hover{background:#f8fafc;color:#334155}
+.detail-demand-subtab.active{background:transparent;color:#2563eb;font-weight:600}
+.detail-demand-subtab.active:after{content:"";position:absolute;left:10px;right:10px;bottom:4px;height:2px;border-radius:2px;background:#2563eb}
+.detail-demand-subtab:focus-visible{outline:2px solid #93c5fd;outline-offset:-2px}
+@media(max-width:1360px){.detail-demand-subtab{padding:0 8px;font-size:11px}.detail-subtabs-divider{margin-right:5px}}
+
+
+/* 需求详情同页锚点 */
+.demand-anchor-section{scroll-margin-top:62px}
+.demand-anchor-section:last-child{margin-bottom:0}
+
+
+/* 提单列表新增运输任务弹窗 */
+body.bill-modal-open{overflow:hidden}
+.bill-list-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.bill-list-actions .doc-result-count{margin-left:0}
+.bill-list-add{height:30px;padding:0 12px;font-size:12px;border-radius:5px}
+.bill-task-overlay{position:fixed;inset:0;z-index:110;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(15,23,42,.32)}
+.bill-task-modal{display:flex;width:min(1500px,calc(100vw - 48px));height:min(650px,calc(100vh - 48px));min-height:480px;flex-direction:column;overflow:hidden;border:1px solid #dbe3ee;border-radius:8px;background:#fff;box-shadow:0 18px 55px rgba(15,23,42,.22)}
+.bill-task-head{display:flex;height:54px;flex:0 0 54px;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #e5eaf1;background:#fff}
+.bill-task-head h2{margin:0;color:#1e293b;font-size:14px;font-weight:600;letter-spacing:.01em}
+.bill-task-close{display:grid;width:28px;height:28px;place-items:center;border:0;border-radius:5px;background:transparent;color:#64748b;font-size:22px;line-height:1}
+.bill-task-close:hover{background:#f1f5f9;color:#334155}
+.bill-task-body{display:grid;min-height:0;flex:1;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:8px 10px;padding:12px 16px 10px;overflow:hidden}
+.bill-task-query{flex:0 0 auto;margin-bottom:8px;border:1px solid #e2e8f0;border-radius:5px;background:#fff}
+.bill-task-query-head{display:flex;min-height:45px;align-items:center;gap:9px;padding:0 11px;border-bottom:1px solid #eef2f7}
+.bill-task-query-toggle{display:inline-flex;height:28px;align-items:center;gap:6px;border:0;background:transparent;color:#334155;font-size:12px;font-weight:600}
+.bill-task-query-arrow{color:#64748b;font-size:11px;transition:transform .15s}
+.bill-task-query.is-collapsed .bill-task-query-arrow{transform:rotate(-90deg)}
+.bill-task-query.is-collapsed .bill-task-query-fields{display:none}
+.bill-task-token{display:inline-flex;height:24px;align-items:center;gap:5px;padding:0 7px;border-radius:3px;background:#eef4fb;color:#2563eb;font-size:11px;white-space:nowrap}
+.bill-task-token button{display:grid;width:16px;height:16px;place-items:center;border:0;background:transparent;color:#2563eb;font-size:14px;line-height:1}
+.bill-task-query-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.bill-task-query-actions .btn{height:32px;padding:0 14px;font-size:12px;border-radius:5px}
+.bill-task-reset{border-color:transparent!important;background:transparent!important;color:#2563eb!important}
+.bill-task-query-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:9px 11px 11px}
+.bill-task-field{display:grid;min-width:0;gap:4px}
+.bill-task-field>span{color:#64748b;font-size:11px;line-height:1.25}
+.bill-task-field em{margin-left:2px;color:#dc2626;font-style:normal}
+.bill-task-field input,.bill-task-field select{width:100%;height:32px;min-width:0;padding:0 9px;border:1px solid #d9e1ec;border-radius:4px;background:#fff;color:#334155;font-size:12px;outline:none}
+.bill-task-field input:focus,.bill-task-field select:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.12)}
+.bill-task-table-wrap{min-height:0;flex:1;overflow:auto;border:1px solid #e2e8f0;border-radius:5px}
+.bill-task-table{width:100%;min-width:1900px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+.bill-task-table th{position:sticky;top:0;z-index:2;height:40px;padding:0 9px;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:11px;font-weight:600;text-align:left;white-space:nowrap}
+.bill-task-table td{height:42px;padding:0 9px;border-bottom:1px solid #eef2f7;color:#334155;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bill-task-table tbody tr:nth-child(even) td{background:#fbfcfe}
+.bill-task-table tbody tr:hover td{background:#f8fbff}
+.bill-task-table .checkbox-cell{width:42px;padding:0;text-align:center}
+.bill-task-table input[type=checkbox]{width:14px;height:14px;accent-color:#2563eb}
+.bill-task-footer{display:flex;height:58px;flex:0 0 58px;align-items:center;justify-content:space-between;gap:16px;padding:0 16px;border-top:1px solid #e5eaf1;background:#fff}
+.bill-task-pagination{display:flex;align-items:center;gap:6px;margin-left:auto;color:#64748b;font-size:11px;white-space:nowrap}
+.bill-task-pagination button{display:grid;width:28px;height:28px;place-items:center;border:1px solid transparent;border-radius:4px;background:transparent;color:#64748b;font-size:11px}
+.bill-task-pagination button:hover:not(:disabled){background:#f1f5f9}
+.bill-task-pagination button.active{border-color:#2563eb;background:#fff;color:#2563eb}
+.bill-task-pagination button:disabled{color:#cbd5e1;cursor:not-allowed}
+.bill-task-pagination input{width:38px;height:28px;padding:0 4px;border:1px solid #d9e1ec;border-radius:4px;text-align:center;font-size:11px}
+.bill-task-modal-actions{display:flex;flex:0 0 auto;align-items:center;gap:8px}
+.bill-task-modal-actions .btn{height:32px;min-width:64px;padding:0 14px;font-size:12px;border-radius:5px}
+@media(max-width:1360px){.bill-task-overlay{padding:16px}.bill-task-modal{width:calc(100vw - 32px);height:calc(100vh - 32px)}.bill-task-query-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* 费用与利润 - 分阶段利润统计 */
+.finance-profit-table{min-width:900px}
+.finance-profit-table th{height:44px;padding:0 16px;background:#f8fafc;color:#64748b;font-size:12px;font-weight:600;text-align:left}
+.finance-profit-table th small{margin-left:4px;color:#94a3b8;font-size:10px;font-weight:400}
+.finance-profit-table td{height:auto!important;padding:14px 16px!important;vertical-align:top}
+.finance-profit-stage{display:grid;min-width:0;gap:7px}
+.finance-profit-line{display:flex;align-items:baseline;justify-content:space-between;gap:18px;white-space:nowrap}
+.finance-profit-line>span{color:#64748b;font-size:11px}
+.finance-profit-line>strong{color:#334155;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.finance-profit-result{margin-top:1px;padding-top:7px;border-top:1px solid #eef2f7}
+.finance-profit-result>span,.finance-profit-result>strong{font-weight:700}
+.finance-profit-result.is-negative>strong{color:#dc2626}
+
+.exec-finance-ref-local{color:#475569;font-size:11px;line-height:1.45}
+.exec-finance-statement-amount{margin-top:7px;padding-top:7px;border-top:1px solid #eef2f7}
+.finance-profit-table .finance-profit-currency{width:132px;background:#fbfcfe;color:#475569;font-size:12px;font-weight:600;vertical-align:middle!important}
+.finance-profit-base-row td{background:#f8fafc!important}
+.finance-profit-base-row .finance-profit-currency{color:#1e293b;font-weight:700}
+
+.exec-finance-commission-inline{display:flex;min-width:0;flex-wrap:wrap;align-items:baseline;gap:4px 6px;margin-top:4px;color:#64748b;font-size:11px;line-height:1.45}
+.exec-finance-commission-inline strong{color:#334155;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.exec-finance-commission-divider{color:#cbd5e1}
+
+.bill-task-token.is-fixed{background:#f8fafc;color:#475569}
+.bill-task-token.is-fixed span{color:#475569}
+.bill-task-field input[readonly]{background:#eef2f7;color:#64748b;border-color:#dbe3ee;box-shadow:inset 0 0 0 1px rgba(148,163,184,.04);cursor:not-allowed}
+
+.bill-task-body{display:grid;min-height:0;flex:1;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:8px 10px;padding:12px 16px 10px;overflow:hidden}
+.bill-task-body.has-selection{grid-template-columns:minmax(0,1fr) 245px}
+.bill-task-query{grid-column:1/-1;margin-bottom:0}
+.bill-task-side-panel{display:flex;min-height:0;flex-direction:column;gap:16px;padding:10px;overflow:auto;border:1px solid #e2e8f0;border-radius:5px;background:#fbfcfe}
+.bill-task-side-panel[hidden]{display:none}
+.bill-task-side-tip{display:flex;align-items:flex-start;gap:6px;padding:9px 10px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:11px;line-height:1.5}
+.bill-task-side-info{display:grid;width:14px;height:14px;flex:0 0 14px;place-items:center;border-radius:50%;background:#3b82f6;color:#fff;font-size:9px;font-weight:700;font-style:normal}
+.bill-task-side-field{display:grid;gap:5px;color:#64748b;font-size:11px}
+.bill-task-side-field em{margin-left:2px;color:#dc2626;font-style:normal}
+.bill-task-side-field select,.bill-task-side-field input{width:100%;height:34px;padding:0 9px;border:1px solid #d9e1ec;border-radius:4px;background:#fff;color:#334155;font-size:12px;outline:none}
+.bill-task-side-field input[readonly]{background:#f8fafc;color:#475569;cursor:default}
+.bill-task-side-field select:focus{break-inside:avoid;border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.12)}
+.bill-task-table tbody tr.is-selected td{background:#eaf3ff!important}
+.bill-task-token[hidden]{display:none!important}
+
 </style>
 <!-- 4PL Control Tower embedded mode -->
 <script>
@@ -542,6 +685,7 @@ const state = {
   page: 'list',
   activeRowId: 'FLR202610200038',
   detailSection: 'overview',
+  demandAnchor: 'basic',
   docFilter: '提单登记单',
   docSection: 'bill',
   paySide: 'recv',
@@ -831,14 +975,88 @@ function feeCard(isExec,kind){
 }
 function executionFeeCard(isExec,kind){
   const isRecv=kind==='recv';
-  const title=isRecv?'执行侧应收':'执行侧预估应付';
-  const action=isExec?`<button class="btn outline-primary mini" data-toast="已模拟维护${isRecv?'执行侧应收':'执行侧应付'}">维护${isRecv?'执行侧应收':'执行侧应付'}</button>`:'';
-  return cubeCard(title,feeTable([],true),{actions:action,className:'exec-fee-card'});
+  const title=isRecv?'执行侧预估应收':'执行侧预估应付';
+  const rows=isExec?feeLedger.filter(row=>row.side===kind):[];
+  const action=isExec?`<button class="btn outline-primary mini" data-toast="已模拟维护${isRecv?'执行侧预估应收':'执行侧应付'}">维护${isRecv?'执行侧预估应收':'执行侧应付'}</button>`:'';
+  const billingMap={
+    'recv:海运费':{unitPrice:120,quantity:100,unit:'柜',commissionRate:2},
+    'recv:港杂费':{unitPrice:80,quantity:50,unit:'吨',commissionRate:1.5},
+    'recv:报关费':{unitPrice:3000,quantity:1,unit:'票',commissionRate:1},
+    'recv:垫付费用':{unitPrice:1500,quantity:2,unit:'票',commissionRate:1},
+    'pay:海运费':{unitPrice:100,quantity:100,unit:'柜',commissionRate:2},
+    'pay:港杂费':{unitPrice:100,quantity:50,unit:'吨',commissionRate:1.5},
+    'pay:代理费':{unitPrice:5500,quantity:1,unit:'票',commissionRate:1.2}
+  };
+  const refList=(list,empty,exchangeRate)=>{
+    if(!list||!list.length)return `<span class="exec-finance-empty">${empty}</span>`;
+    return `<div class="exec-finance-ref-list">${list.map(item=>`<div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${item.id}">${item.id}</button><span class="doc-mini-status ${item.tone}">${item.status}</span></div><span class="exec-finance-ref-meta"><span class="exec-finance-label">原币金额</span> ${item.amount}</span><span class="exec-finance-ref-local">折本位币金额 ${ledgerAmount(ledgerNum(item.amount)*exchangeRate)}</span></div>`).join('')}</div>`;
+  };
+  const body=rows.map(row=>{
+    const billing=billingMap[`${kind}:${row.fee}`]||{unitPrice:ledgerNum(row.amount),quantity:1,unit:'票',commissionRate:0};
+    const exchangeRate=Number(row.exchangeRate||baseCurrencyRates[row.currency]||1);
+    const originalAmount=ledgerNum(row.amount);
+    const localAmount=originalAmount*exchangeRate;
+    const commissionAmount=localAmount*billing.commissionRate/100;
+    return `<tr>
+    <td><div class="exec-finance-primary"><strong>${row.party}</strong><span>客户订单 FCO202610200037</span></div></td>
+    <td><strong>${row.fee}</strong></td>
+    <td><div class="exec-finance-stack"><span class="exec-finance-line"><span class="exec-finance-label">计费单价</span><strong>${ledgerAmount(billing.unitPrice)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">计费数量</span><strong>${billing.quantity}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">计量单位</span><strong>${billing.unit}</strong></span></div></td>
+    <td>${row.currency}</td>
+    <td><div class="exec-finance-stack"><span class="exec-finance-line"><span class="exec-finance-label">原币金额</span><strong>${ledgerAmount(originalAmount)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">汇率</span><strong>${exchangeRate.toFixed(4)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">本位币金额</span><strong>${ledgerAmount(localAmount)}</strong></span></div></td>
+    <td><div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${row.statementNo}">${row.statementNo}</button><span class="doc-mini-status ${row.statementTone}">${row.statementStatus}</span></div><span class="exec-finance-ref-meta">${row.statementType} · ${row.completedAt}</span><div class="exec-finance-commission-inline"><span>佣金比例</span><strong>${billing.commissionRate.toFixed(1)}%</strong><span class="exec-finance-commission-divider">·</span><span>佣金金额</span><strong>${ledgerAmount(commissionAmount)}</strong></div></div></td>
+    <td>${refList(row.invoices,'未开票',exchangeRate)}</td>
+    <td>${refList(row.payments,isRecv?'未收款':'未付款',exchangeRate)}</td>
+    <td><span class="doc-status ${row.tone}">${row.settlementStatus}</span></td>
+  </tr>`}).join('');
+  return `<section class="exec-finance-section" data-finance-side="${kind}">
+    <div class="exec-finance-head">
+      <h3 class="exec-finance-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9h.01M17 15h.01"/></svg><span>${title}</span><span class="exec-finance-direction ${isRecv?'recv':'pay'}">${isRecv?'应收':'应付'}</span></h3>
+      <div class="exec-finance-head-meta">${action}</div>
+    </div>
+    <div class="exec-finance-body">
+      <div class="exec-finance-table-wrap">
+        <table class="exec-finance-table" aria-label="${title}">
+          <colgroup><col style="width:190px"><col style="width:105px"><col style="width:150px"><col style="width:92px"><col style="width:150px"><col style="width:255px"><col style="width:210px"><col style="width:210px"><col style="width:92px"></colgroup>
+          <thead><tr><th>结算对象 / 客户订单</th><th>费用科目</th><th>计费信息</th><th>计费币种</th><th>金额信息</th><th>对账信息</th><th>开票信息</th><th>收付款信息</th><th>状态</th></tr></thead>
+          <tbody>${body||`<tr><td colspan="9" class="exec-finance-empty-row">暂无执行侧预估${isRecv?'应收':'应付'}数据</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>
+  </section>`;
 }
 function profitCard(isExec){
   const row=isExec?['人民币','10.00','10.00','0.00','0.00','0.00','0.00']:['人民币','19,000.00','15,000.00','4,000.00','0.00','0.00','0.00'];
   const body=`<div class="table-scroll"><table class="mini-table" style="min-width:1050px"><thead><tr><th>币种</th><th>业务预估应收</th><th>业务预估应付</th><th>业务预估利润</th><th>执行侧预估应收</th><th>执行侧预估应付</th><th>执行利润</th></tr></thead><tbody><tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${['折合本币(CNY)',...row.slice(1)].map(v=>`<td>${v}</td>`).join('')}</tr></tbody></table></div>`;
   return cubeCard('利润统计',body);
+}
+function financeProfitCard(isExec){
+  const feeRows=isExec?feeLedger:[];
+  const rates=baseCurrencyRates;
+  const stage=(recv,pay)=>({recv,pay,profit:recv-pay});
+  const zero=stage(0,0);
+  const businessByCurrency={CNY:stage(19000,15000)};
+  const currencies=[...new Set([...Object.keys(businessByCurrency),...feeRows.map(row=>row.currency||'CNY')])];
+  const sumBy=(currency,side,key)=>feeRows.filter(row=>(row.currency||'CNY')===currency&&row.side===side).reduce((sum,row)=>sum+ledgerNum(row[key]),0);
+  const baseSumBy=(side,key)=>feeRows.filter(row=>row.side===side).reduce((sum,row)=>sum+ledgerNum(row[key])*Number(row.exchangeRate||rates[row.currency||'CNY']||1),0);
+  const stageCell=(data,base=false)=>`<td><div class="finance-profit-stage">
+    <div class="finance-profit-line"><span>应收</span><strong>${ledgerAmount(data.recv)}</strong></div>
+    <div class="finance-profit-line"><span>应付</span><strong>${ledgerAmount(data.pay)}</strong></div>
+    <div class="finance-profit-line finance-profit-result ${data.profit<0?'is-negative':''}"><span>利润</span><strong>${ledgerAmount(data.profit)}</strong></div>
+  </div></td>`;
+  const rows=currencies.map(currency=>{
+    const business=businessByCurrency[currency]||zero;
+    const execution=stage(sumBy(currency,'recv','amount'),sumBy(currency,'pay','amount'));
+    const invoiced=stage(sumBy(currency,'recv','invoiced'),sumBy(currency,'pay','invoiced'));
+    const actual=stage(sumBy(currency,'recv','settled'),sumBy(currency,'pay','settled'));
+    return `<tr><td class="finance-profit-currency">${currency}</td>${stageCell(business)}${stageCell(execution)}${stageCell(invoiced)}${stageCell(actual)}</tr>`;
+  }).join('');
+  const baseBusiness=Object.values(businessByCurrency).reduce((sum,item)=>({recv:sum.recv+item.recv,pay:sum.pay+item.pay}),{recv:0,pay:0});
+  const baseExecution=stage(baseSumBy('recv','amount'),baseSumBy('pay','amount'));
+  const baseInvoiced=stage(baseSumBy('recv','invoiced'),baseSumBy('pay','invoiced'));
+  const baseActual=stage(baseSumBy('recv','settled'),baseSumBy('pay','settled'));
+  const baseTotal=stage(baseBusiness.recv,baseBusiness.pay);
+  const baseRow=`<tr class="finance-profit-base-row"><td class="finance-profit-currency">折本位币（CNY）</td>${stageCell(baseTotal,true)}${stageCell(baseExecution,true)}${stageCell(baseInvoiced,true)}${stageCell(baseActual,true)}</tr>`;
+  return cubeCard('利润统计',`<div class="table-scroll"><table class="mini-table finance-profit-table"><thead><tr><th>币种</th><th>业务预估</th><th>执行侧预估</th><th>已开票</th><th>实际收付</th></tr></thead><tbody>${rows}${baseRow}</tbody></table></div>`);
 }
 function attachmentCard(isExec){
   const body=isExec?'':`<div class="upload-box"><div>拖拽文件至此处或点击上传</div><div style="margin-top:4px">(仅支持doc/docx/pdf/png/jpg/xlsx格式文件，文件大小不超过20M)</div></div>`;
@@ -858,7 +1076,7 @@ function execFeeSection(){
   const blockTitle=isExecTab?'执行侧预估应收':'业务预估应收';
   const secondTitle=isExecTab?'执行侧预估应付':'业务预估应付';
   return `<section class="cube-card"><div class="section-tabbar"><div class="exec-fee-tabs"><button class="exec-fee-tab ${isExecTab?'active':''}" data-exec-fee-tab="exec">执行侧预估费用</button><button class="exec-fee-tab ${!isExecTab?'active':''}" data-exec-fee-tab="business">业务预估费用</button></div></div>
-    <div class="exec-fee-block"><div class="exec-fee-title"><span>${blockTitle}</span>${isExecTab?'<button class="btn outline-primary mini" data-toast="已模拟维护执行侧应收">维护执行侧应收</button>':''}</div>${feeTable(isExecTab?[]:[['操作费','FCO202610160032','成都柠檬时光科技有限公司','成都柠檬时光科技有限公司','6.00','到收','100.00','人民币','100.00','柜','10000.00','20RF','1.00','10000.00','','','否']],isExecTab)}</div>
+    <div class="exec-fee-block"><div class="exec-fee-title"><span>${blockTitle}</span>${isExecTab?'<button class="btn outline-primary mini" data-toast="已模拟维护执行侧预估应收">维护执行侧预估应收</button>':''}</div>${feeTable(isExecTab?[]:[['操作费','FCO202610160032','成都柠檬时光科技有限公司','成都柠檬时光科技有限公司','6.00','到收','100.00','人民币','100.00','柜','10000.00','20RF','1.00','10000.00','','','否']],isExecTab)}</div>
     <div class="exec-fee-block"><div class="exec-fee-title"><span>${secondTitle}</span>${isExecTab?'<button class="btn outline-primary mini" data-toast="已模拟维护执行侧应付">维护执行侧应付</button>':''}</div>${feeTable(isExecTab?[]:[['运费','FCO202610160032','青岛绿洲园花生食品有限公司','青岛绿洲园花生食品有限公司','9.00','预付','80.00','人民币','100.00','吨','','','1.00','8000.00','','','否']],isExecTab)}</div>
   </section>`;
 }
@@ -1253,7 +1471,7 @@ function renderLegacyDetail(page){
     <div class="detail-view-panel ${state.detailView==='documents'?'active':''}" data-view-panel="documents">${documents}</div>
   </div></div>`;
 }
-document.addEventListener('click',e=>{const t=e.target.closest('[data-detail-section]');if(t){state.detailSection=t.dataset.detailSection;render();}});
+document.addEventListener('click',e=>{const anchor=e.target.closest('[data-demand-anchor]');if(anchor){state.demandAnchor=anchor.dataset.demandAnchor;document.querySelectorAll('[data-demand-anchor]').forEach(btn=>btn.classList.toggle('active',btn===anchor));const target=document.getElementById('demand-'+anchor.dataset.demandAnchor);if(target)target.scrollIntoView({behavior:'smooth',block:'start'});return;}const t=e.target.closest('[data-detail-section]');if(t){state.detailSection=t.dataset.detailSection;if(t.dataset.detailSection==='demand'&&!state.demandAnchor)state.demandAnchor='basic';render();}});
 const downstreamDocs=[
   {id:'BL202610200001',type:'提单登记单',group:'exec',status:'已签发',tone:'success',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'—',currency:'—',ownerBlNo:'COSU6439271850',forwarderBlNo:'HBL202610200001',masterAwbNo:'—',ourHouseNo:'SZX202610200001',updated:'2026-10-20 20:12'},
   {id:'JS202610200012',type:'代理结算单',group:'settle',status:'待确认',tone:'warning',party:'中联铁运集团有限公司',related:'FLMT202610200038',amount:'15,000.00',currency:'CNY',ownerBlNo:'—',forwarderBlNo:'—',masterAwbNo:'—',ourHouseNo:'—',updated:'2026-10-21 09:36'},
@@ -1386,6 +1604,7 @@ const linkedDocs = [
   { id: 'FK202610200011', type: '付款申请单', group: 'funds', status: '待审批', tone: 'warning', party: '中联铁运集团有限公司', related: 'FLMT202610200038', amount: '8,500.00', currency: 'CNY', updated: '2026-10-21 12:05' }
 ];
 
+const baseCurrencyRates={CNY:1,USD:7.2,EUR:7.8};
 const feeLedger = [
   { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '海运费', currency: 'CNY', amount: '12,000.00', invoiced: '12,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '12,000.00', tone: 'success' }], settled: '12,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '12,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
   { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '港杂费', currency: 'CNY', amount: '4,000.00', invoiced: '4,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '3,000.00', tone: 'success' }, { id: 'SR202610200019', status: '已开票', amount: '1,000.00', tone: 'success' }], settled: '4,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '3,000.00', tone: 'success' }, { id: 'SK202610200008', status: '已收款', amount: '1,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
@@ -1416,8 +1635,107 @@ function renderDocLinkStack(list) {
 function renderBillList(isExec) {
   const docs = isExec ? downstreamDocs.filter(d => d.type === '提单登记单') : [];
   const rows = docs.map(d => `<tr data-doc-type="${d.type}"><td>${d.type}</td><td><button class="doc-number-link" data-doc-open="${d.id}">${d.id}</button></td><td>${d.ownerBlNo || '—'}</td><td>${d.forwarderBlNo || '—'}</td><td>${d.masterAwbNo || '—'}</td><td>${d.ourHouseNo || '—'}</td><td><span class="doc-status ${d.tone}">${d.status}</span></td><td>苏丽蓉</td><td>2026-10-20 09:30</td><td>菜菜菜</td><td>${d.updated}</td><td><button class="btn link" data-doc-open="${d.id}">查看详情</button></td></tr>`).join('');
-  return `<section class="cube-card doc-all-card"><div class="doc-query-bar"><span class="doc-query-title">提单列表</span><span class="doc-query-hint">仅展示提单登记单</span><span class="doc-result-count">共 ${docs.length} 条</span></div><div class="doc-all-table-wrap"><table class="mini-table doc-all-table"><thead><tr><th>单据类型</th><th>单据编号</th><th>船东提单号</th><th>货代提单号</th><th>航司主单号</th><th>我司分单号</th><th>状态</th><th>创建人</th><th>创建时间</th><th>修改人</th><th>修改时间</th><th>操作</th></tr></thead><tbody>${rows || '<tr><td colspan="12" class="doc-empty">暂无提单登记单</td></tr>'}</tbody></table></div></section>`;
+  return `<section class="cube-card doc-all-card"><div class="doc-query-bar"><span class="doc-query-title">提单列表</span><span class="doc-query-hint">仅展示提单登记单</span><div class="bill-list-actions"><span class="doc-result-count">共 ${docs.length} 条</span><button class="btn primary bill-list-add" data-bill-add>＋ 新增</button></div></div><div class="doc-all-table-wrap"><table class="mini-table doc-all-table"><thead><tr><th>单据类型</th><th>单据编号</th><th>船东提单号</th><th>货代提单号</th><th>航司主单号</th><th>我司分单号</th><th>状态</th><th>创建人</th><th>创建时间</th><th>修改人</th><th>修改时间</th><th>操作</th></tr></thead><tbody>${rows || '<tr><td colspan="12" class="doc-empty">暂无提单登记单</td></tr>'}</tbody></table></div></section>`;
 }
+
+function openBillTaskModal() {
+  document.querySelectorAll('.bill-task-overlay').forEach(node => node.remove());
+  const currentDemandNo=state.activeRowId||(state.page==='create'?'FLR202610160032':'FLR202610200038');
+  const taskRows = [
+    {sales:'洪小莲',demand:currentDemandNo,mbl:'',hbl:'',name:'LQ1030测试',status:'创建',task:'FLST202610300001',confirm:'',load:'集装箱',origin:'厦门',dest:'Porthmadog',originTerm:'CFS',destTerm:'CFS',order:'FOR202610300001',customer:'福建测试客户有限公司'},
+    {sales:'吴小童',demand:'FLR202610210002',mbl:'',hbl:'',name:'LQ全流程测试-2',status:'创建',task:'FLST202610210006',confirm:'',load:'集装箱',origin:'厦门',dest:'长滩',originTerm:'DR',destTerm:'DR',order:'FOR202610210002',customer:'厦门远洋贸易有限公司'},
+    {sales:'魏勇',demand:'FLR202610130007',mbl:'',hbl:'',name:'LQ111',status:'创建',task:'FLST202610130013',confirm:'',load:'集装箱',origin:'富纳富提',dest:'法马古斯塔',originTerm:'DR',destTerm:'DR',order:'FOR202610130007',customer:'上海海联供应链有限公司'},
+    {sales:'魏勇',demand:'FLR202609200003',mbl:'',hbl:'',name:'LQ测试优化',status:'创建',task:'FLST202609200005',confirm:'',load:'集装箱',origin:'富纳富提',dest:'法马古斯塔',originTerm:'DR',destTerm:'DR',order:'FOR202609200003',customer:'宁波远海物流有限公司'},
+    {sales:'陈伟伟',demand:'FLR202609140001',mbl:'',hbl:'',name:'LQ111',status:'创建',task:'FLST202609160002',confirm:'',load:'集装箱',origin:'',dest:'',originTerm:'',destTerm:'',order:'FOR202609140001',customer:'青岛海程国际物流有限公司'},
+    {sales:'陈伟伟',demand:'FLR202609140001',mbl:'',hbl:'',name:'LQ111',status:'创建',task:'FLST202609160001',confirm:'',load:'集装箱',origin:'',dest:'',originTerm:'',destTerm:'',order:'FOR202609140001',customer:'青岛海程国际物流有限公司'},
+    {sales:'林美燕',demand:'FLR202609090001',mbl:'',hbl:'',name:'LQ',status:'创建',task:'FLST202609090005',confirm:'',load:'集装箱',origin:'富纳富提',dest:'法马古斯塔',originTerm:'DR',destTerm:'DR',order:'FOR202609090001',customer:'广州联盛进出口有限公司'},
+    {sales:'黄瑞钰',demand:'FLR202609030006',mbl:'',hbl:'',name:'LQ出口测试',status:'创建',task:'FLST202609030012',confirm:'',load:'集装箱',origin:'厦门',dest:'汉堡',originTerm:'CY',destTerm:'CY',order:'FOR202609030006',customer:'厦门建发供应链有限公司'}
+  ];
+  const rowHtml = taskRows.map((row, index) => `<tr data-bill-task-row data-name="${esc(row.name)}" data-demand="${esc(row.demand)}"><td class="checkbox-cell"><input type="checkbox" data-bill-row="${index}" aria-label="选择${esc(row.task)}"></td><td>${esc(row.sales)}</td><td>${esc(row.demand)}</td><td>${esc(row.mbl||'')}</td><td>${esc(row.hbl||'')}</td><td>${esc(row.name)}</td><td>${esc(row.status)}</td><td>${esc(row.task)}</td><td>${esc(row.confirm||'')}</td><td>${esc(row.load)}</td><td>${esc(row.origin||'')}</td><td>${esc(row.dest||'')}</td><td>${esc(row.originTerm||'')}</td><td>${esc(row.destTerm||'')}</td><td>${esc(row.order||'')}</td><td>${esc(row.customer||'')}</td></tr>`).join('');
+  const overlay = document.createElement('div');
+  overlay.className = 'bill-task-overlay';
+  overlay.innerHTML = `<section class="bill-task-modal" role="dialog" aria-modal="true" aria-labelledby="billTaskTitle">
+    <header class="bill-task-head"><h2 id="billTaskTitle">新增提单（水运任务提单）</h2><button class="bill-task-close" type="button" aria-label="关闭" data-bill-modal-close>×</button></header>
+    <div class="bill-task-body">
+      <section class="bill-task-query" data-bill-query-panel>
+        <div class="bill-task-query-head">
+          <button class="bill-task-query-toggle" type="button" data-bill-query-toggle><span class="bill-task-query-arrow">▾</span><span>查询条件</span></button>
+          <div class="bill-task-token" data-bill-query-token><span>运输委托名称：LQ</span><button type="button" aria-label="移除运输委托名称筛选" data-bill-token-clear>×</button></div><div class="bill-task-token is-fixed" data-bill-demand-token><span>物流需求单号：${currentDemandNo}</span></div>
+          <div class="bill-task-query-actions"><button class="btn bill-task-reset" type="button" data-bill-reset>重置</button><button class="btn primary" type="button" data-bill-search>查询</button></div>
+        </div>
+        <div class="bill-task-query-fields">
+          <label class="bill-task-field"><span>运输委托名称</span><input id="billQueryName" value="LQ" placeholder="请输入"></label>
+          <label class="bill-task-field"><span>业务员</span><select id="billQuerySales"><option value="">请选择</option><option>洪小莲</option><option>吴小童</option><option>魏勇</option><option>陈伟伟</option><option>林美燕</option><option>黄瑞钰</option></select></label>
+          <label class="bill-task-field"><span>客户</span><select id="billQueryCustomer"><option value="">请选择</option><option>福建测试客户有限公司</option><option>厦门远洋贸易有限公司</option><option>上海海联供应链有限公司</option><option>宁波远海物流有限公司</option><option>青岛海程国际物流有限公司</option><option>广州联盛进出口有限公司</option></select></label>
+          <label class="bill-task-field"><span>物流需求单号</span><input id="billQueryDemand" value="${currentDemandNo}" readonly aria-readonly="true"></label>
+        </div>
+      </section>
+      <div class="bill-task-table-wrap">
+        <table class="bill-task-table"><thead><tr><th class="checkbox-cell"><input type="checkbox" data-bill-select-all aria-label="全选"></th><th>业务员</th><th>物流需求单号</th><th>MBL#</th><th>HBL#</th><th>运输委托名称</th><th>委托状态</th><th>任务编号</th><th>任务确认状态</th><th>装运类别</th><th>起运港</th><th>目的港</th><th>起运港服务条款</th><th>目的港服务条款</th><th>客户订单号</th><th>客户</th></tr></thead><tbody>${rowHtml}</tbody></table>
+      </div>
+      <aside class="bill-task-side-panel" data-bill-selection-panel hidden>
+        <div class="bill-task-side-tip"><span class="bill-task-side-info">i</span><span>新增前需选择单据类型</span></div>
+        <label class="bill-task-side-field"><span>单据类型<em>*</em></span><select id="billTaskDocType"><option value="">请选择</option><option>水运任务提单</option><option>海运提单</option><option>空运提单</option></select></label>
+        <label class="bill-task-side-field"><span>客户</span><input id="billTaskCustomer" readonly></label>
+      </aside>
+    </div>
+    <footer class="bill-task-footer"><div class="bill-task-pagination"><span data-bill-total>共 39 条</span><button type="button" disabled>‹</button><button type="button" class="active" data-bill-page="1">1</button><button type="button" data-bill-page="2">2</button><button type="button" data-bill-page="3">3</button><button type="button" data-bill-page="4">4</button><button type="button">›</button><span>10条/页</span><span>前往</span><input value="1" aria-label="前往页码"><span>页</span></div><div class="bill-task-modal-actions"><button class="btn" type="button" data-bill-modal-close>取消</button><button class="btn primary" type="button" data-bill-confirm>确认</button></div></footer>
+  </section>`;
+  document.body.classList.add('bill-modal-open');
+  document.body.appendChild(overlay);
+  const allRows = [...overlay.querySelectorAll('[data-bill-task-row]')];
+  const visibleRows = () => allRows.filter(row => row.style.display !== 'none');
+  const selectedRows = () => [...overlay.querySelectorAll('[data-bill-row]:checked')];
+  const syncSelection = () => {
+    const selectedInputs = selectedRows();
+    const selectedRow = selectedInputs[0]?.closest('[data-bill-task-row]') || null;
+    const confirmButton = overlay.querySelector('[data-bill-confirm]');
+    const panel = overlay.querySelector('[data-bill-selection-panel]');
+    const customerInput = overlay.querySelector('#billTaskCustomer');
+    const body = overlay.querySelector('.bill-task-body');
+    confirmButton.textContent = selectedInputs.length ? `确认（${selectedInputs.length}）` : '确认';
+    panel.hidden = selectedInputs.length === 0;
+    body.classList.toggle('has-selection', selectedInputs.length > 0);
+    overlay.querySelectorAll('[data-bill-task-row]').forEach(row => row.classList.toggle('is-selected', row === selectedRow));
+    customerInput.value = selectedRow ? selectedRow.lastElementChild.textContent.trim() : '';
+    if (!selectedInputs.length) overlay.querySelector('#billTaskDocType').value = '';
+  };
+  const applyFilter = () => {
+    const name = overlay.querySelector('#billQueryName').value.trim();
+    const demand = overlay.querySelector('#billQueryDemand').value.trim();
+    const sales = overlay.querySelector('#billQuerySales').value;
+    const customer = overlay.querySelector('#billQueryCustomer').value;
+    let count = 0;
+    allRows.forEach(row => {
+      const text = row.innerText;
+      const show = (!name || text.includes(name)) && (!demand || text.includes(demand)) && (!sales || text.includes(sales)) && (!customer || text.includes(customer));
+      row.style.display = show ? '' : 'none';
+      if (show) count += 1;
+    });
+    overlay.querySelector('[data-bill-total]').textContent = `共 ${count} 条`;
+    const token = overlay.querySelector('[data-bill-query-token]');
+    token.hidden = !name;
+    token.innerHTML = name ? `<span>运输委托名称：${esc(name)}</span><button type="button" aria-label="移除运输委托名称筛选" data-bill-token-clear>×</button>` : '';
+    overlay.querySelector('[data-bill-select-all]').checked = false;
+    overlay.querySelectorAll('[data-bill-row]').forEach(input => { input.checked = false; });
+    syncSelection();
+  };
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay || event.target.closest('[data-bill-modal-close]')) { overlay.remove(); document.body.classList.remove('bill-modal-open'); return; }
+    if (event.target.closest('[data-bill-query-toggle]')) { overlay.querySelector('[data-bill-query-panel]').classList.toggle('is-collapsed'); return; }
+    if (event.target.closest('[data-bill-token-clear]')) { overlay.querySelector('#billQueryName').value = ''; applyFilter(); return; }
+    if (event.target.closest('[data-bill-reset]')) { overlay.querySelectorAll('.bill-task-query-fields input:not([readonly])').forEach(input => input.value = ''); overlay.querySelectorAll('.bill-task-query-fields select').forEach(select => select.value = ''); const token = overlay.querySelector('[data-bill-query-token]'); token.innerHTML = ''; token.hidden = true; allRows.forEach(row => row.style.display = ''); overlay.querySelector('[data-bill-total]').textContent = '共 39 条'; syncSelection(); return; }
+    if (event.target.closest('[data-bill-search]')) { applyFilter(); toast('已按条件查询运输任务'); return; }
+    if (event.target.closest('[data-bill-confirm]')) { const selected = selectedRows(); if (!selected.length) { toast('请选择需要生成提单的运输任务'); return; } if (!overlay.querySelector('#billTaskDocType').value) { toast('请选择单据类型'); return; } overlay.remove(); toast(`已新增 ${selected.length} 条提单`); return; }
+    const pageButton = event.target.closest('[data-bill-page]');
+    if (pageButton) { overlay.querySelectorAll('[data-bill-page]').forEach(button => button.classList.toggle('active', button === pageButton)); return; }
+  });
+  overlay.addEventListener('change', event => {
+    if (event.target.matches('[data-bill-select-all]')) { visibleRows().forEach(row => { const checkbox = row.querySelector('[data-bill-row]'); if (checkbox) checkbox.checked = event.target.checked; }); syncSelection(); return; }
+    if (event.target.matches('[data-bill-row]')) syncSelection();
+  });
+}
+document.addEventListener('click', event => { if (event.target.closest('[data-bill-add]')) { event.preventDefault(); openBillTaskModal(); } });
 
 function renderPaymentLedger(isExec) {
   const filter = state.paymentFilter || 'all';
@@ -1468,20 +1786,27 @@ function renderDetail(page){
   const isWater=isExec||createForm.transportType==='水运';
   const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
-  const transport=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}`;
-  const demand=`${overview}${transport}${feeCard(isExec,'recv')}${feeCard(isExec,'pay')}${profitCard(isExec)}`.replaceAll('客户及商品明细','客户与商品明细').replace('收发通信息','收发通');
-  const documents=renderDocumentsView(isExec);
-  const fees=`${executionFeeCard(isExec,'recv')}${executionFeeCard(isExec,'pay')}${documents}${profitCard(isExec)}`;
+  const basicPanel=overview;
+  const transportPanel=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}`;
+  const sendReceivePanel=(isExec?sendReceiveCard(true):(showContainer?sendReceiveCard(false):'')).replace('收发通信息','收发通');
+  const servicePanel=`${transportPanel}${sendReceivePanel}`;
+  const estimatePanel=`${feeCard(isExec,'recv')}${feeCard(isExec,'pay')}${profitCard(isExec)}`;
+  const demandAnchors=['basic','service','estimate'];
+  const activeDemandAnchor=demandAnchors.includes(state.demandAnchor)?state.demandAnchor:'basic';
+  const demand=`<section class="demand-anchor-section" id="demand-basic">${basicPanel}</section><section class="demand-anchor-section" id="demand-service">${servicePanel}</section><section class="demand-anchor-section" id="demand-estimate">${estimatePanel}</section>`;
+  const fees=`${executionFeeCard(isExec,'recv')}${executionFeeCard(isExec,'pay')}${financeProfitCard(isExec)}`;
   const records=`${attachmentCard(isExec)}${systemCard(isExec)}`;
   const billList=renderBillList(isExec);
   const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
   const sections=['demand','fees','records','arrangement','bills'];
   const activeSection=sections.includes(state.detailSection)?state.detailSection:'demand';
   const nav=[['demand','需求详情'],['fees','费用与利润'],['records','附件与记录'],['arrangement','物流安排'],['bills','提单列表']];
+  const demandSubNav=[['basic','基础信息与商品'],['service','服务要求'],['estimate','业务预估费用']];
+  const subTabs=activeSection==='demand'?`<span class="detail-subtabs-divider"></span><div class="detail-demand-subtabs">${demandSubNav.map(([id,label])=>`<button class="detail-demand-subtab ${activeDemandAnchor===id?'active':''}" data-demand-anchor="${id}">${label}</button>`).join('')}</div>`:'';
   const panels={demand,fees,records,arrangement,bills:billList};
   return `<div class="detail-scroll"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${displayStatus==='执行中'?'running':displayStatus==='创建'?'draft':'status-create'}">${displayStatus}</span><div class="detail-actions">${optimizedDetailActions(isExec, displayStatus)}</div></div></section>
-    <div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-detail-section="${id}">${l}</button>`).join('')}</div><div class="detail-section-panel active" id="section-${activeSection}">${panels[activeSection]||panels.overview}</div>
+    <div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-detail-section="${id}">${l}</button>`).join('')}${subTabs}</div><div class="detail-section-panel active" id="section-${activeSection}">${panels[activeSection]||panels.demand}</div>
   </div></div>`;
 }
 document.addEventListener('change',e=>{if(e.target.id==='docTypeFilter'){const val=e.target.value;const card=e.target.closest('.doc-all-card');const rows=[...card.querySelectorAll('tbody tr[data-doc-type]')];let count=0;rows.forEach(r=>{const show=val==='all'||r.dataset.docType===val;r.style.display=show?'':'none';if(show)count++;});const label=card.querySelector('#docResultCount');if(label)label.textContent=`共 ${count} 条`;}});
@@ -1491,6 +1816,22 @@ function render(){
   const main=document.getElementById('main');
   main.innerHTML=state.page==='list'?renderList():state.page==='document'?renderDocumentPage():renderDetail(state.page);
   main.querySelectorAll('.detail-view-switch').forEach(el=>el.remove());
+  const detailScroll=main.querySelector('.detail-scroll');
+  const demandAnchors=[...main.querySelectorAll('.demand-anchor-section')];
+  const demandAnchorButtons=[...main.querySelectorAll('[data-demand-anchor]')];
+  if(detailScroll&&demandAnchors.length&&demandAnchorButtons.length){
+    let anchorTicking=false;
+    const syncDemandAnchor=()=>{
+      anchorTicking=false;
+      const threshold=detailScroll.getBoundingClientRect().top+80;
+      let current='basic';
+      demandAnchors.forEach(section=>{if(section.getBoundingClientRect().top<=threshold)current=section.id.replace('demand-','');});
+      state.demandAnchor=current;
+      demandAnchorButtons.forEach(button=>{const active=button.dataset.demandAnchor===current;button.classList.toggle('active',active);button.setAttribute('aria-current',active?'true':'false');});
+    };
+    detailScroll.addEventListener('scroll',()=>{if(!anchorTicking){anchorTicking=true;requestAnimationFrame(syncDemandAnchor);}},{passive:true});
+    requestAnimationFrame(syncDemandAnchor);
+  }
   state.dropdownOpen=false;
 }
 document.addEventListener('click',e=>{
