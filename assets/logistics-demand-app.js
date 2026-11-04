@@ -342,7 +342,7 @@ function executionFeeCard(isExec,kind){
   const isRecv=kind==='recv';
   const title=isRecv?'执行侧预估应收':'执行侧预估应付';
   const rows=isExec?feeLedger.filter(row=>row.side===kind):[];
-  const action=isExec?`<button class="btn outline-primary mini" data-toast="已模拟维护${isRecv?'执行侧预估应收':'执行侧应付'}">维护${isRecv?'执行侧预估应收':'执行侧应付'}</button>`:'';
+  const action=isExec?`<button class="btn outline-primary mini" data-maintain-exec-fee="${kind}">维护${isRecv?'执行侧预估应收':'执行侧应付'}</button>`:'';
   const billingMap={
     'recv:海运费':{unitPrice:120,quantity:100,unit:'柜',commissionRate:2},
     'recv:港杂费':{unitPrice:80,quantity:50,unit:'吨',commissionRate:1.5},
@@ -389,6 +389,55 @@ function executionFeeCard(isExec,kind){
     </div>
   </section>`;
 }
+function maintainFeeSeed(kind){
+  const isRecv=kind==='recv';
+  return [{feeItem:'代理港杂费',party:isRecv?'青岛绿洲园花生食品有限公司':'中联铁运集团有限公司',taxRate:'9.00',ppcc:'',unitPrice:'1.00',currency:'人民币',quantity:'10.00',unit:'吨',containerType:'',originalAmount:'10',exchangeRate:'1.00',localAmount:'10',remark:'',reconcileStatus:'未对账',reconcileQty:'',reconcileAmount:'',reconciledQty:'',reconciledAmount:'',reconcileQtyTotal:'',reconcileAmountTotal:'',orderNo:'FCO202611030021',customer:'青岛绿洲园花生食品有限公司',invoiceType:'',reimbursable:'是',sourceType:'手动创建',sourceNo:''}];
+}
+function maintainFeeRowHtml(row,index){
+  const input=(field,type='text',extra='')=>`<input class="maintain-fee-input" data-maintain-field="${field}" data-row-index="${index}" type="${type}" value="${esc(row[field]||'')}" ${extra}>`;
+  return `<tr data-maintain-row="${index}">
+    <td>${input('feeItem')}</td><td>${input('party')}</td><td>${input('taxRate','number','step="0.01"')}</td>
+    <td><select class="maintain-fee-input" data-maintain-field="ppcc" data-row-index="${index}"><option value="">请选择</option><option ${row.ppcc==='预付'?'selected':''}>预付</option><option ${row.ppcc==='到付'?'selected':''}>到付</option></select></td>
+    <td>${input('unitPrice','number','step="0.01"')}</td><td>${input('currency')}</td><td>${input('quantity','number','step="0.01"')}</td><td>${input('unit')}</td><td>${input('containerType')}</td>
+    <td>${input('originalAmount','number','step="0.01"')}</td><td>${input('exchangeRate','number','step="0.0001"')}</td><td>${input('localAmount','number','step="0.01"')}</td><td>${input('remark')}</td>
+    <td class="maintain-fee-readonly">${esc(row.reconcileStatus)}</td><td class="maintain-fee-readonly">${esc(row.reconcileQty)}</td><td class="maintain-fee-readonly">${esc(row.reconcileAmount)}</td><td class="maintain-fee-readonly">${esc(row.reconciledQty)}</td><td class="maintain-fee-readonly">${esc(row.reconciledAmount)}</td><td class="maintain-fee-readonly">${esc(row.reconcileQtyTotal)}</td><td class="maintain-fee-readonly">${esc(row.reconcileAmountTotal)}</td>
+    <td>${input('orderNo')}</td><td>${input('customer','text','readonly aria-readonly="true"')}</td>
+    <td><select class="maintain-fee-input" data-maintain-field="invoiceType" data-row-index="${index}"><option value="">请选择</option><option>增值税专用发票</option><option>增值税普通发票</option></select></td>
+    <td><select class="maintain-fee-input" data-maintain-field="reimbursable" data-row-index="${index}"><option ${row.reimbursable==='是'?'selected':''}>是</option><option ${row.reimbursable==='否'?'selected':''}>否</option></select></td>
+    <td>${input('sourceType','text','readonly aria-readonly="true"')}</td><td>${input('sourceNo')}</td>
+    <td class="maintain-fee-actions"><button class="btn link" type="button" data-maintain-copy-row="${index}">复制</button><button class="btn link danger-text" type="button" data-maintain-delete-row="${index}">删除</button></td>
+  </tr>`;
+}
+function openExecutionFeeSelect(sourceKind,onCopy){
+  document.querySelectorAll('.exec-fee-select-overlay').forEach(node=>node.remove());
+  const isRecv=sourceKind==='recv';
+  const rows=maintainFeeSeed(sourceKind);
+  const rowHtml=rows.map((row,index)=>`<tr data-select-fee-row="${index}"><td class="checkbox-cell"><input type="checkbox" data-select-fee-index="${index}" aria-label="选择费用行"></td><td>${esc(row.feeItem)}</td><td>${esc(row.party)}</td><td>${esc(row.taxRate)}</td><td>${esc(row.ppcc||'')}</td><td>${esc(row.unitPrice)}</td><td>${esc(row.currency)}</td><td>${esc(row.quantity)}</td><td>${esc(row.unit)}</td><td>${esc(row.containerType)}</td><td>${esc(row.originalAmount)}</td><td>${esc(row.exchangeRate)}</td><td>${esc(row.localAmount)}</td><td>${esc(row.remark)}</td><td>${esc(row.orderNo)}</td><td>${esc(row.customer)}</td><td>${esc(row.invoiceType)}</td><td>${esc(row.reimbursable)}</td><td>${esc(row.sourceType)}</td><td>${esc(row.sourceNo)}</td></tr>`).join('');
+  const overlay=document.createElement('div');overlay.className='exec-fee-select-overlay';
+  overlay.innerHTML=`<section class="exec-fee-select-modal" role="dialog" aria-modal="true" aria-labelledby="execFeeSelectTitle"><header class="exec-fee-select-head"><h2 id="execFeeSelectTitle">选择执行侧预估${isRecv?'应收':'应付'}</h2><button class="bill-task-close" type="button" data-select-fee-close aria-label="关闭">×</button></header><div class="exec-fee-select-table-wrap"><table class="exec-fee-select-table"><thead><tr><th class="checkbox-cell"><input type="checkbox" data-select-fee-all aria-label="全选"></th><th>费用科目</th><th>结算对象</th><th>税率(%)</th><th>PP/CC</th><th>计费单价（含税）</th><th>计费币种</th><th>计费数量</th><th>计量单位</th><th>柜型</th><th>原币金额（含税）</th><th>汇率</th><th>本位币金额（元）</th><th>费用备注</th><th>客户订单号</th><th>客户</th><th>发票类型</th><th>是否实报实销</th><th>来源类型</th><th>来源单号</th></tr></thead><tbody>${rowHtml}</tbody></table></div><footer class="exec-fee-select-foot"><button class="btn" type="button" data-select-fee-close>取消</button><button class="btn primary" type="button" data-select-fee-copy disabled>复制选中费用</button></footer></section>`;
+  document.body.appendChild(overlay);
+  const selected=()=>[...overlay.querySelectorAll('[data-select-fee-index]:checked')].map(input=>rows[Number(input.dataset.selectFeeIndex)]);
+  const sync=()=>{const count=selected().length;const button=overlay.querySelector('[data-select-fee-copy]');button.disabled=!count;button.textContent=count?`复制选中费用（${count}）`:'复制选中费用';};
+  const close=()=>overlay.remove();
+  overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-select-fee-close]')){close();return;}if(event.target.closest('[data-select-fee-copy]')){const copied=selected();onCopy(copied);close();toast(`已复制 ${copied.length} 条执行侧预估${isRecv?'应收':'应付'}费用`);}});
+  overlay.addEventListener('change',event=>{if(event.target.matches('[data-select-fee-all]')){overlay.querySelectorAll('[data-select-fee-index]').forEach(input=>input.checked=event.target.checked);}if(event.target.matches('[data-select-fee-index],[data-select-fee-all]'))sync();});
+}
+function openMaintainFeeModal(kind){
+  document.querySelectorAll('.maintain-fee-overlay,.exec-fee-select-overlay').forEach(node=>node.remove());
+  const isRecv=kind==='recv';
+  const title=isRecv?'维护执行侧应收':'维护执行侧应付';
+  const rows=maintainFeeSeed(kind);
+  const overlay=document.createElement('div');overlay.className='maintain-fee-overlay';
+  overlay.innerHTML=`<section class="maintain-fee-modal" role="dialog" aria-modal="true" aria-labelledby="maintainFeeTitle"><header class="maintain-fee-head"><h2 id="maintainFeeTitle">${title}</h2><button class="bill-task-close" type="button" data-maintain-close aria-label="关闭">×</button></header><div class="maintain-fee-toolbar"><button class="btn outline-primary" type="button" data-maintain-copy-business>从业务预估${isRecv?'应收':'应付'}复制</button><button class="btn outline-primary" type="button" data-maintain-copy-exec>从执行侧预估${isRecv?'应付':'应收'}复制</button><button class="btn primary" type="button" data-maintain-add>新增费用</button></div><div class="maintain-fee-table-wrap"><table class="maintain-fee-table"><thead><tr><th>费用科目 *</th><th>结算对象 *</th><th>税率(%) *</th><th>PP/CC</th><th>计费单价（含税） *</th><th>计费币种 *</th><th>计费数量 *</th><th>计量单位 *</th><th>柜型</th><th>原币金额（含税）</th><th>汇率</th><th>本位币金额（元）</th><th>费用备注</th><th>对账状态</th><th>对账中数量</th><th>对账中金额</th><th>已对账数量</th><th>已对账金额</th><th>对账数量合计</th><th>对账金额合计</th><th>关联客户订单号</th><th>关联客户</th><th>发票类型</th><th>是否实报实销 *</th><th>来源类型</th><th>来源单号</th><th>操作</th></tr></thead><tbody data-maintain-body></tbody></table></div><footer class="maintain-fee-foot"><button class="btn" type="button" data-maintain-close>取消</button><button class="btn primary" type="button" data-maintain-save>保存</button></footer></section>`;
+  document.body.classList.add('maintain-fee-modal-open');document.body.appendChild(overlay);
+  const body=overlay.querySelector('[data-maintain-body]');
+  const renderRows=()=>{body.innerHTML=rows.length?rows.map((row,index)=>maintainFeeRowHtml(row,index)).join(''):'<tr><td colspan="27" class="maintain-fee-empty">暂无费用，请点击“新增费用”</td></tr>';};
+  const close=()=>{overlay.remove();document.querySelectorAll('.exec-fee-select-overlay').forEach(node=>node.remove());document.body.classList.remove('maintain-fee-modal-open');};
+  renderRows();
+  overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-maintain-close]')){close();return;}if(event.target.closest('[data-maintain-add]')){rows.push({feeItem:'',party:'',taxRate:'',ppcc:'',unitPrice:'',currency:'人民币',quantity:'',unit:'',containerType:'',originalAmount:'',exchangeRate:'1.00',localAmount:'',remark:'',reconcileStatus:'未对账',reconcileQty:'',reconcileAmount:'',reconciledQty:'',reconciledAmount:'',reconcileQtyTotal:'',reconcileAmountTotal:'',orderNo:'FCO202611030021',customer:'青岛绿洲园花生食品有限公司',invoiceType:'',reimbursable:'是',sourceType:'手动创建',sourceNo:''});renderRows();return;}if(event.target.closest('[data-maintain-copy-business]')){toast(`已模拟从业务预估${isRecv?'应收':'应付'}复制费用`);return;}if(event.target.closest('[data-maintain-copy-exec]')){openExecutionFeeSelect(isRecv?'pay':'recv',copied=>{rows.push(...copied.map(item=>({...item,party:item.party,customer:item.customer})));renderRows();});return;}const copyButton=event.target.closest('[data-maintain-copy-row]');if(copyButton){const index=Number(copyButton.dataset.maintainCopyRow);rows.splice(index+1,0,{...rows[index]});renderRows();return;}const deleteButton=event.target.closest('[data-maintain-delete-row]');if(deleteButton){rows.splice(Number(deleteButton.dataset.maintainDeleteRow),1);renderRows();return;}if(event.target.closest('[data-maintain-save]')){close();toast('执行侧预估费用已保存');}});
+  overlay.addEventListener('input',event=>{const input=event.target.closest('[data-maintain-field]');if(!input)return;const row=rows[Number(input.dataset.rowIndex)];if(!row)return;row[input.dataset.maintainField]=input.value;if(input.dataset.maintainField==='originalAmount'||input.dataset.maintainField==='exchangeRate'){row.localAmount=(Number(row.originalAmount||0)*Number(row.exchangeRate||0)).toFixed(2);const local=overlay.querySelector(`[data-maintain-field="localAmount"][data-row-index="${input.dataset.rowIndex}"]`);if(local)local.value=row.localAmount;}});
+}
+document.addEventListener('click',event=>{const button=event.target.closest('[data-maintain-exec-fee]');if(button)openMaintainFeeModal(button.dataset.maintainExecFee);});
 function profitCard(isExec){
   const row=isExec?['人民币','10.00','10.00','0.00','0.00','0.00','0.00']:['人民币','19,000.00','15,000.00','4,000.00','0.00','0.00','0.00'];
   const body=`<div class="table-scroll"><table class="mini-table" style="min-width:1050px"><thead><tr><th>币种</th><th>业务预估应收</th><th>业务预估应付</th><th>业务预估利润</th><th>执行侧预估应收</th><th>执行侧预估应付</th><th>执行利润</th></tr></thead><tbody><tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${['折合本币(CNY)',...row.slice(1)].map(v=>`<td>${v}</td>`).join('')}</tr></tbody></table></div>`;
@@ -453,6 +502,7 @@ function arrangementReferenceActions(isExec){
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   const activeRecord=getActiveDemandRecord();
   const displayStatus=activeRecord.status||(isExec?'执行中':'创建');
+  const displayStatusClass=['待审核','驳回','待安排'].includes(displayStatus)?'status-pending':displayStatus==='执行中'?'running':displayStatus==='已完结'?'status-success':displayStatus==='作废'?'status-muted':'draft';
   const mainCards=isExec?`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`: `${baseCard(false)}${customerCard(false)}${transportCard(false)}${voyageCard(false)}${containerCard(false)}${sendReceiveCard(false)}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
   return `<div class="detail-scroll ${state.detailView==='arrangement'&&!isExec?'empty-arrangement-scroll':''}"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span class="caret">▼</span><span>物流需求单详情（${no}）</span><span class="expand-icon">⛶</span></div><div class="detail-actions">${detailActions(isExec)}</div></div></section>
@@ -788,7 +838,7 @@ function renderExecutionLower(){
   const base=[['物流委托名称','ui自动化物流安排510309',true],['委托方法人公司','厦门建发生生物流有限公司',true],['物流委托类型','我司委托',true],['物流供应商','中联铁运集团有限公司',true],['供应商商户','中联铁运集团有限公司',true],['反馈方式','自反馈',true],['来源单据类型','采购/移仓'],['来源单据号',''],['作业组织','数字化中心',true],['作业组织人员',''],['委托备注','北港到厂水运入库，靠泊窗口需提前与港口调度确认。'],['报审说明','']];
   const fields=base.map(([l,v,r],i)=>field(l,v,{readonly:false,required:!!r,textarea:l==='委托备注'||l==='报审说明',span:i===0?'span-2':(l==='委托备注'||l==='报审说明')?'span-3':''})).join('');
   return `<div class="execution-ref-layout">
-    <aside class="execution-tree-card"><div class="execution-tree-head"><span>执行结构</span><button class="btn link" data-toast="已模拟收起执行结构">«</button></div><div class="execution-tree-list"><button class="exec-delegation-node">${icon('order')}<span>ui自动化物流安排510309</span></button><button class="exec-task-node active">${icon('ship')}<span>华东物流运营中心 / 上海调度组 → 客户收货仓</span></button></div><button class="exec-add-delegation" data-toast="已模拟新增委托">＋ 新增委托</button></aside>
+    <aside class="execution-tree-card"><div class="execution-tree-head"><span>执行结构</span><button class="btn link" data-toast="已模拟收起执行结构">«</button></div><div class="execution-tree-list"><button class="exec-delegation-node">${icon('order')}<span>ui自动化物流安排510309</span><span class="exec-delegation-status">执行中</span></button><button class="exec-task-node active">${icon('ship')}<span>华东物流运营中心 / 上海调度组 → 客户收货仓</span></button></div><button class="exec-add-delegation" data-toast="已模拟新增委托">＋ 新增委托</button></aside>
     <section class="delegation-ref-card">
       <div class="delegation-ref-head"><span class="tag" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe">执行中</span><h3>ui自动化物流安排510309</h3><span class="delegation-code">FLMT202610200038 · V1.0</span><div class="delegation-ref-actions"><button class="btn outline-primary mini" data-toast="已模拟打开合同信息">合同信息</button><button class="btn outline-primary mini" data-toast="已模拟打开需求单审批进度">需求单审批进度</button><button class="btn outline-primary mini" data-toast="已模拟打开附件">附件</button><button class="btn outline-primary mini" data-toast="已模拟打开历史版本">历史版本</button><button class="btn primary mini" data-toast="已模拟提交审批">提交审批</button><button class="btn outline-primary mini" data-toast="已模拟复制委托">复制</button><button class="btn danger mini" data-toast="已模拟删除委托">删除</button></div></div>
       <div class="delegation-ref-meta"><span>来源 <b>控制塔</b></span><span>业务员 <b>黄瑞钰</b></span><span>部门 <b>数字化中心</b></span><span>经营单位 <b>供应链物流科技</b></span><span>核算组织 <b>数字化中心</b></span><span>公司 <b>厦门建发生生物流有限公司</b></span><span>创建 <b>苏丽蓉 · 2026-10-20 19:51:35</b></span><span>修改 <b>菜菜菜 · 2026-10-20 19:53:25</b></span></div>
@@ -813,6 +863,7 @@ function renderLegacyDetail(page){
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   const activeRecord=getActiveDemandRecord();
   const displayStatus=activeRecord.status||(isExec?'执行中':'创建');
+  const displayStatusClass=['待审核','驳回','待安排'].includes(displayStatus)?'status-pending':displayStatus==='执行中'?'running':displayStatus==='已完结'?'status-success':displayStatus==='作废'?'status-muted':'draft';
   const isWater=isExec||createForm.transportType==='水运';
   const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
@@ -1010,9 +1061,8 @@ function renderBillList(isExec) {
 
 function openBillTaskModal() {
   document.querySelectorAll('.bill-task-overlay').forEach(node => node.remove());
-  const currentDemandNo=state.activeRowId||(state.page==='create'?'FLR202610160032':'FLR202610200038');
   const taskRows = [
-    {sales:'洪小莲',demand:currentDemandNo,mbl:'',hbl:'',name:'LQ1030测试',status:'创建',task:'FLST202610300001',confirm:'',load:'集装箱',origin:'厦门',dest:'Porthmadog',originTerm:'CFS',destTerm:'CFS',order:'FOR202610300001',customer:'福建测试客户有限公司'},
+    {sales:'洪小莲',mbl:'',hbl:'',name:'LQ1030测试',status:'创建',task:'FLST202610300001',confirm:'',load:'集装箱',origin:'厦门',dest:'Porthmadog',originTerm:'CFS',destTerm:'CFS',order:'FOR202610300001',customer:'福建测试客户有限公司'},
     {sales:'吴小童',demand:'FLR202610210002',mbl:'',hbl:'',name:'LQ全流程测试-2',status:'创建',task:'FLST202610210006',confirm:'',load:'集装箱',origin:'厦门',dest:'长滩',originTerm:'DR',destTerm:'DR',order:'FOR202610210002',customer:'厦门远洋贸易有限公司'},
     {sales:'魏勇',demand:'FLR202610130007',mbl:'',hbl:'',name:'LQ111',status:'创建',task:'FLST202610130013',confirm:'',load:'集装箱',origin:'富纳富提',dest:'法马古斯塔',originTerm:'DR',destTerm:'DR',order:'FOR202610130007',customer:'上海海联供应链有限公司'},
     {sales:'魏勇',demand:'FLR202609200003',mbl:'',hbl:'',name:'LQ测试优化',status:'创建',task:'FLST202609200005',confirm:'',load:'集装箱',origin:'富纳富提',dest:'法马古斯塔',originTerm:'DR',destTerm:'DR',order:'FOR202609200003',customer:'宁波远海物流有限公司'},
@@ -1021,7 +1071,7 @@ function openBillTaskModal() {
     {sales:'林美燕',demand:'FLR202609090001',mbl:'',hbl:'',name:'LQ',status:'创建',task:'FLST202609090005',confirm:'',load:'集装箱',origin:'富纳富提',dest:'法马古斯塔',originTerm:'DR',destTerm:'DR',order:'FOR202609090001',customer:'广州联盛进出口有限公司'},
     {sales:'黄瑞钰',demand:'FLR202609030006',mbl:'',hbl:'',name:'LQ出口测试',status:'创建',task:'FLST202609030012',confirm:'',load:'集装箱',origin:'厦门',dest:'汉堡',originTerm:'CY',destTerm:'CY',order:'FOR202609030006',customer:'厦门建发供应链有限公司'}
   ];
-  const rowHtml = taskRows.map((row, index) => `<tr data-bill-task-row data-name="${esc(row.name)}" data-demand="${esc(row.demand)}"><td class="checkbox-cell"><input type="checkbox" data-bill-row="${index}" aria-label="选择${esc(row.task)}"></td><td>${esc(row.sales)}</td><td>${esc(row.demand)}</td><td>${esc(row.mbl||'')}</td><td>${esc(row.hbl||'')}</td><td>${esc(row.name)}</td><td>${esc(row.status)}</td><td>${esc(row.task)}</td><td>${esc(row.confirm||'')}</td><td>${esc(row.load)}</td><td>${esc(row.origin||'')}</td><td>${esc(row.dest||'')}</td><td>${esc(row.originTerm||'')}</td><td>${esc(row.destTerm||'')}</td><td>${esc(row.order||'')}</td><td>${esc(row.customer||'')}</td></tr>`).join('');
+  const rowHtml = taskRows.map((row, index) => `<tr data-bill-task-row data-name="${esc(row.name)}" data-demand="${esc(row.demand)}"><td class="checkbox-cell"><input type="checkbox" data-bill-row="${index}" aria-label="选择${esc(row.task)}"></td><td>${esc(row.name)}</td><td>${esc(row.status)}</td><td>${esc(row.task)}</td><td>${esc(row.confirm||'')}</td><td>${esc(row.load)}</td><td>${esc(row.origin||'')}</td><td>${esc(row.dest||'')}</td><td>${esc(row.originTerm||'')}</td><td>${esc(row.destTerm||'')}</td><td>${esc(row.order||'')}</td><td>${esc(row.customer||'')}</td></tr>`).join('');
   const overlay = document.createElement('div');
   overlay.className = 'bill-task-overlay';
   overlay.innerHTML = `<section class="bill-task-modal" role="dialog" aria-modal="true" aria-labelledby="billTaskTitle">
@@ -1030,18 +1080,17 @@ function openBillTaskModal() {
       <section class="bill-task-query" data-bill-query-panel>
         <div class="bill-task-query-head">
           <button class="bill-task-query-toggle" type="button" data-bill-query-toggle><span class="bill-task-query-arrow">▾</span><span>查询条件</span></button>
-          <div class="bill-task-token" data-bill-query-token><span>运输委托名称：LQ</span><button type="button" aria-label="移除运输委托名称筛选" data-bill-token-clear>×</button></div><div class="bill-task-token is-fixed" data-bill-demand-token><span>物流需求单号：${currentDemandNo}</span></div>
+          <div class="bill-task-token" data-bill-query-token><span>运输委托名称：LQ</span><button type="button" aria-label="移除运输委托名称筛选" data-bill-token-clear>×</button></div>
           <div class="bill-task-query-actions"><button class="btn bill-task-reset" type="button" data-bill-reset>重置</button><button class="btn primary" type="button" data-bill-search>查询</button></div>
         </div>
         <div class="bill-task-query-fields">
           <label class="bill-task-field"><span>运输委托名称</span><input id="billQueryName" value="LQ" placeholder="请输入"></label>
           <label class="bill-task-field"><span>业务员</span><select id="billQuerySales"><option value="">请选择</option><option>洪小莲</option><option>吴小童</option><option>魏勇</option><option>陈伟伟</option><option>林美燕</option><option>黄瑞钰</option></select></label>
           <label class="bill-task-field"><span>客户</span><select id="billQueryCustomer"><option value="">请选择</option><option>福建测试客户有限公司</option><option>厦门远洋贸易有限公司</option><option>上海海联供应链有限公司</option><option>宁波远海物流有限公司</option><option>青岛海程国际物流有限公司</option><option>广州联盛进出口有限公司</option></select></label>
-          <label class="bill-task-field"><span>物流需求单号</span><input id="billQueryDemand" value="${currentDemandNo}" readonly aria-readonly="true"></label>
         </div>
       </section>
       <div class="bill-task-table-wrap">
-        <table class="bill-task-table"><thead><tr><th class="checkbox-cell"><input type="checkbox" data-bill-select-all aria-label="全选"></th><th>业务员</th><th>物流需求单号</th><th>MBL#</th><th>HBL#</th><th>运输委托名称</th><th>委托状态</th><th>任务编号</th><th>任务确认状态</th><th>装运类别</th><th>起运港</th><th>目的港</th><th>起运港服务条款</th><th>目的港服务条款</th><th>客户订单号</th><th>客户</th></tr></thead><tbody>${rowHtml}</tbody></table>
+        <table class="bill-task-table"><thead><tr><th class="checkbox-cell"><input type="checkbox" data-bill-select-all aria-label="全选"></th><th>运输委托名称</th><th>委托状态</th><th>任务编号</th><th>任务确认状态</th><th>装运类别</th><th>起运港</th><th>目的港</th><th>起运港服务条款</th><th>目的港服务条款</th><th>客户订单号</th><th>客户</th></tr></thead><tbody>${rowHtml}</tbody></table>
       </div>
       <aside class="bill-task-side-panel" data-bill-selection-panel hidden>
         <div class="bill-task-side-tip"><span class="bill-task-side-info">i</span><span>新增前需选择单据类型</span></div>
@@ -1072,13 +1121,12 @@ function openBillTaskModal() {
   };
   const applyFilter = () => {
     const name = overlay.querySelector('#billQueryName').value.trim();
-    const demand = overlay.querySelector('#billQueryDemand').value.trim();
     const sales = overlay.querySelector('#billQuerySales').value;
     const customer = overlay.querySelector('#billQueryCustomer').value;
     let count = 0;
     allRows.forEach(row => {
       const text = row.innerText;
-      const show = (!name || text.includes(name)) && (!demand || text.includes(demand)) && (!sales || text.includes(sales)) && (!customer || text.includes(customer));
+      const show = (!name || text.includes(name))  && (!sales || text.includes(sales)) && (!customer || text.includes(customer));
       row.style.display = show ? '' : 'none';
       if (show) count += 1;
     });
@@ -1153,6 +1201,7 @@ function renderDetail(page){
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   const activeRecord=getActiveDemandRecord();
   const displayStatus=activeRecord.status||(isExec?'执行中':'创建');
+  const displayStatusClass=['待审核','驳回','待安排'].includes(displayStatus)?'status-pending':displayStatus==='执行中'?'running':displayStatus==='已完结'?'status-success':displayStatus==='作废'?'status-muted':'draft';
   const isWater=isExec||createForm.transportType==='水运';
   const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
@@ -1175,7 +1224,7 @@ function renderDetail(page){
   const subTabs=activeSection==='demand'?`<span class="detail-subtabs-divider"></span><div class="detail-demand-subtabs">${demandSubNav.map(([id,label])=>`<button class="detail-demand-subtab ${activeDemandAnchor===id?'active':''}" data-demand-anchor="${id}">${label}</button>`).join('')}</div>`:'';
   const panels={demand,fees,records,arrangement,bills:billList};
   return `<div class="detail-scroll"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
-    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="expand-icon">⛶</span></div><span class="detail-status ${displayStatus==='执行中'?'running':displayStatus==='创建'?'draft':'status-create'}">${displayStatus}</span><div class="detail-actions">${optimizedDetailActions(isExec, displayStatus)}</div></div></section>
+    <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="detail-status ${displayStatusClass}">${displayStatus}</span><span class="expand-icon">⛶</span></div><div class="detail-actions">${optimizedDetailActions(isExec, displayStatus)}</div></div></section>
     <div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-detail-section="${id}">${l}</button>`).join('')}${subTabs}</div><div class="detail-section-panel active" id="section-${activeSection}">${panels[activeSection]||panels.demand}</div>
   </div></div>`;
 }

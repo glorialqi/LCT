@@ -159,3 +159,42 @@ body.bill-modal-open{overflow:hidden}
 .bill-task-side-field select:focus{break-inside:avoid;border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.12)}
 .bill-task-table tbody tr.is-selected td{background:#eaf3ff!important}
 .bill-task-token[hidden]{display:none!important}
+
+
+.detail-status-label{margin-left:8px;color:#94a3b8;font-size:11px;font-weight:400;white-space:nowrap}
+.detail-status.status-pending{background:#fff7ed;border:1px solid #fed7aa;color:#c2410c}
+.detail-status.status-success{background:#ecfdf5;border:1px solid #bbf7d0;color:#15803d}
+.detail-status.status-muted{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b}
+.exec-delegation-node>span:not(.exec-delegation-status){min-width:0;overflow:hidden;text-overflow:ellipsis}
+.exec-delegation-status{margin-left:auto;flex:0 0 auto;padding:1px 6px;border-radius:9px;background:#eff6ff;color:#2563eb;font-size:10px;font-weight:500}
+body.maintain-fee-modal-open{overflow:hidden}
+.maintain-fee-overlay{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.24)}
+.maintain-fee-modal{display:flex;width:min(1720px,calc(100vw - 40px));height:min(520px,calc(100vh - 40px));min-height:380px;flex-direction:column;overflow:hidden;border:1px solid #dbe3ee;border-radius:7px;background:#fff;box-shadow:0 18px 55px rgba(15,23,42,.22)}
+.maintain-fee-head,.exec-fee-select-head{display:flex;height:48px;flex:0 0 48px;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #e5eaf1}
+.maintain-fee-head h2,.exec-fee-select-head h2{margin:0;color:#1e293b;font-size:14px;font-weight:600}
+.maintain-fee-toolbar{display:flex;flex:0 0 48px;align-items:center;gap:8px;padding:0 16px}
+.maintain-fee-toolbar .btn{height:30px;padding:0 12px;border-radius:5px;font-size:12px}
+.maintain-fee-table-wrap{min-height:0;flex:1;margin:0 16px;overflow:auto;border:1px solid #e2e8f0;border-radius:4px}
+.maintain-fee-table{width:100%;min-width:2600px;border-collapse:separate;border-spacing:0}
+.maintain-fee-table th{position:sticky;top:0;z-index:2;height:34px;padding:0 7px;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:10px;font-weight:600;text-align:left;white-space:nowrap}
+.maintain-fee-table td{height:38px;padding:3px 7px;border-bottom:1px solid #eef2f7;color:#334155;font-size:11px;white-space:nowrap}
+.maintain-fee-table tbody tr:nth-child(even) td{background:#fbfcfe}
+.maintain-fee-input{width:100%;height:26px;min-width:82px;padding:0 6px;border:1px solid #d9e1ec;border-radius:3px;background:#fff;color:#334155;font-size:11px;outline:none}
+.maintain-fee-input:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.12)}
+.maintain-fee-input[readonly]{background:#f8fafc;color:#64748b;cursor:default}
+.maintain-fee-readonly{color:#64748b;text-align:center}
+.maintain-fee-actions{text-align:right}.maintain-fee-actions .btn{font-size:10px}
+.danger-text{color:#e33b3b!important}.maintain-fee-empty{height:110px!important;text-align:center;color:#94a3b8!important}
+.maintain-fee-foot{display:flex;height:52px;flex:0 0 52px;align-items:center;justify-content:flex-end;gap:8px;padding:0 16px;border-top:1px solid #e5eaf1}
+.maintain-fee-foot .btn{height:30px;min-width:58px;padding:0 12px;font-size:12px;border-radius:5px}
+.exec-fee-select-overlay{position:fixed;inset:0;z-index:140;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(15,23,42,.47)}
+.exec-fee-select-modal{display:flex;width:min(1580px,calc(100vw - 44px));height:min(330px,calc(100vh - 44px));min-height:250px;flex-direction:column;overflow:hidden;border:1px solid #dbe3ee;border-radius:6px;background:#fff;box-shadow:0 18px 55px rgba(15,23,42,.25)}
+.exec-fee-select-table-wrap{min-height:0;flex:1;margin:12px 16px 0;overflow:auto;border:1px solid #e2e8f0;border-radius:4px}
+.exec-fee-select-table{width:100%;min-width:1900px;border-collapse:separate;border-spacing:0}
+.exec-fee-select-table th{position:sticky;top:0;z-index:2;height:34px;padding:0 8px;border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:10px;text-align:left;white-space:nowrap}
+.exec-fee-select-table td{height:36px;padding:3px 8px;border-bottom:1px solid #eef2f7;color:#334155;font-size:11px;white-space:nowrap}
+.exec-fee-select-table tbody tr:nth-child(even) td{background:#fbfcfe}
+.exec-fee-select-table .checkbox-cell{text-align:center;padding:0}
+.exec-fee-select-foot{display:flex;height:50px;flex:0 0 50px;align-items:center;justify-content:flex-end;gap:8px;padding:0 16px}
+.exec-fee-select-foot .btn{height:30px;min-width:62px;padding:0 12px;font-size:12px;border-radius:5px}
+.detail-titlebar .detail-actions{margin-left:auto}.detail-title .detail-status{margin-left:2px}
