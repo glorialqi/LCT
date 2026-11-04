@@ -198,3 +198,16 @@ body.maintain-fee-modal-open{overflow:hidden}
 .exec-fee-select-foot{display:flex;height:50px;flex:0 0 50px;align-items:center;justify-content:flex-end;gap:8px;padding:0 16px}
 .exec-fee-select-foot .btn{height:30px;min-width:62px;padding:0 12px;font-size:12px;border-radius:5px}
 .detail-titlebar .detail-actions{margin-left:auto}.detail-title .detail-status{margin-left:2px}
+
+.maintain-fee-toolbar{flex-wrap:wrap}
+.other-demand-fee-modal{width:min(1620px,calc(100vw - 44px));height:min(650px,calc(100vh - 44px))}
+.other-demand-fee-query{flex:0 0 auto;margin:10px 16px 0;padding:10px 12px 12px;border:1px solid #e2e8f0;border-radius:4px}
+.other-demand-fee-query-head{display:flex;min-height:30px;align-items:center;justify-content:space-between;color:#334155;font-size:12px;font-weight:600}
+.other-demand-fee-query-head>div{display:flex;gap:8px}
+.other-demand-fee-query-head .btn{height:28px;padding:0 12px;font-size:11px;border-radius:4px}
+.other-demand-fee-query-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px 14px;margin-top:5px}
+.other-demand-fee-field{display:grid;min-width:0;gap:4px;color:#64748b;font-size:10px}
+.other-demand-fee-field input{width:100%;height:28px;padding:0 8px;border:1px solid #d9e1ec;border-radius:3px;background:#fff;color:#334155;font-size:11px;outline:none}
+.other-demand-fee-field input:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.12)}
+.other-demand-fee-table-wrap{min-height:0;flex:1;margin:8px 16px 0;overflow:auto;border:1px solid #e2e8f0;border-radius:4px}
+.other-demand-fee-table{min-width:2100px}
