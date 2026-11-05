@@ -93,7 +93,7 @@
     .prototype-note b { color: #356bbd; }
     .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 11px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
     .toast.show { opacity: 1; transform: translate(-50%,0); }
-    @media (max-width: 1120px) { body { min-width: 980px; } .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .span-2,.span-4,.span-6 { grid-column: span 3; } }
+    @media (max-width: 1120px) { body { min-width: 980px; } .page-head { padding-top:8px; padding-bottom:8px; } .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .span-2,.span-4,.span-6 { grid-column: span 3; } }
     /* Embedded mode when opened inside index.html */
     html.detail-embedded body { min-width:0; }
     html.detail-embedded .app-shell { grid-template-columns:minmax(0,1fr); }
@@ -103,7 +103,7 @@
     html.detail-embedded .detail-scroll { height:100vh; padding:12px 12px 0 8px; }
 
     /* ===== 详情态：状态动作、利润概览与合同信息 ===== */
-    .page-head { flex-wrap:wrap; row-gap:8px; padding-top:8px; padding-bottom:8px; }
+    .page-head { flex-wrap:wrap; row-gap:8px; }
     .head-primary-actions { display:flex; align-items:center; gap:8px; }
     .edit-actions, .detail-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .detail-actions { display:none; }
@@ -176,9 +176,10 @@
   <link rel="stylesheet" href="../assets/ui-state.css">
   <link rel="stylesheet" href="../assets/accessibility.css">
   <link rel="stylesheet" href="../assets/customer-order-feedback.css">
+  <link rel="stylesheet" href="../assets/customer-workbench.css">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 </head>
-<body>
+<body class="customer-workbench">
   <svg class="svg-sprite" aria-hidden="true">
     <symbol id="p-logo" viewBox="0 0 24 24"><path d="m12 2.7 8 4.2v9.8l-8 4.6-8-4.6V6.9l8-4.2Z"/><path d="m4.4 7 7.6 4 7.6-4M12 11v9.7"/></symbol>
     <symbol id="p-order" viewBox="0 0 24 24"><path d="M7 4.5h10a2 2 0 0 1 2 2v13H5v-13a2 2 0 0 1 2-2Z"/><path d="M9 4V2.8h6V4M8.5 9h7M8.5 13h7M8.5 17h4"/></symbol>
@@ -243,6 +244,10 @@
       <div data-ui-form-alert hidden></div>
         <div class="page-head">
           <div class="page-title">客户订单新增<svg><use href="#p-link"/></svg></div>
+          <div class="detail-view-tabs" role="tablist" aria-label="订单详情视图">
+            <button class="detail-view-tab active" id="orderInfoTab" type="button" role="tab" aria-selected="true" aria-controls="orderInfoView" data-detail-tab="order">订单信息</button>
+            <button class="detail-view-tab" id="feedbackTab" type="button" role="tab" aria-selected="false" aria-controls="feedbackView" data-detail-tab="feedback" tabindex="-1">履约反馈</button>
+          </div>
           <span class="ui-dirty-indicator" id="detailDirtyIndicator" hidden>未保存</span>
           <div class="page-head-spacer"></div>
           <div class="head-primary-actions">
@@ -260,16 +265,9 @@
             <button class="detail-btn outline-primary" id="submitOrderBtn" type="button">提交</button>
             <button class="detail-btn primary" id="submitFlowBtn" type="button">提交并填写物流需求</button>
           </div>
-          <div class="edit-actions" id="feedbackPageActions" hidden>
-            <button class="detail-btn" id="previewFeedbackBtn" type="button">预览客户版</button>
-            <button class="detail-btn outline-primary" id="downloadFeedbackBtn" type="button">下载确认单</button>
-            <button class="detail-btn primary" id="sendFeedbackBtn" type="button">反馈客户</button>
-          </div>
+
         </div>
-        <div class="detail-view-tabs" role="tablist" aria-label="订单详情视图">
-          <button class="detail-view-tab active" id="orderInfoTab" type="button" role="tab" aria-selected="true" aria-controls="orderInfoView" data-detail-tab="order">订单信息</button>
-          <button class="detail-view-tab" id="feedbackTab" type="button" role="tab" aria-selected="false" aria-controls="feedbackView" data-detail-tab="feedback" tabindex="-1">履约反馈</button>
-        </div>
+
         <div class="detail-view" id="orderInfoView" role="tabpanel" aria-labelledby="orderInfoTab">
         <section class="detail-section" aria-labelledby="org-title">
           <div class="detail-section-head"><div class="detail-section-title" id="org-title"><svg><use href="#p-down"/></svg>组织信息</div></div>
@@ -419,9 +417,13 @@
                 <p class="feedback-meta"><span id="feedbackUpdatedAt">最后更新 2026-11-01 14:30</span><span>客户可见范围：<strong>履约、港口作业、验收与费用结果</strong></span></p>
               </div>
               <div class="feedback-context-actions">
-                <button class="detail-btn" id="viewFeedbackRecordsBtn" type="button">查看反馈记录</button>
                 <button class="detail-btn outline-primary" id="editFeedbackBtn" type="button">修改</button>
-                <button class="detail-btn primary" id="startAcceptanceBtn" type="button">发起验收申请</button>
+                <button class="detail-btn primary" id="feedbackCustomerBtn" type="button">反馈客户</button>
+                <button class="detail-btn outline-primary" id="declareVesselBtn" type="button">宣船</button>
+                <button class="detail-btn danger" id="cancelDeclarationBtn" type="button" hidden>取消宣船</button>
+                <button class="detail-btn outline-primary" id="startAcceptanceBtn" type="button">发起验收申请</button>
+                <button class="detail-btn" id="previewFeedbackBtn" type="button">预览客户版</button>
+                <button class="detail-btn" id="viewFeedbackRecordsBtn" type="button">查看反馈记录</button>
               </div>
             </div>
             <div class="feedback-rail-wrap"><div class="feedback-rail" id="feedbackRail" role="tablist" aria-label="履约作业节点"></div></div>

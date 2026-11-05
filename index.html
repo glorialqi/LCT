@@ -74,10 +74,17 @@
       <path d="M18 9a6 6 0 0 0-12 0c0 7-2.5 7-2.5 8.5h17C20.5 16 18 16 18 9Z"/>
       <path d="M9.5 20h5"/>
     </symbol>
+    <symbol id="icon-help" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.5"/>
+      <path d="M9.8 9.2a2.4 2.4 0 1 1 3.4 2.2c-.8.4-1.2.9-1.2 1.8v.3M12 17.2h.01"/>
+    </symbol>
   </svg>
 
   <div class="app-shell">
-    <aside class="sidebar" aria-label="物流控制塔导航">
+    <aside class="sidebar" id="appSidebar" aria-label="物流控制塔导航">
+      <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-controls="appSidebar" aria-expanded="true" aria-label="收起左侧菜单" title="收起左侧菜单">
+        <svg><use href="#icon-chevron"/></svg>
+      </button>
       <div class="brand-row">
         <a class="brand" href="#customer-order" aria-label="物流控制塔首页">
           <span class="brand-mark"><svg><use href="#icon-oms-logo"/></svg></span>
@@ -90,7 +97,7 @@
 
             <nav class="main-nav" aria-label="业务页面">
         <section class="nav-domain" aria-label="股份控制塔">
-          <div class="nav-domain-title">股份控制塔</div>
+          <div class="nav-domain-title" title="股份控制塔">股份控制塔</div>
           <a class="nav-entry" href="#trade-contract" data-page="trade-contract" title="贸易合同待办">
             <span class="nav-icon"><svg><use href="#icon-contract"/></svg></span>
             <span class="nav-text">贸易合同待办</span>
@@ -98,8 +105,8 @@
         </section>
 
         <section class="nav-domain" aria-label="4PL控制塔">
-          <div class="nav-domain-title">4PL控制塔</div>
-          <div class="nav-group-title nav-subgroup-title">
+          <div class="nav-domain-title" title="4PL控制塔">4PL控制塔</div>
+          <div class="nav-group-title nav-subgroup-title" title="物流订单管理">
             <span class="nav-icon"><svg><use href="#icon-order"/></svg></span>
             <span>物流订单管理</span>
           </div>
@@ -124,21 +131,24 @@
             <span class="nav-text">物流需求列表</span>
           </a>
 
-          <div class="nav-entry nav-disabled" aria-disabled="true" title="后续页面，暂未接入">
+          <div class="nav-entry nav-disabled" aria-disabled="true" title="物流委托列表（后续页面，暂未接入）">
             <span class="nav-icon"><svg><use href="#icon-demand"/></svg></span>
             <span class="nav-text">物流委托列表</span>
             <span class="nav-tag">待接入</span>
           </div>
 
           <div class="nav-separator"></div>
-          <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-truck"/></svg></span><span>运输工作台</span></div>
-          <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-database"/></svg></span><span>物流资源池</span></div>
-          <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#icon-settings"/></svg></span><span>OMS配置管理</span></div>
+          <div class="nav-group-title nav-muted" title="运输工作台"><span class="nav-icon"><svg><use href="#icon-truck"/></svg></span><span>运输工作台</span></div>
+          <div class="nav-group-title nav-muted" title="物流资源池"><span class="nav-icon"><svg><use href="#icon-database"/></svg></span><span>物流资源池</span></div>
+          <div class="nav-group-title nav-muted" title="OMS配置管理"><span class="nav-icon"><svg><use href="#icon-settings"/></svg></span><span>OMS配置管理</span></div>
         </section>
       </nav>
 
       <div class="sidebar-bottom">
-        <button class="sidebar-action" id="prototypeInfo" type="button">原型说明</button>
+        <button class="sidebar-action" id="prototypeInfo" type="button" title="原型说明">
+          <svg class="sidebar-action-icon"><use href="#icon-help"/></svg>
+          <span>原型说明</span>
+        </button>
         <div class="sidebar-version">Prototype v1.1</div>
       </div>
     </aside>

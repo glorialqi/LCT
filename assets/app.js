@@ -2,6 +2,12 @@
   "use strict";
 
   const pages = {
+    "customer-demand-list": {
+      domain: "4PL控制塔",
+      title: "客户需求列表",
+      description: "服务要求转入、版本接收与订单生成进度",
+      file: "pages/customer-demand-list-prototype.html"
+    },
     "customer-order-list": {
       domain: "4PL控制塔",
       title: "客户订单列表",
@@ -39,6 +45,9 @@
   const loadingLayer = document.getElementById("loadingLayer");
   const prototypeInfo = document.getElementById("prototypeInfo");
   const appToast = document.getElementById("appToast");
+  const appShell = document.querySelector(".app-shell");
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const sidebarStorageKey = "ct-sidebar-collapsed";
   const loadedPages = new Set();
   let activePage = null;
   let loadingTimer = null;
@@ -68,6 +77,35 @@
     toastTimer = window.setTimeout(() => appToast.classList.remove("show"), 2200);
   }
 
+  function setSidebarCollapsed(collapsed, persist) {
+    if (!appShell || !sidebarToggle) return;
+    appShell.classList.toggle("sidebar-collapsed", collapsed);
+    sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+    const label = collapsed ? "展开左侧菜单" : "收起左侧菜单";
+    sidebarToggle.setAttribute("aria-label", label);
+    sidebarToggle.title = label;
+    if (!persist) return;
+    try {
+      window.localStorage.setItem(sidebarStorageKey, collapsed ? "1" : "0");
+    } catch (error) {
+      // Ignore storage restrictions in local prototype environments.
+    }
+  }
+
+  function restoreSidebarState() {
+    if (!appShell || !sidebarToggle) return;
+    let collapsed = false;
+    try {
+      collapsed = window.localStorage.getItem(sidebarStorageKey) === "1";
+    } catch (error) {
+      collapsed = false;
+    }
+    setSidebarCollapsed(collapsed, false);
+    sidebarToggle.addEventListener("click", () => {
+      setSidebarCollapsed(!appShell.classList.contains("sidebar-collapsed"), true);
+    });
+  }
+
   function activatePage(key, updateHash) {
     if (!pages[key]) key = defaultPage;
     const previousPage = activePage;
@@ -93,7 +131,7 @@
     document.title = config.title + " · " + (config.domain || "物流控制塔");
     activePage = key;
 
-    if ((key === "customer-order-list" || key === "logistics-demand") && previousPage && previousPage !== key) {
+    if ((key === "customer-order-list" || key === "customer-demand-list" || key === "logistics-demand") && previousPage && previousPage !== key) {
       const frame = frames.find((item) => item.dataset.page === key);
       if (frame) {
         loadedPages.delete(key);
@@ -152,5 +190,6 @@
     }
   });
 
+  restoreSidebarState();
   activatePage(pageFromHash(), false);
 })();

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>物流需求 - 订单跟踪记录</title>
+  <style>
+    @font-face { font-family: "CND Inter"; src: url("../assets/vendor/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+    :root { --blue:#0868df; --blue-dark:#0758bd; --text:#17202c; --muted:#7d8998; --line:#dfe5ec; --bg:#f3f5f8; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; min-height:100%; }
+    body { min-width: 960px; background:var(--bg); color:var(--text); font-family:"CND Inter","Microsoft YaHei",sans-serif; font-size:13px; }
+    .topbar { height:56px; padding:0 24px; display:flex; align-items:center; gap:16px; background:#fff; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:10px; color:#0b2f5b; font-size:17px; font-weight:700; }
+    .brand-mark { width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; border-radius:5px; background:var(--blue); color:#fff; font-size:16px; }
+    .top-divider { width:1px; height:20px; background:#dfe5ec; }
+    .top-title { color:#607086; font-size:12px; }
+    .page { width:min(1180px, calc(100vw - 48px)); margin:24px auto 40px; }
+    .hero { padding:20px 24px; display:flex; align-items:flex-start; justify-content:space-between; gap:24px; border:1px solid var(--line); border-radius:8px; background:#fff; }
+    .eyebrow { margin-bottom:7px; color:#8a95a4; font-size:11px; }
+    .hero h1 { margin:0; color:#17202c; font-size:20px; line-height:28px; font-weight:650; }
+    .hero p { margin:6px 0 0; color:#647286; font-size:12px; line-height:20px; }
+    .status-pill { min-height:26px; padding:0 10px; display:inline-flex; align-items:center; border-radius:4px; background:#eaf3ff; color:var(--blue); font-size:11px; font-weight:600; white-space:nowrap; }
+    .summary-card, .timeline-card { margin-top:14px; border:1px solid var(--line); border-radius:8px; background:#fff; }
+    .summary-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .summary-item { min-height:82px; padding:16px 18px; border-right:1px solid #edf0f3; border-bottom:1px solid #edf0f3; }
+    .summary-item:nth-child(4n) { border-right:0; }
+    .summary-item:nth-last-child(-n+4) { border-bottom:0; }
+    .summary-item span { display:block; color:#8a95a4; font-size:11px; line-height:17px; }
+    .summary-item strong { display:block; margin-top:6px; color:#2f3b4c; font-size:13px; line-height:20px; font-weight:600; }
+    .summary-item small { display:block; margin-top:3px; color:#7d8998; font-size:11px; line-height:17px; }
+    .timeline-card { overflow:hidden; }
+    .card-head { min-height:48px; padding:0 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #edf0f3; background:#fbfcfd; }
+    .card-head h2 { margin:0; color:#26313e; font-size:14px; font-weight:650; }
+    .card-head span { color:#8591a2; font-size:11px; }
+    .timeline { padding:20px 24px 24px; }
+    .timeline-item { position:relative; min-height:74px; padding:0 0 24px 32px; border-left:1px solid #d8e2ee; }
+    .timeline-item:last-child { min-height:0; padding-bottom:0; border-left-color:transparent; }
+    .timeline-item::before { content:""; position:absolute; left:-5px; top:3px; width:9px; height:9px; border:2px solid #7caade; border-radius:50%; background:#fff; }
+    .timeline-item:first-child::before { border-color:var(--blue); background:var(--blue); }
+    .timeline-title { color:#2f3b4c; font-size:13px; font-weight:600; }
+    .timeline-time { margin-top:3px; color:#8a95a4; font-size:11px; }
+    .timeline-content { margin-top:7px; color:#5f6d7e; font-size:12px; line-height:19px; }
+    .empty { padding:32px 16px; color:#8a95a4; text-align:center; }
+    @media (max-width: 1000px) {
+      body { min-width: 0; }
+      .page { width:calc(100vw - 24px); margin:12px auto 24px; }
+      .summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .summary-item:nth-child(4n) { border-right:1px solid #edf0f3; }
+      .summary-item:nth-child(2n) { border-right:0; }
+      .summary-item:nth-last-child(-n+4) { border-bottom:1px solid #edf0f3; }
+      .summary-item:nth-last-child(-n+2) { border-bottom:0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">C</span><span>C&amp;D 建发股份</span></div>
+    <span class="top-divider"></span>
+    <span class="top-title">物流需求管理 / 订单跟踪记录</span>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">贸易合同待办工作台 / 物流需求</div>
+        <h1>订单跟踪记录</h1>
+        <p id="pageSubtitle">-</p>
+      </div>
+      <span class="status-pill">跟踪记录</span>
+    </section>
+
+    <section class="summary-card" aria-label="运输任务摘要">
+      <div id="summaryGrid" class="summary-grid"></div>
+    </section>
+
+    <section class="timeline-card">
+      <div class="card-head">
+        <h2>物流动态</h2>
+        <span id="timelineCount">0 条</span>
+      </div>
+      <div id="timeline" class="timeline"></div>
+    </section>
+  </main>
+
+  <script>
+    const fallbackData = {
+      taskNo: 'TR-20260220-001-01',
+      taskName: '青岛港至鹿特丹港 / 3月船期',
+      bookingStatus: '已订舱',
+      declarationStatus: '已宣舱',
+      bookingQty: 700,
+      unbookedQty: 0,
+      shippedQty: 420,
+      vesselName: 'COSCO SHIPPING TAURUS',
+      routeName: '青岛港 → 鹿特丹港',
+      etd: '2026-03-12',
+      laycan: '2026-03-10 ~ 03-15',
+      latestTracking: '船舶已进港，等待靠泊',
+      latestTrackingTime: '2026-03-11 16:42',
+      dynamicUpdatedAt: '2026-03-11 16:42',
+      supplier: '中远海运物流供应链有限公司',
+      trackings: [
+        { time: '2026-03-11 16:42', title: '船舶已进港，等待靠泊', content: 'COSCO SHIPPING TAURUS 已抵达青岛港，等待码头安排靠泊。' },
+        { time: '2026-03-11 09:30', title: '已完成装港准备', content: '舱单、装箱单及报关资料已准备完毕。' },
+        { time: '2026-03-10 14:20', title: '已宣舱', content: '物流供应商已完成宣舱并反馈预计船期。' }
+      ]
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? '-').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+    }
+
+    function formatQty(value) {
+      const number = Number(value || 0);
+      return `${number.toLocaleString()} 吨`;
+    }
+
+    let data = fallbackData;
+    try {
+      const raw = new URLSearchParams(window.location.search).get('data');
+      if (raw) data = { ...fallbackData, ...JSON.parse(raw) };
+    } catch (error) {
+      data = fallbackData;
+    }
+
+    document.title = `${data.taskNo || '运输任务'} - 订单跟踪记录`;
+    document.getElementById('pageSubtitle').textContent = `${data.taskNo || '-'} · ${data.taskName || '-'}`;
+
+    const summaryFields = [
+      ['运输任务', data.taskNo || '-', data.taskName || '-'],
+      ['订舱状态', data.bookingStatus || '-', data.declarationStatus ? `宣舱：${data.declarationStatus}` : ''],
+      ['数量进度', `订舱 ${formatQty(data.bookingQty)}`, `未订 ${formatQty(data.unbookedQty)} · 装船 ${formatQty(data.shippedQty)}`],
+      ['船舶 / 航线', data.vesselName || '-', data.routeName || '-'],
+      ['船期', `ETD ${data.etd || '-'}`, `Laycan ${data.laycan || '-'}`],
+      ['物流供应商', data.supplier || '-', ''],
+      ['最新动态', data.latestTracking || '-', data.latestTrackingTime || '-'],
+      ['动态更新时间', data.dynamicUpdatedAt || '-', '']
+    ];
+    document.getElementById('summaryGrid').innerHTML = summaryFields.map(([label, value, sub]) => `
+      <div class="summary-item">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(value)}</strong>
+        ${sub ? `<small>${escapeHtml(sub)}</small>` : ''}
+      </div>
+    `).join('');
+
+    const events = Array.isArray(data.trackings) && data.trackings.length
+      ? data.trackings
+      : [{ time: data.latestTrackingTime || '-', title: data.latestTracking || '暂无跟踪记录', content: '尚未产生更多运输动态。' }];
+    document.getElementById('timelineCount').textContent = `${events.length} 条`;
+    document.getElementById('timeline').innerHTML = events.length ? events.map(event => `
+      <article class="timeline-item">
+        <div class="timeline-title">${escapeHtml(event.title || '物流动态')}</div>
+        <div class="timeline-time">${escapeHtml(event.time || '-')}</div>
+        <div class="timeline-content">${escapeHtml(event.content || '')}</div>
+      </article>
+    `).join('') : '<div class="empty">暂无跟踪记录</div>';
+  </script>
+</body>
+</html>
