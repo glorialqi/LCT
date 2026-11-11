@@ -352,26 +352,30 @@ function executionFeeCard(isExec,kind){
     'pay:港杂费':{unitPrice:100,quantity:50,unit:'吨',commissionRate:1.5},
     'pay:代理费':{unitPrice:5500,quantity:1,unit:'票',commissionRate:1.2}
   };
-  const refList=(list,empty,exchangeRate)=>{
+  const refList=(list,empty)=>{
     if(!list||!list.length)return `<span class="exec-finance-empty">${empty}</span>`;
-    return `<div class="exec-finance-ref-list">${list.map(item=>`<div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${item.id}">${item.id}</button><span class="doc-mini-status ${item.tone}">${item.status}</span></div><span class="exec-finance-ref-meta"><span class="exec-finance-label">原币金额</span> ${item.amount}</span><span class="exec-finance-ref-local">折本位币金额 ${ledgerAmount(ledgerNum(item.amount)*exchangeRate)}</span></div>`).join('')}</div>`;
+    return `<div class="exec-finance-ref-list">${list.map(item=>`<div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${item.id}">${item.id}</button><span class="doc-mini-status ${item.tone}">${item.status}</span></div><span class="exec-finance-ref-meta"><span class="exec-finance-label">原币金额</span> ${item.amount}</span></div>`).join('')}</div>`;
   };
   const body=rows.map(row=>{
     const billing=billingMap[`${kind}:${row.fee}`]||{unitPrice:ledgerNum(row.amount),quantity:1,unit:'票',commissionRate:0};
     const exchangeRate=Number(row.exchangeRate||baseCurrencyRates[row.currency]||1);
     const originalAmount=ledgerNum(row.amount);
     const localAmount=originalAmount*exchangeRate;
-    const commissionAmount=localAmount*billing.commissionRate/100;
+    const parsedCommissionRate=billing.commissionRate===''||billing.commissionRate==null?null:Number(billing.commissionRate);
+    const parsedCommissionAmount=billing.commissionAmount===''||billing.commissionAmount==null?null:Number(billing.commissionAmount);
+    const commissionRate=Number.isFinite(parsedCommissionRate)?parsedCommissionRate:0;
+    const commissionAmount=Number.isFinite(parsedCommissionAmount)?parsedCommissionAmount:localAmount*commissionRate/100;
+    const hasCommission=(Number.isFinite(parsedCommissionRate)&&parsedCommissionRate!==0)||(Number.isFinite(parsedCommissionAmount)&&parsedCommissionAmount!==0);
+    const commissionHtml=hasCommission?`<div class="exec-finance-commission-inline"><span>佣金比例</span><strong>${Number.isFinite(parsedCommissionRate)?`${commissionRate.toFixed(1)}%`:'-'}</strong><span class="exec-finance-commission-divider">·</span><span>佣金金额</span><strong>${ledgerAmount(commissionAmount)}</strong></div>`:'';
     return `<tr>
     <td><div class="exec-finance-primary"><strong>${row.party}</strong><span>客户订单 FCO202610200037</span></div></td>
     <td><strong>${row.fee}</strong></td>
     <td><div class="exec-finance-stack"><span class="exec-finance-line"><span class="exec-finance-label">计费单价</span><strong>${ledgerAmount(billing.unitPrice)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">计费数量</span><strong>${billing.quantity}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">计量单位</span><strong>${billing.unit}</strong></span></div></td>
     <td>${row.currency}</td>
     <td><div class="exec-finance-stack"><span class="exec-finance-line"><span class="exec-finance-label">原币金额</span><strong>${ledgerAmount(originalAmount)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">汇率</span><strong>${exchangeRate.toFixed(4)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">本位币金额</span><strong>${ledgerAmount(localAmount)}</strong></span></div></td>
-    <td><div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${row.statementNo}">${row.statementNo}</button><span class="doc-mini-status ${row.statementTone}">${row.statementStatus}</span></div><span class="exec-finance-ref-meta">${row.statementType} · ${row.completedAt}</span><div class="exec-finance-commission-inline"><span>佣金比例</span><strong>${billing.commissionRate.toFixed(1)}%</strong><span class="exec-finance-commission-divider">·</span><span>佣金金额</span><strong>${ledgerAmount(commissionAmount)}</strong></div></div></td>
-    <td>${refList(row.invoices,'未开票',exchangeRate)}</td>
-    <td>${refList(row.payments,isRecv?'未收款':'未付款',exchangeRate)}</td>
-    <td><span class="doc-status ${row.tone}">${row.settlementStatus}</span></td>
+    <td><div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${row.statementNo}">${row.statementNo}</button><span class="doc-mini-status ${row.statementTone}">${row.statementStatus}</span></div><span class="exec-finance-ref-meta">${row.statementType} · ${row.completedAt}</span>${commissionHtml}</div></td>
+    <td>${refList(row.invoices,'未开票')}</td>
+    <td>${refList(row.payments,isRecv?'未收款':'未付款')}</td>
   </tr>`}).join('');
   return `<section class="exec-finance-section" data-finance-side="${kind}">
     <div class="exec-finance-head">
@@ -381,9 +385,9 @@ function executionFeeCard(isExec,kind){
     <div class="exec-finance-body">
       <div class="exec-finance-table-wrap">
         <table class="exec-finance-table" aria-label="${title}">
-          <colgroup><col style="width:190px"><col style="width:105px"><col style="width:150px"><col style="width:92px"><col style="width:150px"><col style="width:255px"><col style="width:210px"><col style="width:210px"><col style="width:92px"></colgroup>
-          <thead><tr><th>结算对象 / 客户订单</th><th>费用科目</th><th>计费信息</th><th>计费币种</th><th>金额信息</th><th>对账信息</th><th>开票信息</th><th>收付款信息</th><th>状态</th></tr></thead>
-          <tbody>${body||`<tr><td colspan="9" class="exec-finance-empty-row">暂无执行侧预估${isRecv?'应收':'应付'}数据</td></tr>`}</tbody>
+          <colgroup><col style="width:190px"><col style="width:105px"><col style="width:150px"><col style="width:92px"><col style="width:150px"><col style="width:255px"><col style="width:210px"><col style="width:210px"></colgroup>
+          <thead><tr><th>结算对象 / 客户订单</th><th>费用科目</th><th>计费信息</th><th>计费币种</th><th>金额信息</th><th>对账信息</th><th>开票信息</th><th>收付款信息</th></tr></thead>
+          <tbody>${body||`<tr><td colspan="8" class="exec-finance-empty-row">暂无执行侧预估${isRecv?'应收':'应付'}数据</td></tr>`}</tbody>
         </table>
       </div>
     </div>
@@ -428,10 +432,10 @@ function otherDemandFeeSeed(kind){
 function openOtherDemandFeeSelect(kind,onCopy){
   document.querySelectorAll('.other-demand-fee-overlay').forEach(node=>node.remove());
   const isRecv=kind==='recv';const rows=otherDemandFeeSeed(kind);
-  const queryFields=[['demandNo','物流需求单号','请输入'],['orderNo','客户订单号','请输入'],['customer','客户','请选择'],['party','结算对象','请选择'],['ownerBlNo','船东提单号','请输入'],['forwarderBlNo','货代提单号','请输入'],['sales','业务员','请选择'],['dept','部门','请选择'],['account','核算组','请选择']];
+  const queryFields=isRecv?[['demandNo','物流需求单号','请输入'],['party','结算对象','请选择'],['orderNo','关联客户订单号','请输入'],['customer','关联客户','请选择'],['ownerBlNo','船东提单号','请输入'],['forwarderBlNo','货代提单号','请输入'],['sales','业务员','请选择'],['dept','部门','请选择'],['account','核算组','请选择']]:[['demandNo','物流需求单号','请输入'],['orderNo','关联客户订单号','请输入'],['customer','关联客户','请选择'],['party','结算对象','请选择'],['ownerBlNo','船东提单号','请输入'],['forwarderBlNo','货代提单号','请输入'],['sales','业务员','请选择'],['dept','部门','请选择'],['account','核算组','请选择']];
   const queryHtml=queryFields.map(([id,label,placeholder])=>`<label class="other-demand-fee-field"><span>${label}</span><input id="otherFee_${id}" placeholder="${placeholder}"></label>`).join('');
-  const listHeaders=['费用科目','客户订单号','客户','结算对象','税率（%）','PP/CC','计费单价（含税）','计费币种','计费数量','计量单位','柜型','原币金额（含税）','汇率','本位币金额（元）','船东提单号','货代提单号','物流需求单号','发票类型','是否实报实销','费用备注'];
-  const rowHtml=rows.map((row,index)=>`<tr data-other-demand-fee-row="${index}" data-search="${esc([row.demandNo,row.orderNo,row.customer,row.party,row.ownerBlNo,row.forwarderBlNo,row.sales||'',row.dept||'',row.account||''].join(' '))}"><td class="checkbox-cell"><input type="checkbox" data-other-demand-fee-index="${index}" aria-label="选择费用行"></td><td>${esc(row.feeItem)}</td><td>${esc(row.orderNo)}</td><td>${esc(row.customer)}</td><td>${esc(row.party)}</td><td>${esc(row.taxRate)}</td><td>${esc(row.ppcc||'')}</td><td>${esc(row.unitPrice)}</td><td>${esc(row.currency)}</td><td>${esc(row.quantity)}</td><td>${esc(row.unit)}</td><td>${esc(row.containerType)}</td><td>${esc(row.originalAmount)}</td><td>${esc(row.exchangeRate)}</td><td>${esc(row.localAmount)}</td><td>${esc(row.ownerBlNo)}</td><td>${esc(row.forwarderBlNo)}</td><td>${esc(row.demandNo)}</td><td>${esc(row.invoiceType)}</td><td>${esc(row.reimbursable)}</td><td>${esc(row.remark)}</td></tr>`).join('');
+  const listHeaders=isRecv?['费用科目','结算对象','税率（%）','PP/CC','计费单价（含税）','计费币种','计费数量','计量单位','柜型','原币金额（含税）','汇率','本位币金额（元）','关联客户订单号','关联客户','船东提单号','货代提单号','物流需求单号','发票类型','是否实报实销','费用备注']:['费用科目','关联客户订单号','关联客户','结算对象','税率（%）','PP/CC','计费单价（含税）','计费币种','计费数量','计量单位','柜型','原币金额（含税）','汇率','本位币金额（元）','船东提单号','货代提单号','物流需求单号','发票类型','是否实报实销','费用备注'];
+  const rowHtml=rows.map((row,index)=>{const detailCells=isRecv?[row.party,row.taxRate,row.ppcc,row.unitPrice,row.currency,row.quantity,row.unit,row.containerType,row.originalAmount,row.exchangeRate,row.localAmount,row.orderNo,row.customer,row.ownerBlNo,row.forwarderBlNo,row.demandNo,row.invoiceType,row.reimbursable,row.remark]:[row.orderNo,row.customer,row.party,row.taxRate,row.ppcc,row.unitPrice,row.currency,row.quantity,row.unit,row.containerType,row.originalAmount,row.exchangeRate,row.localAmount,row.ownerBlNo,row.forwarderBlNo,row.demandNo,row.invoiceType,row.reimbursable,row.remark];return `<tr data-other-demand-fee-row="${index}" data-search="${esc([row.demandNo,row.orderNo,row.customer,row.party,row.ownerBlNo,row.forwarderBlNo,row.sales||'',row.dept||'',row.account||''].join(' '))}"><td class="checkbox-cell"><input type="checkbox" data-other-demand-fee-index="${index}" aria-label="选择费用行"></td><td>${esc(row.feeItem)}</td>${detailCells.map(value=>`<td>${esc(value??'')}</td>`).join('')}</tr>`;}).join('');
   const overlay=document.createElement('div');overlay.className='exec-fee-select-overlay other-demand-fee-overlay';
   overlay.innerHTML=`<section class="exec-fee-select-modal other-demand-fee-modal" role="dialog" aria-modal="true" aria-labelledby="otherDemandFeeTitle"><header class="exec-fee-select-head"><h2 id="otherDemandFeeTitle">选择其他需求执行侧预估${isRecv?'应收':'应付'}</h2><button class="bill-task-close" type="button" data-other-demand-fee-close aria-label="关闭">×</button></header><div class="other-demand-fee-query"><div class="other-demand-fee-query-head"><span>查询条件</span><div><button class="btn bill-task-reset" type="button" data-other-demand-reset>重置</button><button class="btn primary" type="button" data-other-demand-search>查询</button></div></div><div class="other-demand-fee-query-grid">${queryHtml}</div></div><div class="other-demand-fee-table-wrap"><table class="exec-fee-select-table other-demand-fee-table"><thead><tr><th class="checkbox-cell"><input type="checkbox" data-other-demand-all aria-label="全选"></th>${listHeaders.map(header=>`<th>${header}</th>`).join('')}</tr></thead><tbody>${rowHtml}</tbody></table></div><footer class="exec-fee-select-foot"><button class="btn" type="button" data-other-demand-fee-close>取消</button><button class="btn primary" type="button" data-other-demand-copy disabled>复制选中费用</button></footer></section>`;
   document.body.appendChild(overlay);
@@ -458,9 +462,9 @@ function openMaintainFeeModal(kind){
 }
 document.addEventListener('click',event=>{const button=event.target.closest('[data-maintain-exec-fee]');if(button)openMaintainFeeModal(button.dataset.maintainExecFee);});
 function profitCard(isExec){
-  const row=isExec?['人民币','10.00','10.00','0.00','0.00','0.00','0.00']:['人民币','19,000.00','15,000.00','4,000.00','0.00','0.00','0.00'];
-  const body=`<div class="table-scroll"><table class="mini-table" style="min-width:1050px"><thead><tr><th>币种</th><th>业务预估应收</th><th>业务预估应付</th><th>业务预估利润</th><th>执行侧预估应收</th><th>执行侧预估应付</th><th>执行利润</th></tr></thead><tbody><tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${['折合本币(CNY)',...row.slice(1)].map(v=>`<td>${v}</td>`).join('')}</tr></tbody></table></div>`;
-  return cubeCard('利润统计',body);
+  const row=isExec?['人民币','10.00','10.00','0.00']:['人民币','19,000.00','15,000.00','4,000.00'];
+  const body=`<div class="table-scroll"><table class="mini-table business-profit-table" style="min-width:720px"><thead><tr><th>币种</th><th>业务预估应收</th><th>业务预估应付</th><th>业务预估利润</th></tr></thead><tbody><tr>${row.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${['折合本币(CNY)',...row.slice(1)].map(v=>`<td>${v}</td>`).join('')}</tr></tbody></table></div>`;
+  return cubeCard('业务预估利润统计',body);
 }
 function financeProfitCard(isExec){
   const feeRows=isExec?feeLedger:[];
@@ -471,7 +475,7 @@ function financeProfitCard(isExec){
   const currencies=[...new Set([...Object.keys(businessByCurrency),...feeRows.map(row=>row.currency||'CNY')])];
   const sumBy=(currency,side,key)=>feeRows.filter(row=>(row.currency||'CNY')===currency&&row.side===side).reduce((sum,row)=>sum+ledgerNum(row[key]),0);
   const baseSumBy=(side,key)=>feeRows.filter(row=>row.side===side).reduce((sum,row)=>sum+ledgerNum(row[key])*Number(row.exchangeRate||rates[row.currency||'CNY']||1),0);
-  const stageCell=(data,base=false)=>`<td><div class="finance-profit-stage">
+  const stageCell=data=>`<td><div class="finance-profit-stage">
     <div class="finance-profit-line"><span>应收</span><strong>${ledgerAmount(data.recv)}</strong></div>
     <div class="finance-profit-line"><span>应付</span><strong>${ledgerAmount(data.pay)}</strong></div>
     <div class="finance-profit-line finance-profit-result ${data.profit<0?'is-negative':''}"><span>利润</span><strong>${ledgerAmount(data.profit)}</strong></div>
@@ -479,21 +483,17 @@ function financeProfitCard(isExec){
   const rows=currencies.map(currency=>{
     const business=businessByCurrency[currency]||zero;
     const execution=stage(sumBy(currency,'recv','amount'),sumBy(currency,'pay','amount'));
-    const invoiced=stage(sumBy(currency,'recv','invoiced'),sumBy(currency,'pay','invoiced'));
-    const actual=stage(sumBy(currency,'recv','settled'),sumBy(currency,'pay','settled'));
-    return `<tr><td class="finance-profit-currency">${currency}</td>${stageCell(business)}${stageCell(execution)}${stageCell(invoiced)}${stageCell(actual)}</tr>`;
+    return `<tr><td class="finance-profit-currency">${currency}</td>${stageCell(business)}${stageCell(execution)}</tr>`;
   }).join('');
   const baseBusiness=Object.values(businessByCurrency).reduce((sum,item)=>({recv:sum.recv+item.recv,pay:sum.pay+item.pay}),{recv:0,pay:0});
   const baseExecution=stage(baseSumBy('recv','amount'),baseSumBy('pay','amount'));
-  const baseInvoiced=stage(baseSumBy('recv','invoiced'),baseSumBy('pay','invoiced'));
-  const baseActual=stage(baseSumBy('recv','settled'),baseSumBy('pay','settled'));
   const baseTotal=stage(baseBusiness.recv,baseBusiness.pay);
-  const baseRow=`<tr class="finance-profit-base-row"><td class="finance-profit-currency">折本位币（CNY）</td>${stageCell(baseTotal,true)}${stageCell(baseExecution,true)}${stageCell(baseInvoiced,true)}${stageCell(baseActual,true)}</tr>`;
-  return cubeCard('利润统计',`<div class="table-scroll"><table class="mini-table finance-profit-table"><thead><tr><th>币种</th><th>业务预估</th><th>执行侧预估</th><th>已开票</th><th>实际收付</th></tr></thead><tbody>${rows}${baseRow}</tbody></table></div>`);
+  const baseRow=`<tr class="finance-profit-base-row"><td class="finance-profit-currency">折本位币（CNY）</td>${stageCell(baseTotal)}${stageCell(baseExecution)}</tr>`;
+  return cubeCard('利润统计',`<div class="table-scroll"><table class="mini-table finance-profit-table"><thead><tr><th>币种</th><th>业务预估</th><th>执行侧预估</th></tr></thead><tbody>${rows}${baseRow}</tbody></table></div>`);
 }
 function attachmentCard(isExec){
   const body=isExec?'':`<div class="upload-box"><div>拖拽文件至此处或点击上传</div><div style="margin-top:4px">(仅支持doc/docx/pdf/png/jpg/xlsx格式文件，文件大小不超过20M)</div></div>`;
-  return cubeCard('审批参考附件',body);
+  return cubeCard('审批附件',body);
 }
 function systemCard(isExec){
   const v=isExec?['苏丽蓉','2026-10-20 19:51:03','菜菜菜','2026-10-20 19:51:36','4','执行中']:['苏丽蓉','2026-10-16 16:52:48','苏丽蓉','2026-10-16 16:52:48','0','创建'];
@@ -1229,19 +1229,19 @@ function renderDetail(page){
   const sendReceivePanel=(isExec?sendReceiveCard(true):(showContainer?sendReceiveCard(false):'')).replace('收发通信息','收发通');
   const servicePanel=`${transportPanel}${sendReceivePanel}`;
   const estimatePanel=`${feeCard(isExec,'recv')}${feeCard(isExec,'pay')}${profitCard(isExec)}`;
-  const demandAnchors=['basic','service','estimate'];
+  const demandAnchors=['basic','service','estimate','attachments'];
   const activeDemandAnchor=demandAnchors.includes(state.demandAnchor)?state.demandAnchor:'basic';
-  const demand=`<section class="demand-anchor-section" id="demand-basic">${basicPanel}</section><section class="demand-anchor-section" id="demand-service">${servicePanel}</section><section class="demand-anchor-section" id="demand-estimate">${estimatePanel}</section>`;
-  const fees=`${executionFeeCard(isExec,'recv')}${executionFeeCard(isExec,'pay')}${financeProfitCard(isExec)}`;
   const records=`${attachmentCard(isExec)}${systemCard(isExec)}`;
+  const demand=`<section class="demand-anchor-section" id="demand-basic">${basicPanel}</section><section class="demand-anchor-section" id="demand-service">${servicePanel}</section><section class="demand-anchor-section" id="demand-estimate">${estimatePanel}</section><section class="demand-anchor-section" id="demand-attachments">${records}</section>`;
+  const fees=`${executionFeeCard(isExec,'recv')}${executionFeeCard(isExec,'pay')}${financeProfitCard(isExec)}`;
   const billList=renderBillList(isExec);
   const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
-  const sections=['demand','fees','records','arrangement','bills'];
+  const sections=['demand','fees','arrangement','bills'];
   const activeSection=sections.includes(state.detailSection)?state.detailSection:'demand';
-  const nav=[['demand','需求详情'],['fees','费用与利润'],['records','附件与记录'],['arrangement','物流安排'],['bills','提单列表']];
-  const demandSubNav=[['basic','基础信息与商品'],['service','服务要求'],['estimate','业务预估费用']];
+  const nav=[['demand','需求详情'],['fees','费用与利润'],['arrangement','物流安排'],['bills','提单列表']];
+  const demandSubNav=[['basic','基础信息与商品'],['service','服务要求'],['estimate','业务预估费用'],['attachments','审批附件']];
   const subTabs=activeSection==='demand'?`<span class="detail-subtabs-divider"></span><div class="detail-demand-subtabs">${demandSubNav.map(([id,label])=>`<button class="detail-demand-subtab ${activeDemandAnchor===id?'active':''}" data-demand-anchor="${id}">${label}</button>`).join('')}</div>`:'';
-  const panels={demand,fees,records,arrangement,bills:billList};
+  const panels={demand,fees,arrangement,bills:billList};
   return `<div class="detail-scroll"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span style="width:8px;height:8px;border-radius:2px;background:#2563eb;display:inline-block"></span><span>物流需求详情（${no}）</span><span class="detail-status ${displayStatusClass}">${displayStatus}</span><span class="expand-icon">⛶</span></div><div class="detail-actions">${optimizedDetailActions(isExec, displayStatus)}</div></div></section>
     <div class="detail-section-tabs">${nav.map(([id,l])=>`<button class="detail-section-tab ${activeSection===id?'active':''}" data-detail-section="${id}">${l}</button>`).join('')}${subTabs}</div><div class="detail-section-panel active" id="section-${activeSection}">${panels[activeSection]||panels.demand}</div>
@@ -1261,8 +1261,10 @@ function render(){
     const syncDemandAnchor=()=>{
       anchorTicking=false;
       const threshold=detailScroll.getBoundingClientRect().top+80;
+      const atBottom=detailScroll.scrollTop+detailScroll.clientHeight>=detailScroll.scrollHeight-2;
       let current='basic';
-      demandAnchors.forEach(section=>{if(section.getBoundingClientRect().top<=threshold)current=section.id.replace('demand-','');});
+      if(atBottom){current=demandAnchors[demandAnchors.length-1].id.replace('demand-','');}
+      else{demandAnchors.forEach(section=>{if(section.getBoundingClientRect().top<=threshold)current=section.id.replace('demand-','');});}
       state.demandAnchor=current;
       demandAnchorButtons.forEach(button=>{const active=button.dataset.demandAnchor===current;button.classList.toggle('active',active);button.setAttribute('aria-current',active?'true':'false');});
     };
