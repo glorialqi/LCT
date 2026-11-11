@@ -28,7 +28,7 @@
     },
     "trade-contract": {
       domain: "股份控制塔",
-      title: "贸易合同待办",
+      title: "订舱工作台",
       description: "贸易合同销售待办、采购待办与配额调配",
       file: "pages/trade-contract-todo.html"
     }
