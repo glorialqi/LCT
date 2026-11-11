@@ -524,8 +524,7 @@
     .ct-data-table tbody > tr:nth-child(4n+3) > td { background: #fbfcfd; }
     .ct-data-table tbody > tr:hover > td { background: #fff8f3; }
     .ct-data-table tbody > tr.selected-row > td { background: #fff7f1; }
-    .ct-data-table tbody > tr.risk-row-blocking > td:first-child::before,
-    .ct-data-table tbody > tr.risk-row-warning > td:first-child::before {
+    .ct-data-table tbody > tr.risk-row > td:first-child::before {
       content: "";
       position: absolute;
       left: 0;
@@ -533,9 +532,8 @@
       bottom: 0;
       width: 3px;
       z-index: 20;
+      background: #d74747;
     }
-    .ct-data-table tbody > tr.risk-row-blocking > td:first-child::before { background: #d74747; }
-    .ct-data-table tbody > tr.risk-row-warning > td:first-child::before { background: #e0ab46; }
     .ct-freeze-left,
     .ct-freeze-right { position: sticky; z-index: 5; background: #fff !important; }
     .ct-data-table th.ct-freeze-left,
@@ -580,6 +578,7 @@
     .ct-status.partial { background: #fff5df; color: #b66a00; }
     .ct-status.done { background: #e6f9ee; color: #0b9a55; }
     .ct-status.closed { background: #eff1f4; color: #687484; }
+    .ct-status.voided { background: #fff0f0; color: #c93b3b; }
     .ct-risk { display: inline-flex; align-items: center; min-height: 26px; padding: 0 8px; border: 0; border-radius: 4px; background: #f1f3f6; color: #697585; font-family: inherit; font-size: 12px; }
     .ct-risk.danger { background: #fff0f0; color: #e14444; }
     .ct-risk.warning { background: #fff7e8; color: #c87900; }
@@ -604,6 +603,20 @@
     .ct-risk-icon-button svg { width: 15px; height: 15px; }
     .ct-risk-label-button { cursor: pointer; border: 0; }
     .ct-risk-label-button:hover { box-shadow: inset 0 0 0 1px currentColor; }
+    .ct-risk-marker { width: 24px; height: 22px; padding: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0; flex: 0 0 24px; border: 1px solid #efb7b7; border-radius: 4px; background: #fff2f2; color: #c93b3b; cursor: pointer; white-space: nowrap; }
+    .ct-risk-marker:hover, .ct-risk-marker:focus-visible, .ct-risk-marker[aria-expanded="true"] { border-color: #df8989; background: #ffe9e9; outline: none; }
+    .ct-risk-marker svg { width: 13px; height: 13px; }
+    .ct-risk-popover { position: fixed; z-index: 2000; width: min(380px, calc(100vw - 24px)); padding: 12px 14px; border: 1px solid #e1e7ef; border-radius: 8px; background: #fff; box-shadow: 0 12px 32px rgba(15, 23, 42, .18); }
+    .ct-risk-popover[hidden] { display: none; }
+    .ct-risk-popover-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid #edf1f5; }
+    .ct-risk-popover-head strong { color: #26313e; font-size: 12px; font-weight: 600; }
+    .ct-risk-popover-count { min-height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; background: #fff0f0; color: #c93b3b; font-size: 10px; font-weight: 600; }
+    .ct-risk-popover-list { padding-top: 2px; }
+    .ct-risk-popover-item { padding: 9px 0; }
+    .ct-risk-popover-item + .ct-risk-popover-item { border-top: 1px dashed #e5eaf0; }
+    .ct-risk-popover-item-title { display: flex; align-items: center; gap: 6px; color: #b93434; font-size: 11.5px; font-weight: 600; }
+    .ct-risk-popover-item-title span { width: 16px; height: 16px; display: inline-grid; place-items: center; flex: 0 0 16px; border-radius: 50%; background: #fff0f0; color: #c93b3b; font-size: 9px; }
+    .ct-risk-popover-item-desc { margin-top: 4px; color: #5f6d7e; font-size: 11px; line-height: 1.6; user-select: text; }
     .dest-column-hidden { transition: none; }
     body.dest-tab .dest-column-hidden { display: none !important; }
 
@@ -1391,7 +1404,7 @@
       font-size: 11px;
       white-space: nowrap;
     }
-    .logistics-summary-fields { min-width: 0; flex: 1; display: grid; grid-template-columns: minmax(120px, 1.1fr) minmax(110px, 1fr) minmax(110px, 1fr) minmax(100px, .8fr) minmax(100px, .8fr); gap: 0; }
+    .logistics-summary-fields { min-width: 0; flex: 1; display: grid; grid-template-columns: minmax(120px, 1.1fr) minmax(110px, 1fr) minmax(110px, 1fr) minmax(100px, .8fr) minmax(100px, .8fr) minmax(100px, .8fr); gap: 0; }
     .logistics-summary-field { min-width: 0; padding: 0 14px; border-right: 1px solid #edf0f3; }
     .logistics-summary-field:first-child { padding-left: 0; }
     .logistics-summary-field:last-child { padding-right: 0; border-right: 0; }
@@ -1443,6 +1456,17 @@
     .logistics-service-node { position: relative; padding: 12px 14px; border: 1px solid #dbe6f3; border-radius: 8px; background: #f5f8fc; }
     .logistics-service-node + .logistics-service-node { margin-top: 12px; }
     .logistics-service-node:before { display: none; }
+    .logistics-service-header { display: flex; align-items: flex-start; gap: 8px; min-width: 0; }
+    .logistics-service-header .logistics-service-inline { flex: 1; min-width: 0; }
+    .logistics-service-toggle { height: 26px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; border: 1px solid #c9daee; border-radius: 4px; background: #fff; color: #0868df; font-size: 10.5px; line-height: 18px; cursor: pointer; white-space: nowrap; }
+    .logistics-service-toggle:hover { border-color: #86b5e8; background: #f4f9ff; }
+    .logistics-service-toggle svg { width: 12px; height: 12px; transition: transform .16s ease; }
+    .logistics-service-node.is-collapsed .logistics-service-toggle svg { transform: rotate(-90deg); }
+    .logistics-service-node.is-collapsed .logistics-service-body { display: none; }
+    .logistics-demand-list > .logistics-service-node { padding: 0; overflow: hidden; border-color: #d4dfec; background: #fff; box-shadow: 0 2px 8px rgba(15, 23, 42, .04); }
+    .logistics-demand-list > .logistics-service-node .logistics-service-header { padding: 12px 14px; border-bottom: 1px solid #e8edf3; background: #fbfdff; }
+    .logistics-demand-list > .logistics-service-node.is-collapsed .logistics-service-header { border-bottom-color: transparent; }
+    .logistics-demand-list > .logistics-service-node .logistics-service-body { padding: 10px 14px 14px; }
     .logistics-node-title { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; min-width: 0; }
     .logistics-node-label { min-height: 21px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 3px; background: #eaf3ff; color: #0868df; font-size: 11px; font-weight: 600; white-space: nowrap; }
     .logistics-node-label.commission { background: #eef7f0; color: #237a45; }
@@ -1475,7 +1499,53 @@
     .logistics-commission-meta { padding: 8px 11px; display: flex; flex-wrap: wrap; gap: 5px 18px; border-bottom: 1px solid #edf1f5; color: #7d8998; font-size: 11px; }
     .logistics-commission-meta strong { color: #4c5a6b; font-weight: 500; }
     .logistics-task-list { padding: 8px; display: flex; flex-direction: column; gap: 7px; }
-    .logistics-task-node { display: grid; grid-template-columns: minmax(150px, 1.05fr) minmax(108px, .7fr) minmax(120px, .85fr) minmax(185px, 1.2fr) minmax(155px, 1fr) auto; align-items: center; gap: 11px; padding: 10px 11px; border: 1px solid #e5eaf0; border-radius: 5px; background: #fff; }
+    .logistics-task-node { display: block; padding: 0; overflow: hidden; border: 1px solid #e5eaf0; border-radius: 5px; background: #fff; }
+    .logistics-task-summary { padding: 9px 12px; display: flex; align-items: center; gap: 10px; overflow-x: auto; border-bottom: 1px solid #e8edf3; background: #fbfcfe; white-space: nowrap; }
+    .logistics-task-summary::-webkit-scrollbar { height: 3px; }
+    .logistics-task-summary::-webkit-scrollbar-thumb { border-radius: 3px; background: #d8e1eb; }
+    .logistics-task-summary .logistics-task-identity { display: flex; align-items: center; gap: 7px; flex: 0 0 auto; }
+    .logistics-task-summary .logistics-task-status-line { margin-top: 0; flex-wrap: nowrap; }
+    .logistics-task-summary-divider { width: 1px; height: 16px; flex: 0 0 1px; background: #e0e7ef; }
+    .logistics-task-qty-inline { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; color: #8a95a4; font-size: 10px; }
+    .logistics-task-qty-inline span { display: inline-flex; align-items: baseline; gap: 3px; }
+    .logistics-task-qty-inline strong { color: #334050; font-size: 10.5px; font-weight: 600; }
+    .logistics-task-summary-laycan { display: inline-flex; align-items: baseline; gap: 4px; flex: 0 0 auto; color: #8a95a4; font-size: 10px; }
+    .logistics-task-summary-laycan > span { color: #748397; font-weight: 600; letter-spacing: .02em; }
+    .logistics-task-summary-laycan strong { color: #334050; font-size: 10.5px; font-weight: 600; }
+    .logistics-task-summary-meta { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; color: #8a95a4; font-size: 10px; }
+    .logistics-task-summary-meta strong { color: #334050; font-size: 11px; font-weight: 600; }
+    .logistics-task-vessel-list { display: flex; flex-direction: column; }
+    .logistics-vessel-row { padding: 10px 12px; display: grid; grid-template-columns: minmax(165px, .8fr) minmax(0, 2.5fr) minmax(165px, .7fr) auto; align-items: center; gap: 14px; border-bottom: 1px solid #edf1f5; background: #fff; }
+    .logistics-vessel-row:last-child { border-bottom: 0; }
+    .logistics-vessel-row.is-vessel-hidden { display: none; }
+    .logistics-vessel-identity { min-width: 0; display: flex; align-items: center; gap: 7px; }
+    .logistics-vessel-identity .logistics-task-vessel-index { flex: 0 0 16px; width: 16px; height: 16px; font-size: 9px; }
+    .logistics-vessel-copy { min-width: 0; }
+    .logistics-vessel-copy strong { display: block; overflow: hidden; color: #334050; font-size: 11px; line-height: 16px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-vessel-copy span { display: block; margin-top: 2px; overflow: hidden; color: #8c98a8; font-size: 9.5px; line-height: 14px; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-vessel-detail { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .logistics-vessel-route-grid { display: grid; grid-template-columns: minmax(96px, max-content) 20px minmax(108px, max-content); align-items: center; justify-content: start; gap: 0; min-width: 0; }
+    .logistics-vessel-port { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .logistics-vessel-port-name { overflow: hidden; color: #334050; font-size: 10.5px; line-height: 15px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-vessel-port-time { display: flex; align-items: baseline; gap: 4px; min-width: 0; color: #8a95a4; font-size: 9px; line-height: 13px; white-space: nowrap; }
+    .logistics-vessel-port-time strong { overflow: hidden; color: #5f7084; font-size: 9px; font-weight: 500; text-overflow: ellipsis; }
+    .logistics-vessel-route-arrow { width: 20px; margin: 0 4px; display: grid; place-items: center; color: #93a8bd; }
+    .logistics-vessel-route-arrow svg { width: 14px; height: 14px; }
+    .logistics-vessel-field { min-width: 0; }
+    .logistics-vessel-field > span { display: block; color: #8a95a4; font-size: 10px; line-height: 14px; }
+    .logistics-vessel-field > strong { display: block; margin-top: 2px; overflow: hidden; color: #334050; font-size: 10.5px; line-height: 16px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-vessel-field > small { display: block; margin-top: 2px; overflow: hidden; color: #8c98a8; font-size: 9.5px; line-height: 14px; text-overflow: ellipsis; white-space: nowrap; }
+    .logistics-vessel-current { margin-top: 3px; display: flex; align-items: center; gap: 5px; color: #334050; font-size: 10.5px; line-height: 16px; font-weight: 500; }
+    .logistics-vessel-current i { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: #0868df; box-shadow: 0 0 0 2px #e5f0ff; }
+    .logistics-vessel-status { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .logistics-vessel-status .logistics-vessel-current { margin-top: 0; }
+    .logistics-vessel-status-time { color: #8c98a8; font-size: 9.5px; line-height: 14px; white-space: nowrap; }
+    .logistics-vessel-action { white-space: nowrap; }
+    .logistics-vessel-more { padding: 7px 12px; border-top: 1px solid #edf1f5; text-align: center; background: #fbfcfe; }
+    .logistics-vessel-more button { height: 24px; padding: 0 7px; display: inline-flex; align-items: center; gap: 4px; border: 0; background: transparent; color: #0868df; font-size: 10px; cursor: pointer; }
+    .logistics-vessel-more button:hover { text-decoration: underline; }
+    .logistics-vessel-more svg { width: 12px; height: 12px; transition: transform .16s ease; }
+    .logistics-vessel-more button[aria-expanded="true"] svg { transform: rotate(180deg); }
     .logistics-task-vessel-label { display: flex !important; align-items: center; gap: 5px; }
     .logistics-task-vessel-count { min-width: 26px; height: 16px; padding: 0 5px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: #edf5ff; color: #0868df; font-size: 9px; font-style: normal; font-weight: 600; }
     .logistics-task-vessel-list { margin-top: 3px; display: flex; flex-direction: column; gap: 3px; }
@@ -1503,15 +1573,17 @@
     @media (max-width: 1180px) {
       .logistics-demand-head-actions { align-items: flex-end; flex-direction: column; }
       .logistics-service-meta { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .logistics-task-node { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .logistics-task-node-actions { grid-column: 2; flex-direction: row; justify-content: flex-end; }
+      .logistics-vessel-row { grid-template-columns: minmax(155px, .75fr) minmax(0, 2.2fr); }
+      .logistics-vessel-action { grid-column: 2; justify-self: end; }
     }
     @media (max-width: 900px) {
       .logistics-drawer { width: 100vw; min-width: 0; }
       .logistics-demand-item-head { align-items: flex-start; flex-direction: column; }
       .logistics-demand-head-actions { width: 100%; align-items: center; flex-direction: row; justify-content: space-between; }
-      .logistics-service-meta, .logistics-task-node { grid-template-columns: 1fr; }
-      .logistics-task-node-actions { grid-column: auto; justify-content: flex-start; }
+      .logistics-service-meta, .logistics-vessel-row { grid-template-columns: 1fr; }
+      .logistics-vessel-action { grid-column: auto; justify-self: start; }
+      .logistics-vessel-route-grid { grid-template-columns: 1fr; }
+      .logistics-vessel-route-arrow { margin: 2px 0; justify-self: start; transform: rotate(90deg); }
     }
     /* Compact single-line demand and service requirement headers */
     .logistics-drawer-title-row { display: flex; align-items: center; gap: 16px; min-width: 0; }
@@ -1547,6 +1619,8 @@
     .logistics-service-inline-divider { width: 1px; height: 14px; background: #e2e7ed; }
     .logistics-service-inline-count { display: inline-flex; align-items: center; gap: 3px; color: #7d8998; font-size: 9.5px; }
     .logistics-service-inline-count strong { color: #334050; font-size: 10.5px; font-weight: 600; }
+    .logistics-service-quantity-item { display: inline-flex; align-items: baseline; gap: 4px; color: #8a95a4; font-size: 9.5px; line-height: 18px; }
+    .logistics-service-quantity-item strong { color: #334050; font-size: 10.5px; font-weight: 600; }
     .logistics-service-secondary { margin-top: 8px; padding: 7px 10px; display: flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap; overflow-x: auto; border: 1px solid #e1e9f3; border-radius: 5px; background: rgba(255, 255, 255, .78); }
     .logistics-service-info-label { min-height: 22px; padding: 0 7px; display: inline-flex; align-items: center; border: 1px solid #dce6f1; border-radius: 4px; background: #fff; color: #657386; font-size: 11px; line-height: 18px; font-weight: 500; white-space: nowrap; }
     .logistics-service-secondary > * { flex: 0 0 auto; }
@@ -2930,11 +3004,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             </select>
           </div>
           <div>
-            <label for="filter-availability">可分配情况</label>
+            <label for="filter-availability">可订舱情况</label>
             <select id="filter-availability" name="availability">
               <option value=""></option>
               <option value="available">有可订舱数量</option>
-              <option value="none">无可分配</option>
+              <option value="none">无可订舱数量</option>
+            </select>
+          </div>
+          <div>
+            <label for="filter-completion">完结状态</label>
+            <select id="filter-completion" name="completion">
+              <option value=""></option>
+              <option value="已完结">已完结</option>
+              <option value="未完结">未完结</option>
             </select>
           </div>
           <div>
@@ -2973,9 +3055,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         <div class="ct-metrics">
           <span class="ct-overview-item neutral"><i data-lucide="clock-3"></i>未提交 <strong id="stat-pending">2</strong></span>
           <span class="ct-overview-item partial"><i data-lucide="list-checks"></i>已提交 <strong id="stat-partial">1</strong></span>
-          <button type="button" id="riskOverview-all" class="ct-overview-item risk-all" onclick="applyRiskOverview('all')" title="查看全部风险记录"><i data-lucide="shield-alert"></i>全部风险 <strong id="stat-risk">1</strong></button>
-          <button type="button" id="riskOverview-blocking" class="ct-overview-item risk-blocking" onclick="applyRiskOverview('blocking')" title="查看阻断风险记录"><i data-lucide="octagon-alert"></i>阻断 <strong id="stat-risk-blocking">0</strong></button>
-          <button type="button" id="riskOverview-warning" class="ct-overview-item risk-warning" onclick="applyRiskOverview('warning')" title="查看提醒风险记录"><i data-lucide="triangle-alert"></i>提醒 <strong id="stat-risk-warning">0</strong></button>
+          <button type="button" id="riskOverview-all" class="ct-overview-item risk-all" onclick="applyRiskOverview()" title="查看风险记录"><i data-lucide="shield-alert"></i>风险 <strong id="stat-risk">1</strong></button>
           <span class="ct-overview-item ct-overview-selected"><i data-lucide="check-square"></i>已选 <strong id="selectedCount">0</strong></span>
         </div>
       </div>
@@ -2990,6 +3070,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               </th>
               <th class="ct-freeze-left ct-freeze-expand" style="width:42px"></th>
               <th class="ct-freeze-left ct-freeze-contract">贸易合同号</th>
+              <th>合同状态</th>
               <th>提交状态</th>
               <th>项目号</th>
               <th>商品中文名</th>
@@ -3010,20 +3091,23 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <th>贸易供应商</th>
               <th>对内交货期</th>
               <th>结算方式</th>
-              <th class="dest-column-hidden">收证情况</th>
               <th>是否控单业务</th>
               <th class="dest-column-hidden">贷前收款比例</th>
               <th style="text-align:right">运费测算单价</th>
-              <th>采购价格条款</th>
-              <th>销售价格条款</th>
+              <th>价格条款</th>
+              <th>控货模式</th>
               <th>是否我司派船</th>
               <th style="text-align:right">港杂预估单价</th>
               <th>贸易类型</th>
+              <th>完结状态</th>
+              <th>风险标记</th>
+              <th style="text-align:right">自动分配数量</th>
+              <th style="text-align:right">有效人工调入数量</th>
+              <th style="text-align:right">有效人工调出数量</th>
               <th>贸易合同类型</th>
               <th class="dest-column-hidden">关联合同类型</th>
               <th>生效日期</th>
-              <th>完结状态</th>
-              <th>风险标记</th>
+              <th>来源类型</th>
               <th class="ct-freeze-right ct-freeze-action" style="text-align:center">操作</th>
             </tr>
           </thead>
@@ -3045,6 +3129,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="riskPopover" class="ct-risk-popover" role="tooltip" hidden></div>
 
   <!-- Modal 1: 手动拉入待办弹窗 -->
   <div id="manualModal" class="fixed inset-0 z-40 modal-backdrop hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="manualModalTitle" tabindex="-1">
@@ -3123,16 +3208,20 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <th>部门</th>
                 <th>核算组</th>
                 <th>业务员</th>
+                <th>装货港</th>
+                <th>卸货港</th>
                 <th>最迟装运日期</th>
                 <th>客户</th>
+                <th>贸易供应商</th>
+                <th>对内交货期</th>
                 <th>结算方式</th>
-                <!-- <th>收证情况</th> -->
                 <th>是否控单业务</th>
-                <!--<th>贷前收款比例</th>
-                <th class="manual-number">运费测算单价</th>-->
-                <th>销售价格条款</th>
+                <th>贷前收款比例</th>
+                <th class="manual-number">运费测算单价</th>
+                <th>价格条款</th>
                 <th>控货模式</th>
-                <!--<th class="manual-number">港杂预估单价</th>-->
+                <th>是否我司派船</th>
+                <th class="manual-number">港杂预估单价</th>
                 <th>贸易类型</th>
                 <!--<th>状态</th>-->
               </tr>
@@ -3349,7 +3438,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <th>贸易供应商</th>
                 <th>对内交货期</th>
                 <th>结算方式</th>
-                <th>收证情况</th>
                 <th>是否控单业务</th>
                 <th>贷前收款比例</th>
                 <th class="candidate-number">运费测算单价</th>
@@ -3383,14 +3471,14 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     </div>
   </div>
 
-  <!-- Modal 3: 生成物流需求 -->
+  <!-- Modal 3: 生成服务要求 -->
   <div id="generateDemandModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center" onclick="handleGenerateDemandBackdrop(event)">
     <div class="generate-demand-shell" role="dialog" aria-modal="true" aria-labelledby="generateDemandTitle">
       <header class="generate-demand-header">
         <div class="generate-demand-title">
           <span class="generate-demand-title-icon"><i data-lucide="ship-wheel"></i></span>
           <div class="generate-demand-title-row">
-            <h3 id="generateDemandTitle">生成物流需求</h3>
+            <h3 id="generateDemandTitle">生成服务要求</h3>
             <div id="demandRiskBar" class="generate-demand-risk-wrap" style="display:none">
               <span id="demandRiskBadge" class="generate-demand-risk-tag" tabindex="0" aria-describedby="demandRiskTooltip">临期预警</span>
               <div id="demandRiskTooltip" class="generate-demand-risk-tooltip" role="tooltip">
@@ -3485,11 +3573,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               </div>
               <div class="generate-demand-field">
                 <label for="demandCertificateRequirement">船证要求<span class="generate-demand-required">*</span></label>
-                <select id="demandCertificateRequirement" data-demand-required="true" onchange="clearDemandFieldError(this)">
-                  <option value="">请选择</option>
-                  <option value="需要船证">需要船证</option>
-                  <option value="不需要船证">不需要船证</option>
-                </select>
+                <input id="demandCertificateRequirement" type="text" data-demand-required="true" autocomplete="off" placeholder="请输入船证要求" oninput="clearDemandFieldError(this)" />
               </div>
               <div class="generate-demand-field">
                 <label for="demandVesselAge">船龄要求</label>
@@ -3599,13 +3683,13 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         </div>
         <div class="generate-demand-actions">
           <button type="button" onclick="closeModal('generateDemandModal')">取消</button>
-          <button type="button" id="confirmDemandButton" class="primary" onclick="confirmGenerateLogisticsDemand()">生成物流需求</button>
+          <button type="button" id="confirmDemandButton" class="primary" onclick="confirmGenerateLogisticsDemand()">生成服务要求</button>
         </div>
       </footer>
     </div>
   </div>
 
-  <!-- Drawer 4: 查看关联物流需求 -->
+  <!-- Drawer 4: 查看关联服务要求 -->
   <div id="logisticsModal" class="fixed inset-0 z-40 modal-backdrop hidden flex" onclick="handleLogisticsDrawerBackdrop(event)">
     <aside class="logistics-drawer" role="dialog" aria-modal="true" aria-labelledby="logisticsDrawerTitle">
       <header class="logistics-drawer-header">
@@ -3613,11 +3697,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <span class="logistics-drawer-title-icon"><i data-lucide="clipboard-list"></i></span>
           <div>
             <div class="logistics-drawer-title-row">
-              <h3 id="logisticsDrawerTitle">关联物流需求</h3>
+              <h3 id="logisticsDrawerTitle">关联服务要求</h3>
               <div class="logistics-drawer-inline-stats">
-                <span><strong id="logisticsCount">0</strong> 个物流需求</span>
-                <span><strong id="logisticsServiceCount">0</strong> 个服务要求</span>
-                <span><strong id="logisticsCommissionCount">0</strong> 张物流委托</span>
+                <span><strong id="logisticsCount">0</strong> 个服务要求</span>
+                <span><strong id="logisticsServiceCount">0</strong> 张物流委托</span>
 
               </div>
             </div>
@@ -3643,11 +3726,15 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <strong id="logisticsModalAssociatedContractNo">-</strong>
             </div>
             <div class="logistics-summary-field">
-              <span>已订舱数量</span>
+              <span>已下发订舱数量</span>
               <strong id="logisticsModalAllocatedQty">-</strong>
             </div>
             <div class="logistics-summary-field">
-              <span>待订舱数量</span>
+              <span>已安排数量</span>
+              <strong id="logisticsModalArrangedQty">-</strong>
+            </div>
+            <div class="logistics-summary-field">
+              <span>已下发未订舱数量</span>
               <strong id="logisticsModalPendingQty">-</strong>
             </div>
           </div>
@@ -3707,9 +3794,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         <button type="button" onclick="closeCommissionDetail()" class="logistics-drawer-close" title="关闭"><i data-lucide="x"></i></button>
       </header>
       <div class="commission-detail-related">
-        <button type="button" onclick="jumpToCommissionDemand()">
-          <span>物流需求</span><strong id="commissionDetailDemandNo">-</strong><i data-lucide="arrow-up-right"></i>
-        </button>
         <button type="button" onclick="jumpToCommissionService()">
           <span>服务要求</span><strong id="commissionDetailServiceNo">-</strong><i data-lucide="arrow-up-right"></i>
         </button>
@@ -3731,11 +3815,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         </div>
         <button type="button" onclick="closeServiceRequirementDetail()" class="logistics-drawer-close" title="关闭"><i data-lucide="x"></i></button>
       </header>
-      <div class="commission-detail-related">
-        <button type="button" onclick="jumpToServiceRequirementDemand()">
-          <span>物流需求</span><strong id="serviceRequirementDetailDemandNo">-</strong><i data-lucide="arrow-up-right"></i>
-        </button>
-      </div>
       <div id="serviceRequirementDetailContent" class="tracking-modal-body"></div>
       <footer class="tracking-modal-footer">
         <button type="button" onclick="closeServiceRequirementDetail()" class="ct-button">关闭</button>
@@ -3826,6 +3905,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           salesman: '张伟 (国际二部)',
           status: '部分分配',
           riskFlag: '超期未订舱',
+          riskFlags: ['贸易合同号变更', '超期未订舱'],
+          previousContractNo: 'SGN00001',
           pullType: 'AUTO',
           allocatableQty: 5000,
           allocatedQty: 3200,
@@ -3833,8 +3914,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           expanded: true,
           projectNos: ['PRJ-2026-001', 'PRJ-2026-010'],
           goodsLines: [
-            { projectNo: 'PRJ-2026-001', goodscode:"G-01",name: '高密度聚乙烯 HDPE-5000S', allocatable: 3000, allocated: 2000, proposed: 1000, unit: '吨' },
-            { projectNo: 'PRJ-2026-010', goodscode:"G-02",name: '线性低密度聚乙烯 LLDPE-7042', allocatable: 2000, allocated: 1200, proposed: 800, unit: '吨' }
+            { projectNo: 'PRJ-2026-001', goodscode:"G-01",name: '高密度聚乙烯 HDPE-5000S', autoAllocated: 2800, manualIn: 300, manualOut: 100, allocatable: 3000, allocated: 2000, proposed: 1000, unit: '吨' },
+            { projectNo: 'PRJ-2026-010', goodscode:"G-02",name: '线性低密度聚乙烯 LLDPE-7042', autoAllocated: 1800, manualIn: 200, manualOut: 0, allocatable: 2000, allocated: 1200, proposed: 800, unit: '吨' }
           ],
           logisticsDemands: [
             { demandNo: 'LR-20260220-001', status: '处理中', scope: '海运门到门', goodsName: 'HDPE-5000S', goodsDescription: '高密度聚乙烯 HDPE-5000S（2000 吨）', qty: 2000, weight: '2000.00', volume: '3500.00', salesman: '张伟', department: '国际业务二部', operationOrg: '建发物流华东作业中心', operationOrgPerson: '周凯', createdAt: '2026-02-20 10:32', latestShipmentDate: '2026-03-15' },
@@ -3875,7 +3956,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           supplier: '浙江巨化集团',
           salesman: '刘洋 (化工部)',
           status: '已安排',
-          riskFlag: '已有关联物流需求',
+          riskFlag: '已有关联服务要求',
           pullType: 'AUTO',
           allocatableQty: 800,
           allocatedQty: 800,
@@ -3957,38 +4038,43 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       ]
     };
 
-    const MAIN_TABLE_COLSPAN = 36;
+    const MAIN_TABLE_COLSPAN = 40;
 
     function getMainTableColspan() {
-      return state.currentTab === 'dest' ? MAIN_TABLE_COLSPAN - 5 : MAIN_TABLE_COLSPAN;
+      return state.currentTab === 'dest' ? MAIN_TABLE_COLSPAN - 4 : MAIN_TABLE_COLSPAN;
     }
 
     const itemProfiles = {
       'WB-1001': {
+        contractStatus: '执行中',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-18', internalDeliveryDate: '2026-03-08', settlementMethod: '即期信用证', receiptStatus: '已收证', controlledOrder: '否',
         prepaymentRatio: '30%', freightUnitPrice: '¥480/吨', purchaseTerms: 'FOB 青岛', salesTerms: 'CIF 鹿特丹', dispatchedByUs: '否', portMiscUnitPrice: '¥65/吨',
         tradeType: '一般贸易', effectiveDate: '2026-02-01', contractQty: 6200
       },
       'WB-1002': {
+        contractStatus: '执行中',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-25', internalDeliveryDate: '2026-03-12', settlementMethod: '电汇', receiptStatus: '待收证', controlledOrder: '否',
         prepaymentRatio: '20%', freightUnitPrice: '¥475/吨', purchaseTerms: 'FOB 青岛', salesTerms: 'CIF 汉堡', dispatchedByUs: '否', portMiscUnitPrice: '¥62/吨',
         tradeType: '一般贸易', effectiveDate: '2026-02-05', contractQty: 3000
       },
       'WB-1003': {
+        contractStatus: '已完结',
         operatingUnit: '建发化工', companyTitle: '厦门建发股份有限公司', department: '化工业务部', accountingGroup: '制冷剂核算组',
         shipmentDeadline: '2026-03-10', internalDeliveryDate: '2026-03-01', settlementMethod: '即期信用证', receiptStatus: '已收证', controlledOrder: '是',
         prepaymentRatio: '50%', freightUnitPrice: '¥820/吨', purchaseTerms: 'CFR 宁波', salesTerms: 'CIF 鹿特丹', dispatchedByUs: '是', portMiscUnitPrice: '¥110/吨',
         tradeType: '转口贸易', effectiveDate: '2026-02-18', contractQty: 800
       },
       'WB-1004': {
+        contractStatus: '执行中',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-28', internalDeliveryDate: '2026-03-16', settlementMethod: '电汇', receiptStatus: '已收证', controlledOrder: '否',
         prepaymentRatio: '25%', freightUnitPrice: '¥470/吨', purchaseTerms: 'FOB 青岛', salesTerms: 'CIF 安特卫普', dispatchedByUs: '否', portMiscUnitPrice: '¥60/吨',
         tradeType: '一般贸易', effectiveDate: '2026-02-09', contractQty: 1200
       },
       'WB-2001': {
+        contractStatus: '执行中',
         operatingUnit: '建发海外', companyTitle: '厦门建发股份有限公司', department: '海外业务部', accountingGroup: '钢材核算组',
         shipmentDeadline: '2026-04-12', internalDeliveryDate: '2026-03-28', settlementMethod: '远期信用证', receiptStatus: '待收证', controlledOrder: '否',
         prepaymentRatio: '15%', freightUnitPrice: '¥1200/托', purchaseTerms: 'CIF 鹿特丹', salesTerms: '境外库存', dispatchedByUs: '是', portMiscUnitPrice: '¥180/托',
@@ -4071,6 +4157,42 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       return '未提交';
     }
 
+    function getContractStatusLabel(item) {
+      const allowed = ['执行中', '已完结', '已作废'];
+      return allowed.includes(item.contractStatus) ? item.contractStatus : '执行中';
+    }
+
+    function getContractStatusClass(item) {
+      const status = getContractStatusLabel(item);
+      if (status === '已完结') return 'ct-status closed';
+      if (status === '已作废') return 'ct-status voided';
+      return 'ct-status pending';
+    }
+
+    function getPriceTerms(item) {
+      return item.priceTerms || item.purchaseTerms || item.salesTerms || '-';
+    }
+
+    function getControlledMode(item) {
+      return item.controlledMode || (item.type === 'dest' ? '目的港库存业务' : '非目的港库存业务');
+    }
+
+    function getAutoAllocatedQty(item) {
+      return Number(item.autoAllocatedQty ?? (item.goodsLines || []).reduce((sum, line) => sum + Number(line.autoAllocated ?? line.allocatable ?? 0), 0));
+    }
+
+    function getEffectiveManualInQty(item) {
+      return Number(item.manualInQty ?? (item.goodsLines || []).reduce((sum, line) => sum + Number(line.manualIn ?? 0), 0));
+    }
+
+    function getEffectiveManualOutQty(item) {
+      return Number(item.manualOutQty ?? (item.goodsLines || []).reduce((sum, line) => sum + Number(line.manualOut ?? 0), 0));
+    }
+
+    function getSourceTypeLabel(item) {
+      return item.pullType === 'MANUAL' ? '手动拉入' : '自动进入';
+    }
+
     // 完结状态：合同已关闭或全部数量已安排视为已提交，否则未提交
     function getClosedStatus(item) {
       const contract = getContractQty(item);
@@ -4088,55 +4210,76 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       return unit ? `${number} ${unit}` : number;
     }
 
+    function getRiskTitles(item) {
+      const titles = [];
+      if (getPendingQty(item) < 0) titles.push('待订舱数量为负');
+      const flags = Array.isArray(item.riskFlags) && item.riskFlags.length
+        ? item.riskFlags
+        : [item.riskFlag];
+      flags.forEach(flag => {
+        if (flag && flag !== '正常' && !titles.includes(flag)) titles.push(flag);
+      });
+      return titles;
+    }
+
+    function getRiskItems(item) {
+      return getRiskTitles(item).map(title => getRiskDefinition(item, title) || {
+        title,
+        description: item.riskDescription || '当前合同存在风险，请及时关注。'
+      });
+    }
+
     function getRiskLabel(item) {
-      if (getPendingQty(item) < 0) return '待订舱数量为负';
-      if (item.riskFlag && item.riskFlag !== '正常') return item.riskFlag;
-      return '正常';
+      return getRiskTitles(item)[0] || '正常';
+    }
+
+    function getRiskCount(item) {
+      return getRiskTitles(item).length;
     }
 
     function getRiskLevel(item) {
-      const risk = getRiskLabel(item);
-      if (['待订舱数量为负', '已有关联物流需求'].includes(risk)) return 'blocking';
-      if (risk !== '正常') return 'warning';
-      return 'normal';
+      return getRiskCount(item) ? 'risk' : 'normal';
     }
 
-    function getRiskDefinition(item) {
-      const risk = getRiskLabel(item);
+    function getRiskDefinition(item, riskTitle) {
+      const risk = riskTitle || getRiskLabel(item);
       const pendingQty = getPendingQty(item);
       const unit = item.goodsLines?.[0]?.unit || '吨';
       const definitions = {
         '待订舱数量为负': {
-          level: 'blocking',
           title: '待订舱数量为负',
+          description: `当前待订舱数量为 ${formatQty(pendingQty, unit)}，请核对合同数量。`,
           trigger: `待订舱数量 = ${formatQty(pendingQty, unit)}`,
           impact: '当前可订舱数量不足，继续安排可能导致数量超配。',
-          suggestion: '请核对采购合同可用数量、已订舱数量及人工分配记录，修正数量后再继续处理。',
-          blocking: '是，阻断生成物流需求和新增分配。'
+          suggestion: '请核对采购合同可用数量、已订舱数量及人工分配记录，修正数量后再继续处理。'
         },
-        '已有关联物流需求': {
-          level: 'blocking',
-          title: '已有关联物流需求',
-          trigger: '存在状态不为“作废”的关联物流需求。',
-          impact: '该合同不允许重复生成物流需求，避免重复订舱。',
-          suggestion: '请先查看并处理已有物流需求；如需重新生成，请先手动删除或作废原物流需求。',
-          blocking: '是，阻断重复生成物流需求。'
+        '已有关联服务要求': {
+          title: '已有关联服务要求',
+          description: '当前合同已存在未作废的关联服务要求。',
+          trigger: '存在状态不为“作废”的关联服务要求。',
+          impact: '该合同不允许重复生成服务要求，避免重复订舱。',
+          suggestion: '请先查看并处理已有服务要求；如需重新生成，请先手动删除或作废原服务要求。'
+        },
+        '贸易合同号变更': {
+          title: '贸易合同号变更',
+          description: `原贸易合同号：${item.previousContractNo || '-'}，现贸易合同号：${getMainContractNo(item)}`,
+          trigger: `原贸易合同号：${item.previousContractNo || '-'}，现贸易合同号：${getMainContractNo(item)}`,
+          impact: '合同编号发生变更，请确认关联单据与后续操作使用最新合同号。',
+          suggestion: '请核对合同变更信息，并同步更新相关业务单据。'
         },
         '超期未订舱': {
-          level: 'warning',
           title: '超期未订舱',
+          description: `最迟装运日期 ${item.shipmentDeadline || '-'} 已到期，仍存在待订舱数量。`,
           trigger: `最迟装运日期 ${item.shipmentDeadline || '-'} 已到期，仍存在待订舱数量。`,
           impact: '可能影响客户交付和合同履约时效。',
-          suggestion: '请尽快确认订舱安排；如日期已调整，请同步更新控制塔合同数据。',
-          blocking: '否，可继续处理，但需重点关注。'
+          suggestion: '请尽快确认订舱安排；如日期已调整，请同步更新控制塔合同数据。'
         },
         '临期预警': {
-          level: 'warning',
           title: '临期预警',
+          description: `最迟装运日期 ${item.shipmentDeadline || '-'} 临近，请优先安排订舱。`,
           trigger: `最迟装运日期 ${item.shipmentDeadline || '-'} 临近，当前仍存在待订舱数量。`,
           impact: '可安排窗口较短，可能产生订舱时效风险。',
-          suggestion: '建议优先完成订舱安排，并关注物流资源和单证准备情况。',
-          blocking: '否，可继续处理，但建议优先处理。'
+          suggestion: '建议优先完成订舱安排，并关注物流资源和单证准备情况。'
         }
       };
       return definitions[risk] || null;
@@ -4144,9 +4287,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
     function isItemInRiskOverview(item) {
       if (!state.riskOverview) return true;
-      const level = getRiskLevel(item);
-      if (state.riskOverview === 'all') return level !== 'normal';
-      return level === state.riskOverview;
+      return getRiskLevel(item) === 'risk';
     }
 
     function getManualPoolProjectDisplay(item) {
@@ -4189,6 +4330,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const shipmentFrom = document.getElementById('filter-shipmentDateFrom')?.value || '';
       const shipmentTo = document.getElementById('filter-shipmentDateTo')?.value || '';
       const availabilityVal = document.getElementById('filter-availability')?.value || '';
+      const completionVal = document.getElementById('filter-completion')?.value || '';
       const riskVal = document.getElementById('filter-risk')?.value || '';
 
       const filteredItems = state.items.filter(item => {
@@ -4203,7 +4345,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         const salesman = (item.salesman || '').toLowerCase();
         const department = (item.department || '').toLowerCase();
         const displayStatus = getDisplayStatus(item);
-        const riskLabel = getRiskLabel(item);
         const pendingQty = getPendingQty(item);
 
         if (prjVal && !projectDisplay.includes(prjVal)) return false;
@@ -4218,7 +4359,13 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         if (shipmentTo && (item.shipmentDeadline || '') > shipmentTo) return false;
         if (availabilityVal === 'none' && pendingQty > 0) return false;
         if (availabilityVal === 'available' && pendingQty <= 0) return false;
-        if (riskVal && riskLabel !== riskVal) return false;
+        if (completionVal && getClosedStatus(item) !== completionVal) return false;
+        if (riskVal) {
+          const matchedRisk = getRiskTitles(item).some(title =>
+            title === riskVal || (riskVal === '贸易合同变更' && title === '贸易合同号变更')
+          );
+          if (!matchedRisk) return false;
+        }
 
         if (goodsVal) {
           const matchGoods = item.goodsLines.some(g =>
@@ -4256,21 +4403,25 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
         const status = getDisplayStatus(item);
         const risk = getRiskLabel(item);
+        const riskItems = getRiskItems(item);
+        const riskCount = riskItems.length;
+        const riskSummary = riskCount > 1 ? `${riskItems[0].title} +${riskCount - 1}` : (riskItems[0]?.title || '正常');
         const contractQty = getContractQty(item);
         const allocatableQty = getAllocatableQty(item);
         const allocatedQty = getAllocatedQty(item);
         const pendingQty = getPendingQty(item);
+        const autoAllocatedQty = getAutoAllocatedQty(item);
+        const manualInQty = getEffectiveManualInQty(item);
+        const manualOutQty = getEffectiveManualOutQty(item);
         const closedStatus = getClosedStatus(item);
         const unit = item.goodsLines?.[0]?.unit || '';
         let statusBadgeClass = 'ct-status pending';
         if (status === '已提交') statusBadgeClass = 'ct-status done';
-        let closedBadgeClass = closedStatus === '已提交' ? 'ct-status closed' : 'ct-status pending';
+        let closedBadgeClass = closedStatus === '已完结' ? 'ct-status closed' : 'ct-status pending';
 
-        let riskBadgeClass = 'ct-risk';
-        if (risk === '待订舱数量为负' || risk === '已有关联物流需求') riskBadgeClass = 'ct-risk danger';
-        else if (risk !== '正常') riskBadgeClass = 'ct-risk warning';
+        const riskBadgeClass = riskCount ? 'ct-risk danger' : 'ct-risk';
         const riskLevel = getRiskLevel(item);
-        tr.className = `${isSelected ? 'selected-row ' : ''}${riskLevel === 'blocking' ? 'risk-row-blocking' : riskLevel === 'warning' ? 'risk-row-warning' : ''}`;
+        tr.className = `${isSelected ? 'selected-row ' : ''}${riskLevel === 'risk' ? 'risk-row' : ''}`;
 
         tr.innerHTML = `
           <td class="ct-freeze-left ct-freeze-select" style="text-align:center">
@@ -4282,9 +4433,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td class="ct-freeze-left ct-freeze-contract ct-key-cell" title="${escapeHtml(getMainContractNo(item))}">
             <span class="ct-contract-cell">
               <span class="ct-contract-no">${escapeHtml(getMainContractNo(item))}</span>
-              ${risk !== '正常' ? `<button type="button" class="ct-risk-icon-button ${getRiskLevel(item) === 'warning' ? 'warning' : ''}" onclick="openRiskDetail('${item.id}')" title="查看风险详情：${escapeHtml(risk)}"><i data-lucide="${getRiskLevel(item) === 'warning' ? 'triangle-alert' : 'octagon-alert'}"></i></button>` : ''}
+              ${riskCount ? `<button type="button" class="ct-risk-marker" data-risk-item-id="${item.id}" aria-expanded="false" aria-describedby="riskPopover" aria-label="查看风险提醒${riskCount > 1 ? `（${riskCount}项）` : ''}" onmouseenter="scheduleRiskPopover(this)" onmouseleave="scheduleRiskPopoverClose()" onfocus="showRiskPopover(this)" onblur="scheduleRiskPopoverClose()" onclick="toggleRiskPopover(this, event)"><i data-lucide="shield-alert"></i></button>` : ''}
             </span>
           </td>
+          <td><span class="${getContractStatusClass(item)}">${escapeHtml(getContractStatusLabel(item))}</span></td>
 		  <td>
             <span class="${statusBadgeClass}">${status}</span>
           </td>
@@ -4295,7 +4447,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td class="ct-number">${formatQty(allocatedQty, unit)}</td>
           <td class="ct-number">
             ${formatQty(pendingQty, unit)}
-            ${hasNoAvailable(item) ? '<span class="ct-no-available">无可分配</span>' : ''}
+            ${hasNoAvailable(item) ? '<span class="ct-no-available">无可订舱</span>' : ''}
           </td>
           <td class="dest-column-hidden ct-muted-cell" title="${escapeHtml(getAssociatedContractNo(item))}">${escapeHtml(getAssociatedContractNo(item))}</td>
           <td>${escapeHtml(item.operatingUnit)}</td>
@@ -4310,27 +4462,30 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td class="ct-long-cell" title="${escapeHtml(item.supplier)}">${escapeHtml(item.supplier)}</td>
           <td>${escapeHtml(item.internalDeliveryDate)}</td>
           <td>${escapeHtml(item.settlementMethod)}</td>
-          <td class="dest-column-hidden">${escapeHtml(item.receiptStatus)}</td>
           <td>${escapeHtml(item.controlledOrder)}</td>
           <td class="dest-column-hidden">${escapeHtml(item.prepaymentRatio)}</td>
           <td class="ct-number">${escapeHtml(item.freightUnitPrice)}</td>
-          <td>${escapeHtml(item.purchaseTerms)}</td>
-          <td>${escapeHtml(item.salesTerms)}</td>
+          <td>${escapeHtml(getPriceTerms(item))}</td>
+          <td>${escapeHtml(getControlledMode(item))}</td>
           <td>${escapeHtml(item.dispatchedByUs)}</td>
           <td class="ct-number">${escapeHtml(item.portMiscUnitPrice)}</td>
           <td>${escapeHtml(item.tradeType)}</td>
+          <td><span class="${closedBadgeClass}">${closedStatus}</span></td>
+          <td>
+            <button type="button" class="${riskBadgeClass} ${riskCount ? 'ct-risk-label-button' : ''}" ${riskCount ? `data-risk-item-id="${item.id}" aria-expanded="false" aria-describedby="riskPopover" aria-label="查看风险提醒" onmouseenter="scheduleRiskPopover(this)" onmouseleave="scheduleRiskPopoverClose()" onfocus="showRiskPopover(this)" onblur="scheduleRiskPopoverClose()" onclick="toggleRiskPopover(this, event)"` : ''}>${escapeHtml(riskSummary)}</button>
+          </td>
+          <td class="ct-number">${formatQty(autoAllocatedQty, unit)}</td>
+          <td class="ct-number">${formatQty(manualInQty, unit)}</td>
+          <td class="ct-number">${formatQty(manualOutQty, unit)}</td>
           <td>${escapeHtml(getTradeContractType(item))}</td>
           <td class="dest-column-hidden">${escapeHtml(getAssociatedContractType(item))}</td>
           <td>${escapeHtml(item.effectiveDate)}</td>
-          <td><span class="${closedBadgeClass}">${closedStatus}</span></td>
-          <td>
-            <button type="button" class="${riskBadgeClass} ${risk !== '正常' ? 'ct-risk-label-button' : ''}" ${risk !== '正常' ? `onclick="openRiskDetail('${item.id}')" title="查看风险详情"` : ''}>${escapeHtml(risk)}</button>
-          </td>
+          <td>${escapeHtml(getSourceTypeLabel(item))}</td>
           <td class="ct-freeze-right ct-freeze-action" style="text-align:center">
             <div class="ct-action-stack">
 
-              <button onclick="generateLogisticsDemand('${item.id}')" class="ct-row-action" title="生成物流需求">生成物流需求</button>
-              <button onclick="openLogisticsDemandModal('${item.id}')" class="ct-row-action" title="查看物流需求">查看物流需求(${item.logisticsDemands.length})</button>
+              <button onclick="generateLogisticsDemand('${item.id}')" class="ct-row-action" title="生成服务要求">生成服务要求</button>
+              <button onclick="openLogisticsDemandModal('${item.id}')" class="ct-row-action" title="查看服务要求">查看服务要求(${item.logisticsDemands.length})</button>
             </div>
           </td>
         `;
@@ -4342,16 +4497,24 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           const subTr = document.createElement('tr');
           subTr.className = 'ct-sub-row';
 
-          let subRows = item.goodsLines.map(g => `
-            <tr>
-              <td style="font-weight:600;color:#0868df">${escapeHtml(g.projectNo || item.projectNo)}</td>
-              <td style="font-weight:500">${escapeHtml(g.name)}</td>
-              <td style="text-align:right">${formatQty(g.contractQty ?? g.allocatable, g.unit)}</td>
-              <td style="text-align:right">${formatQty(g.allocatable, g.unit)}</td>
-              <td style="text-align:right">${formatQty(g.allocated, g.unit)}</td>
-              <td style="text-align:right">${formatQty((g.allocatable || 0) - (g.allocated || 0), g.unit)}</td>
-            </tr>
-          `).join('');
+          let subRows = item.goodsLines.map(g => {
+            const autoQty = Number(g.autoAllocated ?? g.allocatable ?? 0);
+            const manualInQty = Number(g.manualIn ?? 0);
+            const manualOutQty = Number(g.manualOut ?? 0);
+            return `
+              <tr>
+                <td style="font-weight:600;color:#0868df">${escapeHtml(g.projectNo || item.projectNo)}</td>
+                <td style="font-weight:500">${escapeHtml(g.name)}</td>
+                <td style="text-align:right">${formatQty(g.contractQty ?? g.allocatable, g.unit)}</td>
+                <td style="text-align:right">${formatQty(g.allocatable, g.unit)}</td>
+                <td style="text-align:right">${formatQty(g.allocated, g.unit)}</td>
+                <td style="text-align:right">${formatQty((g.allocatable || 0) - (g.allocated || 0), g.unit)}</td>
+                <td style="text-align:right">${formatQty(autoQty, g.unit)}</td>
+                <td style="text-align:right">${formatQty(manualInQty, g.unit)}</td>
+                <td style="text-align:right">${formatQty(manualOutQty, g.unit)}</td>
+              </tr>
+            `;
+          }).join('');
 
           subTr.innerHTML = `
             <td colspan="${getMainTableColspan()}" class="sub-detail-cell">
@@ -4363,12 +4526,15 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <table class="ct-subtable">
                   <thead>
                     <tr>
-                      <th>项目号</th>
-                      <th>商品中文名</th>
+                      <th>业务项目号</th>
+                      <th>商品名称</th>
                       <th style="text-align:right">合同总量</th>
                       <th style="text-align:right">可订舱数量</th>
                       <th style="text-align:right">已订舱数量</th>
                       <th style="text-align:right">待订舱数量</th>
+                      <th style="text-align:right">自动分配数量</th>
+                      <th style="text-align:right">有效人工调入数量</th>
+                      <th style="text-align:right">有效人工调出数量</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -4451,7 +4617,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       }
       const selected = Array.from(state.selectedRowIds).map(id => state.items.find(item => item.id === id)).filter(Boolean);
       if (selected.some(item => item.logisticsDemands.some(demand => demand.status !== '作废'))) {
-        showToast('整批拦截：选中记录中存在未作废物流需求，不能删除', 'danger');
+        showToast('整批拦截：选中记录中存在未作废服务要求，不能删除', 'danger');
         return;
       }
       selected.forEach(item => {
@@ -4507,7 +4673,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       }
       const selected = Array.from(state.selectedRowIds).map(id => state.items.find(item => item.id === id)).filter(Boolean);
       if (selected.some(item => item.logisticsDemands.some(demand => demand.status !== '作废'))) {
-        showToast('整批拦截：存在未作废物流需求的记录，不能完结', 'danger');
+        showToast('整批拦截：存在未作废服务要求的记录，不能完结', 'danger');
         return;
       }
       selected.forEach(item => { item.status = '已关闭'; });
@@ -4571,28 +4737,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const pendingCount = currentTabItems.filter(i => getDisplayStatus(i) === '未提交').length;
       const partialCount = currentTabItems.filter(i => getDisplayStatus(i) === '已提交').length;
       const riskCount = currentTabItems.filter(i => getRiskLevel(i) !== 'normal').length;
-      const blockingRiskCount = currentTabItems.filter(i => getRiskLevel(i) === 'blocking').length;
-      const warningRiskCount = currentTabItems.filter(i => getRiskLevel(i) === 'warning').length;
-
       document.getElementById('stat-pending').textContent = pendingCount;
       document.getElementById('stat-partial').textContent = partialCount;
       document.getElementById('stat-risk').textContent = riskCount;
-      document.getElementById('stat-risk-blocking').textContent = blockingRiskCount;
-      document.getElementById('stat-risk-warning').textContent = warningRiskCount;
       document.getElementById('totalRecords').textContent = filteredItems.length;
 
-      ['all', 'blocking', 'warning'].forEach(type => {
-        const button = document.getElementById(`riskOverview-${type}`);
-        if (!button) return;
-        button.classList.toggle('active', state.riskOverview === type);
-      });
+      const riskOverviewButton = document.getElementById('riskOverview-all');
+      if (riskOverviewButton) riskOverviewButton.classList.toggle('active', state.riskOverview === 'all');
     }
 
-    function applyRiskOverview(type) {
-      state.riskOverview = state.riskOverview === type ? '' : type;
+    function applyRiskOverview() {
+      state.riskOverview = state.riskOverview === 'all' ? '' : 'all';
       renderWorkbenchTable();
-      const typeLabel = { all: '全部风险', blocking: '阻断风险', warning: '提醒风险' }[type];
-      showToast(state.riskOverview ? `已筛选${typeLabel}` : '已取消风险快捷筛选', 'info');
+      showToast(state.riskOverview ? '已筛选风险记录' : '已取消风险筛选', 'info');
     }
 
     // Global Active State for Allocation Modal
@@ -4623,7 +4780,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     };
 
     let activeCommissionContext = null;
-    let activeServiceRequirementContext = null;
+    let riskPopoverTrigger = null;
+    let riskPopoverPinned = false;
+    let riskPopoverShowTimer = null;
+    let riskPopoverHideTimer = null;
 
     function cloneAllocationItem(item) {
       const clone = JSON.parse(JSON.stringify(item));
@@ -5122,7 +5282,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
       document.getElementById('candidateCountSummary').textContent = `可选合同数: ${filteredCandidates.length}；已选 ${activeAllocContext.selectedCandidateIds.size} 条`;
       if (filteredCandidates.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="37" class="p-6 text-center text-slate-400">没有可追加的目标合同（可能已全选或匹配无果）</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="36" class="p-6 text-center text-slate-400">没有可追加的目标合同（可能已全选或匹配无果）</td></tr>';
         return;
       }
 
@@ -5135,10 +5295,9 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         const pendingQty = getPendingQty(candidate);
         const unit = candidate.goodsLines?.[0]?.unit || '';
         const candidateRisk = getRiskLabel(candidate);
-        const candidateRiskLevel = getRiskLevel(candidate);
         const candidateRiskClass = candidateRisk === '正常'
           ? 'ct-risk'
-          : candidateRiskLevel === 'blocking' ? 'ct-risk danger' : 'ct-risk warning';
+          : 'ct-risk danger';
         const loadingPort = candidate.loadingPort || candidate.loadPort || '厦门港';
         const unloadingPort = candidate.unloadingPort || candidate.dischargePort || '大连港';
         const tr = document.createElement('tr');
@@ -5167,7 +5326,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td class="candidate-long-cell" title="${escapeHtml(candidate.supplier)}">${escapeHtml(candidate.supplier)}</td>
           <td>${escapeHtml(candidate.internalDeliveryDate)}</td>
           <td>${escapeHtml(candidate.settlementMethod)}</td>
-          <td>${escapeHtml(candidate.receiptStatus)}</td>
           <td>${escapeHtml(candidate.controlledOrder)}</td>
           <td>${escapeHtml(candidate.prepaymentRatio)}</td>
           <td class="candidate-number">${escapeHtml(candidate.freightUnitPrice)}</td>
@@ -5203,7 +5361,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             </tr>
           `).join('');
           subTr.innerHTML = `
-            <td colspan="37" class="candidate-detail-cell">
+            <td colspan="36" class="candidate-detail-cell">
               <div class="candidate-subtable-wrap">
                 <div class="candidate-subtable-title"><i data-lucide="layers" class="w-3.5 h-3.5 text-brand-500"></i>商品明细</div>
                 <table class="candidate-subtable">
@@ -5479,25 +5637,25 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
     function generateLogisticsDemand(id) {
       if (window.PrototypeAccess && !window.PrototypeAccess.can('trade.generate')) {
-        window.PrototypeAccess.deny('生成物流需求');
+        window.PrototypeAccess.deny('生成服务要求');
         return;
       }
       if (!navigator.onLine) {
-        showToast('网络连接已断开，暂时无法生成物流需求。', 'danger');
+        showToast('网络连接已断开，暂时无法生成服务要求。', 'danger');
         return;
       }
       const item = state.items.find(i => i.id === id);
       if (!item) return;
 
       if (item.status === '已关闭') {
-        showToast('已关闭记录必须先取消完结后才能生成物流需求。', 'warning');
+        showToast('已关闭记录必须先取消完结后才能生成服务要求。', 'warning');
         return;
       }
 
 
       const pendingQty = getPendingQty(item);
       if (pendingQty <= 0) {
-        showToast('当前合同待订舱数量不足，无法生成物流需求', 'warning');
+        showToast('当前合同待订舱数量不足，无法生成服务要求', 'warning');
         return;
       }
 
@@ -5799,7 +5957,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function getDemandRouteDefaults(item) {
       const salesmanName = String(item.salesman || '').split(/[（(]/)[0].trim().split(/\s+/)[0] || '';
       return {
-        assemblyType: item.assemblyType || '集装箱',
+        assemblyType: item.assemblyType || '件杂',
         dischargeTerms: item.dischargeTerms || "LO",
         coilWeight: item.coilWeight || '',
         profileLength: item.profileLength || '',
@@ -5852,17 +6010,16 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const riskBadge = document.getElementById('demandRiskBadge');
       if (!riskBar || !riskBadge || !riskTitle || !riskText) return;
       const risk = getRiskLabel(item);
-      const level = getRiskLevel(item);
       const definition = getRiskDefinition(item);
-      if (level === 'normal') {
+      if (risk === '正常') {
         riskBar.style.display = 'none';
         return;
       }
-      const label = risk && risk !== '正常' ? risk : (level === 'blocking' ? '阻断预警' : '临期预警');
-      const detail = [definition?.trigger, definition?.description].filter(Boolean).join('；')
-        || (level === 'blocking' ? '当前记录存在阻断风险，无法生成物流需求。' : '当前记录存在预警信息，请确认后继续生成。');
+      const label = risk;
+      const detail = [definition?.trigger, definition?.impact].filter(Boolean).join('；')
+        || '当前记录存在风险，请确认后继续生成。';
       riskBar.style.display = 'inline-flex';
-      riskBar.className = `generate-demand-risk-wrap ${level === 'blocking' ? 'danger' : 'warning'}`;
+      riskBar.className = 'generate-demand-risk-wrap danger';
       riskBadge.textContent = label;
       riskBadge.setAttribute('aria-label', `${label}，悬浮查看详情`);
       riskTitle.textContent = label;
@@ -5897,7 +6054,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const item = activeDemandContext.item;
       if (!item) return;
       const fields = [
-        ['物流需求单号', getDemandContractFieldValue(item, 'demandNo', '提交后自动生成')],
+        ['服务要求单号', getDemandContractFieldValue(item, 'demandNo', '提交后自动生成')],
         ['委托方经营单位', getDemandContractFieldValue(item, 'operatingUnit')],
         ['委托方核算组', getDemandContractFieldValue(item, 'accountingGroup')],
         ['委托方部门', getDemandContractFieldValue(item, 'department')],
@@ -5905,7 +6062,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         ['合同抬头', getDemandContractFieldValue(item, 'companyTitle')],
         ['客户', getDemandContractFieldValue(item, 'customer')],
         ['结算方式', getDemandContractFieldValue(item, 'settlementMethod')],
-        ['收证情况', getDemandContractFieldValue(item, 'receiptStatus')],
         ['是否控单业务', getDemandContractFieldValue(item, 'controlledOrder')],
         ['贷前收款比例', getDemandContractFieldValue(item, 'prepaymentRatio')],
         ['预付收款情况', getDemandContractFieldValue(item, 'prepaymentStatus')],
@@ -5915,8 +6071,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         ['最迟装运日期', getDemandContractFieldValue(item, 'shipmentDeadline')],
         ['贸易类型', getDemandContractFieldValue(item, 'tradeType')],
         ['运费测算单价', getDemandContractFieldValue(item, 'freightUnitPrice')],
-        ['合同数量', formatQty(getContractQty(item))],
-        ['品名', getGoodsSummary(item)],
         ['是否我司派船', getDemandContractFieldValue(item, 'dispatchedByUs')],
         ['港杂预估单价', getDemandContractFieldValue(item, 'portMiscUnitPrice')]      ];
       document.getElementById('demandContractGrid').innerHTML = fields.map(([label, value]) => `
@@ -5951,7 +6105,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <tr>
             <td colspan="9" class="demand-goods-empty">
               <i data-lucide="package-x"></i>
-              暂无可生成物流需求的商品明细
+              暂无可生成服务要求的商品明细
             </td>
           </tr>
         `;
@@ -6099,34 +6253,34 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     }
     function confirmGenerateLogisticsDemand() {
       if (window.PrototypeAccess && !window.PrototypeAccess.can('trade.generate')) {
-        window.PrototypeAccess.deny('生成物流需求');
+        window.PrototypeAccess.deny('生成服务要求');
         return;
       }
       const injectedFailure = window.PrototypeRuntime && window.PrototypeRuntime.consumeFailure('logisticsGenerate');
       if (injectedFailure === 'timeout') {
-        showToast('生成物流需求请求超时，当前填写内容已保留，请重试。', 'danger');
+        showToast('生成服务要求请求超时，当前填写内容已保留，请重试。', 'danger');
         return;
       }
       if (!navigator.onLine) {
-        showToast('网络连接已断开，物流需求尚未生成，请恢复网络后重试。', 'danger');
+        showToast('网络连接已断开，服务要求尚未生成，请恢复网络后重试。', 'danger');
         return;
       }
       const item = activeDemandContext.item;
       if (!item) return;
       if (!validateDemandForm()) return;
       if (item.status === '已关闭') {
-        showToast('已关闭记录必须先取消完结后才能生成物流需求。', 'warning');
+        showToast('已关闭记录必须先取消完结后才能生成服务要求。', 'warning');
         return;
       }
       if (getPendingQty(item) <= 0) {
-        showToast('当前合同待订舱数量不足，无法生成物流需求', 'warning');
+        showToast('当前合同待订舱数量不足，无法生成服务要求', 'warning');
         closeModal('generateDemandModal');
         return;
       }
 
-      if (getRiskLevel(item) === 'warning') {
+      if (getRiskLevel(item) === 'risk') {
         const risk = getRiskLabel(item);
-        if (!window.confirm(`当前记录存在“${risk}”，是否确认继续生成物流需求？`)) return;
+        if (!window.confirm(`当前记录存在“${risk}”，是否确认继续生成服务要求？`)) return;
       }
 
       const totalQty = activeDemandContext.lines.reduce((sum, line) => sum + (Number(line.demandQty) || 0), 0);
@@ -6185,7 +6339,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       item.status = getDisplayStatus(item);
 
       closeModal('generateDemandModal');
-      showToast(`成功为主表 [${getMainContractNo(item)}] 生成物流需求单：${newDemandNo}`, 'success');
+      showToast(`成功为主表 [${getMainContractNo(item)}] 生成服务要求：${newDemandNo}`, 'success');
       renderWorkbenchTable();
     }
 
@@ -6208,7 +6362,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         }
       });
 
-      if (count > 0) showToast(`批量处理完成！已为 ${count} 条合同生成物流需求`, 'success');
+      if (count > 0) showToast(`批量处理完成！已为 ${count} 条合同生成服务要求`, 'success');
       else showToast('选中的合同不满足生成条件（待订舱数量不足或已关闭）', 'warning');
     }
 
@@ -6232,6 +6386,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const qtyUnit = item.goodsLines?.[0]?.unit || "吨";
       const allocatedQty = formatQty(getAllocatedQty(item), qtyUnit);
       const pendingQty = formatQty(getPendingQty(item), qtyUnit);
+      const visibleDemands = (item.logisticsDemands || []).filter(demand => demand.status !== '作废');
+      const serviceRequirements = visibleDemands.flatMap((demand, index) => getLogisticsDemandViewModel(demand, item, index).serviceRequirements);
+      const arrangedTotal = serviceRequirements.reduce((sum, requirement) => sum + getServiceRequirementQuantityMetrics(requirement).arranged, 0);
+      const arrangedQty = formatQty(arrangedTotal, qtyUnit);
       const contractFields = document.getElementById('logisticsModalContractFields');
       const purchaseContractField = document.getElementById('logisticsModalPurchaseContractField');
       document.getElementById('logisticsModalPrimaryContractLabel').textContent = isPurchaseContract ? '采购合同号' : '销售合同号';
@@ -6243,11 +6401,13 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       document.getElementById('logisticsModalAssociatedContractNo').title = associatedContractNo;
       document.getElementById("logisticsModalAllocatedQty").textContent = allocatedQty;
       document.getElementById("logisticsModalAllocatedQty").title = allocatedQty;
+      document.getElementById("logisticsModalArrangedQty").textContent = arrangedQty;
+      document.getElementById("logisticsModalArrangedQty").title = arrangedQty;
       document.getElementById("logisticsModalPendingQty").textContent = pendingQty;
       if (purchaseContractField) purchaseContractField.style.display = isPurchaseContract ? 'none' : '';
       if (contractFields) {
         contractFields.style.gridTemplateColumns = isPurchaseContract
-          ? 'minmax(140px, 1.3fr) minmax(120px, 1fr) minmax(100px, .8fr) minmax(100px, .8fr)'
+          ? 'minmax(140px, 1.3fr) minmax(120px, 1fr) minmax(100px, .8fr) minmax(100px, .8fr) minmax(100px, .8fr)'
           : '';
       }
       refreshLogisticsDrawer();
@@ -6290,21 +6450,18 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         activeLogisticsContext.taskMap.set(key, task);
       });
 
-      document.getElementById('logisticsCount').textContent = visibleDemands.length;
-      document.getElementById('logisticsServiceCount').textContent = serviceRequirements.length;
-      document.getElementById('logisticsCommissionCount').textContent = commissions.length;
+      document.getElementById('logisticsCount').textContent = serviceRequirements.length;
+      document.getElementById('logisticsServiceCount').textContent = commissions.length;
 
 
       const demandList = document.getElementById('logisticsDemandList');
-      if (!viewModels.length) {
+      if (!serviceRequirements.length) {
         const emptyText = activeLogisticsContext.demands.length
-          ? '当前合同暂无有效物流需求记录。'
-          : '当前贸易合同尚未生成物流需求记录。';
+          ? '当前合同暂无有效服务要求记录。'
+          : '当前贸易合同尚未生成服务要求记录。';
         demandList.innerHTML = `<div class="logistics-no-data">${emptyText}</div>`;
       } else {
-        demandList.innerHTML = viewModels
-          .map((model, index) => renderLogisticsDemandSummaryCard(model, index))
-          .join('');
+        demandList.innerHTML = serviceRequirements.map(renderLogisticsServiceNode).join('');
       }
 
       if (window.lucide) lucide.createIcons();
@@ -6343,6 +6500,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         taskNo: 'TR-待生成',
         taskName: '待生成运输任务',
         bookingStatus: '未订舱',
+        arrangedQty: 0,
         bookingQty: 0,
         unbookedQty: 0,
         shippedQty: 0,
@@ -6442,8 +6600,9 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                     taskNo: 'TR-20260220-001-01',
                     taskName: '青岛港至鹿特丹港 / 3月船期',
                     bookingStatus: '已订舱',
-                    bookingQty: 700,
-                    unbookedQty: 0,
+                    arrangedQty: 700,
+                    bookingQty: 600,
+                    unbookedQty: 100,
                     shippedQty: 420,
                     declarationStatus: '已宣舱',
                     vesselName: 'COSCO SHIPPING TAURUS',
@@ -6467,8 +6626,38 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                     currentNode: '等待靠泊',
                     currentOperationTime: '2026-03-11 16:42',
                     vessels: [
-                      { name: 'COSCO SHIPPING TAURUS', voyageNo: '086W', qty: 400, unit: '吨' },
-                      { name: 'EVER GLORY', voyageNo: '112E', qty: 300, unit: '吨' }
+                      {
+                        name: 'COSCO SHIPPING TAURUS',
+                        voyageNo: '086W',
+                        mmsi: '477123400',
+                        qty: 400,
+                        unit: '吨',
+                        routeName: '青岛港 → 鹿特丹港',
+                        laycan: '2026-03-10 ~ 03-15',
+                        etd: '2026-03-12',
+                        eta: '2026-04-20',
+                        atd: '2026-03-12 18:20',
+                        ata: '2026-04-19 07:45',
+                        currentNode: '等待靠泊',
+                        currentOperationTime: '2026-03-11 16:42',
+                        latestTracking: '船舶已进港，等待靠泊'
+                      },
+                      {
+                        name: 'EVER GLORY',
+                        voyageNo: '112E',
+                        mmsi: '636092123',
+                        qty: 300,
+                        unit: '吨',
+                        routeName: '青岛港 → 安特卫普港',
+                        laycan: '2026-03-12 ~ 03-17',
+                        etd: '2026-03-14',
+                        eta: '2026-04-22',
+                        atd: '2026-03-14 09:10',
+                        ata: '2026-04-21 10:20',
+                        currentNode: '已开航',
+                        currentOperationTime: '2026-03-14 08:30',
+                        latestTracking: '船舶已离港，航行中'
+                      }
                     ],
                     trackings: [
                       { time: '2026-03-11 16:42', title: '船舶已进港', content: '已抵达青岛港锚地，等待码头靠泊。' },
@@ -6479,9 +6668,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                   getDemoTask({
                     taskNo: 'TR-20260220-001-02',
                     taskName: '青岛港至鹿特丹港 / 4月船期',
-                    bookingStatus: '未订舱',
-                    bookingQty: 500,
-                    unbookedQty: 500,
+                    bookingStatus: '部分订舱',
+                    arrangedQty: 400,
+                    bookingQty: 400,
+                    unbookedQty: 0,
                     shippedQty: 0,
                     declarationStatus: '未宣舱',
                     vesselName: '待安排',
@@ -6522,9 +6712,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                   getDemoTask({
                     taskNo: 'TR-20260221-003-01',
                     taskName: '宁波港至安特卫普港',
-                    bookingStatus: '未订舱',
-                    bookingQty: 800,
-                    unbookedQty: 800,
+                    bookingStatus: '部分订舱',
+                    arrangedQty: 800,
+                    bookingQty: 600,
+                    unbookedQty: 200,
                     routeName: '宁波港 → 安特卫普港',
                     latestTracking: '委托已下发，等待供应商接单',
                     latestTrackingTime: '2026-02-21 09:20',
@@ -6566,6 +6757,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               taskNo: `${commissionNo}-T01`,
               taskName: `${demand.goodsName || '商品'}运输任务`,
               bookingStatus: demand.status === '已完成' ? '已订舱' : '未订舱',
+              arrangedQty: Number(demand.qty) || 0,
               bookingQty: Number(demand.qty) || 0,
               unbookedQty: demand.status === '已完成' ? 0 : Number(demand.qty) || 0,
               shippedQty: 0,
@@ -6619,7 +6811,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <div id="${chainId}" class="logistics-demand-body">
             ${requirements.length
               ? `<div class="logistics-chain-list">${requirements.map(renderLogisticsServiceNode).join('')}</div>`
-              : '<div class="logistics-chain-empty">当前物流需求暂无服务要求</div>'}
+              : '<div class="logistics-chain-empty">当前服务要求暂无关联明细</div>'}
           </div>
         </article>
       `;
@@ -6646,16 +6838,43 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       }
     }
 
+    function getServiceRequirementQuantityMetrics(requirement) {
+      const commissions = requirement.commissions || [];
+      const tasks = commissions.flatMap(commission => commission.tasks || []);
+      const issued = Number(
+        requirement.issuedBookingQty
+        ?? (requirement.goodsLines || []).reduce((sum, line) => sum + Number(line.qty || 0), 0)
+      );
+      const arranged = Number(
+        requirement.arrangedQty
+        ?? tasks.reduce((sum, task) => sum + Number(task.arrangedQty ?? task.bookingQty ?? 0), 0)
+      );
+      const confirmed = Number(
+        requirement.confirmedBookingQty
+        ?? tasks.reduce((sum, task) => sum + Number(task.bookingQty || 0), 0)
+      );
+      const unbooked = Number(
+        requirement.issuedUnbookedQty
+        ?? Math.max(0, issued - confirmed)
+      );
+      return {
+        issued,
+        arranged,
+        unbooked,
+        confirmed,
+        unit: requirement.goodsLines?.[0]?.unit || tasks[0]?.qtyUnit || '吨'
+      };
+    }
+
     function renderLogisticsServiceNode(requirement) {
       const statusClass = getLogisticsDemandStatusClass(requirement.dispatchStatus);
       const commissions = requirement.commissions || [];
       const serviceKey = requirement.dispatchNo || '';
-      const goodsText = (requirement.goodsLines || [])
-        .map(line => `${line.name} ${formatQty(line.qty, line.unit)}`)
-        .join('；') || '-';
+      const quantityMetrics = getServiceRequirementQuantityMetrics(requirement);
       return `
         <article class="logistics-service-node" data-service-requirement-no="${escapeHtml(requirement.dispatchNo || '')}">
-          <div class="logistics-service-inline">
+          <div class="logistics-service-header">
+            <div class="logistics-service-inline">
             <span class="logistics-node-label">服务要求</span>
             <span class="logistics-node-code">${escapeHtml(requirement.dispatchNo)}</span>
             <span class="logistics-service-status ${statusClass}">${escapeHtml(requirement.dispatchStatus)}</span>
@@ -6665,24 +6884,42 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <span class="logistics-service-inline-field">场景 <strong>${escapeHtml(requirement.extensionScene)}</strong></span>
             <span class="logistics-service-inline-divider"></span>
             <span class="logistics-service-inline-field">最迟装运日期 <strong>${escapeHtml(requirement.latestShipmentDate || '-')}</strong></span>
-
+            </div>
+            <button type="button" class="logistics-service-toggle" aria-expanded="true" onclick="toggleLogisticsServiceNode(this)">
+              <span data-service-toggle-label>收起</span><i data-lucide="chevron-down"></i>
+            </button>
           </div>
+          <div class="logistics-service-body">
           <div class="logistics-service-secondary">
             <span class="logistics-service-info-label">作业信息</span>
             <span class="logistics-service-inline-field logistics-service-inline-org">组织/人员 <strong title="${escapeHtml(`${requirement.operationOrg || '-'} / ${requirement.operationOrgPerson || '-'}`)}">${escapeHtml(`${requirement.operationOrg || '-'} / ${requirement.operationOrgPerson || '-'}`)}</strong></span>
             <span class="logistics-service-inline-divider"></span>
             <span class="logistics-service-inline-field logistics-service-inline-supplier">供应商 <strong title="${escapeHtml(requirement.supplier)}">${escapeHtml(requirement.supplier)}</strong></span>
             <span class="logistics-service-inline-divider"></span>
-            <span class="logistics-service-inline-field logistics-service-inline-goods">商品 <strong title="${escapeHtml(goodsText)}">${escapeHtml(goodsText)}</strong></span>
+            <span class="logistics-service-quantity-item"><span>已下发订舱数量</span><strong>${escapeHtml(formatQty(quantityMetrics.issued, quantityMetrics.unit))}</strong></span>
+            <span class="logistics-service-quantity-item"><span>已安排数量</span><strong>${escapeHtml(formatQty(quantityMetrics.arranged, quantityMetrics.unit))}</strong></span>
+            <span class="logistics-service-quantity-item"><span>已下发未订舱数量</span><strong>${escapeHtml(formatQty(quantityMetrics.unbooked, quantityMetrics.unit))}</strong></span>
+            <span class="logistics-service-quantity-item"><span>已确认订舱数量</span><strong>${escapeHtml(formatQty(quantityMetrics.confirmed, quantityMetrics.unit))}</strong></span>
           </div>
           <div class="logistics-chain-children">
             ${commissions.length
               ? commissions.map(commission => renderLogisticsCommissionNode(commission, requirement)).join('')
               : '<div class="logistics-chain-empty">当前服务要求暂无物流委托</div>'}
           </div>
+          </div>
         </article>
       `;
     }
+
+    function toggleLogisticsServiceNode(button) {
+      const node = button.closest('.logistics-service-node');
+      if (!node) return;
+      const collapsed = node.classList.toggle('is-collapsed');
+      button.setAttribute('aria-expanded', String(!collapsed));
+      const label = button.querySelector('[data-service-toggle-label]');
+      if (label) label.textContent = collapsed ? '展开' : '收起';
+    }
+
     function getLogisticsCommissionKey(commission) {
       return `${commission.requirement?.dispatchNo || ''}|${commission.commissionNo || ''}`;
     }
@@ -6719,8 +6956,38 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     }
 
     function getTaskVesselRows(task) {
-      if (Array.isArray(task.vessels) && task.vessels.length) return task.vessels;
-      return [{ name: task.vesselName || '待安排', voyageNo: '', qty: null, unit: task.qtyUnit || '吨' }];
+      const sourceVessels = Array.isArray(task.vessels) && task.vessels.length
+        ? task.vessels
+        : [{ name: task.vesselName || '待安排' }];
+      return sourceVessels.map(vessel => {
+        const routeName = vessel.routeName || task.routeName || '待安排';
+        const routePorts = String(routeName).split(/\s*(?:→|->|至)\s*/);
+        return {
+          name: vessel.name || task.vesselName || '待安排',
+          voyageNo: vessel.voyageNo || '',
+          mmsi: vessel.mmsi || task.mmsi || '待安排',
+          qty: vessel.qty ?? null,
+          unit: vessel.unit || task.qtyUnit || '吨',
+          routeName,
+          originPort: vessel.originPort || task.originPort || routePorts[0] || '待安排',
+          destinationPort: vessel.destinationPort || task.destinationPort || routePorts[1] || '待安排',
+          laycan: vessel.laycan || task.laycan || '待安排',
+          etd: vessel.etd || task.etd || '待安排',
+          eta: vessel.eta || task.eta || '待安排',
+          atd: vessel.atd || task.atd || task.departLoadPortTime || '待安排',
+          ata: vessel.ata || task.ata || '待安排',
+          currentNode: vessel.currentNode || task.currentNode || task.latestTracking || '待处理',
+          currentOperationTime: vessel.currentOperationTime || task.currentOperationTime || task.latestTrackingTime || '待安排',
+          latestTracking: vessel.latestTracking || task.latestTracking || '尚未产生运输动态'
+        };
+      });
+    }
+
+    function formatVesselDate(value) {
+      if (value === undefined || value === null || value === '') return '待安排';
+      const text = String(value).trim();
+      const matched = text.match(/^\d{4}-\d{2}-\d{2}/);
+      return matched ? matched[0] : text;
     }
 
     function renderLogisticsTaskNode(task) {
@@ -6728,59 +6995,86 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const declarationClass = task.declarationStatus === '已宣舱' ? 'logistics-booking-status' : 'logistics-booking-status pending';
       const taskKey = escapeHtml(task.__key);
       const vessels = getTaskVesselRows(task);
-      const visibleVessels = vessels.slice(0, 3);
-      const hiddenVessels = vessels.slice(3);
-      const currentNode = task.currentNode || task.latestTracking || '待处理';
-      const currentOperationTime = task.currentOperationTime || task.latestTrackingTime || '待安排';
       return `
         <article class="logistics-task-node">
-          <div class="logistics-task-identity">
-            <div class="logistics-task-code">${escapeHtml(task.taskNo)}</div>
-            <div class="logistics-task-status-line">
-              <span class="logistics-booking-status ${bookingClass}">${escapeHtml(task.bookingStatus)}</span>
-              <span class="${declarationClass}">${escapeHtml(task.declarationStatus)}</span>
+          <div class="logistics-task-summary">
+            <div class="logistics-task-identity">
+              <div class="logistics-task-code">${escapeHtml(task.taskNo)}</div>
+              <div class="logistics-task-status-line">
+                <span class="logistics-booking-status ${bookingClass}">${escapeHtml(task.bookingStatus)}</span>
+                <span class="${declarationClass}">${escapeHtml(task.declarationStatus)}</span>
+              </div>
+            </div>
+            <span class="logistics-task-summary-divider"></span>
+            <div class="logistics-task-qty-inline">
+              <span><small>已安排数量</small><strong>${escapeHtml(formatQty(task.arrangedQty ?? task.bookingQty, task.qtyUnit || '吨'))}</strong></span>
+              <span><small>已确认订舱数量</small><strong>${escapeHtml(formatQty(task.bookingQty, task.qtyUnit || '吨'))}</strong></span>
+              <span><small>已装船数量</small><strong>${escapeHtml(formatQty(task.shippedQty, task.qtyUnit || '吨'))}</strong></span>
+            </div>
+            <span class="logistics-task-summary-divider"></span>
+            <div class="logistics-task-summary-laycan"><span>LAYCAN</span><strong>${escapeHtml(task.laycan || '待安排')}</strong></div>
+            <div class="logistics-task-summary-meta">
+              <span>承运船舶</span><strong>${vessels.length} 艘</strong>
             </div>
           </div>
-          <div class="logistics-task-fact">
-            <span>数量进度</span>
-            <div class="logistics-task-qty-breakdown">
-              <div><small>订舱</small><strong>${escapeHtml(formatQty(task.bookingQty, task.qtyUnit || '吨'))}</strong></div>
-              <div><small>未订</small><strong>${escapeHtml(formatQty(task.unbookedQty, task.qtyUnit || '吨'))}</strong></div>
-              <div><small>装船</small><strong>${escapeHtml(formatQty(task.shippedQty, task.qtyUnit || '吨'))}</strong></div>
-            </div>
-          </div>
-          <div class="logistics-task-fact">
-            <span>线路</span>
-            <strong title="${escapeHtml(task.routeName)}">${escapeHtml(task.routeName)}</strong>
-          </div>
-          <div class="logistics-task-fact">
-            <span class="logistics-task-vessel-label">承运船舶 <em class="logistics-task-vessel-count">${vessels.length} 艘</em></span>
-            <div class="logistics-task-vessel-list">
-              ${visibleVessels.map((vessel, index) => {
-                const meta = [
-                  vessel.voyageNo,
-                  vessel.qty ? formatQty(vessel.qty, vessel.unit || task.qtyUnit || '吨') : ''
-                ].filter(Boolean).join(' · ');
-                return `<div class="logistics-task-vessel-item" title="${escapeHtml([vessel.name || '待安排', meta].filter(Boolean).join(' · '))}">
+          <div class="logistics-task-vessel-list">
+            ${vessels.map((vessel, index) => {
+              const meta = [
+                vessel.mmsi ? 'MMSI ' + vessel.mmsi : 'MMSI 待安排',
+                vessel.voyageNo ? '航次 ' + vessel.voyageNo : '航次 待安排'
+              ].filter(Boolean).join(' · ');
+              return `<div class="logistics-vessel-row ${index >= 3 ? 'is-vessel-hidden' : ''}" ${index >= 3 ? 'data-extra-vessel="true"' : ''}>
+                <div class="logistics-vessel-identity">
                   <span class="logistics-task-vessel-index">${index + 1}</span>
-                  <strong class="logistics-task-vessel-name">${escapeHtml(vessel.name || '待安排')}</strong>
-                  <span class="logistics-task-vessel-meta">${escapeHtml(meta || '待安排')}</span>
-                </div>`;
-              }).join('')}
-              ${hiddenVessels.length ? `<div class="logistics-task-vessel-more" title="${escapeHtml(hiddenVessels.map(vessel => vessel.name).join('、'))}">+${hiddenVessels.length} 艘</div>` : ''}
-            </div>
+                  <div class="logistics-vessel-copy">
+                    <strong title="${escapeHtml(vessel.name)}">${escapeHtml(vessel.name)}</strong>
+                    <span>${escapeHtml(meta || '待安排')}</span>
+                  </div>
+                </div>
+                <div class="logistics-vessel-detail">
+                  <div class="logistics-vessel-route-grid">
+                    <div class="logistics-vessel-port">
+                      <div class="logistics-vessel-port-name" title="${escapeHtml(vessel.originPort)}">${escapeHtml(vessel.originPort)}</div>
+                      <div class="logistics-vessel-port-time"><span>ETD</span><strong>${escapeHtml(formatVesselDate(vessel.etd))}</strong></div>
+                      <div class="logistics-vessel-port-time"><span>ATD</span><strong>${escapeHtml(formatVesselDate(vessel.atd))}</strong></div>
+                    </div>
+                    <div class="logistics-vessel-route-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="logistics-vessel-port">
+                      <div class="logistics-vessel-port-name" title="${escapeHtml(vessel.destinationPort)}">${escapeHtml(vessel.destinationPort)}</div>
+                      <div class="logistics-vessel-port-time"><span>ETA</span><strong>${escapeHtml(formatVesselDate(vessel.eta))}</strong></div>
+                      <div class="logistics-vessel-port-time"><span>ATA</span><strong>${escapeHtml(formatVesselDate(vessel.ata))}</strong></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="logistics-vessel-status">
+                  <div class="logistics-vessel-current"><i></i><span>${escapeHtml(vessel.currentNode)}</span></div>
+                  <div class="logistics-vessel-status-time">最新反馈时间 ${escapeHtml(vessel.currentOperationTime)}</div>
+                </div>
+                <div class="logistics-vessel-action">
+                  <button type="button" class="logistics-task-action" data-task-key="${taskKey}" data-vessel-index="${index}" onclick="openLogisticsTrackingPage(this.dataset.taskKey, Number(this.dataset.vesselIndex))"><i data-lucide="history"></i>跟踪</button>
+                </div>
+              </div>`;
+            }).join('')}
           </div>
-          <div class="logistics-task-fact">
-            <span>船期 / 最新动态</span>
-            <strong>Laycan ${escapeHtml(task.laycan)}</strong>
-            <div class="logistics-task-latest-node"><i></i><span>${escapeHtml(currentNode)}</span></div>
-            <div class="logistics-task-tracking-time">作业时间 ${escapeHtml(currentOperationTime)}</div>
-          </div>
-          <div class="logistics-task-node-actions">
-            <button type="button" class="logistics-task-action" data-task-key="${taskKey}" onclick="openLogisticsTrackingPage(this.dataset.taskKey)"><i data-lucide="history"></i>跟踪</button>
-          </div>
+          ${vessels.length > 3 ? `<div class="logistics-vessel-more">
+            <button type="button" aria-expanded="false" data-vessel-total="${vessels.length}" onclick="toggleTaskVesselRows(this)">
+              <span data-vessel-toggle-label>查看全部 ${vessels.length} 艘</span><i data-lucide="chevron-down"></i>
+            </button>
+          </div>` : ''}
         </article>
       `;
+    }
+
+    function toggleTaskVesselRows(button) {
+      const taskNode = button.closest('.logistics-task-node');
+      if (!taskNode) return;
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      taskNode.querySelectorAll('[data-extra-vessel="true"]').forEach(row => {
+        row.classList.toggle('is-vessel-hidden', expanded);
+      });
+      button.setAttribute('aria-expanded', String(!expanded));
+      const label = button.querySelector('[data-vessel-toggle-label]');
+      if (label) label.textContent = expanded ? `查看全部 ${button.dataset.vesselTotal} 艘` : '收起船舶';
     }
     function renderServiceRequirementCard(requirement) {
       const statusClass = getLogisticsDemandStatusClass(requirement.dispatchStatus);
@@ -6903,9 +7197,11 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       `;
     }
 
-    function openLogisticsTrackingPage(taskKey) {
+    function openLogisticsTrackingPage(taskKey, vesselIndex = 0) {
       const task = activeLogisticsContext.taskMap.get(taskKey);
       if (!task) return;
+      const vessels = getTaskVesselRows(task);
+      const vessel = vessels[vesselIndex] || vessels[0] || {};
       const payload = {
         taskNo: task.taskNo || '',
         taskName: task.taskName || '',
@@ -6914,13 +7210,13 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         bookingQty: task.bookingQty || 0,
         unbookedQty: task.unbookedQty || 0,
         shippedQty: task.shippedQty || 0,
-        vesselName: task.vesselName || '',
-        routeName: task.routeName || '',
-        etd: task.etd || '',
-        laycan: task.laycan || '',
-        latestTracking: task.latestTracking || '',
-        latestTrackingTime: task.latestTrackingTime || '',
-        dynamicUpdatedAt: task.dynamicUpdatedAt || '',
+        vesselName: vessel.name || task.vesselName || '',
+        routeName: vessel.routeName || task.routeName || '',
+        etd: vessel.etd || task.etd || '',
+        laycan: vessel.laycan || task.laycan || '',
+        latestTracking: vessel.latestTracking || task.latestTracking || '',
+        latestTrackingTime: vessel.currentOperationTime || task.latestTrackingTime || '',
+        dynamicUpdatedAt: vessel.currentOperationTime || task.dynamicUpdatedAt || '',
         supplier: task.commission?.supplier || '',
         trackings: task.trackings || []
       };
@@ -7051,16 +7347,11 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         showToast("未找到服务要求信息", "warning");
         return;
       }
-      const demandNo = requirement.demandNo || "-";
       const goodsText = (requirement.goodsLines || [])
         .map(line => line.name + " " + formatQty(line.qty, line.unit))
         .join("；") || "-";
-      activeServiceRequirementContext = { requirement };
       document.getElementById("serviceRequirementDetailSubtitle").textContent = requirement.dispatchNo + " · " + (requirement.serviceItem || "-");
-      document.getElementById("serviceRequirementDetailDemandNo").textContent = demandNo;
-      document.getElementById("serviceRequirementDetailDemandNo").title = demandNo;
       const fields = [
-        ["物流需求单号", demandNo],
         ["服务要求编号", requirement.dispatchNo || "-"],
         ["服务要求状态", requirement.dispatchStatus || "-"],
         ["服务项目", requirement.serviceItem || "-"],
@@ -7086,28 +7377,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       if (event.target.id === "serviceRequirementDetailModal") closeServiceRequirementDetail();
     }
 
-    function jumpToServiceRequirementDemand() {
-      const context = activeServiceRequirementContext;
-      if (!context) return;
-      const demandNo = context.requirement.demandNo || "";
-      closeServiceRequirementDetail();
-      const demandCard = [...document.querySelectorAll("#logisticsDemandList [data-demand-no]")]
-        .find(card => card.dataset.demandNo === demandNo);
-      if (!demandCard) {
-        showToast("未找到对应物流需求", "warning");
-        return;
-      }
-      const toggle = demandCard.querySelector(".logistics-demand-toggle");
-      if (toggle && toggle.getAttribute("aria-expanded") !== "true") toggle.click();
-      setTimeout(() => {
-        demandCard.scrollIntoView({ behavior: "smooth", block: "center" });
-        demandCard.classList.remove("logistics-navigation-target");
-        void demandCard.offsetWidth;
-        demandCard.classList.add("logistics-navigation-target");
-        setTimeout(() => demandCard.classList.remove("logistics-navigation-target"), 1800);
-      }, 80);
-    }
-
     function openLogisticsCommissionDetail(commissionKey) {
       const commission = activeLogisticsContext.commissionMap?.get(commissionKey);
       if (!commission) {
@@ -7115,18 +7384,14 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         return;
       }
       const requirement = commission.requirement || {};
-      const demandNo = requirement.demandNo || "-";
       const serviceNo = requirement.dispatchNo || "-";
       const contractNo = commission.commissionContractNo || commission.commissionNo || "-";
       const versionNo = commission.versionNo || "V1.0";
       activeCommissionContext = { commission, requirement };
       document.getElementById("commissionDetailSubtitle").textContent = contractNo + " · " + versionNo;
-      document.getElementById("commissionDetailDemandNo").textContent = demandNo;
-      document.getElementById("commissionDetailDemandNo").title = demandNo;
       document.getElementById("commissionDetailServiceNo").textContent = serviceNo;
       document.getElementById("commissionDetailServiceNo").title = serviceNo;
       const fields = [
-        ["物流需求单号", demandNo],
         ["服务要求编号", serviceNo],
         ["物流委托名称", commission.commissionName || "-"],
         ["物流委托合同号", contractNo],
@@ -7148,33 +7413,17 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       if (event.target.id === "commissionDetailModal") closeCommissionDetail();
     }
 
-    function jumpToCommissionDemand() {
-      jumpFromCommissionDetail("demand");
-    }
-
     function jumpToCommissionService() {
-      jumpFromCommissionDetail("service");
+      jumpFromCommissionDetail();
     }
 
-    function jumpFromCommissionDetail(target) {
+    function jumpFromCommissionDetail() {
       const context = activeCommissionContext;
       if (!context) return;
-      const demandNo = context.requirement.demandNo || "";
       const serviceNo = context.requirement.dispatchNo || "";
       closeCommissionDetail();
-      const demandCard = [...document.querySelectorAll("#logisticsDemandList [data-demand-no]")]
-        .find(card => card.dataset.demandNo === demandNo);
-      if (!demandCard) {
-        showToast("未找到对应物流需求", "warning");
-        return;
-      }
-      const toggle = demandCard.querySelector(".logistics-demand-toggle");
-      if (toggle && toggle.getAttribute("aria-expanded") !== "true") toggle.click();
-      let targetElement = demandCard;
-      if (target === "service") {
-        targetElement = [...demandCard.querySelectorAll("[data-service-requirement-no]")]
-          .find(node => node.dataset.serviceRequirementNo === serviceNo);
-      }
+      const targetElement = [...document.querySelectorAll("#logisticsDemandList [data-service-requirement-no]")]
+        .find(node => node.dataset.serviceRequirementNo === serviceNo);
       if (!targetElement) {
         showToast("未找到对应服务要求", "warning");
         return;
@@ -7189,11 +7438,126 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     }
 
     function openLogisticsDemandDetail(demandNo) {
-      showToast("正在跳转物流需求详情页 [" + demandNo + "]...", "info");
+      showToast("正在跳转服务要求详情页 [" + demandNo + "]...", "info");
     }
 
     function handleLogisticsDrawerBackdrop(event) {
       if (event.target.id === "logisticsModal") closeModal("logisticsModal");
+    }
+
+    function findRiskItemById(itemId) {
+      return state.items.find(item => item.id === itemId)
+        || state.controlTowerPool.find(item => item.id === itemId)
+        || null;
+    }
+
+    function renderRiskPopoverContent(item) {
+      const risks = getRiskItems(item);
+      if (!risks.length) return '';
+      return `
+        <div class="ct-risk-popover-head">
+          <strong>风险提醒</strong>
+          <span class="ct-risk-popover-count">${risks.length} 项</span>
+        </div>
+        <div class="ct-risk-popover-list">
+          ${risks.map((risk, index) => `
+            <div class="ct-risk-popover-item">
+              <div class="ct-risk-popover-item-title"><span>${index + 1}</span>${escapeHtml(risk.title)}</div>
+              <div class="ct-risk-popover-item-desc">${escapeHtml(risk.description || risk.trigger || '当前合同存在风险，请及时关注。')}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function positionRiskPopover(trigger) {
+      const popover = document.getElementById('riskPopover');
+      if (!popover || popover.hidden || !trigger) return;
+      const rect = trigger.getBoundingClientRect();
+      const popRect = popover.getBoundingClientRect();
+      const edge = 8;
+      const left = Math.min(Math.max(edge, rect.left), window.innerWidth - popRect.width - edge);
+      let top = rect.bottom + 8;
+      if (top + popRect.height > window.innerHeight - edge) {
+        top = Math.max(edge, rect.top - popRect.height - 8);
+      }
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+    }
+
+    function showRiskPopover(trigger, pinned = false) {
+      const item = findRiskItemById(trigger?.dataset.riskItemId);
+      const popover = document.getElementById('riskPopover');
+      if (!item || !popover) return;
+      clearTimeout(riskPopoverShowTimer);
+      clearTimeout(riskPopoverHideTimer);
+      if (riskPopoverTrigger && riskPopoverTrigger !== trigger) {
+        riskPopoverTrigger.setAttribute('aria-expanded', 'false');
+      }
+      riskPopoverTrigger = trigger;
+      riskPopoverPinned = Boolean(pinned);
+      popover.innerHTML = renderRiskPopoverContent(item);
+      popover.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      positionRiskPopover(trigger);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function scheduleRiskPopover(trigger) {
+      clearTimeout(riskPopoverHideTimer);
+      clearTimeout(riskPopoverShowTimer);
+      riskPopoverShowTimer = setTimeout(() => showRiskPopover(trigger), 120);
+    }
+
+    function hideRiskPopover(force = false) {
+      if (riskPopoverPinned && !force) return;
+      clearTimeout(riskPopoverShowTimer);
+      clearTimeout(riskPopoverHideTimer);
+      const popover = document.getElementById('riskPopover');
+      if (popover) popover.hidden = true;
+      if (riskPopoverTrigger) riskPopoverTrigger.setAttribute('aria-expanded', 'false');
+      riskPopoverTrigger = null;
+      riskPopoverPinned = false;
+    }
+
+    function scheduleRiskPopoverClose() {
+      if (riskPopoverPinned) return;
+      clearTimeout(riskPopoverShowTimer);
+      clearTimeout(riskPopoverHideTimer);
+      riskPopoverHideTimer = setTimeout(() => hideRiskPopover(true), 120);
+    }
+
+    function toggleRiskPopover(trigger, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const popover = document.getElementById('riskPopover');
+      const sameOpen = popover && !popover.hidden && riskPopoverTrigger === trigger;
+      if (sameOpen && riskPopoverPinned) {
+        hideRiskPopover(true);
+        return;
+      }
+      showRiskPopover(trigger, true);
+    }
+
+    function initRiskPopoverInteractions() {
+      const popover = document.getElementById('riskPopover');
+      if (!popover) return;
+      popover.addEventListener('mouseenter', () => {
+        clearTimeout(riskPopoverHideTimer);
+        clearTimeout(riskPopoverShowTimer);
+      });
+      popover.addEventListener('mouseleave', scheduleRiskPopoverClose);
+      document.addEventListener('click', event => {
+        if (popover.hidden) return;
+        if (popover.contains(event.target) || event.target.closest('[data-risk-item-id]')) return;
+        hideRiskPopover(true);
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !popover.hidden) hideRiskPopover(true);
+      });
+      window.addEventListener('resize', () => positionRiskPopover(riskPopoverTrigger));
+      const tableScroll = document.querySelector('.ct-table-scroll');
+      if (tableScroll) tableScroll.addEventListener('scroll', () => positionRiskPopover(riskPopoverTrigger), true);
     }
 
     function openRiskDetail(itemId) {
@@ -7209,23 +7573,21 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       document.getElementById('riskDetailDrawerSubtitle').textContent = `${getTradeContractType(item)} · ${getProjectDisplay(item)}`;
       const level = document.getElementById('riskDetailLevel');
       const icon = document.getElementById('riskDrawerIcon');
-      const isWarning = risk.level === 'warning';
-      level.textContent = isWarning ? '提醒风险' : '阻断风险';
-      level.className = `risk-level-badge ${isWarning ? 'warning' : ''}`;
-      icon.className = `logistics-drawer-title-icon risk-title-icon ${isWarning ? 'warning' : ''}`;
-      icon.innerHTML = `<i data-lucide="${isWarning ? 'triangle-alert' : 'octagon-alert'}"></i>`;
+      level.textContent = '风险';
+      level.className = 'risk-level-badge';
+      icon.className = 'logistics-drawer-title-icon risk-title-icon';
+      icon.innerHTML = '<i data-lucide="shield-alert"></i>';
 
       document.getElementById('riskDetailContent').innerHTML = `
         <article class="risk-detail-card">
           <div class="risk-detail-card-head">
-            <div class="risk-detail-card-title ${isWarning ? 'warning' : ''}"><i data-lucide="${isWarning ? 'triangle-alert' : 'octagon-alert'}"></i>${escapeHtml(risk.title)}</div>
-            <span class="${isWarning ? 'ct-risk warning' : 'ct-risk danger'}">${isWarning ? '提醒' : '阻断'}</span>
+            <div class="risk-detail-card-title"><i data-lucide="shield-alert"></i>${escapeHtml(risk.title)}</div>
+            <span class="ct-risk danger">风险</span>
           </div>
           <div class="risk-detail-card-body">
-            <div class="risk-detail-field"><span>触发原因</span><strong class="risk-trigger-value ${isWarning ? 'warning' : ''}">${escapeHtml(risk.trigger)}</strong></div>
+            <div class="risk-detail-field"><span>触发原因</span><strong class="risk-trigger-value">${escapeHtml(risk.trigger)}</strong></div>
             <div class="risk-detail-field"><span>影响说明</span><strong>${escapeHtml(risk.impact)}</strong></div>
-            <div class="risk-detail-field"><span>是否阻断当前操作</span><strong>${escapeHtml(risk.blocking)}</strong></div>
-            <div class="risk-action-hint ${isWarning ? 'warning' : ''}"><strong>建议处理：</strong>${escapeHtml(risk.suggestion)}</div>
+            <div class="risk-action-hint"><strong>建议处理：</strong>${escapeHtml(risk.suggestion)}</div>
           </div>
         </article>
       `;
@@ -7319,7 +7681,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       });
 
       if (filteredPool.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="26" class="p-6 text-center text-slate-400">没有匹配的控制塔合同</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="27" class="p-6 text-center text-slate-400">没有匹配的控制塔合同</td></tr>';
         updateManualSelectedCount();
         return;
       }
@@ -7346,16 +7708,20 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td>${escapeHtml(ct.department)}</td>
           <td>${escapeHtml(ct.accountingGroup)}</td>
           <td>${escapeHtml(ct.salesman)}</td>
+          <td>${escapeHtml(ct.loadingPort || '厦门港')}</td>
+          <td>${escapeHtml(ct.unloadingPort || '大连港')}</td>
           <td>${escapeHtml(ct.shipmentDeadline)}</td>
           <td class="manual-long-cell" title="${escapeHtml(ct.customer)}">${escapeHtml(ct.customer)}</td>
+          <td class="manual-long-cell" title="${escapeHtml(ct.supplier)}">${escapeHtml(ct.supplier)}</td>
+          <td>${escapeHtml(ct.internalDeliveryDate || '-')}</td>
           <td>${escapeHtml(ct.settlementMethod)}</td>
-          <!--<td>${escapeHtml(ct.receiptStatus)}</td>-->
           <td>${escapeHtml(ct.controlledOrder)}</td>
-         <!-- <td>${escapeHtml(ct.prepaymentRatio)}</td> 
-          <td class="manual-number">${escapeHtml(ct.freightUnitPrice)}</td> -->
-          <td>${escapeHtml(ct.salesTerms)}</td>
-          <td>${escapeHtml(ct.dispatchedByUs)}</td>
-          <!--<td class="manual-number">${escapeHtml(ct.portMiscUnitPrice)}</td> -->
+          <td>${escapeHtml(ct.prepaymentRatio || '-')}</td>
+          <td class="manual-number">${escapeHtml(ct.freightUnitPrice || '-')}</td>
+          <td>${escapeHtml(getPriceTerms(ct))}</td>
+          <td>${escapeHtml(getControlledMode(ct))}</td>
+          <td>${escapeHtml(ct.dispatchedByUs || '-')}</td>
+          <td class="manual-number">${escapeHtml(ct.portMiscUnitPrice || '-')}</td>
           <td>${escapeHtml(ct.tradeType)}</td>
           <!--<td><span class="${getManualPoolStatusClass(ct)}">${escapeHtml(ct.status)}</span></td>-->
         `;
@@ -7371,7 +7737,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             </tr>
           `).join('');
           subTr.innerHTML = `
-            <td colspan="26" class="manual-detail-cell">
+            <td colspan="27" class="manual-detail-cell">
               <div class="manual-subtable-wrap">
                 <div class="manual-subtable-title"><i data-lucide="layers" class="w-3.5 h-3.5 text-brand-500"></i>商品明细</div>
                 <table class="manual-subtable">
@@ -7562,6 +7928,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     window.onload = function() {
       if (window.lucide) lucide.createIcons();
       document.body.classList.toggle('dest-tab', state.currentTab === 'dest');
+      initRiskPopoverInteractions();
       renderWorkbenchTable();
     };
   </script>
