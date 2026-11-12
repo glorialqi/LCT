@@ -3028,6 +3028,14 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <option value="贸易合同变更">贸易合同变更</option>
             </select>
           </div>
+          <div>
+            <label for="filter-internalCustomer">是否内部客商</label>
+            <select id="filter-internalCustomer" name="internalCustomer">
+              <option value="">全部</option>
+              <option value="是">是</option>
+              <option value="否">否</option>
+            </select>
+          </div>
         </div>
       </form>
     </section>
@@ -3038,6 +3046,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         <div class="ct-list-actions">
           <span class="ct-scroll-hint">↔ 横向滚动查看更多</span>
           <button onclick="openBatchAllocationModal()" class="ct-button">人工分配</button>
+          <button onclick="clearSelectedManualAllocations()" class="ct-button">清空人工分配并重算</button>
           <button onclick="batchDeleteRows()" class="ct-button">删除</button>
           <button onclick="batchCloseRows()" class="ct-button">完结</button>
           <button onclick="batchResumeRows()" class="ct-button">取消完结</button>
@@ -3088,6 +3097,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 			  <th>卸货港</th>
               <th>最迟装运日期</th>
               <th class="dest-column-hidden">客户</th>
+              <th>内部客户</th>
               <th>贸易供应商</th>
               <th>对内交货期</th>
               <th>结算方式</th>
@@ -3156,12 +3166,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <input type="text" id="manualProjectNoFilter" list="manualProjectNoOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请输入" />
           </label>
           <label class="manual-filter-field">
-            <span>销售合同号</span>
-            <input type="text" id="manualSalesNoFilter" list="manualSalesNoOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请输入" />
-          </label>
-          <label class="manual-filter-field">
-            <span>采购合同号</span>
-            <input type="text" id="manualPurchaseNoFilter" list="manualPurchaseNoOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请输入" />
+            <span>买卖合同号</span>
+            <input type="text" id="manualTradeNoFilter" list="manualTradeNoOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请输入" />
           </label>
           <label class="manual-filter-field">
             <span>控货模式</span>
@@ -3179,13 +3185,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <span>业务员</span>
             <input type="text" id="manualSalesmanFilter" list="manualSalesmanOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请选择" />
           </label>
+          <label class="manual-filter-field">
+            <span>是否内部客商</span>
+            <select id="manualInternalCustomerFilter" onchange="filterManualList()">
+              <option value="是" selected>是</option>
+              <option value="否">否</option>
+            </select>
+          </label>
           <button onclick="filterManualList()" class="manual-filter-action bg-sky-500 text-white rounded hover:bg-sky-600 transition flex items-center justify-center gap-1 font-medium">
             <i data-lucide="search" class="w-3.5 h-3.5"></i> 筛选
           </button>
           <button onclick="resetManualFilters()" class="manual-filter-action px-3 py-1.5 border border-sky-200 rounded text-slate-700 hover:bg-sky-50">重置</button>
           <datalist id="manualProjectNoOptions"></datalist>
-          <datalist id="manualSalesNoOptions"></datalist>
-          <datalist id="manualPurchaseNoOptions"></datalist>
+          <datalist id="manualTradeNoOptions"></datalist>
           <datalist id="manualCompanyOptions"></datalist>
           <datalist id="manualSalesmanOptions"></datalist>
         </div>
@@ -3212,6 +3224,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <th>卸货港</th>
                 <th>最迟装运日期</th>
                 <th>客户</th>
+                <th>内部客商</th>
                 <th>贸易供应商</th>
                 <th>对内交货期</th>
                 <th>结算方式</th>
@@ -3868,7 +3881,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       controlTowerPool: [
         {
           id: 'CT-2026-088', type: 'non_dest', projectNo: 'PRJ-2026-004', projectNos: ['PRJ-2026-004', 'PRJ-2026-005'],
-          salesNo: 'SC20260301-09', purchaseNo: 'PO20260215-02', customer: '通用汽车（中国）投资有限公司', supplier: '苏州精工橡塑有限公司',
+          salesNo: 'SC20260301-09', purchaseNo: 'PO20260215-02', customer: '通用汽车（中国）投资有限公司', isInternalCustomer: '是', supplier: '苏州精工橡塑有限公司',
           salesman: '李明（汽车业务部）', operatingUnit: '建发汽车', companyTitle: '厦门建发股份有限公司', department: '汽车业务部', accountingGroup: '汽车零部件核算组',
           shipmentDeadline: '2026-04-15', settlementMethod: '即期信用证', receiptStatus: '已收证', controlledOrder: '否', prepaymentRatio: '30%',
           freightUnitPrice: '¥390/吨', salesTerms: 'CIF 汉堡', dispatchedByUs: '否', portMiscUnitPrice: '¥55/吨',
@@ -3880,7 +3893,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         },
         {
           id: 'CT-2026-092', type: 'non_dest', projectNo: 'PRJ-2026-006', projectNos: ['PRJ-2026-006'],
-          salesNo: 'SC20260302-12', purchaseNo: 'PO20260220-05', customer: '博世供应链服务有限公司', supplier: '无锡精密轴承制造厂',
+          salesNo: 'SC20260302-12', purchaseNo: 'PO20260220-05', customer: '博世供应链服务有限公司', isInternalCustomer: '否', supplier: '无锡精密轴承制造厂',
           salesman: '王芳（装备业务部）', operatingUnit: '建发装备', companyTitle: '厦门建发股份有限公司', department: '装备业务部', accountingGroup: '机械设备核算组',
           shipmentDeadline: '2026-04-22', settlementMethod: '电汇', receiptStatus: '待收证', controlledOrder: '是', prepaymentRatio: '40%',
           freightUnitPrice: '¥520/吨', salesTerms: 'CFR 鹿特丹', dispatchedByUs: '是', portMiscUnitPrice: '¥78/吨',
@@ -4038,7 +4051,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       ]
     };
 
-    const MAIN_TABLE_COLSPAN = 40;
+    const MAIN_TABLE_COLSPAN = 41;
 
     function getMainTableColspan() {
       return state.currentTab === 'dest' ? MAIN_TABLE_COLSPAN - 4 : MAIN_TABLE_COLSPAN;
@@ -4047,6 +4060,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     const itemProfiles = {
       'WB-1001': {
         contractStatus: '执行中',
+        isInternalCustomer: '是',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-18', internalDeliveryDate: '2026-03-08', settlementMethod: '即期信用证', receiptStatus: '已收证', controlledOrder: '否',
         prepaymentRatio: '30%', freightUnitPrice: '¥480/吨', purchaseTerms: 'FOB 青岛', salesTerms: 'CIF 鹿特丹', dispatchedByUs: '否', portMiscUnitPrice: '¥65/吨',
@@ -4054,6 +4068,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-1002': {
         contractStatus: '执行中',
+        isInternalCustomer: '否',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-25', internalDeliveryDate: '2026-03-12', settlementMethod: '电汇', receiptStatus: '待收证', controlledOrder: '否',
         prepaymentRatio: '20%', freightUnitPrice: '¥475/吨', purchaseTerms: 'FOB 青岛', salesTerms: 'CIF 汉堡', dispatchedByUs: '否', portMiscUnitPrice: '¥62/吨',
@@ -4061,6 +4076,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-1003': {
         contractStatus: '已完结',
+        isInternalCustomer: '是',
         operatingUnit: '建发化工', companyTitle: '厦门建发股份有限公司', department: '化工业务部', accountingGroup: '制冷剂核算组',
         shipmentDeadline: '2026-03-10', internalDeliveryDate: '2026-03-01', settlementMethod: '即期信用证', receiptStatus: '已收证', controlledOrder: '是',
         prepaymentRatio: '50%', freightUnitPrice: '¥820/吨', purchaseTerms: 'CFR 宁波', salesTerms: 'CIF 鹿特丹', dispatchedByUs: '是', portMiscUnitPrice: '¥110/吨',
@@ -4068,6 +4084,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-1004': {
         contractStatus: '执行中',
+        isInternalCustomer: '否',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-28', internalDeliveryDate: '2026-03-16', settlementMethod: '电汇', receiptStatus: '已收证', controlledOrder: '否',
         prepaymentRatio: '25%', freightUnitPrice: '¥470/吨', purchaseTerms: 'FOB 青岛', salesTerms: 'CIF 安特卫普', dispatchedByUs: '否', portMiscUnitPrice: '¥60/吨',
@@ -4075,6 +4092,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-2001': {
         contractStatus: '执行中',
+        isInternalCustomer: '是',
         operatingUnit: '建发海外', companyTitle: '厦门建发股份有限公司', department: '海外业务部', accountingGroup: '钢材核算组',
         shipmentDeadline: '2026-04-12', internalDeliveryDate: '2026-03-28', settlementMethod: '远期信用证', receiptStatus: '待收证', controlledOrder: '否',
         prepaymentRatio: '15%', freightUnitPrice: '¥1200/托', purchaseTerms: 'CIF 鹿特丹', salesTerms: '境外库存', dispatchedByUs: '是', portMiscUnitPrice: '¥180/托',
@@ -4175,6 +4193,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
     function getControlledMode(item) {
       return item.controlledMode || (item.type === 'dest' ? '目的港库存业务' : '非目的港库存业务');
+    }
+
+    function getInternalCustomerValue(item) {
+      return item.isInternalCustomer || '是';
     }
 
     function getAutoAllocatedQty(item) {
@@ -4332,6 +4354,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const availabilityVal = document.getElementById('filter-availability')?.value || '';
       const completionVal = document.getElementById('filter-completion')?.value || '';
       const riskVal = document.getElementById('filter-risk')?.value || '';
+      const internalCustomerVal = document.getElementById('filter-internalCustomer')?.value || '';
 
       const filteredItems = state.items.filter(item => {
         if (item.type !== state.currentTab) return false;
@@ -4366,6 +4389,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           );
           if (!matchedRisk) return false;
         }
+        if (internalCustomerVal && getInternalCustomerValue(item) !== internalCustomerVal) return false;
 
         if (goodsVal) {
           const matchGoods = item.goodsLines.some(g =>
@@ -4459,6 +4483,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 		  <td>大连港</td>
           <td>${escapeHtml(item.shipmentDeadline)}</td>
           <td class="dest-column-hidden ct-long-cell" title="${escapeHtml(item.customer)}">${escapeHtml(item.customer)}</td>
+          <td>${escapeHtml(getInternalCustomerValue(item))}</td>
           <td class="ct-long-cell" title="${escapeHtml(item.supplier)}">${escapeHtml(item.supplier)}</td>
           <td>${escapeHtml(item.internalDeliveryDate)}</td>
           <td>${escapeHtml(item.settlementMethod)}</td>
@@ -4608,6 +4633,49 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function getCurrentFilteredItems() {
       const visibleRows = new Set(Array.from(document.querySelectorAll('#workbenchTableBody > tr[data-item-id]')).map(row => row.dataset.itemId));
       return state.items.filter(item => item.type === state.currentTab && (!visibleRows.size || visibleRows.has(item.id)));
+    }
+
+    function clearSelectedManualAllocations() {
+      if (state.selectedRowIds.size === 0) {
+        showToast('请先选择需要清空人工分配的待办记录', 'warning');
+        return;
+      }
+      const selected = Array.from(state.selectedRowIds)
+        .map(id => state.items.find(item => item.id === id))
+        .filter(Boolean);
+      const affected = selected.filter(item =>
+        getEffectiveManualInQty(item) > 0 || getEffectiveManualOutQty(item) > 0
+      );
+      if (!affected.length) {
+        showToast('所选记录暂无人工分配数据', 'info');
+        return;
+      }
+      if (!window.confirm('确认重算？重算后将清空所有人工分配数据。')) return;
+
+      affected.forEach(item => {
+        (item.goodsLines || []).forEach(line => {
+          const currentAllocatable = Number(line.allocatable || 0);
+          const currentManualIn = Number(line.manualIn || 0);
+          const currentManualOut = Number(line.manualOut || 0);
+          const autoAllocated = Number(
+            line.autoAllocated
+            ?? Math.max(0, currentAllocatable - currentManualIn + currentManualOut)
+          );
+          line.autoAllocated = autoAllocated;
+          line.manualIn = 0;
+          line.manualOut = 0;
+          line.allocatable = autoAllocated;
+        });
+        item.autoAllocatedQty = (item.goodsLines || []).reduce((sum, line) => sum + Number(line.autoAllocated || 0), 0);
+        item.manualInQty = 0;
+        item.manualOutQty = 0;
+        item.allocatableQty = item.autoAllocatedQty;
+        item.proposedQty = Math.max(0, getPendingQty(item));
+        item.status = getDisplayStatus(item);
+      });
+
+      renderWorkbenchTable();
+      showToast(`已清空 ${affected.length} 条待办记录的人工分配数据`, 'success');
     }
 
     function batchDeleteRows() {
@@ -7653,8 +7721,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function renderManualFilterOptions() {
       const pool = state.controlTowerPool || [];
       populateManualDatalist('manualProjectNoOptions', pool.flatMap(getManualPoolProjects));
-      populateManualDatalist('manualSalesNoOptions', pool.map(ct => ct.salesNo));
-      populateManualDatalist('manualPurchaseNoOptions', pool.map(ct => ct.purchaseNo));
+      populateManualDatalist('manualTradeNoOptions', pool.flatMap(ct => [ct.salesNo, ct.purchaseNo]));
       populateManualDatalist('manualCompanyOptions', pool.map(ct => ct.companyTitle));
       populateManualDatalist('manualSalesmanOptions', pool.map(ct => ct.salesman));
     }
@@ -7664,24 +7731,27 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       tbody.innerHTML = '';
 
       const projectNoFilter = (document.getElementById('manualProjectNoFilter')?.value || '').trim().toLowerCase();
-      const salesNoFilter = (document.getElementById('manualSalesNoFilter')?.value || '').trim().toLowerCase();
-      const purchaseNoFilter = (document.getElementById('manualPurchaseNoFilter')?.value || '').trim().toLowerCase();
+      const tradeNoFilter = (document.getElementById('manualTradeNoFilter')?.value || '').trim().toLowerCase();
       const controlledOrderFilter = (document.getElementById('manualControlledOrderFilter')?.value || '').trim();
       const companyFilter = (document.getElementById('manualCompanyFilter')?.value || '').trim().toLowerCase();
       const salesmanFilter = (document.getElementById('manualSalesmanFilter')?.value || '').trim().toLowerCase();
+      const internalCustomerFilter = document.getElementById('manualInternalCustomerFilter')?.value || '是';
       const filteredPool = state.controlTowerPool.filter(ct => {
         const projectText = getManualPoolProjects(ct).join(',');
         if (projectNoFilter && !projectText.toLowerCase().includes(projectNoFilter)) return false;
-        if (salesNoFilter && !String(ct.salesNo || '').toLowerCase().includes(salesNoFilter)) return false;
-        if (purchaseNoFilter && !String(ct.purchaseNo || '').toLowerCase().includes(purchaseNoFilter)) return false;
+        if (tradeNoFilter) {
+          const tradeNoText = `${ct.salesNo || ''} ${ct.purchaseNo || ''}`.toLowerCase();
+          if (!tradeNoText.includes(tradeNoFilter)) return false;
+        }
         if (controlledOrderFilter && String(ct.controlledOrder || '') !== controlledOrderFilter) return false;
         if (companyFilter && !String(ct.companyTitle || '').toLowerCase().includes(companyFilter)) return false;
         if (salesmanFilter && !String(ct.salesman || '').toLowerCase().includes(salesmanFilter)) return false;
+        if (internalCustomerFilter && String(ct.isInternalCustomer || '是') !== internalCustomerFilter) return false;
         return true;
       });
 
       if (filteredPool.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="27" class="p-6 text-center text-slate-400">没有匹配的控制塔合同</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="28" class="p-6 text-center text-slate-400">没有匹配的控制塔合同</td></tr>';
         updateManualSelectedCount();
         return;
       }
@@ -7712,6 +7782,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td>${escapeHtml(ct.unloadingPort || '大连港')}</td>
           <td>${escapeHtml(ct.shipmentDeadline)}</td>
           <td class="manual-long-cell" title="${escapeHtml(ct.customer)}">${escapeHtml(ct.customer)}</td>
+          <td>${escapeHtml(ct.isInternalCustomer || '是')}</td>
           <td class="manual-long-cell" title="${escapeHtml(ct.supplier)}">${escapeHtml(ct.supplier)}</td>
           <td>${escapeHtml(ct.internalDeliveryDate || '-')}</td>
           <td>${escapeHtml(ct.settlementMethod)}</td>
@@ -7737,7 +7808,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             </tr>
           `).join('');
           subTr.innerHTML = `
-            <td colspan="27" class="manual-detail-cell">
+            <td colspan="28" class="manual-detail-cell">
               <div class="manual-subtable-wrap">
                 <div class="manual-subtable-title"><i data-lucide="layers" class="w-3.5 h-3.5 text-brand-500"></i>商品明细</div>
                 <table class="manual-subtable">
@@ -7791,8 +7862,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function resetManualFilters(showMessage = true) {
       [
         'manualProjectNoFilter',
-        'manualSalesNoFilter',
-        'manualPurchaseNoFilter',
+        'manualTradeNoFilter',
         'manualCompanyFilter',
         'manualSalesmanFilter'
       ].forEach(id => {
@@ -7801,6 +7871,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       });
       const controlledOrder = document.getElementById('manualControlledOrderFilter');
       if (controlledOrder) controlledOrder.value = '';
+      const internalCustomer = document.getElementById('manualInternalCustomerFilter');
+      if (internalCustomer) internalCustomer.value = '是';
       if (showMessage && document.getElementById('manualModal') && !document.getElementById('manualModal').classList.contains('hidden')) {
         renderManualTable();
         showToast('已重置手动拉入查询条件', 'info');
