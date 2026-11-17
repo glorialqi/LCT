@@ -26,6 +26,30 @@
       description: "物流需求查询、状态与列表管理",
       file: "pages/logistics-demand-list-prototype.html"
     },
+    "logistics-demand-multiroute-list": {
+      domain: "4PL控制塔",
+      title: "物流需求列表 · 多线路",
+      description: "各状态物流需求单查询与多线路详情入口",
+      file: "pages/logistics-demand-multiroute-list-prototype.html"
+    },
+    "logistics-demand-multiroute": {
+      domain: "4PL控制塔",
+      title: "物流需求详情 · 多线路",
+      description: "多线路运输要求、航程、载具与收发通信息",
+      file: "pages/logistics-demand-multiroute-detail-prototype.html"
+    },
+    "logistics-demand-multiroute-create": {
+      domain: "4PL控制塔",
+      title: "物流需求详情 · 多线路（创建）",
+      description: "创建状态的多线路客户商品、运输要求与航程要求",
+      file: "pages/logistics-demand-multiroute-create-prototype.html"
+    },
+    "logistics-demand-bill-fee": {
+      domain: "4PL控制塔",
+      title: "物流需求详情 · 单线路提单费用",
+      description: "国运执行侧预估费用按提单号维护与查询",
+      file: "pages/logistics-demand-singleline-bill-fee-detail-prototype.html"
+    },
     "trade-contract": {
       domain: "股份控制塔",
       title: "订舱工作台",
@@ -131,7 +155,7 @@
     document.title = config.title + " · " + (config.domain || "物流控制塔");
     activePage = key;
 
-    if ((key === "customer-order-list" || key === "customer-demand-list" || key === "logistics-demand") && previousPage && previousPage !== key) {
+    if ((key === "customer-order-list" || key === "customer-demand-list" || key === "logistics-demand" || key === "logistics-demand-multiroute" || key === "logistics-demand-bill-fee" || key === "logistics-demand-multiroute-create" || key === "logistics-demand-multiroute-list") && previousPage && previousPage !== key) {
       const frame = frames.find((item) => item.dataset.page === key);
       if (frame) {
         loadedPages.delete(key);

@@ -256,6 +256,12 @@ select.form-control{appearance:none;background-image:linear-gradient(45deg,trans
 .base-card .grid-6{row-gap:0;align-items:start}
 .base-card .field-label{line-height:16px;margin-bottom:2px}
 .base-card textarea.form-control{height:48px}
+.base-card .base-remark-field{grid-column:5 / 7;grid-row:1 / 3;display:flex;flex-direction:column;align-self:stretch}
+.base-card .base-remark-field textarea.form-control{flex:1;height:auto;min-height:76px}
+.base-card .base-org-field{grid-column:1;grid-row:3}
+.base-card .base-person-field{grid-column:2;grid-row:3}
+.base-card .base-unit-field{grid-column:3;grid-row:3}
+.base-card .base-no-field{grid-column:4;grid-row:3}
 .detail-page>.cube-card:first-child{margin-bottom:12px}
 .create-mode .form-control:not([readonly]):not([disabled]){background:#fff;border-color:#d9dee7}
 .create-mode select.form-control:not([disabled]){background-color:#fff;border-color:#d9dee7}
@@ -505,6 +511,50 @@ body{background:var(--page);color:var(--text);font-family:var(--font)}
 .exec-finance-table .doc-mini-status{font-size:10px}
 .exec-finance-table .doc-status{font-size:10px;white-space:nowrap}
 @media(max-width:1360px){.exec-finance-body{padding:10px 12px 14px}.exec-finance-head{padding:0 12px}.exec-finance-head-meta>span:first-child{display:none}}
+/* 执行侧费用：紧凑摘要、上下排列及明细抽屉 */
+.exec-finance-stack{display:grid;gap:12px}.exec-finance-stack .exec-finance-section{margin-bottom:0}
+.exec-finance-workspace{overflow:hidden;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.025)}
+.exec-finance-workspace .exec-finance-section{margin:0;border:0;border-radius:0;box-shadow:none}
+.exec-finance-side-tabs{display:flex;min-height:44px;align-items:center;gap:2px;padding:0 12px;border-bottom:1px solid #e2e8f0;background:#fff}
+.exec-finance-side-tab{position:relative;display:inline-flex;height:44px;align-items:center;gap:6px;padding:0 12px;border:0;background:transparent;color:#64748b;font-size:12px;font-weight:500;white-space:nowrap}
+.exec-finance-side-tab:hover{color:#2563eb;background:#f8fafc}
+.exec-finance-side-tab.active{color:#2563eb;font-weight:600;background:#eff6ff}
+.exec-finance-side-tab.active:after{content:"";position:absolute;right:12px;bottom:0;left:12px;height:2px;border-radius:2px;background:#2563eb}
+.exec-finance-side-tab b{display:inline-flex;min-width:20px;height:18px;align-items:center;justify-content:center;padding:0 6px;border-radius:9px;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:600;font-variant-numeric:tabular-nums}
+.exec-finance-side-tab.active b{background:#dbeafe;color:#2563eb}
+.exec-finance-pane{display:none}.exec-finance-pane.active{display:block}
+.exec-finance-head{min-height:42px;padding:0 12px}
+.exec-finance-body{padding:8px 12px 12px}
+.exec-finance-table-wrap{border-radius:5px}
+.exec-finance-table{min-width:2154px}
+.exec-finance-table th{height:34px;padding:0 8px;font-size:10px}
+.exec-finance-table td{height:42px;padding:4px 8px;overflow:hidden;line-height:1.2;text-overflow:ellipsis;vertical-align:middle;white-space:nowrap}
+.exec-finance-primary{gap:1px}
+.exec-finance-primary strong,.exec-finance-fee-name{display:block;overflow:hidden;color:#334155;font-size:11px;font-weight:600;line-height:16px;text-overflow:ellipsis;white-space:nowrap}
+.exec-finance-primary span{display:block;overflow:hidden;color:#64748b;font-size:10px;line-height:14px;text-overflow:ellipsis;white-space:nowrap}
+.exec-finance-summary-text{display:block;overflow:hidden;color:#334155;font-size:11px;font-variant-numeric:tabular-nums;text-overflow:ellipsis;white-space:nowrap}
+.exec-finance-currency-chip{display:inline-flex;height:20px;align-items:center;padding:0 6px;border-radius:4px;background:#f1f5f9;color:#475569;font-size:10px;font-weight:600}
+.exec-finance-amount-summary,.exec-finance-summary-ref,.exec-finance-summary-doc{display:grid;min-width:0;gap:1px}
+.exec-finance-amount-summary strong{color:#1e293b;font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;line-height:16px}
+.exec-finance-amount-summary span,.exec-finance-summary-ref>span,.exec-finance-summary-doc span{overflow:hidden;color:#64748b;font-size:10px;line-height:14px;text-overflow:ellipsis;white-space:nowrap}
+.exec-finance-summary-doc strong{overflow:hidden;color:#334155;font-size:10px;font-weight:600;line-height:15px;text-overflow:ellipsis;white-space:nowrap}
+.exec-finance-summary-ref .exec-finance-ref-title{display:flex;min-width:0;flex-wrap:nowrap;align-items:center;gap:4px;overflow:hidden}
+.exec-finance-summary-ref .doc-number-link{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exec-finance-summary-row{cursor:pointer}
+.exec-finance-summary-row:focus-visible{outline:2px solid #60a5fa;outline-offset:-2px}
+.exec-finance-table .exec-finance-action-cell{position:sticky;right:0;z-index:1;background:#fff!important;box-shadow:-6px 0 8px rgba(15,23,42,.035)}
+.exec-finance-detail-btn{font-size:10px;white-space:nowrap}.exec-finance-detail-btn:hover{text-decoration:underline}
+.exec-finance-empty-row{height:72px!important;text-align:center;vertical-align:middle!important;color:#94a3b8!important;font-size:12px!important}
+.exec-fee-drawer{width:min(560px,94vw)}
+.exec-fee-drawer .doc-drawer-body{padding:16px 18px}
+.exec-fee-detail-hero{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;padding:12px 14px;border:1px solid #dbeafe;border-radius:7px;background:#f8fbff}
+.exec-fee-detail-hero>div{display:flex;min-width:0;align-items:center;gap:8px;flex-wrap:wrap}.exec-fee-detail-hero strong{color:#1e293b;font-size:14px}.exec-fee-detail-hero small{overflow:hidden;color:#64748b;font-size:11px;text-overflow:ellipsis;white-space:nowrap}.exec-fee-detail-hero>b{color:#1e293b;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.exec-fee-detail-section{padding:14px 0;border-top:1px solid #eef2f7}.exec-fee-detail-section:first-of-type{border-top:0;padding-top:0}.exec-fee-detail-section h4{margin:0 0 10px;color:#334155;font-size:12px;font-weight:600}
+.exec-fee-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px}
+.exec-fee-detail-field{display:grid;min-width:0;gap:3px}.exec-fee-detail-field>span{color:#64748b;font-size:10px}.exec-fee-detail-field>strong{overflow:hidden;color:#334155;font-size:11px;font-weight:500;line-height:18px;text-overflow:ellipsis;white-space:nowrap}
+.exec-fee-doc-list{display:grid;gap:6px}.exec-fee-doc-line{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;min-height:32px;padding:6px 9px;border:1px solid #e8edf4;border-radius:5px;background:#fbfcfe}.exec-fee-doc-line strong{color:#334155;font-size:11px;font-variant-numeric:tabular-nums}.exec-fee-doc-empty{padding:12px;border:1px dashed #dbe3ee;border-radius:5px;color:#94a3b8;font-size:11px;text-align:center}
+@media(max-width:1360px){.exec-finance-side-tabs{padding:0 8px}.exec-finance-body{padding:8px}.exec-finance-head{padding:0 10px}.exec-fee-detail-grid{grid-template-columns:1fr}}
+
 
 
 /* 需求详情二级页签：与一级页签同排，仅当前一级页签下显示 */
@@ -574,14 +624,14 @@ body.bill-modal-open{overflow:hidden}
 
 /* 费用与利润 - 分阶段利润统计 */
 .finance-profit-table{min-width:900px}
-.finance-profit-table th{height:44px;padding:0 16px;background:#f8fafc;color:#64748b;font-size:12px;font-weight:600;text-align:left}
+.finance-profit-table th{height:36px;padding:0 12px;background:#f8fafc;color:#64748b;font-size:11px;font-weight:600;text-align:left;white-space:nowrap}
 .finance-profit-table th small{margin-left:4px;color:#94a3b8;font-size:10px;font-weight:400}
-.finance-profit-table td{height:auto!important;padding:14px 16px!important;vertical-align:top}
-.finance-profit-stage{display:grid;min-width:0;gap:7px}
-.finance-profit-line{display:flex;align-items:baseline;justify-content:space-between;gap:18px;white-space:nowrap}
-.finance-profit-line>span{color:#64748b;font-size:11px}
-.finance-profit-line>strong{color:#334155;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
-.finance-profit-result{margin-top:1px;padding-top:7px;border-top:1px solid #eef2f7}
+.finance-profit-table td{height:42px!important;padding:7px 12px!important;vertical-align:middle;white-space:nowrap}
+.finance-profit-stage{display:flex;min-width:0;align-items:center;gap:16px;flex-wrap:nowrap}
+.finance-profit-line{display:flex;min-width:0;align-items:baseline;gap:5px;white-space:nowrap}
+.finance-profit-line>span{color:#64748b;font-size:10px}
+.finance-profit-line>strong{color:#334155;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.finance-profit-result{margin:0;padding:0;border:0}
 .finance-profit-result>span,.finance-profit-result>strong{font-weight:700}
 .finance-profit-result.is-negative>strong{color:#dc2626}
 
@@ -970,10 +1020,10 @@ function subCard(title,body,o={}){
   return `<section class="sub-card"><div class="sub-head"><div class="title">${o.noCaret?'':`<button class="collapse-btn" data-collapse aria-label="收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>`}${title}</div>${o.actions?`<div class="head-actions">${o.actions}</div>`:''}</div><div class="sub-body">${body}</div></section>`;
 }
 function customerCard(isExec){
-  const d=isExec?{order:'FCO202610200037',company:'青岛绿洲园花生食品有限公司',date:'2026-10-20',contact:'清清',email:'',sales:'黄瑞钰',agent:'',remark:'自动化订单备注',goods:{no:'FCO202610200037',customer:'青岛绿洲园花生食品有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}}:{order:'FCO202610160032',company:'成都柠檬时光科技有限公司',date:'2026-10-16',contact:'11',email:'',sales:'林美燕',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',goods:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}};
+  const d=isExec?{order:'FCO202610200037',customerNo:'KH202610200037',company:'青岛绿洲园花生食品有限公司',principalOrg:'青岛绿洲园花生食品有限公司',settlementHeader:'青岛绿洲园花生食品有限公司',date:'2026-10-20',contact:'清清',email:'qingqing@greenharbor.com',sales:'黄瑞钰',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',goods:{no:'FCO202610200037',customer:'青岛绿洲园花生食品有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}}:{order:'FCO202610160032',customerNo:'KH202610160032',company:'成都柠檬时光科技有限公司',principalOrg:'成都柠檬时光科技有限公司',settlementHeader:'成都柠檬时光科技有限公司',date:'2026-10-16',contact:'11',email:'contact@example.com',sales:'林美燕',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',goods:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}};
   return `<section class="cube-card"><div class="cube-head"><button class="collapse-btn" data-collapse aria-label="收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="title">客户及商品明细</div></div><div class="cube-body"><div class="customer-layout">
     <div class="related-panel"><div class="related-head"><span>查看关联客户订单 <b>（1）</b></span></div><div class="order-summary"><div class="order-top"><span class="order-no">${d.order} （外部客户）</span><span class="tags">${['运输','内贸',isExec?'水运':createForm.transportType,isExec?'集装箱':createForm.loadType].filter(Boolean).map((t,i)=>`<span class="tag ${i<2?'blue':'cyan'}">${esc(t)}</span>`).join('')}</span></div><div class="company">${d.company}</div><div class="summary-lines"><div class="line"><b>委托方组织：</b><span></span></div><div class="line"><b>结算抬头：</b><span>${d.company}</span></div><div class="line"><b>业务日期：</b><span>${d.date}</span></div><div class="line"><b>联系人：</b><span>${d.contact}</span></div><div class="line"><b>联系邮箱：</b><span>${d.email}</span></div><div class="line"><b>业务员：</b><span>${d.sales}</span></div><div class="line"><b>代理：</b><span>${d.agent}</span></div><div class="line"><b>备注：</b><span>${d.remark}</span></div></div></div></div>
-    <div class="goods-panel"><div class="goods-head"><span>商品明细列表</span>${isExec?'':'<button class="btn outline-primary mini" data-toast="已模拟打开商品选择弹窗">选择</button>'}</div><div class="table-scroll"><table class="mini-table" style="min-width:1500px"><thead><tr><th style="width:150px">客户订单号</th><th style="width:180px">客户</th><th style="width:130px">商品中文名</th><th style="width:140px">商品描述</th><th style="width:105px">件数/单位</th><th style="width:105px">毛重/单位</th><th style="width:105px">体积/单位</th><th style="width:125px">标准数量/单位</th><th style="width:100px">单件重量</th><th style="width:120px">单件重量单位</th><th style="width:120px">规格尺寸</th><th style="width:100px">溢装率（%）</th><th style="width:100px">短装率（%）</th><th style="width:130px">货物单价（元）</th><th style="width:140px">货物总价（万元）</th><th style="width:180px">贸易合同号（类型）</th><th style="width:150px">商品英文名</th><th style="width:80px">操作</th></tr></thead><tbody><tr><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td></td><td></td><td>${d.goods.unit1}</td><td>${d.goods.unit2}</td><td>${d.goods.unit3}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></div>
+    <div class="goods-panel"><div class="goods-head"><span>商品明细列表</span>${isExec?'':'<button class="btn outline-primary mini" data-toast="已模拟打开商品选择弹窗">选择</button>'}</div><div class="table-scroll"><table class="mini-table" style="min-width:1500px"><thead><tr><th style="width:150px">客户订单号</th><th style="width:180px">客户</th><th style="width:130px">商品中文名</th><th style="width:140px">商品描述</th><th style="width:105px">件数/单位</th><th style="width:105px">毛重/单位</th><th style="width:105px">体积/单位</th><th style="width:125px">标准数量/单位</th><th style="width:100px">单件重量</th><th style="width:120px">单件重量单位</th><th style="width:120px">规格尺寸</th><th style="width:100px">溢装率（%）</th><th style="width:100px">短装率（%）</th><th style="width:130px">货物单价（元）</th><th style="width:140px">货物总价（万元）</th><th style="width:180px">贸易合同号（类型）</th><th style="width:150px">商品英文名</th><th style="width:80px">操作</th></tr></thead><tbody><tr><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td></td><td></td><td>${d.goods.unit1}</td><td>${d.goods.unit2}</td><td>${d.goods.unit3}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="goods-cell-value">线路1 / 1</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">${isExec?'HT202610200037':'HT202610160032'}</span></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></div>
   </div></div></section>`;
 }
 function baseCard(isExec){
@@ -983,14 +1033,14 @@ function baseCard(isExec){
     ${field('部门',v.dept,{required:true,readonly:true,options:[v.dept]})}
     ${field('核算组织',v.account,{required:true,readonly:true,options:[v.account]})}
     ${field('公司',v.company,{required:true,readonly:true,options:[v.company]})}
-    ${field('备注',v.remark,{textarea:true,span:'span-2',readonly:isExec})}
+    ${field('备注',v.remark,{textarea:true,span:'base-remark-field',readonly:isExec})}
     ${field('业务类型',v.biz,{required:true,options:opts.businessType,readonly:isExec})}
     ${field('业务日期',v.date,{required:true,type:'date',readonly:isExec})}
     ${checkField('服务范围',true,isExec)}
-    ${field('作业组织',v.org,{options:opts.org,readonly:isExec})}
-    ${field('作业组织人员',v.person,{options:opts.people,readonly:isExec})}
-    ${field('经营单位',v.unit,{readonly:true})}
-    ${field('物流需求单号',v.no,{readonly:true})}
+    ${field('作业组织',v.org,{options:opts.org,readonly:isExec,span:'base-org-field'})}
+    ${field('作业组织人员',v.person,{options:opts.people,readonly:isExec,span:'base-person-field'})}
+    ${field('经营单位',v.unit,{readonly:true,span:'base-unit-field'})}
+    ${field('物流需求单号',v.no,{readonly:true,span:'base-no-field'})}
   </div>`;
   return cubeCard('基础信息',body,{className:'base-card'});
 }
@@ -1027,26 +1077,30 @@ function feeCard(isExec,kind){
   const actions=isExec?'':`<button class="btn outline-primary mini" data-toast="已模拟新增费用项">添加</button><button class="btn outline-primary mini" disabled>${isRecv?'拷贝到业务预估应付':'拷贝到业务预估应收'}</button><button class="btn outline-primary mini" data-toast="已模拟拷贝其他业务费用">${isRecv?'拷贝其他业务预估应收':'拷贝其他业务预估应付'}</button><button class="btn outline-primary mini" data-toast="已模拟带入集装箱费用">带入集装箱</button>`;
   return cubeCard(title,feeTable(rows,isExec),{actions,className:'TaskCargoFormList'});
 }
+const executionFeeBillingMap={
+  'recv:海运费':{unitPrice:120,quantity:100,unit:'柜',commissionRate:2},
+  'recv:港杂费':{unitPrice:80,quantity:50,unit:'吨',commissionRate:1.5},
+  'recv:报关费':{unitPrice:3000,quantity:1,unit:'票',commissionRate:1},
+  'recv:垫付费用':{unitPrice:1500,quantity:2,unit:'票',commissionRate:1},
+  'pay:海运费':{unitPrice:100,quantity:100,unit:'柜',commissionRate:2},
+  'pay:港杂费':{unitPrice:100,quantity:50,unit:'吨',commissionRate:1.5},
+  'pay:代理费':{unitPrice:5500,quantity:1,unit:'票',commissionRate:1.2}
+};
+function executionFeeBilling(kind,row){return executionFeeBillingMap[`${kind}:${row.fee}`]||{unitPrice:ledgerNum(row.amount),quantity:1,unit:'票',commissionRate:0};}
+function executionFeeOrderNo(){const record=typeof getActiveDemandRecord==='function'?getActiveDemandRecord():null;return record&&record.order?record.order:'FCO202610200037';}
+function executionFeeDocTotal(list){return (list||[]).reduce((sum,item)=>sum+ledgerNum(item.amount),0);}
+function executionFeeDocSummary(list,empty,currency){if(!list||!list.length)return{title:empty};const statuses=[...new Set(list.map(item=>item.status).filter(Boolean))].join('、');return{title:`${statuses||'已处理'} · ${currency} ${ledgerAmount(executionFeeDocTotal(list))}`};}
+function executionFinanceWorkspace(isExec){
+  return `<div class="exec-finance-stack">${executionFeeCard(isExec,'recv')}${executionFeeCard(isExec,'pay')}</div>`;
+}
 function executionFeeCard(isExec,kind){
   const isRecv=kind==='recv';
   const title=isRecv?'执行侧预估应收':'执行侧预估应付';
   const rows=isExec?feeLedger.filter(row=>row.side===kind):[];
   const action=isExec?`<button class="btn outline-primary mini" data-maintain-exec-fee="${kind}">维护${isRecv?'执行侧预估应收':'执行侧应付'}</button>`:'';
-  const billingMap={
-    'recv:海运费':{unitPrice:120,quantity:100,unit:'柜',commissionRate:2},
-    'recv:港杂费':{unitPrice:80,quantity:50,unit:'吨',commissionRate:1.5},
-    'recv:报关费':{unitPrice:3000,quantity:1,unit:'票',commissionRate:1},
-    'recv:垫付费用':{unitPrice:1500,quantity:2,unit:'票',commissionRate:1},
-    'pay:海运费':{unitPrice:100,quantity:100,unit:'柜',commissionRate:2},
-    'pay:港杂费':{unitPrice:100,quantity:50,unit:'吨',commissionRate:1.5},
-    'pay:代理费':{unitPrice:5500,quantity:1,unit:'票',commissionRate:1.2}
-  };
-  const refList=(list,empty)=>{
-    if(!list||!list.length)return `<span class="exec-finance-empty">${empty}</span>`;
-    return `<div class="exec-finance-ref-list">${list.map(item=>`<div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${item.id}">${item.id}</button><span class="doc-mini-status ${item.tone}">${item.status}</span></div><span class="exec-finance-ref-meta"><span class="exec-finance-label">原币金额</span> ${item.amount}</span></div>`).join('')}</div>`;
-  };
-  const body=rows.map(row=>{
-    const billing=billingMap[`${kind}:${row.fee}`]||{unitPrice:ledgerNum(row.amount),quantity:1,unit:'票',commissionRate:0};
+  const orderNo=executionFeeOrderNo();
+  const body=rows.map((row,index)=>{
+    const billing=executionFeeBilling(kind,row);
     const exchangeRate=Number(row.exchangeRate||baseCurrencyRates[row.currency]||1);
     const originalAmount=ledgerNum(row.amount);
     const localAmount=originalAmount*exchangeRate;
@@ -1055,17 +1109,31 @@ function executionFeeCard(isExec,kind){
     const commissionRate=Number.isFinite(parsedCommissionRate)?parsedCommissionRate:0;
     const commissionAmount=Number.isFinite(parsedCommissionAmount)?parsedCommissionAmount:localAmount*commissionRate/100;
     const hasCommission=(Number.isFinite(parsedCommissionRate)&&parsedCommissionRate!==0)||(Number.isFinite(parsedCommissionAmount)&&parsedCommissionAmount!==0);
-    const commissionHtml=hasCommission?`<div class="exec-finance-commission-inline"><span>佣金比例</span><strong>${Number.isFinite(parsedCommissionRate)?`${commissionRate.toFixed(1)}%`:'-'}</strong><span class="exec-finance-commission-divider">·</span><span>佣金金额</span><strong>${ledgerAmount(commissionAmount)}</strong></div>`:'';
-    return `<tr>
-    <td><div class="exec-finance-primary"><strong>${row.party}</strong><span>客户订单 FCO202610200037</span></div></td>
-    <td><strong>${row.fee}</strong></td>
-    <td><div class="exec-finance-stack"><span class="exec-finance-line"><span class="exec-finance-label">计费单价</span><strong>${ledgerAmount(billing.unitPrice)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">计费数量</span><strong>${billing.quantity}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">计量单位</span><strong>${billing.unit}</strong></span></div></td>
-    <td>${row.currency}</td>
-    <td><div class="exec-finance-stack"><span class="exec-finance-line"><span class="exec-finance-label">原币金额</span><strong>${ledgerAmount(originalAmount)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">汇率</span><strong>${exchangeRate.toFixed(4)}</strong></span><span class="exec-finance-line"><span class="exec-finance-label">本位币金额</span><strong>${ledgerAmount(localAmount)}</strong></span></div></td>
-    <td><div class="exec-finance-ref"><div class="exec-finance-ref-title"><button class="doc-number-link" data-doc-open="${row.statementNo}">${row.statementNo}</button><span class="doc-mini-status ${row.statementTone}">${row.statementStatus}</span></div><span class="exec-finance-ref-meta">${row.statementType} · ${row.completedAt}</span>${commissionHtml}</div></td>
-    <td>${refList(row.invoices,'未开票')}</td>
-    <td>${refList(row.payments,isRecv?'未收款':'未付款')}</td>
-  </tr>`}).join('');
+    const commissionText=hasCommission?`${Number.isFinite(parsedCommissionRate)?`${commissionRate.toFixed(1)}%`:'-'} / ${ledgerAmount(commissionAmount)}`:'—';
+    const invoice=executionFeeDocSummary(row.invoices,'未开票',row.currency);
+    const payment=executionFeeDocSummary(row.payments,isRecv?'未收款':'未付款',row.currency);
+    return `<tr class="exec-finance-summary-row" data-exec-fee-detail="${kind}:${index}" tabindex="0" aria-label="查看${esc(row.fee)}完整费用明细">
+      <td><strong class="exec-finance-fee-name" title="${esc(row.fee)}">${esc(row.fee)}</strong></td>
+      <td><span class="exec-finance-summary-text" title="${esc(row.party)}">${esc(row.party)}</span></td>
+      <td><span class="exec-finance-summary-text">${row.taxRate?`${esc(row.taxRate)}%`:'—'}</span></td>
+      <td><span class="exec-finance-summary-text">${esc(row.ppcc||'—')}</span></td>
+      <td><span class="exec-finance-summary-text">${ledgerAmount(billing.unitPrice)}</span></td>
+      <td><span class="exec-finance-currency-chip">${esc(row.currency)}</span></td>
+      <td><span class="exec-finance-summary-text">${esc(billing.quantity)}</span></td>
+      <td><span class="exec-finance-summary-text">${esc(billing.unit)}</span></td>
+      <td><span class="exec-finance-summary-text">${esc(row.containerType||'—')}</span></td>
+      <td><span class="exec-finance-summary-text">${ledgerAmount(originalAmount)}</span></td>
+      <td><span class="exec-finance-summary-text">${exchangeRate.toFixed(4)}</span></td>
+      <td><span class="exec-finance-summary-text">${ledgerAmount(localAmount)}</span></td>
+      <td><span class="exec-finance-summary-text" title="${esc(row.remark||'—')}">${esc(row.remark||'—')}</span></td>
+      <td><span class="exec-finance-summary-text" title="${esc(row.customer||row.party)}">${esc(row.customer||row.party)}</span></td>
+      <td><span class="exec-finance-summary-text">${esc(row.orderNo||orderNo)}</span></td>
+      <td><button class="doc-number-link" data-doc-open="${row.statementNo}">${row.statementNo}</button></td>
+      <td><span class="exec-finance-summary-text">${commissionText}</span></td>
+      <td><span class="exec-finance-summary-text" title="${esc(invoice.title)}">${esc(invoice.title)}</span></td>
+      <td><span class="exec-finance-summary-text" title="${esc(payment.title)}">${esc(payment.title)}</span></td>
+    </tr>`;
+  }).join('');
   return `<section class="exec-finance-section" data-finance-side="${kind}">
     <div class="exec-finance-head">
       <h3 class="exec-finance-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9h.01M17 15h.01"/></svg><span>${title}</span><span class="exec-finance-direction ${isRecv?'recv':'pay'}">${isRecv?'应收':'应付'}</span></h3>
@@ -1074,14 +1142,66 @@ function executionFeeCard(isExec,kind){
     <div class="exec-finance-body">
       <div class="exec-finance-table-wrap">
         <table class="exec-finance-table" aria-label="${title}">
-          <colgroup><col style="width:190px"><col style="width:105px"><col style="width:150px"><col style="width:92px"><col style="width:150px"><col style="width:255px"><col style="width:210px"><col style="width:210px"></colgroup>
-          <thead><tr><th>结算对象 / 客户订单</th><th>费用科目</th><th>计费信息</th><th>计费币种</th><th>金额信息</th><th>对账信息</th><th>开票信息</th><th>收付款信息</th></tr></thead>
-          <tbody>${body||`<tr><td colspan="8" class="exec-finance-empty-row">暂无执行侧预估${isRecv?'应收':'应付'}数据</td></tr>`}</tbody>
+          <colgroup><col style="width:100px"><col style="width:180px"><col style="width:58px"><col style="width:64px"><col style="width:96px"><col style="width:82px"><col style="width:74px"><col style="width:64px"><col style="width:64px"><col style="width:110px"><col style="width:72px"><col style="width:110px"><col style="width:150px"><col style="width:180px"><col style="width:150px"><col style="width:150px"><col style="width:150px"><col style="width:150px"><col style="width:150px"></colgroup>
+          <thead><tr><th>费用科目</th><th>结算对象</th><th>税率</th><th>PP/CC</th><th>计费单价</th><th>计费币种</th><th>计费数量</th><th>计量单位</th><th>柜型</th><th>原币金额</th><th>汇率</th><th>本位币金额</th><th>备注</th><th>客户</th><th>客户订单号</th><th>对账单号</th><th>佣金比例/佣金金额</th><th>开票状态</th><th>收付款状态</th></tr></thead>
+          <tbody>${body||`<tr><td colspan="19" class="exec-finance-empty-row">暂无执行侧预估${isRecv?'应收':'应付'}数据</td></tr>`}</tbody>
         </table>
       </div>
     </div>
   </section>`;
 }
+function executionFeeDrawerDocRows(list,empty,currency){
+  if(!list||!list.length)return `<div class="exec-fee-doc-empty">${empty}</div>`;
+  return `<div class="exec-fee-doc-list">${list.map(item=>`<div class="exec-fee-doc-line"><button class="doc-number-link" data-doc-open="${item.id}">${item.id}</button><span class="doc-mini-status ${item.tone}">${item.status}</span><strong>${esc(currency)} ${item.amount}</strong></div>`).join('')}</div>`;
+}
+function openExecutionFeeDrawer(kind,index){
+  const isRecv=kind==='recv';
+  const rows=kind&&feeLedger?feeLedger.filter(row=>row.side===kind):[];
+  const row=rows[Number(index)];
+  if(!row)return;
+  const billing=executionFeeBilling(kind,row);
+  const exchangeRate=Number(row.exchangeRate||baseCurrencyRates[row.currency]||1);
+  const originalAmount=ledgerNum(row.amount);
+  const localAmount=originalAmount*exchangeRate;
+  const parsedCommissionRate=billing.commissionRate===''||billing.commissionRate==null?null:Number(billing.commissionRate);
+  const parsedCommissionAmount=billing.commissionAmount===''||billing.commissionAmount==null?null:Number(billing.commissionAmount);
+  const commissionRate=Number.isFinite(parsedCommissionRate)?parsedCommissionRate:0;
+  const commissionAmount=Number.isFinite(parsedCommissionAmount)?parsedCommissionAmount:localAmount*commissionRate/100;
+  const hasCommission=(Number.isFinite(parsedCommissionRate)&&parsedCommissionRate!==0)||(Number.isFinite(parsedCommissionAmount)&&parsedCommissionAmount!==0);
+  const detailField=(label,value)=>`<div class="exec-fee-detail-field"><span>${label}</span><strong>${value}</strong></div>`;
+  const overlay=document.createElement('div');overlay.className='doc-drawer-overlay exec-fee-drawer-overlay';
+  overlay.innerHTML=`<aside class="doc-drawer exec-fee-drawer" role="dialog" aria-modal="true" aria-labelledby="execFeeDrawerTitle">
+    <div class="doc-drawer-head"><div><h3 id="execFeeDrawerTitle">执行侧预估${isRecv?'应收':'应付'}明细</h3><span>${esc(row.fee)} · ${esc(row.party)}</span></div><button type="button" class="btn link" data-exec-fee-drawer-close aria-label="关闭" style="font-size:18px">×</button></div>
+    <div class="doc-drawer-body">
+      <div class="exec-fee-detail-hero"><div><span class="exec-finance-direction ${isRecv?'recv':'pay'}">${isRecv?'应收':'应付'}</span><strong>${esc(row.fee)}</strong><small>${esc(row.party)}</small></div><b>${esc(row.currency)} ${ledgerAmount(originalAmount)}</b></div>
+      <section class="exec-fee-detail-section"><h4>基本信息</h4><div class="exec-fee-detail-grid">
+        ${detailField('结算对象',esc(row.party))}${detailField('客户',esc(row.customer||row.party))}${detailField('客户订单号',esc(row.orderNo||executionFeeOrderNo()))}${detailField('费用科目',esc(row.fee))}${detailField('税率',row.taxRate?`${esc(row.taxRate)}%`:'—')}${detailField('PP/CC',esc(row.ppcc||'—'))}${detailField('计费币种',esc(row.currency))}
+        ${detailField('计费单价',ledgerAmount(billing.unitPrice))}${detailField('计费数量',esc(billing.quantity))}${detailField('计量单位',esc(billing.unit))}${detailField('柜型',esc(row.containerType||'—'))}${detailField('汇率',exchangeRate.toFixed(4))}${detailField('备注',esc(row.remark||'—'))}
+      </div></section>
+      <section class="exec-fee-detail-section"><h4>金额信息</h4><div class="exec-fee-detail-grid">
+        ${detailField('原币金额',`${esc(row.currency)} ${ledgerAmount(originalAmount)}`)}${detailField('本位币金额',`CNY ${ledgerAmount(localAmount)}`)}${detailField('已开票',`${esc(row.currency)} ${ledgerAmount(row.invoiced)}`)}${detailField(isRecv?'已收款':'已付款',`${esc(row.currency)} ${ledgerAmount(row.settled)}`)}${detailField(isRecv?'未收款':'未付款',`${esc(row.currency)} ${ledgerAmount(row.outstanding)}`)}
+      </div></section>
+      <section class="exec-fee-detail-section"><h4>对账信息</h4><div class="exec-fee-detail-grid">
+        ${detailField('对账单号',`<button class="doc-number-link" data-doc-open="${row.statementNo}">${row.statementNo}</button>`)}${detailField('对账状态',`<span class="doc-mini-status ${row.statementTone}">${row.statementStatus}</span>`)}${detailField('对账类型',esc(row.statementType))}${detailField('对账完成日期',row.completedAt)}${detailField('对账名称',esc(row.statementName))}${hasCommission?detailField('佣金比例 / 金额',`${Number.isFinite(parsedCommissionRate)?`${commissionRate.toFixed(1)}%`:'-'} / ${ledgerAmount(commissionAmount)}`):''}
+      </div></section>
+      <section class="exec-fee-detail-section"><h4>开票信息</h4>${executionFeeDrawerDocRows(row.invoices,'暂无开票记录',row.currency)}</section>
+      <section class="exec-fee-detail-section"><h4>收付款信息</h4>${executionFeeDrawerDocRows(row.payments,isRecv?'暂无收款记录':'暂无付款记录',row.currency)}</section>
+    </div>
+    <div class="doc-drawer-foot"><button type="button" class="btn" data-exec-fee-drawer-close>关闭</button></div>
+  </aside>`;
+  document.body.appendChild(overlay);document.body.classList.add('drawer-open');
+  overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-exec-fee-drawer-close]'))closeExecutionFeeDrawer();});
+}
+function closeExecutionFeeDrawer(){document.querySelectorAll('.exec-fee-drawer-overlay').forEach(node=>node.remove());if(!document.querySelector('.doc-drawer-overlay'))document.body.classList.remove('drawer-open');}
+document.addEventListener('click',event=>{
+  const financeTab=event.target.closest('[data-exec-finance-tab]');
+  if(financeTab){const root=financeTab.closest('.exec-finance-workspace');const side=financeTab.dataset.execFinanceTab;root.querySelectorAll('[data-exec-finance-tab]').forEach(tab=>{const active=tab.dataset.execFinanceTab===side;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',active?'true':'false');});root.querySelectorAll('[data-exec-finance-pane]').forEach(pane=>pane.classList.toggle('active',pane.dataset.execFinancePane===side));return;}
+  const detailAction=event.target.closest('[data-exec-fee-detail-action]');
+  if(detailAction){const [kind,index]=detailAction.dataset.execFeeDetailAction.split(':');openExecutionFeeDrawer(kind,index);return;}
+  const summaryRow=event.target.closest('[data-exec-fee-detail]');
+  if(summaryRow&&!event.target.closest('button,a,input,select')){const [kind,index]=summaryRow.dataset.execFeeDetail.split(':');openExecutionFeeDrawer(kind,index);}
+});
+document.addEventListener('keydown',event=>{if(event.key!=='Enter'&&event.key!==' ')return;const summaryRow=event.target.closest('[data-exec-fee-detail].exec-finance-summary-row');if(!summaryRow)return;event.preventDefault();const [kind,index]=summaryRow.dataset.execFeeDetail.split(':');openExecutionFeeDrawer(kind,index);});
 function maintainFeeSeed(kind){
   const isRecv=kind==='recv';
   return [{feeItem:'代理港杂费',party:isRecv?'青岛绿洲园花生食品有限公司':'中联铁运集团有限公司',taxRate:'9.00',ppcc:'',unitPrice:'1.00',currency:'人民币',quantity:'10.00',unit:'吨',containerType:'',originalAmount:'10',exchangeRate:'1.00',localAmount:'10',remark:'',reconcileStatus:'未对账',reconcileQty:'',reconcileAmount:'',reconciledQty:'',reconciledAmount:'',reconcileQtyTotal:'',reconcileAmountTotal:'',orderNo:'FCO202611030021',customer:'青岛绿洲园花生食品有限公司',invoiceType:'',reimbursable:'是',sourceType:'手动创建',sourceNo:''}];
@@ -1208,7 +1328,7 @@ function arrangementReferenceActions(isExec){
 }function renderLegacyDetail(page){
   const isExec=page==='exec';
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
-  const mainCards=isExec?`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`: `${baseCard(false)}${customerCard(false)}${transportCard(false)}${voyageCard(false)}${containerCard(false)}${sendReceiveCard(false)}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
+  const mainCards=isExec?`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`: `${baseCard(false)}${customerCard(false)}${transportCard(false)}${voyageCard(false)}${containerCard(false)}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
   return `<div class="detail-scroll ${state.detailView==='arrangement'&&!isExec?'empty-arrangement-scroll':''}"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span class="caret">▼</span><span>物流需求单详情（${no}）</span><span class="expand-icon">⛶</span></div><div class="detail-actions">${detailActions(isExec)}</div></div></section>
     <div id="detailCards">${mainCards}</div>
@@ -1398,11 +1518,11 @@ function arrangementReferenceActions(isExec){
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   let mainCards;
   if(isExec){
-    mainCards=`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`;
+    mainCards=`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`;
   }else{
     const isWater=createForm.transportType==='水运';
     const showContainer=isWater&&createForm.loadType==='集装箱';
-    mainCards=`${baseCard(false)}${customerCard(false)}${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
+    mainCards=`${baseCard(false)}${customerCard(false)}${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
   }
   return `<div class="detail-scroll ${state.detailView==='arrangement'&&!isExec?'empty-arrangement-scroll':''}"><div class="detail-page ${isExec?'exec-mode':'create-mode'}">
     <section class="cube-card"><div class="detail-titlebar"><div class="detail-title"><span class="caret">▼</span><span>物流需求单详情（${no}）</span><span class="expand-icon">⛶</span></div><div class="detail-actions">${detailActions(isExec)}</div></div></section>
@@ -1483,11 +1603,11 @@ function arrangementReferenceActions(isExec){
   const no=state.activeRowId||(isExec?'FLR202610200038':'FLR202610160032');
   let infoCards;
   if(isExec){
-    infoCards=`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`;
+    infoCards=`${baseCard(true)}${customerCard(true)}${transportCard(true)}${voyageCard(true)}${containerCard(true)}${execFeeSection()}${profitCard(true)}${attachmentCard(true)}${systemCard(true)}`;
   }else{
     const isWater=createForm.transportType==='水运';
     const showContainer=isWater&&createForm.loadType==='集装箱';
-    infoCards=`${baseCard(false)}${customerCard(false)}${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
+    infoCards=`${baseCard(false)}${customerCard(false)}${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}${attachmentCard(false)}${systemCard(false)}`;
   }
   const documents=renderDocumentsView(isExec);
   const billList=renderBillList(isExec);
@@ -1561,7 +1681,7 @@ function customerOverviewCard(isExec){
 }
 function goodsDetailCard(isExec){
   const g=isExec?{no:'FCO202610200037',customer:'青岛绿洲园花生食品有限公司',name:'玉米',u1:'吨',u2:'立方米',u3:'吨'}:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',u1:'吨',u2:'立方米',u3:'吨'};
-  const body=`<div class="goods-summary-bar"><span>共 <b>1</b> 条商品</span><span>标准数量 <b>1 ${g.u3}</b></span><span>毛重 <b>—</b></span><span>体积 <b>—</b></span><span>货值 <b>—</b></span></div><div class="table-scroll goods-table-scroll"><table class="mini-table" style="min-width:1500px"><thead><tr><th style="width:150px">客户订单号</th><th style="width:180px">客户</th><th style="width:130px">商品中文名</th><th style="width:140px">商品描述</th><th style="width:105px">件数/单位</th><th style="width:105px">毛重/单位</th><th style="width:105px">体积/单位</th><th style="width:125px">标准数量/单位</th><th style="width:100px">单件重量</th><th style="width:120px">单件重量单位</th><th style="width:120px">规格尺寸</th><th style="width:100px">溢装率（%）</th><th style="width:100px">短装率（%）</th><th style="width:130px">货物单价（元）</th><th style="width:140px">货物总价（万元）</th><th style="width:180px">贸易合同号（类型）</th><th style="width:150px">商品英文名</th><th style="width:80px">操作</th></tr></thead><tbody><tr><td>${g.no}</td><td>${g.customer}</td><td>${g.name}</td><td></td><td></td><td>${g.u1}</td><td>${g.u2}</td><td>${g.u3}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div>`;
+  const body=`<div class="goods-summary-bar"><span>共 <b>1</b> 条商品</span><span>标准数量 <b>1 ${g.u3}</b></span><span>毛重 <b>—</b></span><span>体积 <b>—</b></span><span>货值 <b>—</b></span></div><div class="table-scroll goods-table-scroll"><table class="mini-table" style="min-width:1500px"><thead><tr><th style="width:150px">客户订单号</th><th style="width:180px">客户</th><th style="width:130px">商品中文名</th><th style="width:140px">商品描述</th><th style="width:105px">件数/单位</th><th style="width:105px">毛重/单位</th><th style="width:105px">体积/单位</th><th style="width:125px">标准数量/单位</th><th style="width:100px">单件重量</th><th style="width:120px">单件重量单位</th><th style="width:120px">规格尺寸</th><th style="width:100px">溢装率（%）</th><th style="width:100px">短装率（%）</th><th style="width:130px">货物单价（元）</th><th style="width:140px">货物总价（万元）</th><th style="width:180px">贸易合同号（类型）</th><th style="width:150px">商品英文名</th><th style="width:80px">操作</th></tr></thead><tbody><tr><td>${g.no}</td><td>${g.customer}</td><td>${g.name}</td><td></td><td></td><td>${g.u1}</td><td>${g.u2}</td><td>${g.u3}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="goods-cell-value">线路1 / 1</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">${isExec?'HT202610200037':'HT202610160032'}</span></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div>`;
   return cubeCard('商品明细列表',body,{actions:isExec?'':'<button class="btn outline-primary mini" data-toast="已模拟打开商品选择弹窗">选择商品</button>'});
 }
 function renderLegacyDetail(page){
@@ -1570,7 +1690,7 @@ function renderLegacyDetail(page){
   const isWater=isExec||createForm.transportType==='水运';
   const showContainer=isExec||(isWater&&createForm.loadType==='集装箱');
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
-  const transport=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}${sendReceiveCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}${showContainer?sendReceiveCard(false):''}`;
+  const transport=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}`;
   const fees=isExec?`${execFeeSection()}${profitCard(true)}`:`${feeCard(false,'recv')}${feeCard(false,'pay')}${profitCard(false)}`;
   const records=`${attachmentCard(isExec)}${systemCard(isExec)}`;
   const sections=[['overview','基础信息'],['transport','运输要求'],['fees','费用与利润'],['records','附件与记录']];
@@ -1703,8 +1823,8 @@ function customerCard(isExec){
   const tags=['运输','内贸',transport].filter(Boolean).map(t=>`<span class="order-tag">${esc(t)}</span>`).join('');
   const meta=(l,v)=>`<div class="related-meta"><span class="related-meta-label">${l}</span><span class="related-meta-value" title="${esc(v||'')}">${v||'—'}</span></div>`;
   return `<section class="cube-card customer-goods-card"><div class="cube-head"><button class="collapse-btn" data-collapse aria-label="收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="title">客户及商品明细</div></div><div class="cube-body"><div class="customer-goods-layout">
-    <section class="related-orders-panel"><div class="related-orders-head">查看关联客户订单 <b>（1）</b></div><div class="related-order-card"><div class="related-order-top"><span class="related-order-no">${d.order}</span><span class="external-client">（外部客户）</span><div class="related-order-tags">${tags}</div></div><div class="related-company-row"><div class="related-company">${d.company}</div><div class="related-meta"><span class="related-meta-label">委托方组织：</span><span class="related-meta-value">—</span></div></div><div class="related-meta-grid">${meta('结算抬头：',d.company)}${meta('业务日期：',d.date)}${meta('联系人：',d.contact)}${meta('联系邮箱：',d.email)}${meta('业务员：',d.sales)}${meta('代理：',d.agent)}${meta('备注：',d.remark)}<div class="related-meta"></div></div></div></section>
-    <section class="goods-panel"><div class="goods-panel-head">商品明细列表</div><div class="goods-table-scroll"><table class="mini-table customer-goods-table"><thead><tr><th style="width:170px">客户订单号</th><th style="width:180px">客户</th><th style="width:150px">商品中文名</th><th style="width:150px">商品描述</th><th style="width:120px">件数/单位</th><th style="width:120px">毛重/单位</th><th style="width:130px">体积/单位</th><th style="width:130px">标准数量/单位</th><th style="width:110px">单件重量</th><th style="width:120px">规格尺寸</th><th style="width:120px">货物单价（元）</th><th style="width:80px">操作</th></tr></thead><tbody><tr class="selected-goods-row"><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td>—</td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit1}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit2}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit3}</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></section>
+    <section class="related-orders-panel"><div class="related-orders-head">查看关联客户订单 <b>（1）</b></div><div class="related-order-card"><div class="related-order-top"><span class="related-order-no">${d.order}</span><span class="external-client">（外部客户）</span><div class="related-order-tags">${tags}</div></div><div class="related-company-row"><div class="related-company">${d.company}</div><div class="related-meta"><span class="related-meta-label">委托方组织：</span><span class="related-meta-value" title="${esc(d.principalOrg)}">${d.principalOrg||'—'}</span></div></div><div class="related-meta-grid">${meta('客户单号：',d.customerNo)}${meta('结算抬头：',d.settlementHeader)}${meta('业务日期：',d.date)}${meta('联系人：',d.contact)}${meta('联系人邮箱：',d.email)}${meta('业务员：',d.sales)}${meta('代理：',d.agent)}${meta('备注：',d.remark)}</div></div></section>
+    <section class="goods-panel"><div class="goods-panel-head">商品明细列表</div><div class="goods-table-scroll"><table class="mini-table customer-goods-table"><thead><tr><th style="width:170px">客户订单号</th><th style="width:180px">客户</th><th style="width:150px">商品中文名</th><th style="width:150px">商品描述</th><th style="width:120px">件数/单位</th><th style="width:120px">毛重/单位</th><th style="width:130px">体积/单位</th><th style="width:130px">标准数量/单位</th><th style="width:110px">单件重量</th><th style="width:120px">规格尺寸</th><th style="width:120px">货物单价（元）</th><th style="width:110px">线路/行号</th><th style="width:130px">关联线路/行号</th><th style="width:180px">贸易合同号（类型）</th><th style="width:80px">操作</th></tr></thead><tbody><tr class="selected-goods-row"><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td>—</td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit1}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit2}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit3}</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">线路1 / 1</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">${isExec?'HT202610200037':'HT202610160032'}</span></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></section>
   </div></div></section>`;
 }
 const docNames={
@@ -1728,13 +1848,13 @@ const linkedDocs = [
 
 const baseCurrencyRates={CNY:1,USD:7.2,EUR:7.8};
 const feeLedger = [
-  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '海运费', currency: 'CNY', amount: '12,000.00', invoiced: '12,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '12,000.00', tone: 'success' }], settled: '12,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '12,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
-  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '港杂费', currency: 'CNY', amount: '4,000.00', invoiced: '4,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '3,000.00', tone: 'success' }, { id: 'SR202610200019', status: '已开票', amount: '1,000.00', tone: 'success' }], settled: '4,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '3,000.00', tone: 'success' }, { id: 'SK202610200008', status: '已收款', amount: '1,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
-  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '报关费', currency: 'CNY', amount: '3,000.00', invoiced: '0.00', invoices: [], settled: '1,500.00', outstanding: '1,500.00', payments: [{ id: 'SK202610200008', status: '部分收款', amount: '1,500.00', tone: 'warning' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '部分收付', tone: 'warning' },
-  { side: 'pay', statementNo: 'DZ202610200022', statementName: '中联铁运集团有限公司 2026-10 应付对账单', statementType: '供应商对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-20', fee: '海运费', currency: 'CNY', amount: '10,000.00', invoiced: '10,000.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '10,000.00', tone: 'success' }], settled: '10,000.00', outstanding: '0.00', payments: [{ id: 'FK202610200009', status: '已付款', amount: '6,000.00', tone: 'success' }, { id: 'FK202610200010', status: '已付款', amount: '4,000.00', tone: 'success' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '已付款', tone: 'success', sourceDoc: 'JS202610200012' },
-  { side: 'pay', statementNo: 'DZ202610200022', statementName: '中联铁运集团有限公司 2026-10 应付对账单', statementType: '供应商对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-20', fee: '港杂费', currency: 'CNY', amount: '5,000.00', invoiced: '5,000.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '5,000.00', tone: 'success' }], settled: '2,000.00', outstanding: '3,000.00', payments: [{ id: 'FK202610200009', status: '部分付款', amount: '2,000.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '部分付款', tone: 'warning', sourceDoc: 'JS202610200012' },
-  { side: 'pay', statementNo: 'DZ202610200023', statementName: '中联铁运集团有限公司 2026-10 代理对账单', statementType: '代理对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-21', fee: '代理费', currency: 'CNY', amount: '5,500.00', invoiced: '5,500.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '5,500.00', tone: 'success' }], settled: '0.00', outstanding: '5,500.00', payments: [{ id: 'FK202610200011', status: '待审批', amount: '0.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '待付款', tone: 'warning', sourceDoc: 'JS202610200012' },
-  { side: 'recv', statementNo: 'DZ202610200023', statementName: '中联铁运集团有限公司 2026-10 代理对账单', statementType: '代理对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-21', fee: '垫付费用', currency: 'CNY', amount: '3,000.00', invoiced: '0.00', invoices: [], settled: '0.00', outstanding: '3,000.00', payments: [{ id: 'SK202610200009', status: '待收款', amount: '0.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '待收款', tone: 'warning', sourceDoc: 'JS202610200012' }
+  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '海运费', taxRate: '9.00', ppcc: '到收', containerType: '20RF', remark: '客户指定船期', customer: '青岛绿洲园花生食品有限公司', orderNo: 'FCO202610200037', currency: 'CNY', amount: '12,000.00', invoiced: '12,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '12,000.00', tone: 'success' }], settled: '12,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '12,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
+  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '港杂费', taxRate: '6.00', ppcc: '到收', containerType: '20RF', remark: '含港建费', customer: '青岛绿洲园花生食品有限公司', orderNo: 'FCO202610200037', currency: 'CNY', amount: '4,000.00', invoiced: '4,000.00', invoices: [{ id: 'SR202610200018', status: '已开票', amount: '3,000.00', tone: 'success' }, { id: 'SR202610200019', status: '已开票', amount: '1,000.00', tone: 'success' }], settled: '4,000.00', outstanding: '0.00', payments: [{ id: 'SK202610200007', status: '已收款', amount: '3,000.00', tone: 'success' }, { id: 'SK202610200008', status: '已收款', amount: '1,000.00', tone: 'success' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '已收付', tone: 'success' },
+  { side: 'recv', statementNo: 'DZ202610200031', statementName: '青岛绿洲园花生食品有限公司 2026-10 应收对账单', statementType: '客户对账单', party: '青岛绿洲园花生食品有限公司', completedAt: '2026-10-21', fee: '报关费', taxRate: '6.00', ppcc: '到收', containerType: '—', remark: '出口报关', customer: '青岛绿洲园花生食品有限公司', orderNo: 'FCO202610200037', currency: 'CNY', amount: '3,000.00', invoiced: '0.00', invoices: [], settled: '1,500.00', outstanding: '1,500.00', payments: [{ id: 'SK202610200008', status: '部分收款', amount: '1,500.00', tone: 'warning' }], statementStatus: '已对账', statementTone: 'success', settlementStatus: '部分收付', tone: 'warning' },
+  { side: 'pay', statementNo: 'DZ202610200022', statementName: '中联铁运集团有限公司 2026-10 应付对账单', statementType: '供应商对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-20', fee: '海运费', taxRate: '9.00', ppcc: '预付', containerType: '20RF', remark: '供应商月结', customer: '青岛绿洲园花生食品有限公司', orderNo: 'FCO202610200037', currency: 'CNY', amount: '10,000.00', invoiced: '10,000.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '10,000.00', tone: 'success' }], settled: '10,000.00', outstanding: '0.00', payments: [{ id: 'FK202610200009', status: '已付款', amount: '6,000.00', tone: 'success' }, { id: 'FK202610200010', status: '已付款', amount: '4,000.00', tone: 'success' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '已付款', tone: 'success', sourceDoc: 'JS202610200012' },
+  { side: 'pay', statementNo: 'DZ202610200022', statementName: '中联铁运集团有限公司 2026-10 应付对账单', statementType: '供应商对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-20', fee: '港杂费', taxRate: '6.00', ppcc: '预付', containerType: '20RF', remark: '含码头操作费', customer: '青岛绿洲园花生食品有限公司', orderNo: 'FCO202610200037', currency: 'CNY', amount: '5,000.00', invoiced: '5,000.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '5,000.00', tone: 'success' }], settled: '2,000.00', outstanding: '3,000.00', payments: [{ id: 'FK202610200009', status: '部分付款', amount: '2,000.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '部分付款', tone: 'warning', sourceDoc: 'JS202610200012' },
+  { side: 'pay', statementNo: 'DZ202610200023', statementName: '中联铁运集团有限公司 2026-10 代理对账单', statementType: '代理对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-21', fee: '代理费', taxRate: '6.00', ppcc: '预付', containerType: '—', remark: '代理服务费', customer: '青岛绿洲园花生食品有限公司', orderNo: 'FCO202610200037', currency: 'CNY', amount: '5,500.00', invoiced: '5,500.00', invoices: [{ id: 'CB202610200016', status: '已登记', amount: '5,500.00', tone: 'success' }], settled: '0.00', outstanding: '5,500.00', payments: [{ id: 'FK202610200011', status: '待审批', amount: '0.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '待付款', tone: 'warning', sourceDoc: 'JS202610200012' },
+  { side: 'recv', statementNo: 'DZ202610200023', statementName: '中联铁运集团有限公司 2026-10 代理对账单', statementType: '代理对账单', party: '中联铁运集团有限公司', completedAt: '2026-10-21', fee: '垫付费用', customer: '青岛绿洲园花生食品有限公司', orderNo: 'FCO202610200037', currency: 'CNY', amount: '3,000.00', invoiced: '0.00', invoices: [], settled: '0.00', outstanding: '3,000.00', payments: [{ id: 'SK202610200009', status: '待收款', amount: '0.00', tone: 'warning' }], statementStatus: '待确认', statementTone: 'warning', settlementStatus: '待收款', tone: 'warning', sourceDoc: 'JS202610200012' }
 ];
 
 function allDocRecords() {
@@ -1908,14 +2028,13 @@ function renderDetail(page){
   const overview=`${baseCard(isExec)}${customerCard(isExec)}`;
   const basicPanel=overview;
   const transportPanel=isExec?`${transportCard(true)}${voyageCard(true)}${containerCard(true)}`:`${editableTransportCard()}${isWater?editableVoyageCard():''}${showContainer?containerCard(false):''}`;
-  const sendReceivePanel=(isExec?sendReceiveCard(true):(showContainer?sendReceiveCard(false):'')).replace('收发通信息','收发通');
-  const servicePanel=`${transportPanel}${sendReceivePanel}`;
+  const servicePanel=transportPanel;
   const estimatePanel=`${feeCard(isExec,'recv')}${feeCard(isExec,'pay')}${profitCard(isExec)}`;
   const demandAnchors=['basic','service','estimate','attachments'];
   const activeDemandAnchor=demandAnchors.includes(state.demandAnchor)?state.demandAnchor:'basic';
   const records=`${attachmentCard(isExec)}${systemCard(isExec)}`;
   const demand=`<section class="demand-anchor-section" id="demand-basic">${basicPanel}</section><section class="demand-anchor-section" id="demand-service">${servicePanel}</section><section class="demand-anchor-section" id="demand-estimate">${estimatePanel}</section><section class="demand-anchor-section" id="demand-attachments">${records}</section>`;
-  const fees=`${executionFeeCard(isExec,'recv')}${executionFeeCard(isExec,'pay')}${financeProfitCard(isExec)}`;
+  const fees=`${executionFinanceWorkspace(isExec)}${financeProfitCard(isExec)}`;
   const billList=renderBillList(isExec);
   const arrangement=isExec?renderExecutionLower():`<div class="arrangement-empty-shell"><span class="empty-message">暂无物流安排，请先新增物流委托。</span><button class="btn primary" data-toast="已模拟新增物流委托"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>新增物流委托</button></div>`;
   const sections=['demand','fees','arrangement','bills'];
