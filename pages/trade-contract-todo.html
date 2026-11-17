@@ -31,7 +31,7 @@
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    
+
     .table-fixed-header th {
       position: sticky;
       top: 0;
@@ -480,6 +480,7 @@
     .ct-overview-item strong { color: #253140; font-size: 14px; }
     .ct-overview-item.neutral { border-left: 3px solid #78aee8; }
     .ct-overview-item.partial { border-left: 3px solid #e2ad50; }
+    .ct-overview-item.completed { border-left: 3px solid #82b79d; }
     .ct-overview-item.risk-all { border-left: 3px solid #db6b6b; }
     .ct-overview-item.risk-blocking { border-left: 3px solid #d74747; color: #8c4141; }
     .ct-overview-item.risk-blocking i,
@@ -540,7 +541,8 @@
     .ct-data-table th.ct-freeze-right { z-index: 18; background: #f7f8fa !important; }
     .ct-freeze-select { left: 0; min-width: 46px; width: 46px; }
     .ct-freeze-expand { left: 46px; min-width: 42px; width: 42px; }
-    .ct-freeze-contract { left: 88px; min-width: 168px; box-shadow: 5px 0 10px -8px rgba(33, 46, 61, .35); }
+    .ct-freeze-contract { left: 46px; min-width: 168px; box-shadow: 5px 0 10px -8px rgba(33, 46, 61, .35); }
+    .ct-contract-status-col { min-width: 88px; width: 88px; white-space: nowrap; }
     .ct-freeze-status { right: 440px; min-width: 100px; }
     .ct-freeze-risk { right: 320px; min-width: 120px; }
     .ct-freeze-effective { right: 210px; min-width: 110px; }
@@ -3062,8 +3064,9 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           采购待办<span class="count">(<span id="badge-dest">1</span>)</span>
         </button>
         <div class="ct-metrics">
-          <span class="ct-overview-item neutral"><i data-lucide="clock-3"></i>未提交 <strong id="stat-pending">2</strong></span>
-          <span class="ct-overview-item partial"><i data-lucide="list-checks"></i>已提交 <strong id="stat-partial">1</strong></span>
+          <button type="button" id="submissionOverview-pending" class="ct-overview-item neutral" onclick="applySubmissionOverview('未提交')" title="筛选未提交数据"><i data-lucide="clock-3"></i>未提交 <strong id="stat-pending">2</strong></button>
+          <button type="button" id="submissionOverview-submitted" class="ct-overview-item partial" onclick="applySubmissionOverview('已提交')" title="筛选已提交数据"><i data-lucide="list-checks"></i>已提交 <strong id="stat-partial">1</strong></button>
+          <button type="button" id="completionOverview-completed" class="ct-overview-item completed" onclick="applyCompletionOverview('已完结')" title="筛选已完结数据"><i data-lucide="circle-check-big"></i>已完结 <strong id="stat-completed">0</strong></button>
           <button type="button" id="riskOverview-all" class="ct-overview-item risk-all" onclick="applyRiskOverview()" title="查看风险记录"><i data-lucide="shield-alert"></i>风险 <strong id="stat-risk">1</strong></button>
           <span class="ct-overview-item ct-overview-selected"><i data-lucide="check-square"></i>已选 <strong id="selectedCount">0</strong></span>
         </div>
@@ -3075,11 +3078,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <thead>
             <tr>
               <th class="ct-freeze-left ct-freeze-select" style="width:46px;text-align:center">
-                <input type="checkbox" id="selectAllCheckbox" name="selectAll" aria-label="全选当前待办合同" onchange="toggleSelectAll(this)" />
+                <input type="checkbox" id="selectAllCheckbox" name="selectAll" aria-label="全选当前商品明细" onchange="toggleSelectAll(this)" />
               </th>
-              <th class="ct-freeze-left ct-freeze-expand" style="width:42px"></th>
               <th class="ct-freeze-left ct-freeze-contract">贸易合同号</th>
-              <th>合同状态</th>
+              <th class="ct-contract-status-col">合同状态</th>
               <th>提交状态</th>
               <th>项目号</th>
               <th>商品中文名</th>
@@ -3088,6 +3090,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <th style="text-align:right">已订舱数量</th>
               <th style="text-align:right">待订舱数量</th>
               <th class="dest-column-hidden">采购合同号</th>
+              <th class="dest-column-hidden">采购合同状态</th>
               <th>经营单位</th>
               <th>公司抬头</th>
               <th>部门</th>
@@ -3130,7 +3133,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <button class="current">1</button>
           <button>2</button><button>3</button><button>4</button><span>...</span><button>7</button>
           <button aria-label="下一页"><i data-lucide="chevron-right"></i></button>
-          <select aria-label="每页条数" name="pageSize"><option>20条/页</option><option>50条/页</option></select>
+          <select aria-label="每页条数" name="pageSize"><option>20条/页</option><option>30条/页</option><option>50条/页</option><option>100条/页</option></select>
           <span>前往</span><input value="1" aria-label="跳转页码" /><span>页</span>
         </div>
       </div>
@@ -3281,14 +3284,14 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       <div class="p-4 flex-1 overflow-y-auto flex flex-col gap-3 text-xs bg-sky-50/40">
         <div class="alloc-summary-panel">
           <div class="alloc-summary-copy">
-           
+
           </div>
           <!-- Per-goods chips: 商品 / 调出 / 调入 / 剩余 / 状态 -->
           <div id="allocGoodsBalanceList" class="alloc-goods-chips"></div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
-          
+
           <!-- Left Column: Source Contracts (源合同) -->
           <div class="lg:col-span-6 bg-white rounded-lg border border-sky-200 shadow-xs flex flex-col">
             <div class="p-2.5 bg-sky-100/70 border-b border-sky-200 flex items-center justify-between">
@@ -3306,7 +3309,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
           <!-- Right Column: Target Contracts (目标合同) -->
           <div class="lg:col-span-6 bg-white rounded-lg border border-sky-200 shadow-xs flex flex-col">
-            
+
             <!-- Target Toolbar & Add Target Button -->
             <div class="p-2.5 bg-sky-100/70 border-b border-sky-200 flex items-center justify-between flex-wrap gap-2">
               <div class="flex items-center gap-2">
@@ -3875,8 +3878,11 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       selectedRowIds: new Set(),
       manualExpandedIds: new Set(),
       manualSelectedIds: new Set(),
+      visibleWorkbenchRowKeys: [],
       riskOverview: '',
-      
+      submissionOverview: '',
+      completionOverview: '',
+
       // Control Tower Pull-In Pool
       controlTowerPool: [
         {
@@ -4051,15 +4057,16 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       ]
     };
 
-    const MAIN_TABLE_COLSPAN = 41;
+    const MAIN_TABLE_COLSPAN = 43;
 
     function getMainTableColspan() {
-      return state.currentTab === 'dest' ? MAIN_TABLE_COLSPAN - 4 : MAIN_TABLE_COLSPAN;
+      return state.currentTab === 'dest' ? MAIN_TABLE_COLSPAN - 5 : MAIN_TABLE_COLSPAN;
     }
 
     const itemProfiles = {
       'WB-1001': {
         contractStatus: '执行中',
+        purchaseContractStatus: '执行中',
         isInternalCustomer: '是',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-18', internalDeliveryDate: '2026-03-08', settlementMethod: '即期信用证', receiptStatus: '已收证', controlledOrder: '否',
@@ -4068,6 +4075,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-1002': {
         contractStatus: '执行中',
+        purchaseContractStatus: '执行中',
         isInternalCustomer: '否',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-25', internalDeliveryDate: '2026-03-12', settlementMethod: '电汇', receiptStatus: '待收证', controlledOrder: '否',
@@ -4076,6 +4084,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-1003': {
         contractStatus: '已完结',
+        purchaseContractStatus: '已完结',
         isInternalCustomer: '是',
         operatingUnit: '建发化工', companyTitle: '厦门建发股份有限公司', department: '化工业务部', accountingGroup: '制冷剂核算组',
         shipmentDeadline: '2026-03-10', internalDeliveryDate: '2026-03-01', settlementMethod: '即期信用证', receiptStatus: '已收证', controlledOrder: '是',
@@ -4084,6 +4093,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-1004': {
         contractStatus: '执行中',
+        purchaseContractStatus: '执行中',
         isInternalCustomer: '否',
         operatingUnit: '建发能源', companyTitle: '厦门建发股份有限公司', department: '国际业务二部', accountingGroup: '化工核算组',
         shipmentDeadline: '2026-03-28', internalDeliveryDate: '2026-03-16', settlementMethod: '电汇', receiptStatus: '已收证', controlledOrder: '否',
@@ -4092,6 +4102,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       },
       'WB-2001': {
         contractStatus: '执行中',
+        purchaseContractStatus: '执行中',
         isInternalCustomer: '是',
         operatingUnit: '建发海外', companyTitle: '厦门建发股份有限公司', department: '海外业务部', accountingGroup: '钢材核算组',
         shipmentDeadline: '2026-04-12', internalDeliveryDate: '2026-03-28', settlementMethod: '远期信用证', receiptStatus: '待收证', controlledOrder: '否',
@@ -4187,6 +4198,17 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       return 'ct-status pending';
     }
 
+    function getPurchaseContractStatusLabel(item) {
+      return item.purchaseContractStatus || '执行中';
+    }
+
+    function getPurchaseContractStatusClass(item) {
+      const status = getPurchaseContractStatusLabel(item);
+      if (status === '已完结') return 'ct-status closed';
+      if (status === '已作废') return 'ct-status voided';
+      return 'ct-status pending';
+    }
+
     function getPriceTerms(item) {
       return item.priceTerms || item.purchaseTerms || item.salesTerms || '-';
     }
@@ -4221,6 +4243,54 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const allocated = getAllocatedQty(item);
       if (contract > 0 && allocated >= contract) return '已完结';
       return '未完结';
+    }
+
+    // ===== 商品明细行维度状态（列表按商品明细行展示与操作） =====
+    function getRowPendingQty(row) {
+      const goods = row.goods || {};
+      return Number(goods.allocatable || 0) - Number(goods.allocated || 0);
+    }
+
+    function getRowDisplayStatus(row) {
+      return getRowPendingQty(row) <= 0 ? '已提交' : '未提交';
+    }
+
+    function getRowClosedStatus(row) {
+      const goods = row.goods || {};
+      if (typeof goods.closed === 'boolean') return goods.closed ? '已完结' : '未完结';
+      const contractQty = Number(goods.contractQty ?? goods.allocatable ?? 0);
+      const allocatedQty = Number(goods.allocated || 0);
+      if (contractQty > 0 && allocatedQty >= contractQty) return '已完结';
+      return '未完结';
+    }
+
+    function getRowLabel(row) {
+      const goodsName = row.goods?.name || '-';
+      return `${getMainContractNo(row.item)} / ${goodsName}`;
+    }
+
+    // 按剩余商品明细行回写合同汇总数量
+    function syncItemQtyFromLines(item) {
+      const lines = item.goodsLines || [];
+      const sum = key => lines.reduce((total, line) => total + Number(line[key] || 0), 0);
+      item.contractQty = lines.reduce((total, line) => total + Number(line.contractQty ?? line.allocatable ?? 0), 0);
+      item.allocatableQty = sum('allocatable');
+      item.allocatedQty = sum('allocated');
+      item.autoAllocatedQty = sum('autoAllocated');
+      item.manualInQty = sum('manualIn');
+      item.manualOutQty = sum('manualOut');
+      item.projectNos = [...new Set(lines.map(line => line.projectNo || item.projectNo).filter(Boolean))];
+    }
+
+    // 合同下全部商品明细行都已完结时才把合同标记为已关闭（供行内“生成服务要求”等合同级校验使用）
+    function syncItemClosedState(item) {
+      const rows = getWorkbenchGoodsRows(item);
+      const allClosed = rows.length > 0 && rows.every(row => row.goods?.closed === true);
+      if (allClosed) {
+        item.status = '已关闭';
+      } else if (item.status === '已关闭') {
+        item.status = getDisplayStatus(item);
+      }
     }
 
     function hasNoAvailable(item) {
@@ -4335,6 +4405,48 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     // --- Workbench Main Table Rendering & Operations ---
 
     // Render Table Rows based on Tab & Filter Criteria
+    function getWorkbenchGoodsRows(item) {
+      const goodsLines = Array.isArray(item.goodsLines) && item.goodsLines.length
+        ? item.goodsLines
+        : [{
+          projectNo: item.projectNo,
+          name: item.goodsName || '-',
+          contractQty: item.contractQty || 0,
+          allocatable: item.allocatableQty || 0,
+          allocated: item.allocatedQty || 0,
+          autoAllocated: item.autoAllocatedQty || 0,
+          manualIn: item.manualInQty || 0,
+          manualOut: item.manualOutQty || 0,
+          unit: item.goodsLines?.[0]?.unit || '吨'
+        }];
+      return goodsLines.map((goods, goodsIndex) => ({
+        key: `${item.id}::${goodsIndex}`,
+        item,
+        goods,
+        goodsIndex
+      }));
+    }
+
+    function getWorkbenchRowKey(itemId, goodsIndex) {
+      return `${itemId}::${goodsIndex}`;
+    }
+
+    function getSelectedWorkbenchRows() {
+      return Array.from(state.selectedRowIds).map(key => {
+        const separatorIndex = key.lastIndexOf('::');
+        const itemId = separatorIndex >= 0 ? key.slice(0, separatorIndex) : key;
+        const goodsIndex = separatorIndex >= 0 ? Number(key.slice(separatorIndex + 2)) : 0;
+        const item = state.items.find(candidate => candidate.id === itemId);
+        if (!item) return null;
+        const goods = item.goodsLines?.[goodsIndex] || item.goodsLines?.[0];
+        return { key, item, goods, goodsIndex: Number.isFinite(goodsIndex) ? goodsIndex : 0 };
+      }).filter(Boolean);
+    }
+
+    function getSelectedWorkbenchItems() {
+      return [...new Map(getSelectedWorkbenchRows().map(row => [row.item.id, row.item])).values()];
+    }
+
     function renderWorkbenchTable() {
       const tbody = document.getElementById('workbenchTableBody');
       if (!tbody) return;
@@ -4360,29 +4472,21 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         if (item.type !== state.currentTab) return false;
         if (!isItemInRiskOverview(item)) return false;
 
-        const projectDisplay = getProjectDisplay(item).toLowerCase();
         const salesNo = (item.salesNo || '').toLowerCase();
         const purchaseNo = (item.purchaseNo || '').toLowerCase();
         const customer = (item.customer || '').toLowerCase();
         const supplier = (item.supplier || '').toLowerCase();
         const salesman = (item.salesman || '').toLowerCase();
         const department = (item.department || '').toLowerCase();
-        const displayStatus = getDisplayStatus(item);
-        const pendingQty = getPendingQty(item);
 
-        if (prjVal && !projectDisplay.includes(prjVal)) return false;
         if (salesVal && !salesNo.includes(salesVal)) return false;
         if (purchaseVal && !purchaseNo.includes(purchaseVal)) return false;
         if (custVal && !customer.includes(custVal)) return false;
-        if (statusVal && displayStatus !== statusVal) return false;
         if (salesManVal && !salesman.includes(salesManVal)) return false;
         if (departmentVal && !department.includes(departmentVal)) return false;
         if (supplierVal && !supplier.includes(supplierVal)) return false;
         if (shipmentFrom && (item.shipmentDeadline || '') < shipmentFrom) return false;
         if (shipmentTo && (item.shipmentDeadline || '') > shipmentTo) return false;
-        if (availabilityVal === 'none' && pendingQty > 0) return false;
-        if (availabilityVal === 'available' && pendingQty <= 0) return false;
-        if (completionVal && getClosedStatus(item) !== completionVal) return false;
         if (riskVal) {
           const matchedRisk = getRiskTitles(item).some(title =>
             title === riskVal || (riskVal === '贸易合同变更' && title === '贸易合同号变更')
@@ -4390,69 +4494,81 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           if (!matchedRisk) return false;
         }
         if (internalCustomerVal && getInternalCustomerValue(item) !== internalCustomerVal) return false;
-
-        if (goodsVal) {
-          const matchGoods = item.goodsLines.some(g =>
-            (g.name || '').toLowerCase().includes(goodsVal) || (g.code || '').toLowerCase().includes(goodsVal)
-          );
-          if (!matchGoods) return false;
-        }
-
         return true;
       });
 
-      // Update counters
-      updateWorkbenchStats(filteredItems);
+      const filteredRows = filteredItems.flatMap(getWorkbenchGoodsRows).filter(row => {
+        const { item, goods } = row;
+        const projectNo = String(goods.projectNo || item.projectNo || '').toLowerCase();
+        const goodsName = String(goods.name || '').toLowerCase();
+        const goodsCode = String(goods.goodscode || goods.code || '').toLowerCase();
+        const rowPendingQty = getRowPendingQty(row);
+        if (prjVal && !projectNo.includes(prjVal)) return false;
+        if (goodsVal && !goodsName.includes(goodsVal) && !goodsCode.includes(goodsVal)) return false;
+        if (statusVal && getRowDisplayStatus(row) !== statusVal) return false;
+        if (state.submissionOverview && getRowDisplayStatus(row) !== state.submissionOverview) return false;
+        if (completionVal && getRowClosedStatus(row) !== completionVal) return false;
+        if (state.completionOverview && getRowClosedStatus(row) !== state.completionOverview) return false;
+        if (availabilityVal === 'none' && rowPendingQty > 0) return false;
+        if (availabilityVal === 'available' && rowPendingQty <= 0) return false;
+        return true;
+      });
 
-      if (filteredItems.length === 0) {
+      state.visibleWorkbenchRowKeys = filteredRows.map(row => row.key);
+      const filteredUniqueItems = [...new Map(filteredRows.map(row => [row.item.id, row.item])).values()];
+      updateWorkbenchStats(filteredUniqueItems, filteredRows.length);
+
+      if (filteredRows.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="${getMainTableColspan()}" style="padding:0;border-bottom:0">
               <div class="ui-state-block is-table-inline" data-state="empty" data-density="compact">
                 <div class="ui-state-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></div>
-                <div class="ui-state-title">暂无符合条件的贸易合同</div>
+                <div class="ui-state-title">暂无符合条件的商品明细</div>
                 <p class="ui-state-message">调整筛选条件，或清空筛选后重新查询。</p>
                 <div class="ui-state-actions"><button type="button" class="secondary" onclick="resetFilters()">清空筛选</button></div>
               </div>
             </td>
           </tr>
         `;
+        const masterCheckbox = document.getElementById('selectAllCheckbox');
+        if (masterCheckbox) masterCheckbox.checked = false;
         return;
       }
 
-      filteredItems.forEach(item => {
-        const isSelected = state.selectedRowIds.has(item.id);
-        const tr = document.createElement('tr');
-        tr.dataset.itemId = item.id;
-
-        const status = getDisplayStatus(item);
+      filteredRows.forEach(row => {
+        const { item, goods } = row;
+        const rowKey = row.key;
+        const isSelected = state.selectedRowIds.has(rowKey);
+        const status = getRowDisplayStatus(row);
         const risk = getRiskLabel(item);
         const riskItems = getRiskItems(item);
         const riskCount = riskItems.length;
         const riskSummary = riskCount > 1 ? `${riskItems[0].title} +${riskCount - 1}` : (riskItems[0]?.title || '正常');
-        const contractQty = getContractQty(item);
-        const allocatableQty = getAllocatableQty(item);
-        const allocatedQty = getAllocatedQty(item);
-        const pendingQty = getPendingQty(item);
-        const autoAllocatedQty = getAutoAllocatedQty(item);
-        const manualInQty = getEffectiveManualInQty(item);
-        const manualOutQty = getEffectiveManualOutQty(item);
-        const closedStatus = getClosedStatus(item);
-        const unit = item.goodsLines?.[0]?.unit || '';
-        let statusBadgeClass = 'ct-status pending';
-        if (status === '已提交') statusBadgeClass = 'ct-status done';
-        let closedBadgeClass = closedStatus === '已完结' ? 'ct-status closed' : 'ct-status pending';
-
+        const unit = goods.unit || item.goodsLines?.[0]?.unit || '';
+        const projectNo = goods.projectNo || item.projectNo || '-';
+        const contractQty = Number(goods.contractQty ?? goods.allocatable ?? 0);
+        const allocatableQty = Number(goods.allocatable || 0);
+        const allocatedQty = Number(goods.allocated || 0);
+        const pendingQty = allocatableQty - allocatedQty;
+        const autoAllocatedQty = Number(goods.autoAllocated ?? allocatableQty);
+        const manualInQty = Number(goods.manualIn || 0);
+        const manualOutQty = Number(goods.manualOut || 0);
+        const closedStatus = getRowClosedStatus(row);
         const riskBadgeClass = riskCount ? 'ct-risk danger' : 'ct-risk';
         const riskLevel = getRiskLevel(item);
+        let statusBadgeClass = 'ct-status pending';
+        if (status === '已提交') statusBadgeClass = 'ct-status done';
+        const closedBadgeClass = closedStatus === '已完结' ? 'ct-status closed' : 'ct-status pending';
+        const tr = document.createElement('tr');
+        tr.dataset.itemId = item.id;
+        tr.dataset.goodsIndex = String(row.goodsIndex);
+        tr.dataset.rowKey = rowKey;
         tr.className = `${isSelected ? 'selected-row ' : ''}${riskLevel === 'risk' ? 'risk-row' : ''}`;
 
         tr.innerHTML = `
           <td class="ct-freeze-left ct-freeze-select" style="text-align:center">
-            <input type="checkbox" ${isSelected ? 'checked' : ''} aria-label="选择贸易合同 ${escapeHtml(getMainContractNo(item))}" onchange="toggleRowSelect('${item.id}', this.checked)" />
-          </td>
-          <td class="ct-freeze-left ct-freeze-expand" style="text-align:center;cursor:pointer;color:#8b96a4" onclick="toggleRowExpand('${item.id}')">
-            <i data-lucide="${item.expanded ? 'chevron-down' : 'chevron-right'}" class="w-4 h-4"></i>
+            <input type="checkbox" ${isSelected ? 'checked' : ''} aria-label="选择商品 ${escapeHtml(goods.name || row.key)}" onchange="toggleRowSelect('${rowKey}', this.checked)" />
           </td>
           <td class="ct-freeze-left ct-freeze-contract ct-key-cell" title="${escapeHtml(getMainContractNo(item))}">
             <span class="ct-contract-cell">
@@ -4460,27 +4576,26 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               ${riskCount ? `<button type="button" class="ct-risk-marker" data-risk-item-id="${item.id}" aria-expanded="false" aria-describedby="riskPopover" aria-label="查看风险提醒${riskCount > 1 ? `（${riskCount}项）` : ''}" onmouseenter="scheduleRiskPopover(this)" onmouseleave="scheduleRiskPopoverClose()" onfocus="showRiskPopover(this)" onblur="scheduleRiskPopoverClose()" onclick="toggleRiskPopover(this, event)"><i data-lucide="shield-alert"></i></button>` : ''}
             </span>
           </td>
-          <td><span class="${getContractStatusClass(item)}">${escapeHtml(getContractStatusLabel(item))}</span></td>
-		  <td>
-            <span class="${statusBadgeClass}">${status}</span>
-          </td>
-          <td class="ct-key-cell" title="${escapeHtml(getProjectDisplay(item))}">${escapeHtml(getProjectDisplay(item))}</td>
-          <td class="ct-long-cell" title="${escapeHtml(getGoodsSummary(item))}">${escapeHtml(getGoodsSummary(item))}</td>
+          <td class="ct-contract-status-col"><span class="${getContractStatusClass(item)}">${escapeHtml(getContractStatusLabel(item))}</span></td>
+          <td><span class="${statusBadgeClass}">${status}</span></td>
+          <td class="ct-key-cell" title="${escapeHtml(projectNo)}">${escapeHtml(projectNo)}</td>
+          <td class="ct-long-cell" title="${escapeHtml(goods.name || '-')}">${escapeHtml(goods.name || '-')}</td>
           <td class="ct-number">${formatQty(contractQty, unit)}</td>
           <td class="ct-number" style="font-weight:600">${formatQty(allocatableQty, unit)}</td>
           <td class="ct-number">${formatQty(allocatedQty, unit)}</td>
           <td class="ct-number">
             ${formatQty(pendingQty, unit)}
-            ${hasNoAvailable(item) ? '<span class="ct-no-available">无可订舱</span>' : ''}
+            ${pendingQty <= 0 ? '<span class="ct-no-available">无可订舱</span>' : ''}
           </td>
           <td class="dest-column-hidden ct-muted-cell" title="${escapeHtml(getAssociatedContractNo(item))}">${escapeHtml(getAssociatedContractNo(item))}</td>
+          <td class="dest-column-hidden"><span class="${getPurchaseContractStatusClass(item)}">${escapeHtml(getPurchaseContractStatusLabel(item))}</span></td>
           <td>${escapeHtml(item.operatingUnit)}</td>
           <td class="ct-long-cell" title="${escapeHtml(item.companyTitle)}">${escapeHtml(item.companyTitle)}</td>
           <td>${escapeHtml(item.department)}</td>
           <td>${escapeHtml(item.accountingGroup)}</td>
           <td>${escapeHtml(item.salesman)}</td>
-		  <td>厦门港</td>
-		  <td>大连港</td>
+          <td>厦门港</td>
+          <td>大连港</td>
           <td>${escapeHtml(item.shipmentDeadline)}</td>
           <td class="dest-column-hidden ct-long-cell" title="${escapeHtml(item.customer)}">${escapeHtml(item.customer)}</td>
           <td>${escapeHtml(getInternalCustomerValue(item))}</td>
@@ -4508,81 +4623,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td>${escapeHtml(getSourceTypeLabel(item))}</td>
           <td class="ct-freeze-right ct-freeze-action" style="text-align:center">
             <div class="ct-action-stack">
-
               <button onclick="generateLogisticsDemand('${item.id}')" class="ct-row-action" title="生成服务要求">生成服务要求</button>
               <button onclick="openLogisticsDemandModal('${item.id}')" class="ct-row-action" title="查看服务要求">查看服务要求(${item.logisticsDemands.length})</button>
             </div>
           </td>
         `;
-
         tbody.appendChild(tr);
-
-        // Expanded Goods Subtable Row
-        if (item.expanded && item.goodsLines && item.goodsLines.length > 0) {
-          const subTr = document.createElement('tr');
-          subTr.className = 'ct-sub-row';
-
-          let subRows = item.goodsLines.map(g => {
-            const autoQty = Number(g.autoAllocated ?? g.allocatable ?? 0);
-            const manualInQty = Number(g.manualIn ?? 0);
-            const manualOutQty = Number(g.manualOut ?? 0);
-            return `
-              <tr>
-                <td style="font-weight:600;color:#0868df">${escapeHtml(g.projectNo || item.projectNo)}</td>
-                <td style="font-weight:500">${escapeHtml(g.name)}</td>
-                <td style="text-align:right">${formatQty(g.contractQty ?? g.allocatable, g.unit)}</td>
-                <td style="text-align:right">${formatQty(g.allocatable, g.unit)}</td>
-                <td style="text-align:right">${formatQty(g.allocated, g.unit)}</td>
-                <td style="text-align:right">${formatQty((g.allocatable || 0) - (g.allocated || 0), g.unit)}</td>
-                <td style="text-align:right">${formatQty(autoQty, g.unit)}</td>
-                <td style="text-align:right">${formatQty(manualInQty, g.unit)}</td>
-                <td style="text-align:right">${formatQty(manualOutQty, g.unit)}</td>
-              </tr>
-            `;
-          }).join('');
-
-          subTr.innerHTML = `
-            <td colspan="${getMainTableColspan()}" class="sub-detail-cell">
-              <div class="ct-subtable-wrap">
-                <div class="ct-subtable-title">
-                  <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-500"></i>
-                  商品明细
-                </div>
-                <table class="ct-subtable">
-                  <thead>
-                    <tr>
-                      <th>业务项目号</th>
-                      <th>商品名称</th>
-                      <th style="text-align:right">合同总量</th>
-                      <th style="text-align:right">可订舱数量</th>
-                      <th style="text-align:right">已订舱数量</th>
-                      <th style="text-align:right">待订舱数量</th>
-                      <th style="text-align:right">自动分配数量</th>
-                      <th style="text-align:right">有效人工调入数量</th>
-                      <th style="text-align:right">有效人工调出数量</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${subRows}
-                  </tbody>
-                </table>
-              </div>
-            </td>
-          `;
-          tbody.appendChild(subTr);
-        }
       });
 
-      if (window.lucide) lucide.createIcons();
-    }
-
-    // Toggle Row Nested Subtable Expansion
-    function toggleRowExpand(id) {
-      const item = state.items.find(i => i.id === id);
-      if (item) {
-        item.expanded = !item.expanded;
-        renderWorkbenchTable();
+      const masterCheckbox = document.getElementById('selectAllCheckbox');
+      if (masterCheckbox) {
+        masterCheckbox.checked = filteredRows.length > 0 && filteredRows.every(row => state.selectedRowIds.has(row.key));
       }
+      if (window.lucide) lucide.createIcons();
     }
 
     // Switch Top Business Tab
@@ -4619,20 +4672,21 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
     // Select All Rows in Active View
     function toggleSelectAll(masterCb) {
-      const visibleIds = Array.from(document.querySelectorAll('#workbenchTableBody > tr[data-item-id]')).map(row => row.dataset.itemId);
-      const filteredItems = state.items.filter(i => i.type === state.currentTab && (!visibleIds.length || visibleIds.includes(i.id)));
+      const visibleKeys = state.visibleWorkbenchRowKeys || [];
       if (masterCb.checked) {
-        filteredItems.forEach(i => state.selectedRowIds.add(i.id));
+        visibleKeys.forEach(key => state.selectedRowIds.add(key));
       } else {
-        filteredItems.forEach(i => state.selectedRowIds.delete(i.id));
+        visibleKeys.forEach(key => state.selectedRowIds.delete(key));
       }
       document.getElementById('selectedCount').textContent = state.selectedRowIds.size;
       renderWorkbenchTable();
     }
 
     function getCurrentFilteredItems() {
-      const visibleRows = new Set(Array.from(document.querySelectorAll('#workbenchTableBody > tr[data-item-id]')).map(row => row.dataset.itemId));
-      return state.items.filter(item => item.type === state.currentTab && (!visibleRows.size || visibleRows.has(item.id)));
+      return [...new Map((state.selectedRowIds || []).map(key => {
+        const itemId = String(key).split('::')[0];
+        return [itemId, state.items.find(item => item.id === itemId)];
+      }).filter(([, item]) => Boolean(item))).values()];
     }
 
     function clearSelectedManualAllocations() {
@@ -4640,11 +4694,9 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         showToast('请先选择需要清空人工分配的待办记录', 'warning');
         return;
       }
-      const selected = Array.from(state.selectedRowIds)
-        .map(id => state.items.find(item => item.id === id))
-        .filter(Boolean);
-      const affected = selected.filter(item =>
-        getEffectiveManualInQty(item) > 0 || getEffectiveManualOutQty(item) > 0
+      const selectedRows = getSelectedWorkbenchRows();
+      const affected = selectedRows.filter(row =>
+        Number(row.goods?.manualIn || 0) > 0 || Number(row.goods?.manualOut || 0) > 0
       );
       if (!affected.length) {
         showToast('所选记录暂无人工分配数据', 'info');
@@ -4652,20 +4704,21 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       }
       if (!window.confirm('确认重算？重算后将清空所有人工分配数据。')) return;
 
-      affected.forEach(item => {
-        (item.goodsLines || []).forEach(line => {
-          const currentAllocatable = Number(line.allocatable || 0);
-          const currentManualIn = Number(line.manualIn || 0);
-          const currentManualOut = Number(line.manualOut || 0);
-          const autoAllocated = Number(
-            line.autoAllocated
-            ?? Math.max(0, currentAllocatable - currentManualIn + currentManualOut)
-          );
-          line.autoAllocated = autoAllocated;
-          line.manualIn = 0;
-          line.manualOut = 0;
-          line.allocatable = autoAllocated;
-        });
+      affected.forEach(row => {
+        const line = row.goods;
+        const currentAllocatable = Number(line.allocatable || 0);
+        const currentManualIn = Number(line.manualIn || 0);
+        const currentManualOut = Number(line.manualOut || 0);
+        const autoAllocated = Number(
+          line.autoAllocated
+          ?? Math.max(0, currentAllocatable - currentManualIn + currentManualOut)
+        );
+        line.autoAllocated = autoAllocated;
+        line.manualIn = 0;
+        line.manualOut = 0;
+        line.allocatable = autoAllocated;
+      });
+      [...new Map(affected.map(row => [row.item.id, row.item])).values()].forEach(item => {
         item.autoAllocatedQty = (item.goodsLines || []).reduce((sum, line) => sum + Number(line.autoAllocated || 0), 0);
         item.manualInQty = 0;
         item.manualOutQty = 0;
@@ -4675,95 +4728,117 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       });
 
       renderWorkbenchTable();
-      showToast(`已清空 ${affected.length} 条待办记录的人工分配数据`, 'success');
+      showToast(`已清空 ${affected.length} 条商品明细的人工分配数据`, 'success');
     }
 
+    // 批量删除：仅删除所选商品明细行；合同下所有行都删完时才移除该待办
     function batchDeleteRows() {
       if (state.selectedRowIds.size === 0) {
-        showToast('请先选择需要删除的记录', 'warning');
+        showToast('请先选择需要删除的商品明细行', 'warning');
         return;
       }
-      const selected = Array.from(state.selectedRowIds).map(id => state.items.find(item => item.id === id)).filter(Boolean);
-      if (selected.some(item => item.logisticsDemands.some(demand => demand.status !== '作废'))) {
-        showToast('整批拦截：选中记录中存在未作废服务要求，不能删除', 'danger');
+      const selectedRows = getSelectedWorkbenchRows();
+      if (selectedRows.some(row => row.item.logisticsDemands.some(demand => demand.status !== '作废'))) {
+        showToast('整批拦截：所选商品明细行存在未作废服务要求，不能删除', 'danger');
         return;
       }
-      selected.forEach(item => {
-        item.deleted = true;
-        if (!state.controlTowerPool.some(candidate => candidate.projectNo === item.projectNo && candidate.salesNo === item.salesNo && candidate.purchaseNo === item.purchaseNo)) {
-          state.controlTowerPool.push({
-            id: `CT-REOPEN-${item.id}`,
-            type: item.type,
-            projectNo: item.projectNo,
-            projectNos: item.projectNos || item.goodsLines.map(goods => goods.projectNo || item.projectNo),
-            salesNo: item.salesNo,
-            purchaseNo: item.purchaseNo,
-            customer: item.customer,
-            supplier: item.supplier,
-            salesman: item.salesman,
-            operatingUnit: item.operatingUnit,
-            companyTitle: item.companyTitle,
-            department: item.department,
-            accountingGroup: item.accountingGroup,
-            shipmentDeadline: item.shipmentDeadline,
-            settlementMethod: item.settlementMethod,
-            receiptStatus: item.receiptStatus,
-            controlledOrder: item.controlledOrder,
-            prepaymentRatio: item.prepaymentRatio,
-            freightUnitPrice: item.freightUnitPrice,
-            purchaseTerms: item.purchaseTerms,
-            salesTerms: item.salesTerms,
-            dispatchedByUs: item.dispatchedByUs,
-            portMiscUnitPrice: item.portMiscUnitPrice,
-            tradeType: item.tradeType,
-            status: getDisplayStatus(item),
-            goodsLines: item.goodsLines.map(goods => ({
-              code: goods.code,
-              projectNo: goods.projectNo || item.projectNo,
-              name: goods.name,
-              contractQty: goods.contractQty ?? goods.allocatable ?? 0,
-              unit: goods.unit || '吨'
-            }))
-          });
+
+      const grouped = new Map();
+      selectedRows.forEach(row => {
+        if (!grouped.has(row.item.id)) grouped.set(row.item.id, { item: row.item, indexes: new Set() });
+        grouped.get(row.item.id).indexes.add(row.goodsIndex);
+      });
+
+      grouped.forEach(({ item, indexes }) => {
+        const allLines = item.goodsLines || [];
+        item.goodsLines = allLines.filter((line, index) => !indexes.has(index));
+
+        if (item.goodsLines.length === 0) {
+          item.deleted = true;
+          if (!state.controlTowerPool.some(candidate => candidate.projectNo === item.projectNo && candidate.salesNo === item.salesNo && candidate.purchaseNo === item.purchaseNo)) {
+            state.controlTowerPool.push({
+              id: `CT-REOPEN-${item.id}`,
+              type: item.type,
+              projectNo: item.projectNo,
+              projectNos: item.projectNos || allLines.map(goods => goods.projectNo || item.projectNo),
+              salesNo: item.salesNo,
+              purchaseNo: item.purchaseNo,
+              customer: item.customer,
+              supplier: item.supplier,
+              salesman: item.salesman,
+              operatingUnit: item.operatingUnit,
+              companyTitle: item.companyTitle,
+              department: item.department,
+              accountingGroup: item.accountingGroup,
+              shipmentDeadline: item.shipmentDeadline,
+              settlementMethod: item.settlementMethod,
+              receiptStatus: item.receiptStatus,
+              controlledOrder: item.controlledOrder,
+              prepaymentRatio: item.prepaymentRatio,
+              freightUnitPrice: item.freightUnitPrice,
+              purchaseTerms: item.purchaseTerms,
+              salesTerms: item.salesTerms,
+              dispatchedByUs: item.dispatchedByUs,
+              portMiscUnitPrice: item.portMiscUnitPrice,
+              tradeType: item.tradeType,
+              status: getDisplayStatus(item),
+              goodsLines: allLines.map(goods => ({
+                code: goods.code,
+                projectNo: goods.projectNo || item.projectNo,
+                name: goods.name,
+                contractQty: goods.contractQty ?? goods.allocatable ?? 0,
+                unit: goods.unit || '吨'
+              }))
+            });
+          }
+        } else {
+          syncItemQtyFromLines(item);
         }
       });
+
       state.items = state.items.filter(item => !item.deleted);
       state.selectedRowIds.clear();
       document.getElementById('selectedCount').textContent = '0';
       renderWorkbenchTable();
-      showToast(`已删除 ${selected.length} 条待办记录`, 'success');
+      showToast(`已删除 ${selectedRows.length} 条商品明细`, 'success');
     }
 
+    // 批量完结：仅完结所选商品明细行
     function batchCloseRows() {
       if (state.selectedRowIds.size === 0) {
-        showToast('请先选择需要完结的记录', 'warning');
+        showToast('请先选择需要完结的商品明细行', 'warning');
         return;
       }
-      const selected = Array.from(state.selectedRowIds).map(id => state.items.find(item => item.id === id)).filter(Boolean);
-      if (selected.some(item => item.logisticsDemands.some(demand => demand.status !== '作废'))) {
-        showToast('整批拦截：存在未作废服务要求的记录，不能完结', 'danger');
+      const selectedRows = getSelectedWorkbenchRows();
+      if (selectedRows.some(row => row.item.logisticsDemands.some(demand => demand.status !== '作废'))) {
+        showToast('整批拦截：所选商品明细行存在未作废服务要求，不能完结', 'danger');
         return;
       }
-      selected.forEach(item => { item.status = '已关闭'; });
-      renderWorkbenchTable();
-      showToast(`已结束 ${selected.length} 条记录的安排`, 'success');
-    }
-
-    function batchResumeRows() {
-      if (state.selectedRowIds.size === 0) {
-        showToast('请先选择需要取消完结的记录', 'warning');
-        return;
-      }
-      const selected = Array.from(state.selectedRowIds).map(id => state.items.find(item => item.id === id)).filter(Boolean);
-      if (selected.some(item => item.status !== '已关闭')) {
-        showToast('整批拦截：只有已关闭记录可以取消完结', 'danger');
-        return;
-      }
-      selected.forEach(item => {
-        item.status = getPendingQty(item) <= 0 ? '已提交' : '未提交';
+      selectedRows.forEach(row => {
+        if (row.goods) row.goods.closed = true;
+        syncItemClosedState(row.item);
       });
       renderWorkbenchTable();
-      showToast(`已恢复 ${selected.length} 条记录的安排`, 'success');
+      showToast(`已完结 ${selectedRows.length} 条商品明细`, 'success');
+    }
+
+    // 批量取消完结：仅取消所选商品明细行
+    function batchResumeRows() {
+      if (state.selectedRowIds.size === 0) {
+        showToast('请先选择需要取消完结的商品明细行', 'warning');
+        return;
+      }
+      const selectedRows = getSelectedWorkbenchRows();
+      if (selectedRows.some(row => getRowClosedStatus(row) !== '已完结')) {
+        showToast('整批拦截：只有已完结的商品明细行可以取消完结', 'danger');
+        return;
+      }
+      selectedRows.forEach(row => {
+        if (row.goods) row.goods.closed = false;
+        syncItemClosedState(row.item);
+      });
+      renderWorkbenchTable();
+      showToast(`已取消完结 ${selectedRows.length} 条商品明细`, 'success');
     }
 
     // Filter Form Handlers
@@ -4776,6 +4851,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function resetFilters() {
       document.getElementById('filterForm').reset();
       state.riskOverview = '';
+      state.submissionOverview = '';
+      state.completionOverview = '';
       renderWorkbenchTable();
       showToast('已重置筛选条件', 'info');
     }
@@ -4793,31 +4870,64 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       if (window.lucide) lucide.createIcons();
     }
 
-    // Update Top Badges & Counters
-    function updateWorkbenchStats(filteredItems) {
-      const nonDestCount = state.items.filter(i => i.type === 'non_dest').length;
-      const destCount = state.items.filter(i => i.type === 'dest').length;
+    // Update Top Badges & Counters（统计口径：商品明细行）
+    function updateWorkbenchStats(filteredItems, totalRows = filteredItems.length) {
+      const rowsOfTab = tab => state.items
+        .filter(i => i.type === tab)
+        .flatMap(getWorkbenchGoodsRows);
 
-      document.getElementById('badge-non_dest').textContent = nonDestCount;
-      document.getElementById('badge-dest').textContent = destCount;
+      const nonDestRows = rowsOfTab('non_dest');
+      const destRows = rowsOfTab('dest');
 
-      const currentTabItems = state.items.filter(i => i.type === state.currentTab);
-      const pendingCount = currentTabItems.filter(i => getDisplayStatus(i) === '未提交').length;
-      const partialCount = currentTabItems.filter(i => getDisplayStatus(i) === '已提交').length;
-      const riskCount = currentTabItems.filter(i => getRiskLevel(i) !== 'normal').length;
+      document.getElementById('badge-non_dest').textContent = nonDestRows.length;
+      document.getElementById('badge-dest').textContent = destRows.length;
+
+      const currentTabRows = rowsOfTab(state.currentTab);
+      const pendingCount = currentTabRows.filter(row => getRowDisplayStatus(row) === '未提交').length;
+      const partialCount = currentTabRows.filter(row => getRowDisplayStatus(row) === '已提交').length;
+      const completedCount = currentTabRows.filter(row => getRowClosedStatus(row) === '已完结').length;
+      const riskCount = currentTabRows.filter(row => getRiskLevel(row.item) !== 'normal').length;
       document.getElementById('stat-pending').textContent = pendingCount;
       document.getElementById('stat-partial').textContent = partialCount;
+      document.getElementById('stat-completed').textContent = completedCount;
       document.getElementById('stat-risk').textContent = riskCount;
-      document.getElementById('totalRecords').textContent = filteredItems.length;
+      document.getElementById('totalRecords').textContent = totalRows;
 
       const riskOverviewButton = document.getElementById('riskOverview-all');
       if (riskOverviewButton) riskOverviewButton.classList.toggle('active', state.riskOverview === 'all');
+      const pendingButton = document.getElementById('submissionOverview-pending');
+      if (pendingButton) pendingButton.classList.toggle('active', state.submissionOverview === '未提交');
+      const submittedButton = document.getElementById('submissionOverview-submitted');
+      if (submittedButton) submittedButton.classList.toggle('active', state.submissionOverview === '已提交');
+      const completedButton = document.getElementById('completionOverview-completed');
+      if (completedButton) completedButton.classList.toggle('active', state.completionOverview === '已完结');
     }
 
     function applyRiskOverview() {
-      state.riskOverview = state.riskOverview === 'all' ? '' : 'all';
+      const isActive = state.riskOverview === 'all';
+      state.riskOverview = isActive ? '' : 'all';
+      state.submissionOverview = '';
+      state.completionOverview = '';
       renderWorkbenchTable();
       showToast(state.riskOverview ? '已筛选风险记录' : '已取消风险筛选', 'info');
+    }
+
+    function applySubmissionOverview(status) {
+      const isActive = state.submissionOverview === status;
+      state.submissionOverview = isActive ? '' : status;
+      state.completionOverview = '';
+      state.riskOverview = '';
+      renderWorkbenchTable();
+      showToast(state.submissionOverview ? `已筛选${status}数据` : '已取消提交状态筛选', 'info');
+    }
+
+    function applyCompletionOverview(status) {
+      const isActive = state.completionOverview === status;
+      state.completionOverview = isActive ? '' : status;
+      state.submissionOverview = '';
+      state.riskOverview = '';
+      renderWorkbenchTable();
+      showToast(state.completionOverview ? `已筛选${status}数据` : '已取消完结状态筛选', 'info');
     }
 
     // Global Active State for Allocation Modal
@@ -4972,8 +5082,10 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
 
     // Open Allocation from Single Row Button
     function openSingleAllocationModal(id) {
+      const item = state.items.find(candidate => candidate.id === id);
+      const firstRowKey = item ? getWorkbenchGoodsRows(item)[0]?.key : '';
       state.selectedRowIds.clear();
-      state.selectedRowIds.add(id);
+      if (firstRowKey) state.selectedRowIds.add(firstRowKey);
       openBatchAllocationModal();
     }
 
@@ -4984,17 +5096,15 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         return;
       }
 
-      const selectedItems = Array.from(state.selectedRowIds)
-        .map(id => state.items.find(item => item.id === id))
-        .filter(Boolean);
+      const selectedItems = getSelectedWorkbenchItems();
 
       if (selectedItems.some(item => item.type !== 'non_dest')) {
         showToast('目的港库存业务不支持人工分配，请仅选择非目的港库存业务。', 'danger');
         return;
       }
 
-      if (selectedItems.some(item => getDisplayStatus(item) === '已关闭')) {
-        showToast('已关闭记录必须先点击“取消完结”后才能人工分配。', 'danger');
+      if (getSelectedWorkbenchRows().some(row => getRowClosedStatus(row) === '已完结')) {
+        showToast('已完结的商品明细行必须先点击“取消完结”后才能人工分配。', 'danger');
         return;
       }
 
@@ -6422,8 +6532,8 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       }
 
       let count = 0;
-      state.selectedRowIds.forEach(id => {
-        const item = state.items.find(i => i.id === id);
+      getSelectedWorkbenchItems().forEach(item => {
+        const id = item.id;
         if (item && getDisplayStatus(item) !== '已关闭' && getPendingQty(item) > 0) {
           generateLogisticsDemand(id);
           count++;
@@ -7977,7 +8087,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function showToast(message, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      
+
       let icon = 'info';
       let bgColor = 'bg-slate-800 text-white';
       if (type === 'success') { icon = 'check-circle-2'; bgColor = 'bg-emerald-600 text-white shadow-lg'; }

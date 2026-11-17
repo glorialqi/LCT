@@ -36,6 +36,7 @@
     <symbol id="p-link" viewBox="0 0 24 24"><path d="m9.2 14.8 5.6-5.6M7.5 16.5l-1.1 1.1a3.3 3.3 0 0 1-4.7-4.7l3-3a3.3 3.3 0 0 1 4.7 0M16.5 7.5l1.1-1.1a3.3 3.3 0 0 1 4.7 4.7l-3 3a3.3 3.3 0 0 1-4.7 0"/></symbol>
     <symbol id="p-chevron" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
     <symbol id="p-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="p-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></symbol>
     <symbol id="p-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></symbol>
   </svg>
 
@@ -79,13 +80,7 @@
             <button class="btn danger" id="rejectPendingBtn" type="button" hidden>驳回</button>
             <button class="btn primary" id="receivePendingBtn" type="button" hidden>接收</button>
             <button class="btn outline-primary" id="modifyBtn" type="button" hidden>版本维护</button>
-            <div class="demand-menu-wrap" id="downstreamMenuWrap" hidden>
-              <button class="btn primary" id="downstreamBtn" type="button" aria-haspopup="menu" aria-expanded="false">生成下游单据</button>
-              <div class="demand-menu" id="downstreamMenu" role="menu" hidden>
-                <button type="button" role="menuitem" data-downstream-kind="logistics">生成物流需求</button>
-                <button type="button" role="menuitem" data-downstream-kind="delegation">生成物流委托</button>
-              </div>
-            </div>
+            <button class="btn primary" id="startCustomerOrderBtn" type="button" hidden>发起客户订单</button>
             <button class="btn outline-primary" id="cancelCompleteBtn" type="button" hidden>取消完结</button>
             <button class="btn danger" id="voidDemandBtn" type="button" hidden>作废</button>
             <button class="btn" id="historyBtn" type="button">历史版本</button>
@@ -105,13 +100,39 @@
             <button class="ct-business-tab active" id="overviewTab" type="button" role="tab" aria-selected="true" aria-controls="overviewPanel" tabindex="0">需求信息</button>
             <button class="ct-business-tab" id="ordersTab" type="button" role="tab" aria-selected="false" aria-controls="ordersPanel" tabindex="-1">订单与合同</button>
             <button class="ct-business-tab" id="financeTab" type="button" role="tab" aria-selected="false" aria-controls="financePanel" tabindex="-1">费用与结算</button>
-            <button class="ct-business-tab" id="changesTab" type="button" role="tab" aria-selected="false" aria-controls="changesPanel" tabindex="-1">变更与流转</button>
           </div>
         </div>
 
         <div id="overviewPanel" class="demand-tab-panel" role="tabpanel" aria-labelledby="overviewTab">
           <form id="createDemandForm" novalidate hidden>
             <div data-ui-form-alert hidden></div>
+            <datalist id="productNameOptions">
+              <option value="脱皮花生仁"></option>
+              <option value="一级压榨花生油"></option>
+              <option value="花生粕"></option>
+              <option value="食用植物油"></option>
+            </datalist>
+            <datalist id="goodsValueCurrencyOptions">
+              <option value="CNY"></option>
+              <option value="USD"></option>
+              <option value="EUR"></option>
+              <option value="JPY"></option>
+            </datalist>
+            <datalist id="packageUnitOptions">
+              <option value="袋"></option>
+              <option value="桶"></option>
+              <option value="箱"></option>
+              <option value="托盘"></option>
+              <option value="件"></option>
+            </datalist>
+            <datalist id="feeItemOptions">
+              <option value="海运费"></option>
+              <option value="港杂费"></option>
+              <option value="报关代理费"></option>
+              <option value="仓储费"></option>
+              <option value="运输费"></option>
+              <option value="其他费用"></option>
+            </datalist>
 
             <section class="demand-section" id="createDemandFormSection" aria-labelledby="createFormTitle">
               <div class="demand-section-head">
@@ -119,39 +140,44 @@
                 <div class="demand-inline-actions"><span class="demand-muted">必填字段标记 *；修改后自动标记未保存</span><button class="btn soft-primary" id="resetCreateBtn" type="button">重置表单</button></div>
               </div>
               <div class="demand-section-body">
-                <div class="demand-form-grid">
+                <div class="demand-form-grid demand-customer-info-grid">
                   <div class="demand-form-field field"><label for="createCustomer">客户<span class="required">*</span></label><select id="createCustomer" name="customer" required><option value="">请选择客户</option><option>青岛绿洲园花生食品有限公司</option><option>厦门象屿股份有限公司</option><option>上海远洋供应链有限公司</option><option>广州南沙国际物流有限公司</option><option>宁波中远海运集装箱运输有限公司</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createCustomerType">客户类型<span class="required">*</span></label><select id="createCustomerType" name="customerType" required><option value="">请选择客户类型</option><option>内部客户</option><option>外部客户</option><option>同行客户</option></select><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createContact">客户联系人<span class="required">*</span></label><input id="createContact" name="contact" type="text" required><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createPhone">客户联系人电话</label><input id="createPhone" name="phone" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createEmail">联系人邮箱</label><input id="createEmail" name="email" type="email"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createBizType">业务类型<span class="required">*</span></label><select id="createBizType" name="bizType" required><option>出口</option><option>进口</option><option>内贸</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field span-2 field" id="contactEmailRecipientsField">
+                    <label for="emailRecipientDraftName">邮件接收人 + 邮箱</label>
+                    <div class="demand-email-recipient-box" id="createEmailRecipientBox">
+                      <div class="demand-email-recipient-chips" id="createEmailRecipientList"></div>
+                      <button class="demand-email-recipient-trigger" id="addEmailRecipientBtn" type="button" aria-expanded="false" aria-controls="emailRecipientPopover">＋ 添加</button>
+                      <div class="demand-email-recipient-popover" id="emailRecipientPopover" hidden>
+                        <div class="demand-email-recipient-popover-fields">
+                          <input id="emailRecipientDraftName" type="text" placeholder="姓名" aria-label="邮件接收人姓名">
+                          <input id="emailRecipientDraftEmail" type="email" placeholder="邮箱" aria-label="邮件接收人邮箱">
+                        </div>
+                        <div class="demand-email-recipient-popover-actions">
+                          <button class="btn" id="cancelEmailRecipientBtn" type="button">取消</button>
+                          <button class="btn primary" id="confirmEmailRecipientBtn" type="button">添加</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ui-field-message"></div>
+                  </div>
+                  <div class="demand-form-field field is-grid-row-start" id="createBizTypeField"><label for="createBizType">业务类型<span class="required">*</span></label><select id="createBizType" name="bizType" required><option>出口</option><option>进口</option><option>内贸</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createBusinessDate">业务日期<span class="required">*</span></label><input id="createBusinessDate" name="businessDate" type="date" required><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createTradeTerms">贸易条款</label><select id="createTradeTerms" name="tradeTerms"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field span-2 field">
+                                    <div class="demand-form-field field">
                     <label>服务范围<span class="required">*</span></label>
                     <div class="demand-check-group" data-required-group="serviceScopes">
                       <label class="demand-check-option"><input type="checkbox" name="serviceScopes" value="运输">运输</label>
                       <label class="demand-check-option"><input type="checkbox" name="serviceScopes" value="仓储">仓储</label>
-                      <label class="demand-check-option"><input type="checkbox" name="serviceScopes" value="报关清关">报关清关</label>
-                      <label class="demand-check-option"><input type="checkbox" name="serviceScopes" value="加工">加工</label>
+                      <label class="demand-check-option"><input type="checkbox" name="serviceScopes" value="报关">报关</label>
                     </div>
                     <div class="ui-field-message"></div>
                   </div>
-                  <div class="demand-form-field span-2 field"><label for="createServiceRequirement">服务内容<span class="required">*</span></label><textarea id="createServiceRequirement" name="serviceRequirement" required placeholder="请输入服务要求"></textarea><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field span-2 field"><label for="createCustomerRemark">其他特殊要求 / 客户备注</label><textarea id="createCustomerRemark" name="customerRemark" placeholder="请输入"></textarea><div class="ui-field-message"></div></div>
-                </div>
-              </div>
-            </section>
-
-            <section class="demand-section" id="createTransportRequirementSection" aria-labelledby="createTransportRequirementTitle" hidden>
-              <div class="demand-section-head">
-                <h2 class="demand-section-title" id="createTransportRequirementTitle"><svg><use href="#p-contract"/></svg>运输要求</h2>
-                <span class="demand-muted">服务范围包含运输时填写</span>
-              </div>
-              <div class="demand-section-body">
-                <div class="demand-form-grid">
                   <div class="demand-form-field field" id="createTransportTypeField">
                     <label>运输类型<span class="required">*</span></label>
-                    <details class="demand-multi-select" data-multi-select-name="serviceItems">
+                    <details class="demand-multi-select" id="createTransportType" data-multi-select-name="serviceItems">
                       <summary><span class="demand-multi-select-value" data-multi-select-value data-placeholder="请选择运输类型">请选择运输类型</span><svg aria-hidden="true"><use href="#p-chevron"/></svg></summary>
                       <div class="demand-multi-select-menu">
                         <label class="demand-multi-select-option"><input type="checkbox" name="serviceItems" value="水运">水运</label>
@@ -163,12 +189,12 @@
                   </div>
                   <div class="demand-form-field field" id="createShippingCategoryField">
                     <label>装运类别<span class="required">*</span></label>
-                    <details class="demand-multi-select" data-multi-select-name="shippingCategories">
+                    <details class="demand-multi-select" id="createShippingCategory" data-multi-select-name="shippingCategories">
                       <summary><span class="demand-multi-select-value" data-multi-select-value data-placeholder="请选择装运类别">请选择装运类别</span><svg aria-hidden="true"><use href="#p-chevron"/></svg></summary>
                       <div class="demand-multi-select-menu">
                         <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="散货">散货</label>
                         <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="集装箱">集装箱</label>
-                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="件杂货">件杂货</label>
+                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="件杂">件杂</label>
                       </div>
                     </details>
                     <div class="ui-field-message"></div>
@@ -183,27 +209,8 @@
                     </details>
                     <div class="ui-field-message"></div>
                   </div>
-                </div>
-                <div id="createWaterTransportFields" hidden>
-                  <div class="demand-form-grid">
-                    <div class="demand-form-field field"><label for="createOriginPort">起运港</label><input id="createOriginPort" name="originPort" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createOriginRegion">起运港国别/省市区</label><input id="createOriginRegion" name="originRegion" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createOriginContact">起运港联系人</label><input id="createOriginContact" name="originContact" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createOriginContactPhone">起运港联系方式</label><input id="createOriginContactPhone" name="originContactPhone" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createOriginTerminal">起运港码头</label><input id="createOriginTerminal" name="originTerminal" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field is-grid-row-start"><label for="createDestinationPort">目的港</label><input id="createDestinationPort" name="destinationPort" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createDestinationRegion">目的港国别/省市区</label><input id="createDestinationRegion" name="destinationRegion" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createDestinationContact">目的港联系人</label><input id="createDestinationContact" name="destinationContact" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createDestinationContactPhone">目的港联系方式</label><input id="createDestinationContactPhone" name="destinationContactPhone" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createDestinationTerminal">卸货港码头</label><input id="createDestinationTerminal" name="destinationTerminal" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field is-grid-row-start"><label for="createLatestShipmentDate">最迟装运日期</label><input id="createLatestShipmentDate" name="latestShipmentDate" type="date"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createDischargeTerms">卸货条款</label><input id="createDischargeTerms" name="dischargeTerms" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createDirectSailing">是否直航</label><select id="createDirectSailing" name="directSailing"><option>是</option><option>否</option></select><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createVesselCertificateRequirement">船证要求</label><input id="createVesselCertificateRequirement" name="vesselCertificateRequirement" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createTransportVesselAgeRequirement">船龄要求</label><input id="createTransportVesselAgeRequirement" name="transportVesselAgeRequirement" type="text"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field field"><label for="createCommissionRate">佣金比例（%）</label><input id="createCommissionRate" name="commissionRate" type="number" min="0" step="0.01"><div class="ui-field-message"></div></div>
-                    <div class="demand-form-field span-2 field"><label for="createEmailRecipients">邮件接收人（支持多个）</label><input id="createEmailRecipients" name="emailRecipients" type="text" placeholder="多个邮箱请用英文逗号分隔"><div class="ui-field-message"></div></div>
-                  </div>
+                  <div class="demand-form-field span-2 field"><label for="createServiceRequirement">服务内容</label><textarea id="createServiceRequirement" name="serviceRequirement" rows="1" placeholder="请输入服务要求"></textarea><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field span-2 field"><label for="createCustomerRemark">其他特殊要求 / 客户备注</label><textarea id="createCustomerRemark" name="customerRemark" rows="1" placeholder="请输入"></textarea><div class="ui-field-message"></div></div>
                 </div>
               </div>
             </section>
@@ -216,7 +223,7 @@
               <div class="demand-section-body">
                 <div class="demand-data-table-wrap">
                   <table class="demand-data-table demand-product-form-table" aria-label="客户需求商品明细">
-                    <thead><tr><th>贸易合同号</th><th>贸易合同类型</th><th>商品中文名<span class="required">*</span></th><th>商品描述</th><th>标准数量<span class="required">*</span></th><th>标准单位<span class="required">*</span></th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>操作</th></tr></thead>
+                    <thead><tr><th>贸易合同号</th><th>贸易合同类型</th><th>商品中文名<span class="required">*</span></th><th>商品描述</th><th>标准数量<span class="required">*</span></th><th>标准单位<span class="required">*</span></th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>包装数量</th><th>包装单位</th><th>商品英文名</th><th>操作</th></tr></thead>
                     <tbody id="createProductBody"></tbody>
                   </table>
                 </div>
@@ -226,26 +233,32 @@
             <section class="demand-section" id="createBookingExtensionSection" aria-labelledby="createBookingExtensionTitle" hidden>
               <div class="demand-section-head">
                 <h2 class="demand-section-title" id="createBookingExtensionTitle"><svg><use href="#p-contract"/></svg>订舱扩展</h2>
-                <span class="demand-muted">扩展场景包含订舱时填写</span>
               </div>
               <div class="demand-section-body">
-                <div class="demand-form-grid">
-                  <div class="demand-form-field field"><label for="createSalesContractNo">销售合同号</label><input id="createSalesContractNo" name="salesContractNo" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createPurchaseContractNo">采购合同号</label><input id="createPurchaseContractNo" name="purchaseContractNo" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createContractHeader">合同抬头</label><input id="createContractHeader" name="contractHeader" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createBookingCustomer">客户</label><input id="createBookingCustomer" name="bookingCustomer" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createFactory">工厂</label><input id="createFactory" name="factory" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createBookingTradeType">贸易类型</label><input id="createBookingTradeType" name="bookingTradeType" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createSalesPriceTerm">销售价格条款</label><input id="createSalesPriceTerm" name="salesPriceTerm" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createPurchasePriceTerm">采购价格条款</label><input id="createPurchasePriceTerm" name="purchasePriceTerm" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createExternalDeliveryDate">对外交货期</label><input id="createExternalDeliveryDate" name="externalDeliveryDate" type="date"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createFreightEstimate">运费测算单价</label><input id="createFreightEstimate" name="freightEstimate" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createPortChargeEstimate">港杂预估单价</label><input id="createPortChargeEstimate" name="portChargeEstimate" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createVesselAgeRequirement">船龄要求</label><input id="createVesselAgeRequirement" name="vesselAgeRequirement" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createVesselTypeRequirement">船型要求</label><input id="createVesselTypeRequirement" name="vesselTypeRequirement" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createCoilWeight">卷重</label><input id="createCoilWeight" name="coilWeight" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createLength">长度</label><input id="createLength" name="length" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createClientDocumentOfficer">委托方单证员</label><input id="createClientDocumentOfficer" name="clientDocumentOfficer" type="text"><div class="ui-field-message"></div></div>
+                <div id="createWaterTransportFields" hidden>
+                  <div class="demand-form-grid">
+                    <div class="demand-form-field field"><label for="createOriginPort">起运港<span class="required">*</span></label><select id="createOriginPort" name="originPort" required><option value="">请选择起运港</option><option>青岛港</option><option>上海港</option><option>宁波舟山港</option><option>天津港</option><option>深圳港</option></select><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createOriginRegion">起运港国别/省市区</label><input id="createOriginRegion" name="originRegion" type="text" readonly aria-readonly="true"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createOriginContact">起运港联系人</label><input id="createOriginContact" name="originContact" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createOriginContactPhone">起运港联系方式</label><input id="createOriginContactPhone" name="originContactPhone" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createOriginTerminal">起运港码头</label><input id="createOriginTerminal" name="originTerminal" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field is-grid-row-start"><label for="createDestinationPort">目的港<span class="required">*</span></label><select id="createDestinationPort" name="destinationPort" required><option value="">请选择目的港</option><option>胡志明港</option><option>海防港</option><option>新加坡港</option><option>鹿特丹港</option><option>洛杉矶港</option></select><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createDestinationRegion">目的港国别/省市区</label><input id="createDestinationRegion" name="destinationRegion" type="text" readonly aria-readonly="true"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createDestinationContact">目的港联系人</label><input id="createDestinationContact" name="destinationContact" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createDestinationContactPhone">目的港联系方式</label><input id="createDestinationContactPhone" name="destinationContactPhone" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createDestinationTerminal">卸货港码头</label><input id="createDestinationTerminal" name="destinationTerminal" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field is-grid-row-start"><label for="createLatestShipmentDate">最迟装运日期</label><input id="createLatestShipmentDate" name="latestShipmentDate" type="date"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createDischargeTerms">卸货条款</label><select id="createDischargeTerms" name="dischargeTerms"><option value="">请选择卸货条款</option><option>FO</option><option>FI</option><option>FIO</option><option>LINER TERMS</option></select><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createDirectSailing">是否直航</label><select id="createDirectSailing" name="directSailing"><option value="">请选择</option><option>是</option><option>否</option></select><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createVesselCertificateRequirement">船证要求</label><input id="createVesselCertificateRequirement" name="vesselCertificateRequirement" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createTransportVesselAgeRequirement">船龄要求</label><input id="createTransportVesselAgeRequirement" name="transportVesselAgeRequirement" type="text"><div class="ui-field-message"></div></div>
+                    <div class="demand-form-field field"><label for="createCommissionRate">佣金比例（%）</label><input id="createCommissionRate" name="commissionRate" type="number" min="0" step="0.01"><div class="ui-field-message"></div></div>
+                  </div>
+                </div>
+                <div class="demand-form-field field demand-booking-note-field">
+                  <label for="createBookingExtensionText">订舱备注</label>
+                  <textarea id="createBookingExtensionText" name="bookingExtensionText" class="demand-booking-extension-textarea" rows="1" aria-label="订舱备注" placeholder="请输入订舱备注"></textarea>
+                  <div class="ui-field-message"></div>
                 </div>
               </div>
             </section>
@@ -253,14 +266,27 @@
             <section class="demand-section" id="createQuoteSection" aria-labelledby="createQuoteTitle">
               <div class="demand-section-head">
                 <h2 class="demand-section-title" id="createQuoteTitle"><svg><use href="#p-money"/></svg>需求报价与目标成本</h2>
-                <button class="btn" id="addQuoteLineBtn" type="button">添加报价行</button>
               </div>
               <div class="demand-section-body">
-                <div class="demand-data-table-wrap">
-                  <table class="demand-data-table demand-quote-form-table" aria-label="需求报价与目标成本">
-                    <thead><tr><th>费用科目<span class="required">*</span></th><th>收付方向</th><th>税率（%）</th><th>报价单价（含税）</th><th>币种</th><th>预计数量</th><th>单位</th><th>报价金额</th><th>汇率</th><th>本位币金额</th><th>操作</th></tr></thead>
-                    <tbody id="createQuoteBody"></tbody>
-                  </table>
+                <div class="demand-quote-split">
+                  <section class="demand-quote-panel" aria-labelledby="createReceivableQuoteTitle">
+                    <div class="demand-quote-panel-head"><h3 id="createReceivableQuoteTitle">预估应收</h3><button class="btn" id="addReceivableQuoteBtn" type="button">添加应收行</button></div>
+                    <div class="demand-data-table-wrap">
+                      <table class="demand-data-table demand-quote-form-table demand-quote-subtable" aria-label="预估应收">
+                        <thead><tr><th>费用科目<span class="required">*</span></th><th>税率（%）</th><th>报价单价（含税）</th><th>币种</th><th>预计数量</th><th>单位</th><th>报价金额</th><th>汇率</th><th>本位币金额</th><th>操作</th></tr></thead>
+                        <tbody id="createReceivableQuoteBody" data-quote-direction="应收"></tbody>
+                      </table>
+                    </div>
+                  </section>
+                  <section class="demand-quote-panel" aria-labelledby="createPayableQuoteTitle">
+                    <div class="demand-quote-panel-head"><h3 id="createPayableQuoteTitle">预估应付</h3><button class="btn" id="addPayableQuoteBtn" type="button">添加应付行</button></div>
+                    <div class="demand-data-table-wrap">
+                      <table class="demand-data-table demand-quote-form-table demand-quote-subtable" aria-label="预估应付">
+                        <thead><tr><th>费用科目<span class="required">*</span></th><th>税率（%）</th><th>报价单价（含税）</th><th>币种</th><th>预计数量</th><th>单位</th><th>报价金额</th><th>汇率</th><th>本位币金额</th><th>操作</th></tr></thead>
+                        <tbody id="createPayableQuoteBody" data-quote-direction="应付"></tbody>
+                      </table>
+                    </div>
+                  </section>
                 </div>
               </div>
             </section>
@@ -269,28 +295,39 @@
           <section class="demand-section" id="staticDemandInfoSection" aria-labelledby="basicInfoTitle">
             <div class="demand-section-head"><h2 class="demand-section-title" id="basicInfoTitle"><svg><use href="#p-demand"/></svg>客户需求信息</h2></div>
             <div class="demand-section-body">
-              <div class="demand-readonly-grid">
+              <div class="demand-readonly-grid demand-customer-info-grid">
                 <div class="demand-field"><div class="demand-field-label">客户</div><div class="demand-readonly-value is-strong" id="staticCustomerValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">客户类型</div><div class="demand-readonly-value" id="staticCustomerTypeValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">客户联系人</div><div class="demand-readonly-value" id="staticContactValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">客户联系人电话</div><div class="demand-readonly-value" id="staticPhoneValue"></div></div>
-                <div class="demand-field"><div class="demand-field-label">联系人邮箱</div><div class="demand-readonly-value" id="staticEmailValue"></div></div>
-                <div class="demand-field"><div class="demand-field-label">业务类型</div><div class="demand-readonly-value" id="staticBizTypeValue"></div></div>
+                <div class="demand-field span-2"><div class="demand-field-label">邮件接收人 + 邮箱</div><div class="demand-readonly-value demand-email-recipient-list" id="staticEmailValue"></div></div>
+                <div class="demand-field is-grid-row-start"><div class="demand-field-label">业务类型</div><div class="demand-readonly-value" id="staticBizTypeValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">业务日期</div><div class="demand-readonly-value" id="staticBusinessDateValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">贸易条款</div><div class="demand-readonly-value" id="staticTradeTermsValue"></div></div>
-                <div class="demand-field span-2"><div class="demand-field-label">服务范围</div><div class="demand-readonly-value" id="staticServiceScopeValue"></div></div>
+                                <div class="demand-field"><div class="demand-field-label">服务范围</div><div class="demand-readonly-value" id="staticServiceScopeValue"></div></div>
+                <div class="demand-field" id="staticTransportTypeField"><div class="demand-field-label">运输类型</div><div class="demand-readonly-value" id="staticServiceItemsValue"></div></div>
+                <div class="demand-field" id="staticShippingCategoriesField"><div class="demand-field-label">装运类别</div><div class="demand-readonly-value" id="staticShippingCategoriesValue"></div></div>
+                <div class="demand-field" id="staticExtensionSceneField"><div class="demand-field-label">扩展场景</div><div class="demand-readonly-value" id="staticExtensionScenesValue"></div></div>
                 <div class="demand-field span-2"><div class="demand-field-label">服务内容</div><div class="demand-readonly-value is-multiline" id="serviceRequirementValue"></div></div>
                 <div class="demand-field span-2"><div class="demand-field-label">其他特殊要求 / 客户备注</div><div class="demand-readonly-value is-multiline" id="customerRemarkValue"></div></div>
               </div>
             </div>
           </section>
 
-          <section class="demand-section" id="staticTransportRequirementSection" aria-labelledby="transportRequirementTitle" hidden>
-            <div class="demand-section-head"><h2 class="demand-section-title" id="transportRequirementTitle"><svg><use href="#p-contract"/></svg>运输要求</h2><span class="demand-muted">服务范围包含运输时展示</span></div>
+          <section class="demand-section" id="staticProductDetailSection" aria-labelledby="lineTitle">
+            <div class="demand-section-head"><h2 class="demand-section-title" id="lineTitle"><svg><use href="#p-package"/></svg>商品明细</h2><span class="demand-muted">数量按需求行核销</span></div>
             <div class="demand-section-body">
-              <div class="demand-readonly-grid">
-                <div class="demand-field" id="staticTransportTypeField"><div class="demand-field-label">运输类型</div><div class="demand-readonly-value" id="staticServiceItemsValue"></div></div>
-                <div class="demand-field" id="staticShippingCategoriesField"><div class="demand-field-label">装运类别</div><div class="demand-readonly-value" id="staticShippingCategoriesValue"></div></div>
-                <div class="demand-field" id="staticExtensionSceneField"><div class="demand-field-label">扩展场景</div><div class="demand-readonly-value" id="staticExtensionScenesValue"></div></div>
+              <div class="demand-data-table-wrap">
+                <table class="demand-data-table demand-product-detail-table" aria-label="客户需求商品明细">
+                  <thead><tr><th>行号</th><th>贸易合同号</th><th>贸易合同类型</th><th>商品中文名</th><th>商品描述</th><th class="num">标准数量</th><th>标准单位</th><th class="num">单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th class="num">溢装率</th><th class="num">短装率</th><th class="num">货值单价</th><th class="num">货值金额</th><th>货值币种</th><th class="num">包装数量</th><th>包装单位</th><th>商品英文名</th></tr></thead>
+                  <tbody id="overviewLineBody"></tbody>
+                </table>
               </div>
+            </div>
+          </section>
+          <section class="demand-section" id="staticBookingExtensionSection" aria-labelledby="bookingExtensionTitle" hidden>
+            <div class="demand-section-head"><h2 class="demand-section-title" id="bookingExtensionTitle"><svg><use href="#p-contract"/></svg>订舱扩展</h2><span class="status running">订舱</span></div>
+            <div class="demand-section-body">
               <div id="staticWaterTransportFields" hidden>
                 <div class="demand-readonly-grid">
                   <div class="demand-field"><div class="demand-field-label">起运港</div><div class="demand-readonly-value" id="staticOriginPortValue"></div></div>
@@ -309,46 +346,11 @@
                   <div class="demand-field"><div class="demand-field-label">船证要求</div><div class="demand-readonly-value" id="staticVesselCertificateValue"></div></div>
                   <div class="demand-field"><div class="demand-field-label">船龄要求</div><div class="demand-readonly-value" id="staticTransportVesselAgeValue"></div></div>
                   <div class="demand-field"><div class="demand-field-label">佣金比例（%）</div><div class="demand-readonly-value" id="staticCommissionRateValue"></div></div>
-                  <div class="demand-field span-6"><div class="demand-field-label">邮件接收人（支持多个）</div><div class="demand-readonly-value is-multiline" id="staticEmailRecipientsValue"></div></div>
                 </div>
               </div>
-            </div>
-          </section>
-
-          <section class="demand-section" id="staticProductDetailSection" aria-labelledby="lineTitle">
-            <div class="demand-section-head"><h2 class="demand-section-title" id="lineTitle"><svg><use href="#p-package"/></svg>商品明细</h2><span class="demand-muted">数量按需求行核销</span></div>
-            <div class="demand-section-body">
-              <div class="demand-data-table-wrap">
-                <table class="demand-data-table demand-product-detail-table" aria-label="客户需求商品明细">
-                  <thead><tr><th>需求行号</th><th>贸易合同号</th><th>贸易合同类型</th><th>商品中文名</th><th>商品描述</th><th class="num">标准数量</th><th>标准单位</th><th class="num">单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th class="num">溢装率</th><th class="num">短装率</th></tr></thead>
-                  <tbody id="overviewLineBody"></tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-          <section class="demand-section" id="bookingExtensionDisplaySection" aria-labelledby="bookingDisplayTitle" hidden>
-            <div class="demand-section-head">
-              <h2 class="demand-section-title" id="bookingDisplayTitle"><svg><use href="#p-contract"/></svg>订舱扩展</h2>
-              <span class="status running">订舱</span>
-            </div>
-            <div class="demand-section-body">
-              <div class="demand-readonly-grid">
-                <div class="demand-field"><div class="demand-field-label">销售合同号</div><div class="demand-readonly-value" id="bookingSalesContract"></div></div>
-                <div class="demand-field"><div class="demand-field-label">采购合同号</div><div class="demand-readonly-value" id="bookingPurchaseContract"></div></div>
-                <div class="demand-field"><div class="demand-field-label">合同抬头</div><div class="demand-readonly-value" id="bookingContractHeader"></div></div>
-                <div class="demand-field"><div class="demand-field-label">客户</div><div class="demand-readonly-value" id="bookingCustomer"></div></div>
-                <div class="demand-field"><div class="demand-field-label">工厂</div><div class="demand-readonly-value" id="bookingFactory"></div></div>
-                <div class="demand-field"><div class="demand-field-label">贸易类型</div><div class="demand-readonly-value" id="bookingTradeType"></div></div>
-                <div class="demand-field"><div class="demand-field-label">销售价格条款</div><div class="demand-readonly-value" id="bookingSalesPriceTerm"></div></div>
-                <div class="demand-field"><div class="demand-field-label">采购价格条款</div><div class="demand-readonly-value" id="bookingPurchasePriceTerm"></div></div>
-                <div class="demand-field"><div class="demand-field-label">对外交货期</div><div class="demand-readonly-value" id="bookingExternalDeliveryDate"></div></div>
-                <div class="demand-field"><div class="demand-field-label">运费测算单价</div><div class="demand-readonly-value" id="bookingFreightEstimate"></div></div>
-                <div class="demand-field"><div class="demand-field-label">港杂预估单价</div><div class="demand-readonly-value" id="bookingPortChargeEstimate"></div></div>
-                <div class="demand-field"><div class="demand-field-label">船龄要求</div><div class="demand-readonly-value" id="bookingVesselAgeRequirement"></div></div>
-                <div class="demand-field"><div class="demand-field-label">船型要求</div><div class="demand-readonly-value" id="bookingVesselTypeRequirement"></div></div>
-                <div class="demand-field"><div class="demand-field-label">卷重</div><div class="demand-readonly-value" id="bookingCoilWeight"></div></div>
-                <div class="demand-field"><div class="demand-field-label">长度</div><div class="demand-readonly-value" id="bookingLength"></div></div>
-                <div class="demand-field"><div class="demand-field-label">委托方单证员</div><div class="demand-readonly-value" id="bookingClientDocumentOfficer"></div></div>
+              <div class="demand-booking-note-field">
+                <div class="demand-field-label">订舱备注</div>
+                <textarea id="bookingExtensionTextDisplay" class="demand-booking-extension-textarea demand-booking-extension-readonly" aria-label="订舱备注" readonly></textarea>
               </div>
             </div>
           </section>
@@ -361,31 +363,47 @@
             <div class="demand-section-body">
               <div class="demand-metric-grid demand-metric-grid--4" id="quoteMetrics"></div>
               <div class="demand-table-toolbar"><span class="demand-muted">报价随需求版本冻结；订单合同价独立维护。</span></div>
-              <div class="demand-data-table-wrap">
-                <table class="demand-data-table demand-quote-table" aria-label="需求报价与目标成本">
-                  <thead><tr><th>费用科目</th><th>收付方向</th><th class="num">税率（%）</th><th class="num">报价单价（含税）</th><th>币种</th><th class="num">预计数量</th><th>单位</th><th class="num">报价金额</th><th class="num">汇率</th><th class="num">本位币金额</th></tr></thead>
-                  <tbody id="quoteLineBody"></tbody>
-                </table>
+              <div class="demand-quote-split">
+                <section class="demand-quote-panel" aria-labelledby="receivableQuoteTitle">
+                  <div class="demand-quote-panel-head"><h3 id="receivableQuoteTitle">预估应收</h3><span class="demand-muted" id="quoteReceivableCount">0 行</span></div>
+                  <div class="demand-data-table-wrap">
+                    <table class="demand-data-table demand-quote-table demand-quote-subtable" aria-label="预估应收">
+                      <thead><tr><th>费用科目</th><th class="num">税率（%）</th><th class="num">报价单价（含税）</th><th>币种</th><th class="num">预计数量</th><th>单位</th><th class="num">报价金额</th><th class="num">汇率</th><th class="num">本位币金额</th></tr></thead>
+                      <tbody id="quoteReceivableBody"></tbody>
+                    </table>
+                  </div>
+                </section>
+                <section class="demand-quote-panel" aria-labelledby="payableQuoteTitle">
+                  <div class="demand-quote-panel-head"><h3 id="payableQuoteTitle">预估应付</h3><span class="demand-muted" id="quotePayableCount">0 行</span></div>
+                  <div class="demand-data-table-wrap">
+                    <table class="demand-data-table demand-quote-table demand-quote-subtable" aria-label="预估应付">
+                      <thead><tr><th>费用科目</th><th class="num">税率（%）</th><th class="num">报价单价（含税）</th><th>币种</th><th class="num">预计数量</th><th>单位</th><th class="num">报价金额</th><th class="num">汇率</th><th class="num">本位币金额</th></tr></thead>
+                      <tbody id="quotePayableBody"></tbody>
+                    </table>
+                  </div>
+                </section>
               </div>
             </div>
           </section>
 
-          <section class="demand-section" id="demandSourceSection" aria-labelledby="sourceTitle">
-            <div class="demand-section-head">
-              <h2 class="demand-section-title" id="sourceTitle"><svg><use href="#p-doc"/></svg>来源与接收</h2>
-              <span class="status running" id="sourceTypeBadge">服务要求转入</span>
-            </div>
+          <section class="demand-section" id="systemInfoSection" aria-labelledby="systemInfoTitle">
+            <div class="demand-section-head"><h2 class="demand-section-title" id="systemInfoTitle"><svg><use href="#p-link"/></svg>系统信息</h2></div>
             <div class="demand-section-body">
+              <div class="demand-readonly-grid" id="systemMetaGrid">
+                <div class="demand-field"><div class="demand-field-label">创建人</div><div class="demand-readonly-value" id="systemCreatedBy"></div></div>
+                <div class="demand-field"><div class="demand-field-label">创建时间</div><div class="demand-readonly-value" id="systemCreatedAt"></div></div>
+                <div class="demand-field"><div class="demand-field-label">修改人</div><div class="demand-readonly-value" id="systemUpdatedBy"></div></div>
+                <div class="demand-field"><div class="demand-field-label">修改时间</div><div class="demand-readonly-value" id="systemUpdatedAt"></div></div>
+                <div class="demand-field"><div class="demand-field-label">版本号</div><div class="demand-readonly-value is-strong" id="systemVersion"></div></div>
+                <div class="demand-field"><div class="demand-field-label">当前版本生效时间</div><div class="demand-readonly-value" id="systemEffectiveAt"></div></div>
+              </div>
               <div class="demand-readonly-grid" id="sourceMetaGrid">
                 <div class="demand-field"><div class="demand-field-label">来源类型</div><div class="demand-readonly-value" id="sourceTypeValue">服务要求转入</div></div>
                 <div class="demand-field"><div class="demand-field-label">来源系统</div><div class="demand-readonly-value" id="sourceSystemValue">物流控制塔</div></div>
-                <div class="demand-field"><div class="demand-field-label">来源单号</div><div class="demand-readonly-value is-strong" id="sourceNumberValue">SR202610280018</div></div>
-                <div class="demand-field"><div class="demand-field-label">来源版本</div><div class="demand-readonly-value" id="sourceVersionValue">V2</div></div>
-              </div>
-              <div class="demand-readonly-grid" id="sourceHandlingGrid">
-                <div class="demand-field"><div class="demand-field-label">接收或驳回人</div><div class="demand-readonly-value" id="overviewHandledBy">苏丽蓉</div></div>
-                <div class="demand-field span-2"><div class="demand-field-label">接收或驳回时间</div><div class="demand-readonly-value" id="overviewHandledAt">2026-10-28 09:32</div></div>
-                <div class="demand-field span-3"><div class="demand-field-label">驳回记录</div><div class="demand-readonly-value demand-readonly-value--singleline" id="rejectionRecord">V1 于 2026-10-27 16:08 被驳回：客户联系人信息不完整。</div></div>
+                <div class="demand-field"><div class="demand-field-label">来源单号</div><div class="demand-readonly-value is-strong" id="sourceNumberValue">SR202610280018(V2)</div></div>
+                <div class="demand-field"><div class="demand-field-label" id="sourceHandlerLabel">接收人</div><div class="demand-readonly-value" id="overviewHandledBy">苏丽蓉</div></div>
+                <div class="demand-field"><div class="demand-field-label" id="sourceHandledAtLabel">接收时间</div><div class="demand-readonly-value" id="overviewHandledAt">2026-10-28 09:32</div></div>
+                <div class="demand-field"><div class="demand-field-label">驳回记录</div><div class="demand-readonly-value demand-readonly-value--singleline" id="rejectionRecord" title="V1 于 2026-10-27 16:08 被驳回：客户联系人信息不完整。">V1 于 2026-10-27 16:08 被驳回：客户联系人信息不完整。</div></div>
               </div>
               <div class="demand-readonly-grid" id="sourceAttachmentGrid">
                 <div class="demand-field span-6 demand-source-attachments"><div class="demand-field-label">来源附件</div><div class="demand-readonly-value"><div class="demand-attachment-list" id="sourceAttachmentList"></div></div></div>
@@ -401,7 +419,7 @@
 
               <div class="demand-data-table-wrap">
                 <table class="demand-data-table" aria-label="客户需求核销进度">
-                  <thead><tr><th>需求行号</th><th>商品/服务名称</th><th>单位</th><th class="num">需求数量</th><th class="num">已安排数量</th><th class="num">剩余可安排</th><th class="num">超出数量</th><th>核销状态</th></tr></thead>
+                  <thead><tr><th>行号</th><th>商品/服务名称</th><th>单位</th><th class="num">需求数量</th><th class="num">已安排数量</th><th class="num">剩余可安排</th><th class="num">超出数量</th><th>核销状态</th></tr></thead>
                   <tbody id="progressLineBody"></tbody>
                 </table>
               </div>
@@ -477,26 +495,6 @@
 
         </div>
 
-        <div id="changesPanel" class="demand-tab-panel" role="tabpanel" aria-labelledby="changesTab" hidden>
-          <section class="demand-section" aria-labelledby="versionsTitle">
-            <div class="demand-section-head">
-              <h2 class="demand-section-title" id="versionsTitle"><svg><use href="#p-version"/></svg>提交版本与修改单 <small>接收即生效，无审批</small></h2>
-              <div class="demand-inline-actions"><button class="btn soft-primary" id="exportVersionsBtn" type="button">导出变更记录</button><button class="btn outline-primary" id="modifyFromChangesBtn" type="button">发起修改单</button></div>
-            </div>
-            <div class="demand-section-body">
-              <div class="demand-data-table-wrap">
-                <table class="demand-data-table demand-version-table" aria-label="客户需求提交版本">
-                  <thead><tr><th>版本</th><th>提交类型</th><th>修改单号</th><th>状态</th><th>提交时间</th><th>接收/驳回人</th><th>生效时间</th><th>操作</th></tr></thead>
-                  <tbody id="versionTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-          <section class="demand-section" aria-labelledby="timelineTitle">
-            <div class="demand-section-head"><h2 class="demand-section-title" id="timelineTitle"><svg><use href="#p-link"/></svg>流转记录</h2></div>
-            <div class="demand-section-body"><ol class="demand-timeline" id="timelineList"></ol></div>
-          </section>
-        </div>
       </main>
     </section>
   </div>

@@ -121,28 +121,21 @@
           </section>
 
           <section class="demand-table-card" aria-label="客户需求列表">
-            <div class="status-tabs" role="tablist" aria-label="客户需求状态">
-              <button class="status-tab active" type="button" data-status="all" role="tab" aria-selected="true">全部(0)</button>
-              <button class="status-tab" type="button" data-status="created" role="tab" aria-selected="false">创建(0)</button>
-              <button class="status-tab" type="button" data-status="pending" role="tab" aria-selected="false">待接收(0)</button>
-              <button class="status-tab" type="button" data-status="received" role="tab" aria-selected="false">执行中(0)</button>
-              <button class="status-tab" type="button" data-status="rejected" role="tab" aria-selected="false">已驳回(0)</button>
-              <button class="status-tab" type="button" data-status="completed" role="tab" aria-selected="false">已完成(0)</button>
-              <span class="status-spacer"></span>
-              <span class="demand-result-hint" id="scrollHint">横向滚动查看更多字段</span>
-            </div>
-            <div class="demand-list-commandbar" aria-label="客户需求列表操作">
-              <div class="demand-list-commandbar-actions">
-                <button class="demand-command-btn" id="relationBtn" type="button" disabled title="选择 1 条需求拆分，选择 2 条及以上需求合并">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#p-merge"/></svg>
-                  <span id="relationBtnLabel">合并/拆分</span>
-                </button>
-                <button class="demand-command-btn" id="addDemandBtn" type="button">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#p-plus"/></svg>
-                  新增
-                </button>
+            <div class="demand-list-tabs-row">
+              <div class="status-tabs" role="tablist" aria-label="客户需求状态">
+                <button class="status-tab active" type="button" data-status="all" role="tab" aria-selected="true">全部(0)</button>
+                <button class="status-tab" type="button" data-status="created" role="tab" aria-selected="false">创建(0)</button>
+                <button class="status-tab" type="button" data-status="pending" role="tab" aria-selected="false">待接收(0)</button>
+                <button class="status-tab" type="button" data-status="received" role="tab" aria-selected="false">执行中(0)</button>
+                <button class="status-tab" type="button" data-status="rejected" role="tab" aria-selected="false">已驳回(0)</button>
+                <button class="status-tab" type="button" data-status="completed" role="tab" aria-selected="false">已完成(0)</button>
               </div>
-            </div>            <div class="demand-table-scroll demand-list-table-scroll ui-table-state-host" id="demandTableHost" role="region" aria-label="客户需求表格，可横向滚动" tabindex="0">
+              <button class="demand-command-btn demand-list-add-btn" id="addDemandBtn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#p-plus"/></svg>
+                新增
+              </button>
+            </div>
+            <div class="demand-table-scroll demand-list-table-scroll ui-table-state-host" id="demandTableHost" role="region" aria-label="客户需求表格，可横向滚动" tabindex="0">
               <table class="demand-table demand-list-table" aria-label="客户需求列表">
                 <thead>
                   <tr>
@@ -186,9 +179,3 @@
   <script src="../assets/customer-demand-list.js"></script>
 </body>
 </html>
-
-
-
-
-
-

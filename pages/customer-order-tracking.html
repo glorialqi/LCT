@@ -1972,7 +1972,7 @@ html.panorama-mode .drawer[aria-hidden="true"] { visibility:visible !important; 
                     <thead class="bg-slate-50 text-slate-500 font-medium sticky top-0 z-30 border-b border-slate-200 shadow-sm">
                         <tr>
                             <th class="py-3 px-4 min-w-[200px]">客户订单与业务分类</th>
-                            
+
                             <th class="py-3 px-3 w-[200px]">商品标的及数量</th>
                             <th class="py-3 px-4 min-w-[320px]">客户要求</th>
                             <th class="py-3 px-3 min-w-[140px]">物流供应商</th>
@@ -1983,7 +1983,7 @@ html.panorama-mode .drawer[aria-hidden="true"] { visibility:visible !important; 
                             <th class="py-3 px-4 w-28">业务员</th>
                             <th class="py-3 px-3 w-24">部门</th>
                             <th class="py-3 px-4 min-w-[180px]">公司</th>
-                            
+
                             <th class="py-3 px-4 w-28 text-center sticky-right bg-slate-50 shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)]">操作</th>
                         </tr>
                     </thead>
@@ -2624,7 +2624,7 @@ html.panorama-mode .drawer[aria-hidden="true"] { visibility:visible !important; 
           </div>
           <div class="stage" id="stage">
             <div class="flow-layer" id="flowLayer" hidden=""></div>
-          
+
           </div>
           <div class="map-legend" id="mapLegend">
             <span><b style="color:#2f74ff">●</b> 起运港</span>
@@ -2686,7 +2686,7 @@ html.panorama-mode .drawer[aria-hidden="true"] { visibility:visible !important; 
 
   <section class="mode-panel profit-panel" id="profitPanel" hidden>
             <div class="flex-1 overflow-y-auto p-6 bg-slate-50 space-y-6">
-                
+
                 <!-- Financial KPI Cards Summary -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs bg-linear-to-br from-emerald-50/50 to-white">
@@ -2989,7 +2989,7 @@ html.panorama-mode .drawer[aria-hidden="true"] { visibility:visible !important; 
                         </div>
                     </div>
 
-                
+
                                 </div>
   </section>
   </div>
@@ -3839,13 +3839,13 @@ function taskBlockHtml(t){
     }
   }
   const rows='<div class="tk-rows">'+
-      
+
       '<div class="tk-row"><span class="ic"><i class="fa-solid fa-list-check"></i></span><span class="lb">作业项</span>'+
         '<span class="val"><span class="tk-mini">'+mini+'</span></span>'+
         '<button type="button" class="track" data-track="'+t.id+'" title="跳转运输任务跟踪页"><i class="fa-solid fa-location-crosshairs"></i>跟踪</button></div>'+
       '<div class="tk-row"><span class="ic"><i class="fa-solid fa-truck"></i></span><span class="lb">载具</span>'+
         '<span class="val"'+(carrierTip?' title="'+esc(carrierTip)+'"':'')+'>'+carrierSummary+'</span></div>'+
-      
+
     '</div>';
 
   return '<article class="task-block '+t.status+' '+(isSea?"sea":"road")+' '+(t.id===state.taskId?"active":"")+'" data-tid="'+t.id+'">'+head+rows+'</article>';
@@ -4082,7 +4082,7 @@ function qtyRowHtml(t,st,isBox,boxCount){
   const dm=doneMetric(t,st);
   const metric=dm?('<i>·</i><span>'+dm.label+' <b class="done">'+fmt(dm.value)+'</b></span>'):"";
   if(isBox){
-    const head=boxCount>0?('<span title="箱数">箱 <b>'+fmt(boxCount)+'</b> 个</span><i>·</i>'):""; 
+    const head=boxCount>0?('<span title="箱数">箱 <b>'+fmt(boxCount)+'</b> 个</span><i>·</i>'):"";
     return '<span title="商品总量">商品 <b>'+fmt(st.qty)+'</b> '+unit+'</span>'+head + metric
   }
   return '<span title="商品总量（'+unit+'）">商品 <b>'+fmt(st.qty)+'</b></span>'+metric;
@@ -5084,5 +5084,3 @@ document.addEventListener('click', function (event) {
   <script src="../assets/prototype-access.js"></script>
 </body>
 </html>
-
-

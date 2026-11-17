@@ -159,7 +159,140 @@
     .col-short { width:112px; min-width:112px; }
     .col-company { width:190px; min-width:190px; }
     .col-time { width:150px; min-width:150px; }
-    .col-action { width:130px; min-width:130px; }
+    .col-confirm { width:104px; min-width:104px; }
+    .col-consignment { width:180px; min-width:180px; }
+    .col-progress { width:132px; min-width:132px; font-variant-numeric:tabular-nums; }
+    .col-route { width:280px; min-width:280px; }
+    .col-scope { width:132px; min-width:132px; }
+    .col-contract { width:92px; min-width:92px; }
+    .col-person { width:84px; min-width:84px; }
+    .col-department { width:104px; min-width:104px; }
+    .col-created { width:150px; min-width:150px; }
+    .col-action { width:430px; min-width:430px; }
+    .order-table tbody tr[data-order] { cursor:pointer; }
+    .route-cell, .creator-info-cell { min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .route-path { overflow:hidden; color:#334155; text-overflow:ellipsis; white-space:nowrap; }
+    .route-mode { color:#8b96a7; font-size:10px; }
+    .creator-info-cell small { color:#8b96a7; font-size:10px; }
+    .confirm-status, .contract-status { display:inline-flex; min-height:22px; align-items:center; padding:0 7px; border:1px solid #d7dee8; border-radius:10px; color:#526176; background:#f8fafc; font-size:11px; white-space:nowrap; }
+    .confirm-status.pending { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
+    .confirm-status.confirmed { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
+    .row-actions { display:flex; align-items:center; gap:4px; }
+    .row-action-link { height:26px; display:inline-flex; align-items:center; padding:0 7px; border:1px solid #cfe0ff; border-radius:4px; color:#2563eb; background:#f8fbff; font-size:11px; text-decoration:none; white-space:nowrap; }
+    .row-action-link:hover { background:#edf5ff; }
+    .row-more-trigger[aria-expanded="true"] { color:#2563eb; border-color:#bcd4ff; background:#f8fbff; }
+    .row-more-source[hidden] { display:none; }
+    .row-action-menu { position:fixed; z-index:220; min-width:126px; padding:4px; border:1px solid #dce3ed; border-radius:6px; background:#fff; box-shadow:0 12px 28px rgba(15,23,42,.18); }
+    .row-action-menu[hidden] { display:none; }
+    .row-action-menu button { width:100%; height:30px; display:flex; align-items:center; padding:0 9px; border:0; border-radius:4px; color:#475569; background:#fff; font-size:11px; white-space:nowrap; cursor:pointer; }
+    .row-action-menu button:hover { color:#2563eb; background:#f4f8ff; }
+    .merge-drawer-backdrop { position:fixed; inset:0; z-index:240; display:flex; align-items:stretch; justify-content:flex-end; background:rgba(15,23,42,.42); }
+    .merge-drawer-backdrop[hidden] { display:none; }
+    .merge-drawer { width:min(820px,calc(100vw - 64px)); height:100vh; display:flex; flex-direction:column; overflow:hidden; border-left:1px solid #d9e1ec; background:#fff; box-shadow:-20px 0 54px rgba(15,23,42,.2); animation:merge-drawer-in .2s ease-out; }
+    @keyframes merge-drawer-in { from { opacity:.8; transform:translateX(28px); } to { opacity:1; transform:translateX(0); } }
+    .merge-drawer-head { min-height:68px; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 20px; border-bottom:1px solid #edf1f5; }
+    .merge-drawer-title-wrap { display:flex; align-items:center; gap:11px; min-width:0; }
+    .merge-drawer-icon { width:32px; height:32px; flex:0 0 32px; display:grid; place-items:center; border-radius:8px; color:#2563eb; background:#eef5ff; }
+    .merge-drawer-icon svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+    .merge-drawer-title { color:#172033; font-size:18px; font-weight:700; line-height:1.3; }
+    .merge-drawer-close { width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:6px; color:#8a94a3; background:transparent; font-size:24px; line-height:1; cursor:pointer; }
+    .merge-drawer-close:hover { color:#475569; background:#f4f6f9; }
+    .merge-drawer-body { flex:1; overflow:auto; padding:12px 16px 14px; background:#fff; }
+    .merge-route-card { margin-bottom:12px; overflow:hidden; border:1px solid #dfe6ef; border-radius:8px; background:#fff; }
+    .merge-route-card:last-child { margin-bottom:0; }
+    .merge-route-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:12px 14px; border-bottom:1px solid #e8edf4; background:#f8fafc; }
+    .merge-route-title-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+    .merge-route-index { display:inline-flex; align-items:center; height:22px; padding:0 8px; border:1px solid #bfd5fa; border-radius:5px; color:#2563eb; background:#edf5ff; font-size:11px; font-weight:700; }
+    .merge-route-order { color:#253044; font-size:13px; font-weight:700; }
+    .merge-route-customer { color:#7b8798; font-size:12px; }
+    .merge-route-count { flex:0 0 auto; margin-top:2px; color:#64748b; font-size:11px; }
+    .merge-route-meta { display:flex; align-items:center; flex-wrap:wrap; gap:5px 12px; margin-top:8px; }
+    .merge-route-path { color:#334155; font-size:12px; font-weight:600; }
+    .merge-route-mode { display:inline-flex; align-items:center; min-height:20px; padding:0 7px; border-radius:4px; color:#526176; background:#eef2f7; font-size:10px; }
+    .merge-product-table-wrap { overflow-x:auto; }
+    .merge-product-table { width:100%; min-width:690px; border-collapse:separate; border-spacing:0; table-layout:fixed; }
+    .merge-product-table th { height:34px; padding:0 10px; border-bottom:1px solid #e8edf4; color:#6b7789; background:#fff; font-size:11px; font-weight:600; text-align:left; white-space:nowrap; }
+    .merge-product-table td { padding:9px 10px; border-bottom:1px solid #edf1f5; color:#475569; font-size:12px; vertical-align:middle; }
+    .merge-product-row:last-child td { border-bottom:0; }
+    .merge-product-row:hover td { background:#fbfdff; }
+    .merge-product-name { color:#182235; font-size:13px; font-weight:700; line-height:1.4; }
+    .merge-product-line, .merge-product-relation-tip { margin-top:3px; color:#8a95a5; font-size:10px; line-height:1.4; }
+    .merge-qty-input { width:100%; height:32px; padding:0 9px; border:1px solid #8fa7c4; border-radius:6px; color:#1f2937; background:#fff; font-size:13px; font-weight:600; outline:none; box-sizing:border-box; }
+    .merge-qty-input:hover { border-color:#6f91b9; }
+    .merge-qty-input:focus { border-color:#2563eb; box-shadow:0 0 0 2px rgba(37,99,235,.14); }
+    .merge-qty-input.is-invalid { border-color:#d9534f; color:#c62828; box-shadow:0 0 0 2px rgba(217,83,79,.12); }
+    .merge-qty-unit { margin-top:4px; color:#7b8798; font-size:10px; }
+    .merge-qty-available { color:#7b8798; font-size:11px; line-height:1.5; }
+    .merge-qty-available strong { display:block; margin-top:2px; color:#4b5b70; font-size:12px; font-weight:600; }
+    .merge-relation-main { color:#526176; font-size:11px; line-height:1.45; }
+    .merge-item-delete { width:28px; height:28px; display:grid; place-items:center; border:1px solid #e0e6ee; border-radius:5px; color:#98a3b2; background:#fff; cursor:pointer; }
+    .merge-item-delete:hover { color:#c62828; border-color:#efc7c2; background:#fff3f2; }
+    .merge-item-delete svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+    .merge-empty { padding:54px 24px; color:#8a94a3; text-align:center; font-size:12px; }
+    .merge-drawer-foot { padding:12px 20px 16px; border-top:1px solid #edf1f5; background:#fff; }
+    .merge-summary { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:10px; color:#667386; font-size:12px; }
+    .merge-summary-stats { display:inline-flex; align-items:center; min-height:28px; padding:0 9px; border:1px solid #e3e9f1; border-radius:6px; background:#f8fafc; line-height:1.4; }
+    .merge-total { text-align:right; }
+    .merge-total strong { margin-left:8px; color:#182235; font-size:16px; font-weight:700; }
+    .merge-fill-btn { width:100%; height:38px; justify-content:center; font-size:14px; }
+    @media(max-width:760px) { .merge-drawer { width:100vw; } }
+    .arrangement-backdrop { position:fixed; inset:0; z-index:260; display:grid; place-items:center; padding:20px; background:rgba(15,23,42,.48); }
+    .arrangement-backdrop[hidden] { display:none; }
+    .arrangement-dialog { width:min(1480px,calc(100vw - 32px)); height:min(900px,calc(100vh - 32px)); max-height:calc(100vh - 32px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #d7dfe9; border-radius:8px; background:#fff; box-shadow:0 24px 70px rgba(15,23,42,.26); }
+    .arrangement-head { min-height:58px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; border-bottom:1px solid #e9edf3; }
+    .arrangement-title { color:#253044; font-size:18px; font-weight:700; }
+    .arrangement-close { width:30px; height:30px; border:0; border-radius:5px; color:#8b95a4; background:transparent; font-size:23px; cursor:pointer; }
+    .arrangement-close:hover { color:#c62828; background:#fff4f3; }
+    .arrangement-body { flex:1; overflow:auto; padding:18px 22px 22px; background:#fff; }
+    .arrangement-section + .arrangement-section { margin-top:18px; padding-top:16px; border-top:1px solid #eef1f5; }
+    .arrangement-section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .arrangement-section-title { color:#263246; font-size:14px; font-weight:700; }
+    .arrangement-section-note { color:#8b95a5; font-size:11px; }
+    .arrangement-form-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px 14px; }
+    .arrangement-field { min-width:0; }
+    .arrangement-field > label, .arrangement-field-label { display:block; margin-bottom:5px; color:#6b7789; font-size:11px; }
+    .arrangement-field .required { color:#c62828; margin-left:2px; }
+    .arrangement-field input, .arrangement-field select { width:100%; height:32px; padding:0 9px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; box-sizing:border-box; }
+    .arrangement-field input:focus, .arrangement-field select:focus { outline:none; border-color:#6da2f4; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .arrangement-field input[readonly] { color:#5d6879; background:#f7f9fc; }
+    .arrangement-route-pool { display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; }
+    .arrangement-route-card { width:260px; flex:0 0 260px; padding:10px 11px; border:1px solid #dce4ef; border-radius:6px; background:#f9fbfe; cursor:grab; }
+    .arrangement-route-card.is-assigned { opacity:.58; cursor:not-allowed; }
+    .arrangement-route-card.dragging { opacity:.45; }
+    .arrangement-route-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; color:#2563eb; font-size:12px; font-weight:700; }
+    .arrangement-route-card-path { margin-top:6px; overflow:hidden; color:#334155; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+    .arrangement-route-card-mode { margin-top:3px; color:#8490a2; font-size:11px; }
+    .arrangement-route-drag-hint { margin-top:9px; color:#2563eb; font-size:10px; }
+    .arrangement-route-card.is-assigned .arrangement-route-drag-hint { color:#94a3b8; }
+    .arrangement-mini-btn { height:27px; padding:0 8px; border:1px solid #bcd4fa; border-radius:4px; color:#2563eb; background:#f7fbff; font-size:10px; cursor:pointer; }
+    .arrangement-mini-btn:disabled { color:#a4adba; border-color:#e2e7ee; background:#f7f9fb; cursor:not-allowed; }
+    .arrangement-add-consignment { height:28px; padding:0 10px; border:1px solid #bcd4fa; border-radius:5px; color:#2563eb; background:#f7fbff; font-size:11px; cursor:pointer; }
+    .arrangement-consignment { margin-bottom:14px; padding:14px; border:1px solid #dfe6ef; border-radius:7px; background:#fff; transition:border-color .15s, background-color .15s, box-shadow .15s; }
+    .arrangement-consignment.is-dragover { border-color:#2563eb; background:#f8fbff; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .arrangement-consignment:last-child { margin-bottom:0; }
+    .arrangement-consignment-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .arrangement-consignment-title { color:#1f2b3d; font-size:13px; font-weight:700; }
+    .arrangement-consignment-actions { display:flex; gap:6px; }
+    .arrangement-icon-btn { width:27px; height:27px; display:grid; place-items:center; border:1px solid #d7dee8; border-radius:4px; color:#8793a3; background:#fff; cursor:pointer; }
+    .arrangement-icon-btn:hover { color:#c62828; border-color:#efc7c2; background:#fff6f5; }
+    .arrangement-tasks { margin-top:12px; padding-top:10px; border-top:1px solid #eef2f6; }
+    .arrangement-task-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .arrangement-task-title { color:#526176; font-size:12px; font-weight:600; }
+    .arrangement-task-list { display:grid; gap:7px; }
+    .arrangement-task-card { display:grid; grid-template-columns:1.4fr 1fr 1fr 28px; gap:8px; align-items:end; padding:9px; border:1px solid #e4e9f1; border-radius:5px; background:#fbfcfe; }
+    .arrangement-task-field { min-width:0; }
+    .arrangement-task-field label { display:block; margin-bottom:4px; color:#7b8798; font-size:10px; }
+    .arrangement-task-field select { width:100%; height:29px; padding:0 6px; border:1px solid #d6dee8; border-radius:4px; color:#475569; background:#fff; font-size:11px; }
+    .arrangement-task-route-value { min-height:29px; display:flex; align-items:center; padding:0 8px; border:1px solid #e2e8f0; border-radius:4px; color:#526176; background:#f8fafc; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .arrangement-task-delete { width:28px; height:29px; border:1px solid #d7dee8; border-radius:4px; color:#8b95a4; background:#fff; cursor:pointer; }
+    .arrangement-task-delete:hover { color:#c62828; border-color:#efc7c2; background:#fff5f4; }
+    .arrangement-dropzone { margin-top:9px; padding:10px; border:1px dashed #bcd4fa; border-radius:5px; color:#7e8da2; background:#f8fbff; text-align:center; font-size:11px; }
+    .arrangement-dropzone.is-dragover { border-color:#2563eb; background:#eef5ff; color:#2563eb; }
+    .arrangement-task-empty { padding:9px; color:#9aa4b2; font-size:11px; text-align:center; }
+    .arrangement-empty-consignment { padding:28px 16px; border:1px dashed #d8e0eb; border-radius:6px; color:#8b95a5; text-align:center; font-size:12px; }
+    .arrangement-foot { display:flex; justify-content:flex-end; gap:9px; min-height:56px; align-items:center; padding:0 22px; border-top:1px solid #e9edf3; background:#fff; }
+    .arrangement-foot .btn { min-width:88px; justify-content:center; }
+    @media(max-width:900px) { .arrangement-form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .arrangement-task-card { grid-template-columns:1fr 1fr; } .arrangement-task-delete { width:100%; } }
     .sticky-select { position:sticky; left:0; z-index:20; background:#fff; }
     .sticky-order { position:sticky; left:38px; z-index:20; background:#fff; }
     .sticky-consignment { position:sticky; left:218px; z-index:20; background:#fff; box-shadow:5px 0 7px -6px rgba(23,42,74,.22); }
@@ -180,6 +313,8 @@
     .status-pill.to-sign { color:#8a5a00; border-color:#efd8a4; background:#fff8e8; }
     .status-pill.signing { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
     .status-pill.running { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
+    .status-pill.completed { color:#475569; border-color:#cbd5e1; background:#f1f5f9; }
+    .status-pill.voided { color:#c62828; border-color:#f3c7c2; background:#fff1ef; }
     .num { text-align:right; font-variant-numeric:tabular-nums; }
     .muted { color:#98a4b4; }
     .empty-dash { color:#5b6778; }
@@ -251,6 +386,8 @@
     .order-table tbody tr:hover .sticky-action { background:#f5f9ff !important; }
     .row-action { height:auto; padding:0; border:0; color:var(--primary); background:transparent; font-size:12px; }
     .row-action:hover { background:transparent; color:var(--primary-hover); text-decoration:underline; }
+    .order-table .row-action { height:26px; display:inline-flex; align-items:center; padding:0 7px; border:1px solid #cfe0ff; border-radius:4px; color:#2563eb; background:#f8fbff; font-size:11px; line-height:24px; text-decoration:none; white-space:nowrap; }
+    .order-table .row-action:hover { border-color:#9fc4ff; color:#1d4ed8; background:#edf5ff; text-decoration:none; }
     .pager { height:50px; display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:0 20px; color:#555d6b; border-top:1px solid var(--line); background:#fff; font-size:12px; }
     .pager button { min-width:28px; height:28px; padding:0 6px; border:1px solid transparent; border-radius:4px; color:#46505e; background:#fff; }
     .pager button.active { color:var(--primary); border-color:var(--primary); }
@@ -342,20 +479,20 @@
             <div class="status-tabs" role="tablist" aria-label="订单状态">
               <button class="status-tab active" type="button" data-status="all">全部(920)</button>
               <button class="status-tab" type="button" data-status="created">创建(37)</button>
-              <button class="status-tab" type="button" data-status="audit">待审核(0)</button>
               <button class="status-tab" type="button" data-status="rejected">驳回(0)</button>
-              <button class="status-tab" type="button" data-status="to-sign">待签约(12)</button>
-              <button class="status-tab" type="button" data-status="signing">签约中(7)</button>
-              <button class="status-tab" type="button" data-status="unscheduled">待安排(16)</button>
-              <button class="status-tab" type="button" data-status="scheduled">已安排(848)</button>
+              <button class="status-tab" type="button" data-status="audit">待审核(0)</button>
+              <button class="status-tab" type="button" data-status="pending">待履约(35)</button>
+              <button class="status-tab" type="button" data-status="running">履约中(848)</button>
+              <button class="status-tab" type="button" data-status="completed">已完结(0)</button>
+              <button class="status-tab" type="button" data-status="voided">已作废(0)</button>
               <div class="status-spacer"></div>
               <div class="bulk-actions">
-                <button class="btn soft-primary action-requires-selection" type="button" disabled>合并/拆分订单</button>
+                <button class="btn soft-primary action-requires-selection" id="mergeSplitOrdersBtn" type="button" disabled>合并/拆分订单</button>
                 <button class="btn outline-primary action-requires-selection" type="button" disabled>取消订单</button>
                 <button class="btn soft-primary action-requires-selection" type="button" disabled>复制订单</button>
                 <button class="btn primary action-requires-selection" type="button" disabled>完结订单</button>
                 <button class="btn outline-primary action-requires-selection" type="button" disabled>取消完结</button>
-                <button class="btn primary" type="button" data-toast="打开新增客户订单页面">新增订单</button>
+                <button class="btn primary" id="newOrderBtn" type="button">新增订单</button>
               </div>
             </div>
             <div class="table-scroll" id="tableScroll">
@@ -363,58 +500,37 @@
                 <thead>
                   <tr>
                     <th class="col-check sticky-select"><input type="checkbox" id="selectAll" aria-label="全选"></th>
-                    <th class="col-order sticky-order">客户订单号<span class="sort">↕</span></th>
-                    <th class="col-status">状态<span class="sort">↕</span></th>
+                    <th class="col-order sticky-order">客户订单编号<span class="sort">↕</span></th>
+                    <th class="col-status">订单状态<span class="sort">↕</span></th>
+                    <th class="col-confirm">订单确认状态<span class="sort">↕</span></th>
                     <th class="col-customer">客户<span class="sort">↕</span></th>
+                    <th class="col-consignment">客户单号<span class="sort">↕</span></th>
                     <th class="col-product">商品名称<span class="sort">↕</span></th>
-                    <th class="col-qty num">总数量<span class="sort">↕</span></th>
-                    <th class="col-qty num">已安排数量<span class="sort">↕</span></th>
-                    <th class="col-qty num">未安排数量<span class="sort">↕</span></th>
-                    <th class="col-place">起运地<span class="sort">↕</span></th>
-                    <th class="col-place">目的地<span class="sort">↕</span></th>
+                    <th class="col-qty num">订单总数量<span class="sort">↕</span></th>
+                    <th class="col-progress">履约进度<span class="sort">↕</span></th>
+                    <th class="col-route">线路<span class="sort">↕</span></th>
                     <th class="col-short">业务类型<span class="sort">↕</span></th>
-                    <th class="col-short">服务范围<span class="sort">↕</span></th>
-                    <th class="col-short">运输类型<span class="sort">↕</span></th>
-                    <th class="col-short">装运方式<span class="sort">↕</span></th>
-                    <th class="col-short">业务员<span class="sort">↕</span></th>
+                    <th class="col-scope">服务范围<span class="sort">↕</span></th>
+                    <th class="col-contract">合同状态<span class="sort">↕</span></th>
+                    <th class="col-person">业务员<span class="sort">↕</span></th>
                     <th class="col-company">公司<span class="sort">↕</span></th>
-                    <th class="col-short">部门<span class="sort">↕</span></th>
-                    <th class="col-customer-consignment">客户委托单号<span class="sort">↕</span></th>
-                    <th class="col-short">创建人<span class="sort">↕</span></th>
-                    <th class="col-time">创建时间<span class="sort">↕</span></th>
-                    <th class="col-short">修改人<span class="sort">↕</span></th>
+                    <th class="col-department">部门<span class="sort">↕</span></th>
+                    <th class="col-created">创建信息<span class="sort">↕</span></th>
+                    <th class="col-person">修改人<span class="sort">↕</span></th>
                     <th class="col-time">修改时间<span class="sort">↕</span></th>
-                    <th class="col-action sticky-action">操作</th>
+                    <th class="col-action">操作</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr data-status="scheduled" data-order="CO-20260904-BREAKBULK" data-consignment="">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 CO-20260904-BREAKBULK"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list&view=feedback">CO-20260904-BREAKBULK</a></td><td><span class="status-pill running">履约中</span></td><td>中国重汽集团</td><td>重卡卡车</td><td class="num">300 台</td><td class="num">300 台</td><td class="num">0 台</td><td>青岛港件杂货码头</td><td>东非蒙巴萨港</td><td>出口</td><td>运输</td><td>水运</td><td>件杂货</td><td>庄巧玲</td><td>厦门建发亚投新能源物流有限公司</td><td>件杂部</td><td class="customer-consignment-cell"><span class="empty-dash">--</span></td><td>庄巧玲</td><td>2026-10-28 09:20</td><td>庄巧玲</td><td>2026-11-01 14:30</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 CO-20260904-BREAKBULK 的履约反馈">查看履约反馈</button></td>
-                  </tr>                  <tr data-status="scheduled" data-order="FCO202610270010" data-consignment="2102957467694845952">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270010"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list">FCO202610270010</a></td><td><span class="status-pill scheduled">已安排</span></td><td>青岛绿洲园花生食品有限公司</td><td>玉米</td><td class="num">10 吨</td><td class="num">10 吨</td><td class="num">0 吨</td><td>上官栗子四果汤(文化宫店)</td><td>厦门港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2102957467694845952">2102957467694845952</span></td><td>苏丽蓉</td><td>2026-10-27 09:42</td><td>苏丽蓉</td><td>2026-10-27 09:42</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270010 的物流安排">查看物流安排</button></td>
-                  </tr>
-                  <tr data-status="scheduled" data-order="FCO202610270009" data-consignment="2102960421436968960">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270009"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list">FCO202610270009</a></td><td><span class="status-pill scheduled">已安排</span></td><td>青岛绿洲园花生食品有限公司</td><td>玉米</td><td class="num">10 吨</td><td class="num">10 吨</td><td class="num">0 吨</td><td>上官栗子四果汤(文化宫店)</td><td>厦门港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2102960421436968960">2102960421436968960</span></td><td>苏丽蓉</td><td>2026-10-27 09:35</td><td>苏丽蓉</td><td>2026-10-27 09:35</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270009 的物流安排">查看物流安排</button></td>
-                  </tr>
-                  <tr data-status="unscheduled" data-order="FCO202610270008" data-consignment="2102960975970095104 2102960975970095105">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270008"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270008&from=customer-order-list">FCO202610270008</a></td><td><span class="status-pill pending">待安排</span></td><td>中国重汽集团</td><td>重卡卡车</td><td class="num">300 台</td><td class="num">0 台</td><td class="num">300 台</td><td>青岛港</td><td>上海港</td><td>出口</td><td>运输</td><td>水运</td><td>件杂货</td><td>庄巧玲</td><td>厦门建发物流有限公司</td><td>件杂部</td><td class="customer-consignment-cell"><span class="ref-no" title="2102960975970095104, 2102960975970095105">2102960975970095104, 2102960975970095105</span></td><td>庄巧玲</td><td>2026-10-26 16:18</td><td>庄巧玲</td><td>2026-10-26 17:02</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270008 的物流安排">查看物流安排</button></td>
-                  </tr>
-                  <tr data-status="created" data-order="FCO202610270007" data-consignment="2104489744589164545">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270007"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270007&from=customer-order-list">FCO202610270007</a></td><td><span class="status-pill created">创建</span></td><td>中国宝武钢铁集团有限公司</td><td>PB粉矿</td><td class="num">8.50 万吨</td><td class="num">0 万吨</td><td class="num">8.50 万吨</td><td>Port Hedland</td><td>舟山鼠浪湖</td><td>进口</td><td>报关清关</td><td>水运</td><td>散货</td><td>刘婷</td><td>厦门建发物流有限公司</td><td>单证客服部</td><td class="customer-consignment-cell"><span class="ref-no" title="2104489744589164545">2104489744589164545</span></td><td>刘婷</td><td>2026-10-26 14:26</td><td>刘婷</td><td>2026-10-26 14:26</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270007 的物流安排">查看物流安排</button></td>
-                  </tr>
-                  <tr data-status="audit" data-order="FCO202610270006" data-consignment="CT-2026-1027-01">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270006"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270006&from=customer-order-list">FCO202610270006</a></td><td><span class="status-pill created">待审核</span></td><td>浙江吉利控股集团</td><td>新能源整车</td><td class="num">450 台</td><td class="num">0 台</td><td class="num">450 台</td><td>宁波梅山港</td><td>比利时安特卫普</td><td>出口</td><td>运输</td><td>水运</td><td>集装箱</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="CT-2026-1027-01">CT-2026-1027-01</span></td><td>苏丽蓉</td><td>2026-10-25 11:20</td><td>苏丽蓉</td><td>2026-10-25 11:20</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270006 的物流安排">查看物流安排</button></td>
-                  </tr>
-                  <tr data-status="rejected" data-order="FCO202610270005" data-consignment="">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270005"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270005&from=customer-order-list">FCO202610270005</a></td><td><span class="status-pill rejected">驳回</span></td><td>厦门象屿股份有限公司</td><td>钢材</td><td class="num">1.20 万吨</td><td class="num">0 万吨</td><td class="num">1.20 万吨</td><td>厦门港</td><td>胡志明港</td><td>出口</td><td>运输</td><td>水运</td><td>散货</td><td>庄巧玲</td><td>厦门建发物流有限公司</td><td>件杂部</td><td class="customer-consignment-cell"><span class="empty-dash">--</span></td><td>庄巧玲</td><td>2026-10-24 10:08</td><td>庄巧玲</td><td>2026-10-24 10:08</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270005 的物流安排">查看物流安排</button></td>
-                  </tr>
+                  <tr class="order-row" data-status="running" data-order="CO-20260904-BREAKBULK" data-consignment="" data-order-status="履约中" data-confirmation-status="已确认" data-contract-status="已生效" data-origin="青岛港件杂货码头" data-destination="东非蒙巴萨港" data-transport-type="水运" data-load-type="件杂货" data-scheduled="300 台" data-unscheduled="0 台" data-creator="庄巧玲" data-created-at="2026-10-28 09:20" data-modified-by="庄巧玲" data-modified-at="2026-11-01 14:30"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 CO-20260904-BREAKBULK"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list">CO-20260904-BREAKBULK</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">中国重汽集团</td><td class="col-consignment customer-consignment-cell"><span class="empty-dash">--</span></td><td class="col-product">重卡卡车</td><td class="col-qty num">300 台</td><td class="col-progress" title="已履约 / 总计">300 台 / 300 台</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港件杂货码头 → 东非蒙巴萨港</span><span class="route-mode">水运 · 件杂货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发亚投新能源物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-28 09:20</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-11-01 14:30</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list&view=feedback" data-order-detail-link>查看履约情况</a><button class="row-action" type="button" data-toast="打开 CO-20260904-BREAKBULK 的物流安排">查看物流安排</button><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 CO-20260904-BREAKBULK 的合同">查看合同</button><button type="button" data-toast="完结客户订单 CO-20260904-BREAKBULK">完结</button><button type="button" data-toast="作废客户订单 CO-20260904-BREAKBULK">作废</button></div></div></td></tr>                  <tr class="order-row" data-status="running" data-order="FCO202610270010" data-consignment="2102957467694845952" data-order-status="履约中" data-confirmation-status="已确认" data-contract-status="已生效" data-origin="上官栗子四果汤(文化宫店)" data-destination="厦门港" data-transport-type="水运" data-load-type="散货" data-scheduled="10 吨" data-unscheduled="0 吨" data-creator="苏丽蓉" data-created-at="2026-10-27 09:42" data-modified-by="苏丽蓉" data-modified-at="2026-10-27 09:42"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270010"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list">FCO202610270010</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛绿洲园花生食品有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102957467694845952">2102957467694845952</span></td><td class="col-product">玉米</td><td class="col-qty num">10 吨</td><td class="col-progress" title="已履约 / 总计">10 吨 / 10 吨</td><td class="col-route"><div class="route-cell"><span class="route-path">上官栗子四果汤(文化宫店) → 厦门港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-27 09:42</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-27 09:42</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list&view=feedback" data-order-detail-link>查看履约情况</a><button class="row-action" type="button" data-toast="打开 FCO202610270010 的物流安排">查看物流安排</button><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270010 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270010">完结</button><button type="button" data-toast="作废客户订单 FCO202610270010">作废</button></div></div></td></tr>
+                  <tr class="order-row" data-status="running" data-order="FCO202610270009" data-consignment="2102960421436968960" data-order-status="履约中" data-confirmation-status="已确认" data-contract-status="已生效" data-origin="上官栗子四果汤(文化宫店)" data-destination="厦门港" data-transport-type="水运" data-load-type="散货" data-scheduled="10 吨" data-unscheduled="0 吨" data-creator="苏丽蓉" data-created-at="2026-10-27 09:35" data-modified-by="苏丽蓉" data-modified-at="2026-10-27 09:35"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270009"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list">FCO202610270009</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛绿洲园花生食品有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102960421436968960">2102960421436968960</span></td><td class="col-product">玉米</td><td class="col-qty num">10 吨</td><td class="col-progress" title="已履约 / 总计">10 吨 / 10 吨</td><td class="col-route"><div class="route-cell"><span class="route-path">上官栗子四果汤(文化宫店) → 厦门港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-27 09:35</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-27 09:35</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list&view=feedback" data-order-detail-link>查看履约情况</a><button class="row-action" type="button" data-toast="打开 FCO202610270009 的物流安排">查看物流安排</button><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270009 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270009">完结</button><button type="button" data-toast="作废客户订单 FCO202610270009">作废</button></div></div></td></tr>
+                  <tr class="order-row" data-status="pending" data-order="FCO202610270008" data-consignment="2102960975970095104 2102960975970095105" data-order-status="待履约" data-confirmation-status="待确认" data-contract-status="" data-origin="青岛港" data-destination="上海港" data-transport-type="水运" data-load-type="件杂货" data-scheduled="0 台" data-unscheduled="300 台" data-creator="庄巧玲" data-created-at="2026-10-26 16:18" data-modified-by="庄巧玲" data-modified-at="2026-10-26 17:02"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270008"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270008&from=customer-order-list">FCO202610270008</a></td><td class="col-status"><span class="status-pill pending">待履约</span></td><td class="col-confirm"><span class="confirm-status pending">待确认</span></td><td class="col-customer">中国重汽集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102960975970095104, 2102960975970095105">2102960975970095104, 2102960975970095105</span></td><td class="col-product">重卡卡车</td><td class="col-qty num">300 台</td><td class="col-progress" title="已履约 / 总计">0 台 / 300 台</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 上海港</span><span class="route-mode">水运 · 件杂货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-26 16:18</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-10-26 17:02</td><td class="col-action"><div class="row-actions"><button class="row-action" type="button" data-toast="确认客户订单 FCO202610270008">确认</button><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270008&from=customer-order-list&view=feedback" data-order-detail-link>查看履约情况</a><button class="row-action" type="button" data-toast="打开 FCO202610270008 的物流安排">查看物流安排</button></div></td></tr>
+                  <tr class="order-row" data-status="created" data-order="FCO202610270007" data-consignment="2104489744589164545" data-order-status="创建" data-confirmation-status="" data-contract-status="" data-origin="Port Hedland" data-destination="舟山鼠浪湖" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="8.50 万吨" data-creator="刘婷" data-created-at="2026-10-26 14:26" data-modified-by="刘婷" data-modified-at="2026-10-26 14:26"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270007"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270007&from=customer-order-list">FCO202610270007</a></td><td class="col-status"><span class="status-pill created">创建</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">中国宝武钢铁集团有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2104489744589164545">2104489744589164545</span></td><td class="col-product">PB粉矿</td><td class="col-qty num">8.50 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 8.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">Port Hedland → 舟山鼠浪湖</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">进口</td><td class="col-scope">报关清关</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">刘婷</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">单证客服部</td><td class="col-created"><div class="creator-info-cell"><span>刘婷</span><small>2026-10-26 14:26</small></div></td><td class="col-person">刘婷</td><td class="col-time">2026-10-26 14:26</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="打开 FCO202610270007 的版本维护">版本维护</button></div></div></td></tr>
+                  <tr class="order-row" data-status="audit" data-order="FCO202610270006" data-consignment="CT-2026-1027-01" data-order-status="待审核" data-confirmation-status="" data-contract-status="" data-origin="宁波梅山港" data-destination="比利时安特卫普" data-transport-type="水运" data-load-type="集装箱" data-scheduled="0 台" data-unscheduled="450 台" data-creator="苏丽蓉" data-created-at="2026-10-25 11:20" data-modified-by="苏丽蓉" data-modified-at="2026-10-25 11:20"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270006"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270006&from=customer-order-list">FCO202610270006</a></td><td class="col-status"><span class="status-pill created">待审核</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">浙江吉利控股集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="CT-2026-1027-01">CT-2026-1027-01</span></td><td class="col-product">新能源整车</td><td class="col-qty num">450 台</td><td class="col-progress" title="已履约 / 总计">0 台 / 450 台</td><td class="col-route"><div class="route-cell"><span class="route-path">宁波梅山港 → 比利时安特卫普</span><span class="route-mode">水运 · 集装箱</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-25 11:20</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-25 11:20</td><td class="col-action"><div class="row-actions"></div></td></tr>
+                  <tr class="order-row" data-status="rejected" data-order="FCO202610270005" data-consignment="" data-order-status="驳回" data-confirmation-status="" data-contract-status="" data-origin="厦门港" data-destination="胡志明港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="1.20 万吨" data-creator="庄巧玲" data-created-at="2026-10-24 10:08" data-modified-by="庄巧玲" data-modified-at="2026-10-24 10:08"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270005"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270005&from=customer-order-list">FCO202610270005</a></td><td class="col-status"><span class="status-pill rejected">驳回</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">厦门象屿股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="empty-dash">--</span></td><td class="col-product">钢材</td><td class="col-qty num">1.20 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 1.20 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">厦门港 → 胡志明港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-24 10:08</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-10-24 10:08</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="打开 FCO202610270005 的版本维护">版本维护</button></div></div></td></tr>
 
-                  <tr data-status="to-sign" data-order="FCO202610270004" data-consignment="2103654897215401984">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270004"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list">FCO202610270004</a></td><td><span class="status-pill to-sign">待签约</span></td><td>山东港口国际贸易集团有限公司</td><td>进口纸浆</td><td class="num">1.20 万吨</td><td class="num">0 万吨</td><td class="num">1.20 万吨</td><td>青岛港</td><td>日照港</td><td>进口</td><td>运输</td><td>水运</td><td>散货</td><td>梁露</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2103654897215401984">2103654897215401984</span></td><td>梁露</td><td>2026-10-23 10:18</td><td>梁露</td><td>2026-10-23 10:18</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270004 的订单详情">查看详情</button></td>
-                  </tr>
-                  <tr data-status="signing" data-order="FCO202610270003" data-consignment="2103652106571845520">
-                    <td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270003"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list">FCO202610270003</a></td><td><span class="status-pill signing">签约中</span></td><td>青岛港国际股份有限公司</td><td>铁矿石</td><td class="num">2.50 万吨</td><td class="num">0 万吨</td><td class="num">2.50 万吨</td><td>青岛港</td><td>日照港</td><td>内贸</td><td>运输</td><td>水运</td><td>散货</td><td>苏丽蓉</td><td>厦门建发物流有限公司</td><td>物流运营部</td><td class="customer-consignment-cell"><span class="ref-no" title="2103652106571845520">2103652106571845520</span></td><td>苏丽蓉</td><td>2026-10-22 15:46</td><td>苏丽蓉</td><td>2026-10-22 16:20</td><td class="sticky-action"><button class="row-action" type="button" data-toast="打开 FCO202610270003 的订单详情">查看详情</button></td>
-                  </tr>
+                  <tr class="order-row" data-status="pending" data-order="FCO202610270004" data-consignment="2103654897215401984" data-order-status="待履约" data-confirmation-status="待确认" data-contract-status="待签约" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="1.20 万吨" data-creator="梁露" data-created-at="2026-10-23 10:18" data-modified-by="梁露" data-modified-at="2026-10-23 10:18"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270004"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list">FCO202610270004</a></td><td class="col-status"><span class="status-pill pending">待履约</span></td><td class="col-confirm"><span class="confirm-status pending">待确认</span></td><td class="col-customer">山东港口国际贸易集团有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103654897215401984">2103654897215401984</span></td><td class="col-product">进口纸浆</td><td class="col-qty num">1.20 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 1.20 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">进口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">待签约</span></td><td class="col-person">梁露</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>梁露</span><small>2026-10-23 10:18</small></div></td><td class="col-person">梁露</td><td class="col-time">2026-10-23 10:18</td><td class="col-action"><div class="row-actions"><button class="row-action" type="button" data-toast="确认客户订单 FCO202610270004">确认</button><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list&view=feedback" data-order-detail-link>查看履约情况</a><button class="row-action" type="button" data-toast="打开 FCO202610270004 的物流安排">查看物流安排</button><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270004 的合同">查看合同</button></div></div></td></tr>
+                  <tr class="order-row" data-status="pending" data-order="FCO202610270003" data-consignment="2103652106571845520" data-order-status="待履约" data-confirmation-status="已确认" data-contract-status="签约中" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="2.50 万吨" data-creator="苏丽蓉" data-created-at="2026-10-22 15:46" data-modified-by="苏丽蓉" data-modified-at="2026-10-22 16:20"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270003"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list">FCO202610270003</a></td><td class="col-status"><span class="status-pill pending">待履约</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛港国际股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103652106571845520">2103652106571845520</span></td><td class="col-product">铁矿石</td><td class="col-qty num">2.50 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 2.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">内贸</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">签约中</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-22 15:46</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-22 16:20</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list&view=feedback" data-order-detail-link>查看履约情况</a><button class="row-action" type="button" data-toast="打开 FCO202610270003 的物流安排">查看物流安排</button><button class="row-action" type="button" data-open-arrangement="FCO202610270003">发起物流安排</button><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270003 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270003">完结</button><button type="button" data-toast="作废客户订单 FCO202610270003">作废</button></div></div></td></tr>
                 </tbody>
               </table>
                 <div id="queryEmptyState" class="query-empty" hidden role="status" aria-live="polite">未找到匹配的客户订单，请调整查询条件后重试。</div>
@@ -427,6 +543,54 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="row-action-menu" id="rowActionMenu" hidden></div>
+
+  <div class="arrangement-backdrop" id="arrangementDialog" hidden>
+    <section class="arrangement-dialog" role="dialog" aria-modal="true" aria-labelledby="arrangementDialogTitle">
+      <header class="arrangement-head"><h2 class="arrangement-title" id="arrangementDialogTitle">发起物流安排</h2><button class="arrangement-close" id="arrangementDialogClose" type="button" aria-label="关闭发起物流安排">×</button></header>
+      <div class="arrangement-body">
+        <section class="arrangement-section">
+          <div class="arrangement-section-head"><div class="arrangement-section-title">组织信息</div></div>
+          <div class="arrangement-form-grid">
+            <div class="arrangement-field"><label>业务员<span class="required">*</span></label><input id="arrangementSales" placeholder="请输入业务员"></div>
+            <div class="arrangement-field"><label>业务员部门<span class="required">*</span></label><input id="arrangementDepartment" placeholder="请输入业务员部门"></div>
+            <div class="arrangement-field"><label>业务员经营单位<span class="required">*</span></label><input id="arrangementBusinessUnit" value="供应链物流科技" placeholder="请输入经营单位"></div>
+            <div class="arrangement-field"><label>业务员核算组<span class="required">*</span></label><input id="arrangementAccountingGroup" value="数字化中心" placeholder="请输入核算组"></div>
+            <div class="arrangement-field"><label>业务员公司<span class="required">*</span></label><input id="arrangementCompany" placeholder="请输入业务员公司"></div>
+            <div class="arrangement-field"><label>作业组织<span class="required">*</span></label><input id="arrangementOperationOrg" value="数字化中心" placeholder="请输入作业组织"></div>
+            <div class="arrangement-field"><label>作业组织人员<span class="required">*</span></label><input id="arrangementOperationPerson" placeholder="请输入作业组织人员"></div>
+          </div>
+        </section>
+        <section class="arrangement-section">
+          <div class="arrangement-section-head"><div class="arrangement-section-title">可分配线路</div><div class="arrangement-section-note">按住线路卡片，拖拽到下方任一物流委托即可生成任务</div></div>
+          <div class="arrangement-route-pool" id="arrangementRoutePool"></div>
+        </section>
+        <section class="arrangement-section">
+          <div class="arrangement-section-head"><div class="arrangement-section-title">物流委托与任务</div><button class="arrangement-add-consignment" id="addArrangementConsignmentBtn" type="button">＋ 新增委托</button></div>
+          <div id="arrangementConsignmentList"></div>
+        </section>
+      </div>
+      <footer class="arrangement-foot"><button class="btn" id="arrangementCancelBtn" type="button">取消</button><button class="btn primary" id="arrangementConfirmBtn" type="button">确认创建</button></footer>
+    </section>
+  </div>
+
+  <div class="merge-drawer-backdrop" id="mergeSplitDrawer" hidden>
+    <aside class="merge-drawer" role="dialog" aria-modal="true" aria-labelledby="mergeDrawerTitle">
+      <header class="merge-drawer-head">
+        <div class="merge-drawer-title-wrap">
+          <span class="merge-drawer-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4.5 7v10L12 21l7.5-4V7z"/><path d="m4.8 7.2 7.2 4 7.2-4M12 11.2V21"/></svg></span>
+          <div><h2 class="merge-drawer-title" id="mergeDrawerTitle">已选线路（<span id="mergeSelectedCount">0</span>）</h2></div>
+        </div>
+        <button class="merge-drawer-close" id="mergeDrawerClose" type="button" aria-label="关闭合并拆分">×</button>
+      </header>
+      <div class="merge-drawer-body" id="mergeDrawerBody"></div>
+      <footer class="merge-drawer-foot">
+        <div class="merge-summary"><span class="merge-summary-stats" id="mergeSummaryStats">客户 0 · 订单 0 · 线路 0 · 商品 0</span><span class="merge-total">总数量<strong id="mergeTotalQuantity">0</strong></span></div>
+        <button class="btn primary merge-fill-btn" id="mergeFillLogisticsBtn" type="button" disabled>填写物流需求</button>
+      </footer>
+    </aside>
+  </div>
 
   <script src="../assets/prototype-data.js"></script>
   <script>
@@ -445,6 +609,18 @@
       const rowChecks = Array.from(document.querySelectorAll('.row-check'));
       const selectionButtons = Array.from(document.querySelectorAll('.action-requires-selection'));
       const toast = document.getElementById('toast');
+      const arrangementDialog = document.getElementById('arrangementDialog');
+      const arrangementRoutePool = document.getElementById('arrangementRoutePool');
+      const arrangementConsignmentList = document.getElementById('arrangementConsignmentList');
+      const arrangementConfirmBtn = document.getElementById('arrangementConfirmBtn');
+      const arrangementState = { orderNo: '', routes: [], consignments: [], sequence: 0, dragRouteId: '' };
+      const mergeSplitDrawer = document.getElementById('mergeSplitDrawer');
+      const mergeDrawerBody = document.getElementById('mergeDrawerBody');
+      const mergeSelectedCount = document.getElementById('mergeSelectedCount');
+      const mergeSummaryStats = document.getElementById('mergeSummaryStats');
+      const mergeTotalQuantity = document.getElementById('mergeTotalQuantity');
+      const mergeFillLogisticsBtn = document.getElementById('mergeFillLogisticsBtn');
+      const mergeState = { items: [] };
       let toastTimer;
       let activeStatus = 'all';
 
@@ -454,6 +630,210 @@
         toast.classList.add('show');
         toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
       };
+
+      const mergeRelationMap = {
+        'FCO202610270004': { orderNo: 'FCO202610270003', itemLine: '商品行 #1' },
+        'FCO202610270003': { orderNo: 'FCO202610270004', itemLine: '商品行 #1' }
+      };
+      const mergeProductExamples = {
+        'FCO202610270003': [
+          { itemLine: '商品行 #1', product: '铁矿石', quantityText: '2 万吨' },
+          { itemLine: '商品行 #2', product: '铁矿石精粉', quantityText: '0.5 万吨' }
+        ]
+      };
+      const escapeMergeText = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+      const parseQuantityText = (value) => {
+        const match = String(value || '').trim().match(/^([0-9.]+)[ ]*(.*)$/);
+        if (!match) return { number: 0, unit: '' };
+        return { number: Number(match[1]) || 0, unit: match[2] || '' };
+      };
+      const formatMergeNumber = (value) => {
+        const numberValue = Number(value);
+        return Number.isInteger(numberValue) ? String(numberValue) : numberValue.toFixed(2).replace(/0+$/, '').replace(/[.]$/, '');
+      };
+      const collectMergeItems = () => rows.filter((row) => {
+        const checkbox = row.querySelector('.row-check');
+        return checkbox?.checked && !row.hidden;
+      }).flatMap((row) => {
+        const rowQuantity = parseQuantityText(row.dataset.unscheduled || row.cells[7]?.innerText);
+        const products = mergeProductExamples[row.dataset.order] || [{
+          itemLine: '商品行 #1',
+          product: row.cells[6]?.innerText.trim() || '--',
+          quantityText: row.dataset.unscheduled || '0 ' + rowQuantity.unit
+        }];
+        return products.map((product, index) => {
+          const quantity = parseQuantityText(product.quantityText || rowQuantity.number + ' ' + rowQuantity.unit);
+          return {
+            id: row.dataset.order + '::route-1::item-' + (index + 1),
+            routeId: row.dataset.order + '::route-1',
+            routeIndex: 1,
+            itemLine: product.itemLine || '商品行 #' + (index + 1),
+            orderNo: row.dataset.order,
+            customer: row.cells[4]?.innerText.trim() || '--',
+            product: product.product || row.cells[6]?.innerText.trim() || '--',
+            route: (row.dataset.origin || '起运地') + ' → ' + (row.dataset.destination || '目的地'),
+            routeMode: (row.dataset.transportType || '--') + ' · ' + (row.dataset.loadType || '--'),
+            availableValue: quantity.number,
+            availableText: product.quantityText || row.dataset.unscheduled || '0 ' + quantity.unit,
+            unit: quantity.unit,
+            quantity: quantity.number,
+            relation: index === 0 ? (mergeRelationMap[row.dataset.order] || null) : null
+          };
+        });
+      }).filter((item) => item.availableValue > 0);
+
+      const groupMergeRoutes = (items) => {
+        const routeMap = new Map();
+        items.forEach((item) => {
+          if (!routeMap.has(item.routeId)) {
+            routeMap.set(item.routeId, {
+              id: item.routeId,
+              routeIndex: item.routeIndex,
+              orderNo: item.orderNo,
+              customer: item.customer,
+              route: item.route,
+              routeMode: item.routeMode,
+              items: []
+            });
+          }
+          routeMap.get(item.routeId).items.push(item);
+        });
+        return Array.from(routeMap.values());
+      };
+
+      const updateMergeSummary = () => {
+        const items = mergeState.items;
+        const routes = groupMergeRoutes(items);
+        const customers = new Set(items.map((item) => item.customer));
+        const orders = new Set(items.map((item) => item.orderNo));
+        mergeSelectedCount.textContent = String(routes.length);
+        mergeSummaryStats.textContent = '客户 ' + customers.size + ' · 订单 ' + orders.size + ' · 线路 ' + routes.length + ' · 商品 ' + items.length;
+        const totalsByUnit = new Map();
+        items.forEach((item) => {
+          if (!Number.isFinite(item.quantity) || item.quantity < 0 || item.quantity > item.availableValue) return;
+          totalsByUnit.set(item.unit, (totalsByUnit.get(item.unit) || 0) + item.quantity);
+        });
+        mergeTotalQuantity.textContent = totalsByUnit.size
+          ? Array.from(totalsByUnit.entries()).map(([unit, quantity]) => formatMergeNumber(quantity) + ' ' + unit).join(' + ')
+          : '0';
+        const invalid = items.some((item) => !Number.isFinite(item.quantity) || item.quantity <= 0 || item.quantity > item.availableValue);
+        mergeFillLogisticsBtn.disabled = items.length === 0 || invalid;
+      };
+
+      const renderMergeDrawer = () => {
+        if (!mergeState.items.length) {
+          mergeDrawerBody.innerHTML = '<div class="merge-empty">所选订单暂无可提交商品，请重新选择订单。</div>';
+          updateMergeSummary();
+          return;
+        }
+        const selectedOrders = new Set(mergeState.items.map((item) => item.orderNo));
+        const routes = groupMergeRoutes(mergeState.items);
+        mergeDrawerBody.innerHTML = routes.map((route) => {
+          const productRows = route.items.map((item) => {
+            const relationText = item.relation
+              ? escapeMergeText(item.relation.orderNo) + ' / ' + escapeMergeText(item.relation.itemLine)
+              : '--';
+            const relationTip = item.relation
+              ? '<div class="merge-product-relation-tip">' + (selectedOrders.has(item.relation.orderNo) ? '关联商品已同批选择' : '关联商品未同批提交不影响本次提交') + '</div>'
+              : '';
+            return '<tr class="merge-product-row" data-merge-item="' + escapeMergeText(item.id) + '">' +
+              '<td><div class="merge-product-name">' + escapeMergeText(item.product) + '</div><div class="merge-product-line">需求行号：' + escapeMergeText(item.itemLine) + '</div></td>' +
+              '<td><input class="merge-qty-input" type="number" min="0" step="0.01" max="' + item.availableValue + '" value="' + item.quantity + '" data-merge-qty="' + escapeMergeText(item.id) + '" aria-label="' + escapeMergeText(route.orderNo) + ' ' + escapeMergeText(item.product) + '本次提交数量"><div class="merge-qty-unit">' + escapeMergeText(item.unit) + '</div></td>' +
+              '<td><div class="merge-qty-available">未提交数量<strong>' + escapeMergeText(item.availableText) + '</strong></div></td>' +
+              '<td><div class="merge-relation-main">' + relationText + '</div>' + relationTip + '</td>' +
+              '<td><button class="merge-item-delete" type="button" data-merge-remove="' + escapeMergeText(item.id) + '" aria-label="移除商品"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg></button></td>' +
+            '</tr>';
+          }).join('');
+          return '<section class="merge-route-card" data-merge-route="' + escapeMergeText(route.id) + '">' +
+            '<div class="merge-route-head"><div><div class="merge-route-title-row"><span class="merge-route-index">线路 #' + route.routeIndex + '</span><span class="merge-route-order">' + escapeMergeText(route.orderNo) + '</span><span class="merge-route-customer">' + escapeMergeText(route.customer) + '</span></div><div class="merge-route-meta"><span class="merge-route-path">' + escapeMergeText(route.route) + '</span><span class="merge-route-mode">' + escapeMergeText(route.routeMode) + '</span></div></div><span class="merge-route-count">' + route.items.length + ' 个商品</span></div>' +
+            '<div class="merge-product-table-wrap"><table class="merge-product-table"><colgroup><col style="width:34%"><col style="width:18%"><col style="width:18%"><col style="width:24%"><col style="width:6%"></colgroup><thead><tr><th>商品清单</th><th>本次提交数量</th><th>未提交数量</th><th>关联商品</th><th>操作</th></tr></thead><tbody>' + productRows + '</tbody></table></div>' +
+          '</section>';
+        }).join('');
+        updateMergeSummary();
+      };
+
+      const openMergeSplitDrawer = () => {
+        mergeState.items = collectMergeItems();
+        renderMergeDrawer();
+        mergeSplitDrawer.hidden = false;
+        mergeSplitDrawer.querySelector('.merge-drawer-close')?.focus();
+      };
+
+      const closeMergeSplitDrawer = () => {
+        mergeSplitDrawer.hidden = true;
+      };
+
+      const arrangementTaskTypes = ['汽运', '水运', '铁运', '航空'];
+      const arrangementLoadTypes = ['散货', '件杂', '集装箱'];
+      const arrangementOptions = (items, selected) => items.map((item) => '<option value="' + item + '"' + (item === selected ? ' selected' : '') + '>' + item + '</option>').join('');
+      const arrangementEsc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+      const assignedArrangementRouteIds = () => new Set(arrangementState.consignments.flatMap((item) => item.tasks.map((task) => task.routeId)).filter(Boolean));
+      const arrangementTaskMarkup = (commission, task) => {
+        const route = arrangementState.routes.find((item) => item.id === task.routeId);
+        const routeLabel = route ? route.label + ' · ' + route.origin + ' → ' + route.destination : '未关联线路';
+        return '<div class="arrangement-task-card" data-arr-task="' + arrangementEsc(task.id) + '" data-arr-commission="' + arrangementEsc(commission.id) + '">' +
+          '<div class="arrangement-task-field"><label>关联线路</label><div class="arrangement-task-route-value" title="' + arrangementEsc(routeLabel) + '">' + arrangementEsc(routeLabel) + '</div></div>' +
+          '<div class="arrangement-task-field"><label>首段运输任务类型</label><select data-arr-task-field="taskType">' + arrangementOptions(arrangementTaskTypes, task.taskType) + '</select></div>' +
+          '<div class="arrangement-task-field"><label>装运类别</label><select data-arr-task-field="loadType">' + arrangementOptions(arrangementLoadTypes, task.loadType) + '</select></div>' +
+          '<button class="arrangement-task-delete" type="button" data-delete-arr-task="' + arrangementEsc(task.id) + '" data-arr-commission="' + arrangementEsc(commission.id) + '" aria-label="删除任务">×</button>' +
+        '</div>';
+      };
+      const arrangementConsignmentMarkup = (commission) => {
+        return '<article class="arrangement-consignment" data-arr-consignment-card="' + arrangementEsc(commission.id) + '" data-arr-drop="' + arrangementEsc(commission.id) + '">' +
+          '<div class="arrangement-consignment-head"><div class="arrangement-consignment-title">委托 ' + (arrangementState.consignments.indexOf(commission) + 1) + '</div><div class="arrangement-consignment-actions"><button class="arrangement-mini-btn" type="button" data-add-arr-task="' + arrangementEsc(commission.id) + '">＋ 新增任务</button><button class="arrangement-icon-btn" type="button" data-delete-arr-consignment="' + arrangementEsc(commission.id) + '" aria-label="删除委托">×</button></div></div>' +
+          '<div class="arrangement-form-grid">' +
+            '<div class="arrangement-field"><label>物流委托名称<span class="required">*</span></label><input data-arr-consignment-field="name" data-arr-commission="' + arrangementEsc(commission.id) + '" value="' + arrangementEsc(commission.name) + '" placeholder="请输入物流委托名称"></div>' +
+            '<div class="arrangement-field"><label>委托方法人公司<span class="required">*</span></label><input data-arr-consignment-field="legalCompany" data-arr-commission="' + arrangementEsc(commission.id) + '" value="' + arrangementEsc(commission.legalCompany) + '"></div>' +
+            '<div class="arrangement-field"><label>运输委托类型<span class="required">*</span></label><select data-arr-consignment-field="type" data-arr-commission="' + arrangementEsc(commission.id) + '"><option>我司委托-已准入供应商</option><option>供应商直委托</option></select></div>' +
+            '<div class="arrangement-field"><label>物流供应商<span class="required">*</span></label><select data-arr-consignment-field="supplier" data-arr-commission="' + arrangementEsc(commission.id) + '"><option>中联铁运集团有限公司</option><option>青岛远洋物流有限公司</option><option>待分配承运商</option></select></div>' +
+            '<div class="arrangement-field"><label>供应商商户</label><select data-arr-consignment-field="supplierMerchant" data-arr-commission="' + arrangementEsc(commission.id) + '"><option value="">请选择</option><option>默认商户</option></select></div>' +
+          '</div>' +
+          '<div class="arrangement-tasks"><div class="arrangement-task-head"><div class="arrangement-task-title">任务信息（' + commission.tasks.length + '）</div></div>' +
+            '<div class="arrangement-task-list">' + (commission.tasks.length ? commission.tasks.map((task) => arrangementTaskMarkup(commission, task)).join('') : '<div class="arrangement-task-empty">暂无任务</div>') + '</div>' +
+            '<div class="arrangement-dropzone">将上方线路拖到此委托内，即可生成任务</div>' +
+          '</div>' +
+        '</article>';
+      };
+      const renderArrangement = () => {
+        const assigned = assignedArrangementRouteIds();
+        arrangementRoutePool.innerHTML = arrangementState.routes.map((route) => {
+          const isAssigned = assigned.has(route.id);
+          const dragHint = isAssigned ? '已分配到任务' : '按住卡片拖到下方委托';
+          return '<article class="arrangement-route-card' + (isAssigned ? ' is-assigned' : '') + '" draggable="' + (!isAssigned) + '" data-arr-route="' + arrangementEsc(route.id) + '"><div class="arrangement-route-card-head"><span>' + arrangementEsc(route.label) + '</span><span>' + (isAssigned ? '已分配' : '可分配') + '</span></div><div class="arrangement-route-card-path">' + arrangementEsc(route.origin) + ' → ' + arrangementEsc(route.destination) + '</div><div class="arrangement-route-card-mode">' + arrangementEsc(route.type) + ' · ' + arrangementEsc(route.loadType) + '</div><div class="arrangement-route-drag-hint">' + dragHint + '</div></article>';
+        }).join('');
+        arrangementConsignmentList.innerHTML = arrangementState.consignments.length ? arrangementState.consignments.map(arrangementConsignmentMarkup).join('') : '<div class="arrangement-empty-consignment">暂无物流委托，请点击“新增委托”。</div>';
+        arrangementConfirmBtn.disabled = !arrangementState.consignments.length || !arrangementState.consignments.some((item) => item.tasks.length);
+      };
+      const addArrangementTask = (commissionId, routeId) => {
+        const commission = arrangementState.consignments.find((item) => item.id === commissionId);
+        if (!commission) return;
+        if (routeId && assignedArrangementRouteIds().has(routeId)) { showToast('该线路已分配任务'); return; }
+        const route = arrangementState.routes.find((item) => item.id === routeId);
+        commission.tasks.push({ id: 'T' + (++arrangementState.sequence), routeId: routeId || '', taskType: route?.type || '汽运', loadType: route?.loadType || '散货' });
+        renderArrangement();
+      };
+      const openArrangementDialog = (orderNo) => {
+        const row = rows.find((item) => item.dataset.order === orderNo);
+        if (!row) return;
+        const sales = row.cells[13]?.innerText.trim() || '苏丽蓉';
+        const company = row.cells[14]?.innerText.trim() || '厦门建发物流有限公司';
+        const department = row.cells[15]?.innerText.trim() || '物流运营部';
+        document.getElementById('arrangementSales').value = sales;
+        document.getElementById('arrangementDepartment').value = department;
+        document.getElementById('arrangementCompany').value = company;
+        document.getElementById('arrangementOperationPerson').value = sales;
+        const type = row.dataset.transportType || '水运';
+        const loadType = row.dataset.loadType || '散货';
+        const primary = { id: 'R1', label: '线路 #1', origin: row.dataset.origin || '起运地', destination: row.dataset.destination || '目的地', type, loadType };
+        const second = { id: 'R2', label: '线路 #2', origin: type === '水运' ? '苏州/工业园区海关监管库' : '中转仓', destination: type === '水运' ? '成都/青白江铁路港' : '目的仓', type, loadType };
+        arrangementState.orderNo = orderNo;
+        arrangementState.routes = [primary, second];
+        arrangementState.consignments = [{ id: 'C' + (++arrangementState.sequence), name: '未命名物流委托', legalCompany: company, type: '我司委托-已准入供应商', supplier: '中联铁运集团有限公司', supplierMerchant: '', tasks: [{ id: 'T' + (++arrangementState.sequence), routeId: 'R1', taskType: type, loadType }] }];
+        renderArrangement();
+        arrangementDialog.hidden = false;
+        arrangementDialog.querySelector('.arrangement-close')?.focus();
+      };
+      const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
 
       const setQueryExpanded = (expanded) => {
         queryBody.classList.toggle('expanded', expanded);
@@ -487,7 +867,6 @@
           .filter(Boolean)
           .map((value) => value.toLowerCase());
         let visible = 0;
-
         rows.forEach((row) => {
           const rowText = row.innerText.toLowerCase();
           const rowConsignments = (row.dataset.consignment || '')
@@ -501,7 +880,6 @@
           row.hidden = !show;
           if (show) visible += 1;
         });
-
         rowChecks.forEach((checkbox) => {
           if (checkbox.closest('tr').hidden) checkbox.checked = false;
         });
@@ -518,24 +896,28 @@
         const cells = Array.from(row.cells).map((cell) => cell.innerText.trim());
         return {
           no: row.dataset.order || cells[1] || '',
-          status: cells[2] || '',
-          customer: cells[3] || '',
-          goods: cells[4] || '',
-          total: cells[5] || '',
-          scheduled: cells[6] || '',
-          unscheduled: cells[7] || '',
-          origin: cells[8] || '',
-          destination: cells[9] || '',
+          status: row.dataset.orderStatus || cells[2] || '',
+          confirmationStatus: row.dataset.confirmationStatus || '',
+          contractStatus: row.dataset.contractStatus || '',
+          customer: cells[4] || '',
+          goods: cells[6] || '',
+          total: cells[7] || '',
+          scheduled: row.dataset.scheduled || '',
+          unscheduled: row.dataset.unscheduled || '',
+          origin: row.dataset.origin || '',
+          destination: row.dataset.destination || '',
           businessType: cells[10] || '',
           serviceScope: (cells[11] || '').split(/[、,，\s]+/).filter(Boolean),
-          transportType: cells[12] || '',
-          loadType: cells[13] || '',
-          sales: cells[14] || '',
-          company: cells[15] || '',
-          department: cells[16] || '',
+          transportType: row.dataset.transportType || '',
+          loadType: row.dataset.loadType || '',
+          sales: cells[13] || '',
+          company: cells[14] || '',
+          department: cells[15] || '',
           consignments: (row.dataset.consignment || '').split(/[\s,，]+/).filter(Boolean),
-          businessDate: (cells[19] || '').split(' ')[0],
-          updated: cells[21] || '',
+          businessDate: (row.dataset.createdAt || '').split(' ')[0],
+          updated: row.dataset.modifiedAt || '',
+          creator: row.dataset.creator || '',
+          modifier: row.dataset.modifiedBy || '',
           projectNo: '',
           tradeTerm: 'FOB',
           contact: '',
@@ -574,7 +956,7 @@
         window.requestAnimationFrame(() => window.scrollTo(0, Number(saved.scrollY) || 0));
       };
 
-      document.querySelectorAll('.order-link').forEach((link) => {
+      document.querySelectorAll('.order-link, [data-order-detail-link]').forEach((link) => {
         link.addEventListener('click', () => {
           const row = link.closest('tr[data-order]');
           const record = parseOrderRecord(row);
@@ -583,84 +965,88 @@
         });
       });
       window.addEventListener('pagehide', captureListState);
+      document.querySelectorAll('tr[data-order]').forEach((row) => {
+        row.title = '双击查看详情';
+        row.addEventListener('dblclick', (event) => {
+          if (event.target.closest('button, a, summary, details, input, label, select')) return;
+          row.querySelector('.order-link')?.click();
+        });
+      });
 
-      moreQueryBtn.addEventListener('click', () => {
-        setQueryExpanded(!queryBody.classList.contains('expanded'));
+      const rowActionMenu = document.getElementById('rowActionMenu');
+      let activeRowMoreTrigger = null;
+      const closeRowActionMenu = () => {
+        if (!rowActionMenu) return;
+        rowActionMenu.hidden = true;
+        activeRowMoreTrigger?.setAttribute('aria-expanded', 'false');
+        activeRowMoreTrigger = null;
+      };
+      document.querySelectorAll('[data-row-more]').forEach((trigger) => {
+        trigger.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (activeRowMoreTrigger === trigger && !rowActionMenu.hidden) { closeRowActionMenu(); return; }
+          closeRowActionMenu();
+          const source = trigger.nextElementSibling;
+          if (!source || !rowActionMenu) return;
+          rowActionMenu.innerHTML = source.innerHTML;
+          rowActionMenu.hidden = false;
+          activeRowMoreTrigger = trigger;
+          trigger.setAttribute('aria-expanded', 'true');
+          const rect = trigger.getBoundingClientRect();
+          const menuWidth = rowActionMenu.offsetWidth || 126;
+          const menuHeight = rowActionMenu.offsetHeight || 90;
+          const left = Math.max(8, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8));
+          const top = rect.bottom + menuHeight + 4 > window.innerHeight - 8 ? Math.max(8, rect.top - menuHeight - 4) : rect.bottom + 4;
+          rowActionMenu.style.left = left + 'px';
+          rowActionMenu.style.top = top + 'px';
+        });
       });
-      queryToggle.addEventListener('click', () => {
-        setQueryExpanded(!queryBody.classList.contains('expanded'));
+      rowActionMenu?.addEventListener('click', (event) => {
+        const action = event.target.closest('[data-toast]');
+        if (!action) return;
+        showToast(action.dataset.toast);
+        closeRowActionMenu();
       });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('[data-row-more], #rowActionMenu')) closeRowActionMenu();
+      });
+      window.addEventListener('scroll', closeRowActionMenu, true);
+      window.addEventListener('resize', closeRowActionMenu);
+
+      moreQueryBtn.addEventListener('click', () => { setQueryExpanded(!queryBody.classList.contains('expanded')); });
+      queryToggle.addEventListener('click', () => { setQueryExpanded(!queryBody.classList.contains('expanded')); });
       const runQuery = () => {
-        if (!window.UIState) {
-          applyFilters();
-          return;
-        }
+        if (!window.UIState) { applyFilters(); return; }
         const injectedFailure = window.PrototypeRuntime && window.PrototypeRuntime.consumeFailure('orderQuery');
         if (injectedFailure === 'timeout') {
-          UIState.setTableState(tableHost, {
-            state: 'error',
-            preserveHeader: true,
-            title: '查询请求超时',
-            message: '查询条件已保留，请点击重试重新加载。',
-            actionLabel: '重新查询',
-            onAction: () => runQuery()
-          });
+          UIState.setTableState(tableHost, { state: 'error', preserveHeader: true, title: '查询请求超时', message: '查询条件已保留，请点击重试重新加载。', actionLabel: '重新查询', onAction: () => runQuery() });
           captureListState();
           return;
         }
         if (!navigator.onLine) {
-          UIState.setTableState(tableHost, {
-            state: 'offline',
-            preserveHeader: true,
-            title: '网络连接已断开',
-            message: '恢复网络后点击重新连接，当前查询条件不会丢失。',
-            actionLabel: '重新连接',
-            onAction: () => runQuery()
-          });
+          UIState.setTableState(tableHost, { state: 'offline', preserveHeader: true, title: '网络连接已断开', message: '恢复网络后点击重新连接，当前查询条件不会丢失。', actionLabel: '重新连接', onAction: () => runQuery() });
           captureListState();
           return;
         }
         UIState.setButtonLoading(submitQueryBtn, true, '查询中');
-        UIState.setTableState(tableHost, {
-          state: 'loading',
-          title: '正在查询客户订单…',
-          message: '正在应用筛选条件，请稍候。',
-          rows: 5
-        });
-        window.setTimeout(() => {
-          applyFilters();
-          UIState.clearTableState(tableHost);
-          UIState.setButtonLoading(submitQueryBtn, false);
-        }, 360);
+        UIState.setTableState(tableHost, { state: 'loading', title: '正在查询客户订单…', message: '正在应用筛选条件，请稍候。', rows: 5 });
+        window.setTimeout(() => { applyFilters(); UIState.clearTableState(tableHost); UIState.setButtonLoading(submitQueryBtn, false); }, 360);
       };
-
       window.addEventListener('offline', () => {
         if (!window.UIState) return;
-        UIState.setTableState(tableHost, {
-          state: 'offline',
-          preserveHeader: true,
-          title: '网络连接已断开',
-          message: '恢复网络后点击重新连接，当前查询条件不会丢失。',
-          actionLabel: '重新连接',
-          onAction: () => runQuery()
-        });
+        UIState.setTableState(tableHost, { state: 'offline', preserveHeader: true, title: '网络连接已断开', message: '恢复网络后点击重新连接，当前查询条件不会丢失。', actionLabel: '重新连接', onAction: () => runQuery() });
         captureListState();
       });
       window.addEventListener('online', () => showToast('网络已恢复，请点击“重新连接”继续查询'));
-
       submitQueryBtn.addEventListener('click', runQuery);
       resetQueryBtn.addEventListener('click', () => {
-        queryBody.querySelectorAll('input, select').forEach((control) => {
-          control.value = '';
-        });
+        queryBody.querySelectorAll('input, select').forEach((control) => { control.value = ''; });
         activeStatus = 'all';
         applyFilters();
         captureListState();
         showToast('查询条件已重置');
       });
-      queryBody.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') runQuery();
-      });
+      queryBody.addEventListener('keydown', (event) => { if (event.key === 'Enter') runQuery(); });
 
       document.querySelectorAll('.status-tab').forEach((tab) => {
         tab.addEventListener('click', () => {
@@ -669,7 +1055,6 @@
           captureListState();
         });
       });
-
       selectAll.addEventListener('change', () => {
         rowChecks.forEach((checkbox) => {
           if (!checkbox.closest('tr').hidden) checkbox.checked = selectAll.checked;
@@ -681,9 +1066,132 @@
       });
       selectionButtons.forEach((button) => {
         button.addEventListener('click', () => {
+          if (button.id === 'mergeSplitOrdersBtn') {
+            openMergeSplitDrawer();
+            return;
+          }
           const count = checkedVisibleCount();
           showToast(button.textContent + '：已选择 ' + count + ' 个订单');
         });
+      });
+      document.getElementById('mergeDrawerClose')?.addEventListener('click', closeMergeSplitDrawer);
+      mergeSplitDrawer?.addEventListener('click', (event) => { if (event.target === mergeSplitDrawer) closeMergeSplitDrawer(); });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !mergeSplitDrawer.hidden) closeMergeSplitDrawer();
+      });
+      mergeDrawerBody?.addEventListener('input', (event) => {
+        const input = event.target.closest('[data-merge-qty]');
+        if (!input) return;
+        const item = mergeState.items.find((entry) => entry.id === input.dataset.mergeQty);
+        if (!item) return;
+        item.quantity = Number(input.value);
+        input.classList.toggle('is-invalid', !Number.isFinite(item.quantity) || item.quantity <= 0 || item.quantity > item.availableValue);
+        updateMergeSummary();
+      });
+      mergeDrawerBody?.addEventListener('click', (event) => {
+        const remove = event.target.closest('[data-merge-remove]');
+        if (!remove) return;
+        mergeState.items = mergeState.items.filter((item) => item.id !== remove.dataset.mergeRemove);
+        renderMergeDrawer();
+      });
+      mergeFillLogisticsBtn?.addEventListener('click', () => {
+        if (mergeFillLogisticsBtn.disabled) return;
+        const customers = new Set(mergeState.items.map((item) => item.customer)).size;
+        const orders = new Set(mergeState.items.map((item) => item.orderNo)).size;
+        const itemCount = mergeState.items.length;
+        closeMergeSplitDrawer();
+        showToast('已创建物流需求草稿：' + customers + ' 个客户、' + orders + ' 个订单、' + itemCount + ' 个商品行');
+      });
+
+      document.querySelectorAll('[data-open-arrangement]').forEach((button) => {
+        button.addEventListener('click', () => openArrangementDialog(button.dataset.openArrangement));
+      });
+      document.getElementById('arrangementDialogClose')?.addEventListener('click', closeArrangementDialog);
+      document.getElementById('arrangementCancelBtn')?.addEventListener('click', closeArrangementDialog);
+      arrangementDialog?.addEventListener('click', (event) => { if (event.target === arrangementDialog) closeArrangementDialog(); });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && arrangementDialog && !arrangementDialog.hidden) closeArrangementDialog();
+      });
+      document.getElementById('addArrangementConsignmentBtn')?.addEventListener('click', () => {
+        arrangementState.consignments.push({ id: 'C' + (++arrangementState.sequence), name: '未命名物流委托', legalCompany: document.getElementById('arrangementCompany').value || '厦门建发物流有限公司', type: '我司委托-已准入供应商', supplier: '中联铁运集团有限公司', supplierMerchant: '', tasks: [] });
+        renderArrangement();
+      });
+      arrangementConsignmentList?.addEventListener('input', (event) => {
+        const field = event.target.dataset.arrConsignmentField;
+        if (!field) return;
+        const commission = arrangementState.consignments.find((item) => item.id === event.target.dataset.arrCommission);
+        if (commission) commission[field] = event.target.value;
+      });
+      arrangementConsignmentList?.addEventListener('change', (event) => {
+        const field = event.target.dataset.arrConsignmentField;
+        if (field) {
+          const commission = arrangementState.consignments.find((item) => item.id === event.target.dataset.arrCommission);
+          if (commission) commission[field] = event.target.value;
+          return;
+        }
+        const taskField = event.target.dataset.arrTaskField;
+        if (!taskField) return;
+        const taskCard = event.target.closest('[data-arr-task]');
+        const commission = arrangementState.consignments.find((item) => item.id === taskCard?.dataset.arrCommission);
+        const task = commission?.tasks.find((item) => item.id === taskCard?.dataset.arrTask);
+        if (!task) return;
+        task[taskField] = event.target.value;
+      });
+      arrangementConsignmentList?.addEventListener('click', (event) => {
+        const addTask = event.target.closest('[data-add-arr-task]');
+        if (addTask) { addArrangementTask(addTask.dataset.addArrTask, ''); return; }
+        const deleteTask = event.target.closest('[data-delete-arr-task]');
+        if (deleteTask) {
+          const commission = arrangementState.consignments.find((item) => item.id === deleteTask.dataset.arrCommission);
+          if (commission) { commission.tasks = commission.tasks.filter((task) => task.id !== deleteTask.dataset.deleteArrTask); renderArrangement(); }
+          return;
+        }
+        const deleteCommission = event.target.closest('[data-delete-arr-consignment]');
+        if (deleteCommission) {
+          arrangementState.consignments = arrangementState.consignments.filter((item) => item.id !== deleteCommission.dataset.deleteArrConsignment);
+          renderArrangement();
+          return;
+        }
+      });
+      arrangementRoutePool?.addEventListener('dragstart', (event) => {
+        const card = event.target.closest('[data-arr-route]');
+        if (!card || card.classList.contains('is-assigned')) { event.preventDefault(); return; }
+        arrangementState.dragRouteId = card.dataset.arrRoute;
+        card.classList.add('dragging');
+        event.dataTransfer?.setData('text/plain', arrangementState.dragRouteId);
+      });
+      arrangementRoutePool?.addEventListener('dragend', (event) => {
+        event.target.closest('[data-arr-route]')?.classList.remove('dragging');
+        arrangementState.dragRouteId = '';
+      });
+      arrangementConsignmentList?.addEventListener('dragover', (event) => {
+        const dropzone = event.target.closest('[data-arr-drop]');
+        if (!dropzone) return;
+        event.preventDefault();
+        dropzone.classList.add('is-dragover');
+      });
+      arrangementConsignmentList?.addEventListener('dragleave', (event) => {
+        event.target.closest('[data-arr-drop]')?.classList.remove('is-dragover');
+      });
+      arrangementConsignmentList?.addEventListener('drop', (event) => {
+        const dropzone = event.target.closest('[data-arr-drop]');
+        if (!dropzone) return;
+        event.preventDefault();
+        dropzone.classList.remove('is-dragover');
+        const routeId = event.dataTransfer?.getData('text/plain') || arrangementState.dragRouteId;
+        if (routeId) addArrangementTask(dropzone.dataset.arrDrop, routeId);
+      });
+      arrangementConfirmBtn?.addEventListener('click', () => {
+        if (arrangementConfirmBtn.disabled) return;
+        const consignmentCount = arrangementState.consignments.length;
+        const taskCount = arrangementState.consignments.reduce((sum, item) => sum + item.tasks.length, 0);
+        closeArrangementDialog();
+        showToast('物流安排已创建：' + consignmentCount + ' 个委托、' + taskCount + ' 个任务');
+      });
+
+      document.getElementById('newOrderBtn')?.addEventListener('click', () => {
+        captureListState();
+        window.location.href = 'customer-order-detail-prototype.html?from=customer-order-list';
       });
 
       document.querySelectorAll('[data-toast]').forEach((button) => {
@@ -698,7 +1206,3 @@
   <script src="../assets/prototype-access.js"></script>
 </body>
 </html>
-
-
-
-

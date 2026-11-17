@@ -760,6 +760,7 @@ html.ct-embedded .main{padding-top:0!important;background:var(--page)!important}
 @media(max-width:1360px){.doc-query-bar{padding:0 14px}.doc-query-field .doc-status-filter{min-width:130px}.doc-all-table-wrap{height:calc(100vh - 330px)}}
 </style>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/logistics-demand-arrangement-ui.css?v=20261117g">
 </head>
 <body>
 <div class="app">
@@ -1657,14 +1658,14 @@ function renderReferenceTask(){
       <div class="ref-task-pane" data-ref-task-pane="letters"><div class="ref-file-toolbar"><button class="btn outline-primary mini" data-toast="已模拟上传附件">上传附件</button><button class="btn outline-primary mini" data-toast="已模拟生成介绍信">生成介绍信/提货通知书</button></div>${taskAttachmentTable()}</div>
       <div class="ref-task-pane" data-ref-task-pane="attachments"><div class="upload-box" style="margin-bottom:12px">拖拽或点击上传　doc/pdf/png/jpg/xlsx · ≤20MB</div>${taskAttachmentTable()}</div>
     </div>
-    <div class="ref-task-footer"><button class="btn outline-primary mini" data-toast="已模拟添加任务">＋ 添加任务</button></div>
+    <div class="ref-task-footer"><button class="btn outline-primary mini" data-open-logistics-task>＋ 新增任务</button></div>
   </article>`;
 }
 function renderExecutionLower(){
   const base=[['物流委托名称','ui自动化物流安排510309',true],['委托方法人公司','厦门建发生生物流有限公司',true],['物流委托类型','我司委托',true],['物流供应商','中联铁运集团有限公司',true],['供应商商户','中联铁运集团有限公司',true],['反馈方式','自反馈',true],['来源单据类型','采购/移仓'],['来源单据号',''],['作业组织','数字化中心',true],['作业组织人员',''],['委托备注','北港到厂水运入库，靠泊窗口需提前与港口调度确认。'],['报审说明','']];
   const fields=base.map(([l,v,r],i)=>field(l,v,{readonly:false,required:!!r,textarea:l==='委托备注'||l==='报审说明',span:i===0?'span-2':(l==='委托备注'||l==='报审说明')?'span-3':''})).join('');
   return `<div class="execution-ref-layout">
-    <aside class="execution-tree-card"><div class="execution-tree-head"><span>执行结构</span><button class="btn link" data-toast="已模拟收起执行结构">«</button></div><div class="execution-tree-list"><button class="exec-delegation-node">${icon('order')}<span>ui自动化物流安排510309</span><span class="exec-delegation-status">执行中</span></button><button class="exec-task-node active">${icon('ship')}<span>华东物流运营中心 / 上海调度组 → 客户收货仓</span></button></div><button class="exec-add-delegation" data-toast="已模拟新增委托">＋ 新增委托</button></aside>
+    <aside class="execution-tree-card"><div class="execution-tree-head"><span>执行结构</span><button class="btn link" data-toast="已模拟收起执行结构">«</button></div><div class="execution-tree-list"><button class="exec-delegation-node">${icon('order')}<span>ui自动化物流安排510309</span><span class="exec-delegation-status">执行中</span></button><button class="exec-task-node active">${icon('ship')}<span>华东物流运营中心 / 上海调度组 → 客户收货仓</span></button></div><button class="exec-add-delegation" type="button" data-launch-logistics-arrangement data-demand-no="${esc(state.activeRowId||'FLR202610200038')}" data-demand-type="水运集装箱" data-demand-dept="数字化中心" data-demand-sales="苏丽蓉" data-demand-company="厦门建发生生物流有限公司">＋ 发起物流安排</button></aside>
     <section class="delegation-ref-card">
       <div class="delegation-ref-head"><span class="tag" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe">执行中</span><h3>ui自动化物流安排510309</h3><span class="delegation-code">FLMT202610200038 · V1.0</span><div class="delegation-ref-actions"><button class="btn outline-primary mini" data-toast="已模拟打开合同信息">合同信息</button><button class="btn outline-primary mini" data-toast="已模拟打开需求单审批进度">需求单审批进度</button><button class="btn outline-primary mini" data-toast="已模拟打开附件">附件</button><button class="btn outline-primary mini" data-toast="已模拟打开历史版本">历史版本</button><button class="btn primary mini" data-toast="已模拟提交审批">提交审批</button><button class="btn outline-primary mini" data-toast="已模拟复制委托">复制</button><button class="btn danger mini" data-toast="已模拟删除委托">删除</button></div></div>
       <div class="delegation-ref-meta"><span>来源 <b>控制塔</b></span><span>业务员 <b>黄瑞钰</b></span><span>部门 <b>数字化中心</b></span><span>经营单位 <b>供应链物流科技</b></span><span>核算组织 <b>数字化中心</b></span><span>公司 <b>厦门建发生生物流有限公司</b></span><span>创建 <b>苏丽蓉 · 2026-10-20 19:51:35</b></span><span>修改 <b>菜菜菜 · 2026-10-20 19:53:25</b></span></div>
@@ -2133,5 +2134,6 @@ document.addEventListener('dblclick',event=>{
 render();
 </script>
   <script src="../assets/component-system.js"></script>
+  <script src="../assets/logistics-demand-arrangement-ui.js?v=20261117g"></script>
 </body>
 </html>
