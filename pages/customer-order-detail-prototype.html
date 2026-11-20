@@ -99,6 +99,16 @@
     .order-route-anchor-tab:hover { color:#2563eb; background:#f4f8ff; }
     .order-route-anchor-tab.active { color:#2563eb; border-color:#d7e7ff; background:#edf5ff; font-weight:600; }
     .order-route-card { scroll-margin-top:52px; }
+    #orderRoutesSection.single-route-mode .order-route-anchor-tabs,
+    #orderRoutesSection.single-route-mode .order-route-toolbar,
+    #orderRoutesSection.single-route-mode .order-route-card-head { display:none !important; }
+    #orderRoutesSection.single-route-mode .order-route-card { margin-top:0; border:0; background:transparent; box-shadow:none; }
+    #orderRoutesSection.single-route-mode .order-route-card-body { padding:0; }
+    #orderRoutesSection.single-route-mode [data-route-action="link-items"] { display:none !important; }
+    #orderRoutesSection.single-route-mode .order-route-index,
+    #orderRoutesSection.single-route-mode [data-route-action="duplicate"],
+    #orderRoutesSection.single-route-mode [data-route-action="remove"] { display:none; }
+    #orderRoutesSection.single-route-mode .order-route-card-head { min-height:40px; background:#fff; }
     .order-route-view-switch { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid #dbe3ee; border-radius:6px; background:#f1f5f9; }
     .order-route-view-switch .detail-btn { height:27px; padding:0 10px; border:0; background:transparent; box-shadow:none; color:#64748b; }
     .order-route-view-switch .detail-btn.active { color:var(--detail-blue); background:#fff; box-shadow:0 1px 3px rgba(15,23,42,.12); }
@@ -118,13 +128,13 @@
     .order-route-route-copy { color:#334155; font-size:12px; font-weight:700; }
     .order-route-route-copy span { margin-left:6px; color:#64748b; font-weight:400; }
     .order-route-card-controls { display:flex; align-items:center; gap:6px; }
-    .order-route-metrics { display:flex; align-items:center; gap:10px; padding:0 10px; color:#64748b; font-size:11px; }
-    .order-route-metrics strong { color:#2563eb; font-variant-numeric:tabular-nums; }
     .order-route-icon-btn { width:28px; height:28px; display:inline-grid; place-items:center; border:1px solid transparent; border-radius:5px; background:transparent; color:#64748b; cursor:pointer; }
     .order-route-icon-btn:hover { color:var(--detail-blue); border-color:#dbe8fb; background:#f5f9ff; }
     .order-route-icon-btn.danger:hover { color:#c62828; border-color:#f0c9c4; background:#fff5f4; }
     .order-route-card-body { padding:15px 16px 17px; }
     .order-route-block { padding:13px 14px; border:1px solid #e5ebf3; border-radius:6px; background:#fbfcfe; }
+    .order-route-parties .order-route-grid { gap:11px 14px; }
+    .order-route-parties textarea.control { min-height:52px; padding:6px 8px; line-height:1.45; resize:vertical; }
     .order-route-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:13px 14px; }
     .order-route-field.row-start { grid-column-start:1; }
     .order-route-grid.five-column { grid-template-columns:repeat(5,minmax(0,1fr)); }
@@ -152,6 +162,17 @@
     .order-route-items tr:last-child td { border-bottom:0; }
     .order-route-items .control { height:29px; padding:0 6px; font-size:11px; }
     .order-route-items .control:disabled { color:#526176; background:#f5f7fa; opacity:1; cursor:default; }
+    .order-route-containers-table { width:100%; min-width:0; border-collapse:collapse; table-layout:fixed; }
+    .order-route-containers-table th { height:34px; padding:6px 7px; border-bottom:1px solid #dce3ed; background:#f1f5f9; color:#526176; font-size:10px; font-weight:700; text-align:left; white-space:nowrap; }
+    .order-route-containers-table td { padding:6px 7px; border-bottom:1px solid #eef2f7; color:#475569; font-size:11px; vertical-align:middle; }
+    .order-route-containers-table tr:last-child td { border-bottom:0; }
+    .order-route-containers-table .control { height:29px; padding:0 6px; font-size:11px; }
+    .order-route-containers-table th:nth-child(1), .order-route-containers-table td:nth-child(1) { width:56px; text-align:center; }
+    .order-route-containers-table th:nth-child(2), .order-route-containers-table td:nth-child(2) { width:140px; }
+    .order-route-containers-table th:nth-child(3), .order-route-containers-table td:nth-child(3) { width:100px; }
+    .order-route-containers-table th:nth-child(4), .order-route-containers-table td:nth-child(4) { width:200px; }
+    .order-route-containers-table th:nth-child(6), .order-route-containers-table td:nth-child(6) { width:64px; text-align:center; }
+    .order-route-containers-table .order-route-containers-empty td { padding:16px 8px; color:#94a3b8; text-align:center; }
     .order-route-source-ref { color:#2563eb; font-size:10px; font-weight:600; white-space:nowrap; }
     .order-route-link-group { margin-bottom:10px; padding:10px; border:1px solid #e1e8f2; border-radius:6px; background:#fff; }
     .order-route-link-group:last-child { margin-bottom:0; }
@@ -324,7 +345,7 @@
     .detail-btn.danger { color:#c62828; border-color:#efc7c2; background:#fff8f7; }
     .detail-btn.danger:hover { color:#c62828; border-color:#e7a7a0; background:#fff1ef; }
     .status-field-value[data-status="创建"] { color:#8c6a14; border-color:#ead8a8; background:#fff9eb; }
-    .status-field-value[data-status="驳回"], .status-field-value[data-status="已作废"] { color:#c62828; border-color:#efc7c2; background:#fff1ef; }
+    .status-field-value[data-status="驳回"], .status-field-value[data-status="已取消"] { color:#c62828; border-color:#efc7c2; background:#fff1ef; }
     .status-field-value[data-status="待审核"] { color:#8a5a00; border-color:#efd8a4; background:#fff8e8; }
     .status-field-value[data-status="待履约"] { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
     .status-field-value[data-status="履约中"] { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
@@ -332,7 +353,7 @@
     .order-status-chip { min-height:26px; display:inline-flex; align-items:center; padding:0 10px; border:1px solid #d5dee9; border-radius:13px; color:#64748b; background:#fff; font-size:11px; font-weight:600; line-height:1; white-space:nowrap; }
     .order-status-chip:empty::before { content:'—'; color:#9aa6b6; font-weight:500; }
     .order-status-chip[data-status="创建"] { color:#8c6a14; border-color:#ead8a8; background:#fff9eb; }
-    .order-status-chip[data-status="驳回"], .order-status-chip[data-status="已作废"], .order-status-chip[data-status="拒签"] { color:#c62828; border-color:#efc7c2; background:#fff1ef; }
+    .order-status-chip[data-status="驳回"], .order-status-chip[data-status="已取消"], .order-status-chip[data-status="拒签"] { color:#c62828; border-color:#efc7c2; background:#fff1ef; }
     .order-status-chip[data-status="待审核"], .order-status-chip[data-status="待确认"], .order-status-chip[data-status="待安排"] { color:#8a5a00; border-color:#efd8a4; background:#fff8e8; }
     .order-status-chip[data-status="待履约"], .order-status-chip[data-status="待签约"], .order-status-chip[data-status="部分安排"] { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
     .order-status-chip[data-status="履约中"], .order-status-chip[data-status="已确认"], .order-status-chip[data-status="已安排"], .order-status-chip[data-status="已生效"] { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
@@ -347,8 +368,6 @@
     .detail-subnav-divider { width:1px; height:20px; flex:0 0 1px; background:#d7dfe9; }
     html.feedback-active #orderDetailForm #orderViewSwitchRow { display:flex !important; }
     html.feedback-active #orderViewSwitchRow .order-module-links, html.feedback-active #orderViewSwitchRow .detail-subnav-divider, html.cost-active #orderViewSwitchRow .order-module-links, html.cost-active #orderViewSwitchRow .detail-subnav-divider { display:none !important; }
-    .cost-profit-view { margin-top:11px; }
-    .cost-profit-view #costProfitSection { margin-top:0; }
     .order-module-links { min-width:0; flex:1; display:flex; align-items:center; gap:3px; overflow-x:auto; scrollbar-width:none; }
     .order-module-links::-webkit-scrollbar { display:none; }
     .order-quick-statuses { flex:0 0 auto; margin-left:auto; display:flex; align-items:center; justify-content:flex-end; gap:11px; }
@@ -371,91 +390,6 @@
     .detail-more-menu .detail-btn:hover { color:#2563eb; background:#f4f8ff; }
     .detail-more-menu .detail-btn.danger { color:#c62828; }
     .detail-more-empty { padding:10px; color:#94a3b8; text-align:center; font-size:11px; }
-    .actual-finance-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
-    .actual-finance-metric { padding:14px 16px; border:1px solid #dfe7f1; border-radius:7px; background:#fff; }
-    .actual-finance-metric-label { color:#64748b; font-size:11px; }
-    .actual-finance-metric-value { margin-top:7px; color:#1e293b; font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; }
-    .actual-finance-metric-meta { margin-top:4px; color:#94a3b8; font-size:10px; }
-    .actual-finance-metric.receivable .actual-finance-metric-value { color:#2563eb; }
-    .actual-finance-metric.payable .actual-finance-metric-value { color:#c2410c; }
-    .actual-finance-metric.profit .actual-finance-metric-value { color:#047857; }
-    .actual-profit-statistics { overflow:hidden; margin-top:14px; border:1px solid #dfe7f1; border-radius:8px; background:#fff; }
-    .actual-profit-statistics-head { display:flex; align-items:center; min-height:48px; padding:0 16px; border-bottom:1px solid #eef2f7; }
-    .actual-profit-statistics-title { display:flex; align-items:center; gap:8px; color:#0f172a; font-size:13px; font-weight:700; }
-    .actual-profit-statistics-title svg { width:14px; height:14px; }
-    .actual-profit-statistics .detail-section-body { padding:0; }
-    .actual-profit-statistics .detail-section-body.is-collapsed { display:none; }
-    .actual-profit-stat-table-wrap { overflow:auto; }
-    .actual-profit-stat-table { width:100%; min-width:760px; border-collapse:separate; border-spacing:0; table-layout:fixed; }
-    .actual-profit-stat-table th { border-right:1px solid #edf1f5; border-bottom:1px solid #e5eaf1; color:#64748b; background:#f8fafc; font-size:10px; font-weight:600; text-align:left; }
-    .actual-profit-stat-table thead th { height:38px; padding:0 14px; }
-    .actual-profit-stat-table tbody th { width:25%; padding:16px 14px; color:#475569; background:#fff; font-size:11px; font-weight:500; vertical-align:top; }
-    .actual-profit-stat-table td { width:37.5%; padding:16px 14px; border-right:1px solid #edf1f5; border-bottom:1px solid #e5eaf1; vertical-align:top; }
-    .actual-profit-stat-table th:last-child, .actual-profit-stat-table td:last-child { border-right:0; }
-    .actual-profit-stat-table tbody tr:last-child th, .actual-profit-stat-table tbody tr:last-child td { border-bottom:0; }
-    .actual-profit-value-list { display:grid; gap:8px; }
-    .actual-profit-value-line { display:flex; align-items:center; justify-content:space-between; gap:16px; color:#64748b; font-size:11px; }
-    .actual-profit-value-line strong { color:#334155; font-size:11px; font-weight:600; font-variant-numeric:tabular-nums; }
-    .actual-profit-value-line.is-total { margin-top:2px; padding-top:8px; border-top:1px dashed #e7edf4; }
-    .actual-profit-value-line.is-total strong { color:#0f766e; font-weight:700; }
-    .actual-finance-card { overflow:hidden; margin-top:14px; border:1px solid #dfe7f1; border-radius:8px; background:#fff; }
-    .actual-finance-head { min-height:48px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 16px; border-bottom:1px solid #eef2f7; }
-    .actual-finance-title { display:flex; align-items:center; gap:8px; color:#0f172a; font-size:13px; font-weight:700; }
-    .actual-finance-section-actions { display:flex; align-items:center; gap:10px; }
-    .actual-finance-source-note { color:#94a3b8; font-size:10px; }
-    body.order-fee-entry-open { overflow:hidden; }
-    .order-fee-entry-backdrop { position:fixed; inset:0; z-index:150; display:grid; place-items:center; padding:24px; background:rgba(15,23,42,.42); }
-    .order-fee-entry-backdrop[hidden] { display:none; }
-    .order-fee-entry-modal { width:min(880px,calc(100vw - 48px)); max-height:calc(100vh - 48px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #dce3ed; border-radius:8px; background:#fff; box-shadow:0 24px 60px rgba(15,23,42,.26); }
-    .order-fee-entry-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:16px 18px; border-bottom:1px solid #eef1f5; background:#fafbfc; }
-    .order-fee-entry-title { margin:0; color:#0f172a; font-size:15px; font-weight:700; }
-    .order-fee-entry-subtitle { margin-top:4px; color:#64748b; font-size:11px; line-height:1.5; }
-    .order-fee-entry-close { width:28px; height:28px; display:grid; place-items:center; padding:0; border:1px solid #dfe4ec; border-radius:4px; color:#5b6778; background:#fff; cursor:pointer; }
-    .order-fee-entry-close:hover { color:#334155; border-color:#bdc7d6; background:#f8fafc; }
-    .order-fee-entry-body { overflow:auto; padding:16px 18px; }
-    .order-fee-entry-tip { display:flex; gap:8px; align-items:flex-start; margin-bottom:12px; padding:10px 12px; border:1px solid #dbeafe; border-radius:5px; color:#475569; background:#f4f8ff; font-size:11px; line-height:1.55; }
-    .order-fee-entry-tip strong { color:#1d4ed8; }
-    .order-fee-entry-table-wrap { overflow:auto; border:1px solid #e2e8f0; border-radius:5px; }
-    .order-fee-entry-table { width:100%; min-width:700px; border-collapse:separate; border-spacing:0; }
-    .order-fee-entry-table th { height:36px; padding:0 12px; border-bottom:1px solid #e5eaf1; color:#64748b; background:#f8fafc; font-size:10px; font-weight:600; text-align:left; white-space:nowrap; }
-    .order-fee-entry-table td { padding:12px; border-bottom:1px solid #edf1f5; color:#475569; font-size:11px; }
-    .order-fee-entry-table tr:last-child td { border-bottom:0; }
-    .order-fee-entry-table tbody tr:has(input:checked) { background:#eff6ff; }
-    .order-fee-entry-radio { width:15px; height:15px; margin:0; accent-color:#2563eb; }
-    .order-fee-entry-demand { color:#1e293b; font-weight:600; }
-    .order-fee-entry-status { display:inline-flex; min-height:20px; align-items:center; padding:0 7px; border-radius:4px; color:#1d4ed8; background:#eff6ff; font-size:10px; font-weight:600; }
-    .order-fee-entry-status.pending { color:#b45309; background:#fff7ed; }
-    .order-fee-entry-money { color:#334155; font-variant-numeric:tabular-nums; white-space:nowrap; }
-    .order-fee-entry-state { color:#64748b; font-size:10px; }
-    .order-fee-entry-foot { display:flex; justify-content:flex-end; gap:8px; padding:12px 18px; border-top:1px solid #eef1f5; background:#fafbfc; }
-    .actual-finance-direction { display:inline-flex; height:20px; align-items:center; padding:0 7px; border-radius:4px; font-size:10px; font-weight:600; }
-    .actual-finance-direction.receivable { color:#2563eb; background:#eff6ff; }
-    .actual-finance-direction.payable { color:#c2410c; background:#fff7ed; }
-    .actual-finance-table-wrap { overflow:auto; }
-    .actual-finance-table { width:100%; min-width:1360px; border-collapse:separate; border-spacing:0; table-layout:fixed; }
-    .actual-finance-table th { height:38px; padding:0 12px; border-right:1px solid #edf1f5; border-bottom:1px solid #e5eaf1; color:#64748b; background:#f8fafc; font-size:10px; font-weight:600; text-align:left; white-space:nowrap; }
-    .actual-finance-table td { padding:12px; border-right:1px solid #f0f3f7; border-bottom:1px solid #edf1f5; color:#475569; font-size:11px; vertical-align:top; }
-    .actual-finance-table tr:last-child td { border-bottom:0; }
-    .finance-party-name { display:block; color:#1e293b; font-size:12px; font-weight:600; }
-    .finance-party-order { display:block; margin-top:5px; color:#7c8898; font-size:10px; }
-    .finance-fee-name { color:#334155; font-size:12px; font-weight:600; }
-    .finance-stack { display:grid; gap:5px; }
-    .finance-line { display:flex; align-items:center; justify-content:space-between; gap:8px; min-width:0; }
-    .finance-label { color:#8793a3; font-size:10px; white-space:nowrap; }
-    .finance-line strong { color:#334155; font-size:11px; font-weight:600; font-variant-numeric:tabular-nums; }
-    .finance-ref-list { display:grid; gap:7px; }
-    .finance-ref { min-width:0; }
-    .finance-ref-title { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-    .finance-doc-link { padding:0; border:0; color:#2563eb; background:transparent; font-size:11px; font-weight:600; cursor:pointer; }
-    .finance-mini-status { display:inline-flex; min-height:19px; align-items:center; padding:0 6px; border-radius:4px; font-size:9px; font-weight:600; }
-    .finance-mini-status.success { color:#047857; background:#ecfdf5; }
-    .finance-mini-status.warning { color:#b45309; background:#fff7ed; }
-    .finance-mini-status.info { color:#2563eb; background:#eff6ff; }
-    .finance-ref-meta { display:block; margin-top:4px; color:#94a3b8; font-size:10px; line-height:1.45; }
-    .finance-commission { margin-top:6px; color:#64748b; font-size:10px; }
-    .finance-commission strong { color:#334155; }
-    .finance-empty { color:#94a3b8; font-size:11px; }
-    .actual-finance-summary + .actual-finance-card { margin-top:0; }
     @media(max-width:1120px) { .actual-finance-summary { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     .order-profit-panel { margin-top:14px; overflow:hidden; border:1px solid #dfe7f1; border-radius:7px; background:#fff; }
     .profit-strip { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); overflow:hidden; border:1px solid #e5eaf1; border-radius:4px; background:#fff; }
@@ -479,7 +413,29 @@
     .contract-value:focus { outline:none; border-color:#8db7ff; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
     .contract-meta-note { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; color:#64748b; font-size:11px; }
     .contract-meta-note strong { color:#334155; font-weight:600; }
+    /* ===== 合同信息：按签约维度拆分的分区块表单 ===== */
+    .contract-subblock { margin-top:16px; padding-top:14px; border-top:1px dashed #e7edf4; }
+    .contract-subblock-head { display:flex; align-items:center; gap:6px; margin-bottom:10px; color:#1f2937; font-size:12px; font-weight:700; }
+    .contract-subblock-head::before { content:''; width:3px; height:12px; border-radius:2px; background:#2563eb; }
+    .contract-subblock-head em { color:#94a3b8; font-size:10px; font-style:normal; font-weight:500; }
+    .contract-subblock[hidden], .contract-field[hidden] { display:none !important; }
+    .contract-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px 14px; }
+    .contract-grid + .contract-grid { margin-top:12px; }
+    select.contract-value { appearance:none; -webkit-appearance:none; padding-right:24px; cursor:pointer; background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; }
+    select.contract-value:disabled { cursor:not-allowed; }
+    .contract-value.is-readonly, .contract-value[readonly] { border-color:#e8ecf2; background:#f5f7fa; color:#526176; cursor:default; }
+    .contract-upload { display:flex; align-items:center; gap:8px; height:32px; padding:0 6px 0 9px; border:1px dashed #cfd9e6; border-radius:4px; background:#fbfcfe; }
+    .contract-upload-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#a0aab8; font-size:12px; }
+    .contract-upload-name.has-file { color:#334155; }
+    .contract-upload-btn { flex:0 0 auto; height:22px; padding:0 8px; border:1px solid #d7e3f2; border-radius:4px; background:#fff; color:#2563eb; font-size:11px; cursor:pointer; }
+    .contract-upload-btn:hover { background:#f2f7ff; }
+    .contract-upload-hint { margin-top:4px; color:#a8b2c0; font-size:10px; }
+    @media (max-width:1180px) { .contract-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
     html:not(.detail-mode) .detail-only { display:none !important; }
+    html.create-mode .detail-only { display:block !important; }
+    html.create-mode .detail-view-switch-row { display:flex !important; }
+    html.create-mode #orderViewSwitchRow .detail-view-tabs,
+    html.create-mode #orderViewSwitchRow .detail-subnav-divider { display:none !important; }
     .contract-modal-backdrop { position:fixed; inset:0; z-index:120; display:grid; place-items:center; padding:24px; background:rgba(15,23,42,.42); }
     .contract-modal-backdrop[hidden] { display:none; }
     .contract-modal { width:min(820px,calc(100vw - 48px)); max-height:calc(100vh - 48px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #dce3ed; border-radius:6px; background:#fff; box-shadow:0 24px 60px rgba(15,23,42,.24); }
@@ -514,6 +470,7 @@
     (() => {
       const params = new URLSearchParams(window.location.search);
       if (params.get("no")) document.documentElement.classList.add("detail-mode");
+      else document.documentElement.classList.add("create-mode");
       if (window.self !== window.top || params.get("embed") === "1") document.documentElement.classList.add("detail-embedded");
     })();
   </script>
@@ -602,8 +559,7 @@
               <button class="detail-btn" id="saveDraftBtn" type="button">保存</button>
               <button class="detail-btn outline-primary" id="submitOrderBtn" type="button">提交</button>
               <button class="detail-btn outline-primary" id="submitFillLogisticsBtn" type="button">提交并填写物流需求</button>
-              <button class="detail-btn outline-primary" id="submitGeneratePlanBtn" type="button">提交并生成物流安排</button>
-              <button class="detail-btn outline-primary" id="submitAutoTaskBtn" type="button">提交并自动提交任务</button>
+              <button class="detail-btn outline-primary" id="submitAutoTaskBtn" type="button">提交并自动生成任务</button>
               <button class="detail-btn primary" id="confirmOrderBtn" type="button" hidden>确认</button>
               <button class="detail-btn outline-primary" id="viewContractBtn" type="button">查看合同</button>
               <button class="detail-btn" id="attachmentBtn" type="button">附件</button>
@@ -614,7 +570,8 @@
               <button class="detail-btn" id="historyVersionBtn" type="button">历史版本</button>
               <button class="detail-btn" id="approvalProgressBtn" type="button">审批进度</button>
               <button class="detail-btn primary" id="completeOrderBtn" type="button" hidden>完结</button>
-              <button class="detail-btn danger" id="voidOrderBtn" type="button" hidden>作废</button>
+              <button class="detail-btn danger" id="cancelOrderBtn" type="button" hidden>取消订单</button>
+              <button class="detail-btn danger" id="deleteVersionBtn" type="button" hidden>删除版本维护</button>
               <button class="detail-btn" id="cancelCompleteBtn" type="button" hidden>取消完结</button>
               <button class="detail-btn primary" id="initiateSignBtn" type="button" hidden>发起签署</button>
               <button class="detail-btn" id="withdrawSignBtn" type="button" hidden>撤销签署（E建签签约）</button>
@@ -628,7 +585,6 @@
         <div class="detail-view-switch-row" id="orderViewSwitchRow">
           <div class="detail-view-tabs" role="tablist" aria-label="订单详情视图">
             <button class="detail-view-tab active" id="orderInfoTab" type="button" role="tab" aria-selected="true" aria-controls="orderInfoView" data-detail-tab="order">订单信息</button>
-            <button class="detail-view-tab" id="costProfitTab" type="button" role="tab" aria-selected="false" aria-controls="costProfitView" data-detail-tab="cost" tabindex="-1">费用与利润</button>
             <button class="detail-view-tab" id="feedbackTab" type="button" role="tab" aria-selected="false" aria-controls="feedbackView" data-detail-tab="feedback" tabindex="-1">履约反馈</button>
           </div>
           <div class="detail-subnav-divider" aria-hidden="true"></div>
@@ -672,7 +628,32 @@
               <div class="field"><div class="field-label">客户订单编号</div><input class="control" autocomplete="off" value="CO-20261026-001" readonly aria-label="客户订单编号"></div>
               <div class="field"><div class="field-label">客户<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发新能源物流有限公司" aria-label="客户"></div>
               <div class="field"><div class="field-label">客户结算抬头<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发新能源物流有限公司" aria-label="客户结算抬头"></div>
-              <div class="field"><div class="field-label">客户类型<span class="required">*</span></div><select class="control" aria-label="客户类型"><option>外部客户</option><option>内部客户</option></select></div>
+              <div class="field"><div class="field-label">客户类型<span class="required">*</span></div><select class="control" id="customerTypeSelect" aria-label="客户类型"><option>外部客户</option><option selected>内部客户</option><option>同行客户</option></select></div>
+              <div class="field" id="innerCustomerOrgField">
+                <div class="field-label">内部客户所属经营单位<span class="required">*</span></div>
+                <select class="control" id="innerCustomerOrgSelect" aria-label="内部客户所属经营单位">
+                  <option value="">请选择</option>
+                  <option selected>厦门物资</option>
+                  <option>供应链物流科技</option>
+                  <option>物流公司</option>
+                  <option>林产品事业部</option>
+                  <option>煤炭事业三部</option>
+                  <option>粮源公司</option>
+                  <option>铝业公司</option>
+                  <option>浆纸集团</option>
+                </select>
+              </div>
+              <div class="field" id="innerCustomerDeptField">
+                <div class="field-label">内部客户所属部门</div>
+                <select class="control" id="innerCustomerDeptSelect" aria-label="内部客户所属部门">
+                  <option value="">请选择</option>
+                  <option>海运部</option>
+                  <option>物流运营部</option>
+                  <option>供应链物流综合</option>
+                  <option>数字化中心</option>
+                  <option>财务部</option>
+                </select>
+              </div>
               <div class="field"><div class="field-label">客户联系人</div><input class="control" autocomplete="off" value="张先生" aria-label="客户联系人"></div>
 
               <div class="field"><div class="field-label">客户联系人电话</div><input class="control" autocomplete="off" value="138 0000 0000" aria-label="客户联系人电话"></div>
@@ -696,7 +677,7 @@
               </div>
               <div class="field"><div class="field-label">业务类型<span class="required">*</span></div><select class="control" aria-label="业务类型"><option>出口</option><option>进口</option><option>内贸</option><option>转口</option></select></div>
               <div class="field"><div class="field-label">业务日期<span class="required">*</span></div><input class="control" autocomplete="off" type="date" value="2026-10-26" aria-label="业务日期"></div>
-              <div class="field"><div class="field-label">项目号</div><input class="control" autocomplete="off" value="PRJ-2026-018" aria-label="项目号"></div>
+              <div class="field"><div class="field-label">关联物流项目</div><input class="control" autocomplete="off" value="PRJ-2026-018" aria-label="关联物流项目"></div>
               <div class="field"><div class="field-label">贸易条款</div><select class="control" aria-label="贸易条款"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select></div>
 
 
@@ -799,24 +780,100 @@
             <span class="contract-meta-note"><strong data-contract-field="version">V1.0</strong><span>合同版本</span></span>
           </div>
           <div class="detail-section-body">
-            <div class="contract-meta-grid">
-              <div class="contract-field"><label for="contractNo">合同编号</label><input class="contract-value is-summary" id="contractNo" readonly data-contract-field="no" aria-label="合同编号"></div>
-              <div class="contract-field"><label for="contractVersion">合同版本号</label><input class="contract-value is-summary" id="contractVersion" readonly data-contract-field="version" aria-label="合同版本号"></div>
-              <div class="contract-field"><label for="contractStatus">合同状态</label><input class="contract-value is-summary" id="contractStatus" readonly data-contract-field="status" aria-label="合同状态"></div>
-              <div class="contract-field"><label for="signMethod">签约方式</label><input class="contract-value is-summary" id="signMethod" readonly data-contract-field="signMethod" aria-label="签约方式"></div>
-              <div class="contract-field"><label for="signMode">签约模式<span class="required">*</span></label><input class="contract-value is-summary" id="signMode" readonly data-contract-field="signMode" aria-label="签约模式"></div>
-              <div class="contract-field"><label for="platformCompany">物流平台公司<span class="required">*</span></label><input class="contract-value is-summary" id="platformCompany" readonly data-contract-field="platformCompany" aria-label="物流平台公司"></div>
+            <!-- 合同签约基础设置：是否创建合同常驻，其余字段按条件显隐 -->
+            <div class="contract-subblock">
+              <div class="contract-subblock-head" data-contract-when="create">合同签约基础设置</div>
+              <div class="contract-grid">
+                <div class="contract-field"><label for="contractCreateFlag">是否创建合同</label>
+                  <select class="contract-value" id="contractCreateFlag" data-contract-setting="createContract" aria-label="是否创建合同">
+                    <option value="y" selected>是</option><option value="n">否</option>
+                  </select>
+                </div>
+                <div class="contract-field" data-contract-when="create"><label for="contractBodyType">合同正文类型</label>
+                  <select class="contract-value" id="contractBodyType" data-contract-setting="bodyType" aria-label="合同正文类型">
+                    <option value="system_auto_generate" selected>系统自动生成</option><option value="manual_upload">手动上传</option>
+                  </select>
+                </div>
+                <div class="contract-field" data-contract-when="create"><label for="contractSignMethod">签约方式</label>
+                  <select class="contract-value" id="contractSignMethod" data-contract-setting="signMethod" aria-label="签约方式">
+                    <option value="elb">E建签签约</option><option value="offline">线下签约</option><option value="no_sign" selected>无需签署</option>
+                  </select>
+                </div>
+                <div class="contract-field" data-contract-when="signDateTop"><label for="contractSignDateTop">签约日期</label><input class="contract-value" id="contractSignDateTop" type="date" data-contract-setting="signDateTop" aria-label="签约日期"></div>
+                <div class="contract-field" data-contract-when="reclaim"><label for="contractReclaim">审批通过后自动执行正本回收</label>
+                  <select class="contract-value" id="contractReclaim" data-contract-setting="reclaim" aria-label="审批通过后自动执行正本回收">
+                    <option value="y">是</option><option value="n" selected>否</option>
+                  </select>
+                </div>
+                <div class="contract-field" data-contract-when="create"><label for="contractJurisdiction">司法管辖<span class="required">*</span></label>
+                  <select class="contract-value" id="contractJurisdiction" data-contract-setting="jurisdiction" aria-label="司法管辖">
+                    <option value="法院" selected>法院</option>
+                    <option value="商事仲裁">商事仲裁</option>
+                    <option value="其他">其他</option>
+                  </select>
+                </div>
+                <div class="contract-field" data-contract-when="court"><label for="contractCourt">法院/商事仲裁<span class="required">*</span></label>
+                  <select class="contract-value" id="contractCourt" data-contract-setting="court" aria-label="法院/商事仲裁">
+                    <option value="厦门市思明区人民法院" selected>厦门市思明区人民法院</option>
+                    <option value="厦门市中级人民法院">厦门市中级人民法院</option>
+                    <option value="厦门仲裁委员会">厦门仲裁委员会</option>
+                    <option value="中国海事仲裁委员会">中国海事仲裁委员会</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="contract-grid" data-contract-when="create">
+                <div class="contract-field"><label for="principalName">委托方联系人<span class="required">*</span></label><input class="contract-value" id="principalName" data-contract-field="principalName" aria-label="委托方联系人"></div>
+                <div class="contract-field"><label for="principalPhone">委托方联系方式<span class="required">*</span></label><input class="contract-value" id="principalPhone" data-contract-field="principalPhone" aria-label="委托方联系方式"></div>
+                <div class="contract-field"><label for="principalAddress">委托方邮寄地址<span class="required">*</span></label><input class="contract-value" id="principalAddress" data-contract-field="principalAddress" aria-label="委托方邮寄地址"></div>
+                <div class="contract-field"><label for="principalEmail">委托方邮箱</label><input class="contract-value" id="principalEmail" data-contract-field="principalEmail" aria-label="委托方邮箱"></div>
+              </div>
+
+              <div class="contract-grid" data-contract-when="create">
+                <div class="contract-field"><label for="counterpartyName">受托方联系人<span class="required">*</span></label><input class="contract-value" id="counterpartyName" data-contract-field="counterpartyName" aria-label="受托方联系人"></div>
+                <div class="contract-field"><label for="counterpartyPhone">受托方联系方式<span class="required">*</span></label><input class="contract-value" id="counterpartyPhone" data-contract-field="counterpartyPhone" aria-label="受托方联系方式"></div>
+                <div class="contract-field"><label for="counterpartyAddress">受托方邮寄地址<span class="required">*</span></label><input class="contract-value" id="counterpartyAddress" data-contract-field="counterpartyAddress" aria-label="受托方邮寄地址"></div>
+                <div class="contract-field"><label for="counterpartyEmail">受托方邮箱</label><input class="contract-value" id="counterpartyEmail" data-contract-field="counterpartyEmail" aria-label="受托方邮箱"></div>
+              </div>
             </div>
-            <div class="contract-party-grid">
-              <div class="contract-field"><label for="principalName">委托方联系人<span class="required">*</span></label><input class="contract-value" id="principalName" readonly data-contract-field="principalName" aria-label="委托方联系人"></div>
-              <div class="contract-field"><label for="principalPhone">委托方联系方式<span class="required">*</span></label><input class="contract-value" id="principalPhone" readonly data-contract-field="principalPhone" aria-label="委托方联系方式"></div>
-              <div class="contract-field"><label for="principalAddress">委托方邮寄地址<span class="required">*</span></label><input class="contract-value" id="principalAddress" readonly data-contract-field="principalAddress" aria-label="委托方邮寄地址"></div>
-              <div class="contract-field"><label for="principalEmail">委托方邮箱</label><input class="contract-value" id="principalEmail" readonly data-contract-field="principalEmail" aria-label="委托方邮箱"></div>
-              <div class="contract-field row-start"><label for="counterpartyName">受托方联系人<span class="required">*</span></label><input class="contract-value" id="counterpartyName" readonly data-contract-field="counterpartyName" aria-label="受托方联系人"></div>
-              <div class="contract-field"><label for="counterpartyPhone">受托方联系方式<span class="required">*</span></label><input class="contract-value" id="counterpartyPhone" readonly data-contract-field="counterpartyPhone" aria-label="受托方联系方式"></div>
-              <div class="contract-field"><label for="counterpartyAddress">受托方邮寄地址<span class="required">*</span></label><input class="contract-value" id="counterpartyAddress" readonly data-contract-field="counterpartyAddress" aria-label="受托方邮寄地址"></div>
-              <div class="contract-field"><label for="counterpartyEmail">受托方邮箱</label><input class="contract-value" id="counterpartyEmail" readonly data-contract-field="counterpartyEmail" aria-label="受托方邮箱"></div>
+
+            <!-- 合同正本附件上传：合同正文类型=手动上传 -->
+            <div class="contract-subblock" data-contract-when="upload">
+              <div class="contract-grid">
+                <div class="contract-field" style="grid-column:span 2"><label>合同正本附件上传</label>
+                  <div class="contract-upload">
+                    <span class="contract-upload-name">未上传</span>
+                    <button class="contract-upload-btn" type="button" data-toast="原型演示：合同正本附件选择未接入">选择文件</button>
+                  </div>
+                  <div class="contract-upload-hint">仅支持 doc/docx/pdf/png/jpg/xlsx/xls，单个文件不超过 20M，限 1 个</div>
+                </div>
+              </div>
             </div>
+
+            <!-- 我司签约设置：签约方式=E建签签约 -->
+            <div class="contract-subblock" data-contract-when="elb">
+              <div class="contract-subblock-head">我司签约设置</div>
+              <div class="contract-grid">
+                <div class="contract-field"><label for="contractOurCompany">我司签约公司</label><input class="contract-value is-readonly" id="contractOurCompany" readonly value="厦门建发供应链物流科技有限公司" aria-label="我司签约公司"></div>
+                <div class="contract-field"><label for="contractSupplierSealName">印章名称（供应商）</label>
+                  <select class="contract-value" id="contractSupplierSealName" data-contract-setting="supplierSealName" aria-label="印章名称（供应商）">
+                    <option value="contract">青岛中远海运物流有限公司合同专用章</option>
+                    <option value="official">青岛中远海运物流有限公司公章</option>
+                  </select>
+                </div>
+                <div class="contract-field"><label for="contractOurSigner">签约授权人</label>
+                  <select class="contract-value" id="contractOurSigner" data-contract-setting="ourSigner" aria-label="签约授权人">
+                    <option value="苏丽蓉" selected>苏丽蓉</option><option value="陈一一">陈一一</option><option value="黄瑞钰">黄瑞钰</option>
+                  </select>
+                </div>
+                <div class="contract-field"><label for="contractSupplierNeedKey">是否指定盖章关键字</label>
+                  <select class="contract-value" id="contractSupplierNeedKey" data-contract-setting="supplierNeedKey" aria-label="是否指定盖章关键字">
+                    <option value="y">是</option><option value="n" selected>否</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 
@@ -828,7 +885,7 @@
               <div class="field"><div class="field-label">创建时间</div><input class="control" value="2026-10-26 09:35" readonly aria-label="创建时间"></div>
               <div class="field"><div class="field-label">修改人</div><input class="control" value="陈一一" readonly aria-label="修改人"></div>
               <div class="field"><div class="field-label">修改时间</div><input class="control" value="2026-11-01 14:30" readonly aria-label="修改时间"></div>
-              <div class="field"><div class="field-label">版本号</div><input class="control" value="V1.0" readonly aria-label="版本号"></div>
+              <div class="field"><div class="field-label">版本号</div><input class="control" value="1.0" readonly aria-label="版本号"></div>
               <div class="field"><div class="field-label">当前版本生效时间</div><input class="control" value="2026-11-01 14:30" readonly aria-label="当前版本生效时间"></div>
               <div class="field"><div class="field-label">来源系统</div><select class="control" disabled aria-label="来源系统"><option selected>4PL控制塔</option><option>SSP</option></select></div>
               <div class="field"><div class="field-label">来源类型</div><select class="control" disabled aria-label="来源类型"><option>手动创建</option><option selected>客户需求单</option><option>外系统接入</option></select></div>
@@ -844,134 +901,6 @@
           <div><b>原型说明：</b>客户单号位于“基础信息”服务范围下方；采用标准表单控件，不额外增加页面高度。支持回车录入多个单号、删除标签和重复校验。</div>
         </div>
         </div>
-        <section class="detail-view cost-profit-view" id="costProfitView" role="tabpanel" aria-labelledby="costProfitTab" hidden>
-        <section class="detail-section" id="actualCostProfitSection" aria-labelledby="actual-cost-profit-title">
-          <div class="detail-section-head">
-            <div class="detail-section-title" id="actual-cost-profit-title"><svg><use href="#p-down"/></svg>实际费用与利润</div>
-            <div class="actual-finance-section-actions"><span class="actual-finance-source-note">费用录入与发起在物流需求单完成</span><button class="detail-btn outline-primary" id="openLogisticsFeeEntryBtn" type="button">录入物流需求费用</button></div>
-          </div>
-          <div class="detail-section-body">
-            <section class="actual-finance-card" id="actualReceivableTable" data-finance-side="receivable">
-              <div class="actual-finance-head"><div class="actual-finance-title"><span>实际应收</span><span class="actual-finance-direction receivable">应收</span></div><button class="detail-btn outline-primary" type="button" data-toast="已模拟维护实际应收">维护实际应收</button></div>
-              <div class="actual-finance-table-wrap"><table class="actual-finance-table" aria-label="客户订单实际应收"><colgroup><col style="width:190px"><col style="width:105px"><col style="width:150px"><col style="width:86px"><col style="width:160px"><col style="width:255px"><col style="width:210px"><col style="width:210px"></colgroup><thead><tr><th>结算对象 / 物流需求单号</th><th>费用科目</th><th>计费信息</th><th>计费币种</th><th>金额信息</th><th>对账信息</th><th>开票信息</th><th>收付款信息</th></tr></thead><tbody>
-                <tr>
-                  <td><strong class="finance-party-name">青岛绿洲园花生食品有限公司</strong><span class="finance-party-order">物流需求单号 LD202610270018</span></td>
-                  <td><span class="finance-fee-name">海运费</span></td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">计费单价</span><strong>120.00</strong></span><span class="finance-line"><span class="finance-label">计费数量</span><strong>100</strong></span><span class="finance-line"><span class="finance-label">计量单位</span><strong>柜</strong></span></div></td>
-                  <td>CNY</td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">原币金额</span><strong>12,000.00</strong></span><span class="finance-line"><span class="finance-label">汇率</span><strong>1.0000</strong></span><span class="finance-line"><span class="finance-label">本位币金额</span><strong>12,000.00</strong></span></div></td>
-                  <td><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开对账单 DZ202610200031">DZ202610200031</button><span class="finance-mini-status success">已对账</span></div><span class="finance-ref-meta">客户对账单 · 2026-10-21</span><div class="finance-commission">佣金比例 <strong>2.0%</strong> · 佣金金额 <strong>240.00</strong></div></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开发票 SR202610200018">SR202610200018</button><span class="finance-mini-status success">已开票</span></div><span class="finance-ref-meta">原币金额 12,000.00</span></div></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开收款单 SK202610200007">SK202610200007</button><span class="finance-mini-status success">已收款</span></div><span class="finance-ref-meta">原币金额 12,000.00</span></div></div></td>
-                </tr>
-                <tr>
-                  <td><strong class="finance-party-name">青岛绿洲园花生食品有限公司</strong><span class="finance-party-order">物流需求单号 LD202610270018</span></td>
-                  <td><span class="finance-fee-name">港杂费</span></td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">计费单价</span><strong>80.00</strong></span><span class="finance-line"><span class="finance-label">计费数量</span><strong>50</strong></span><span class="finance-line"><span class="finance-label">计量单位</span><strong>吨</strong></span></div></td>
-                  <td>CNY</td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">原币金额</span><strong>4,000.00</strong></span><span class="finance-line"><span class="finance-label">汇率</span><strong>1.0000</strong></span><span class="finance-line"><span class="finance-label">本位币金额</span><strong>4,000.00</strong></span></div></td>
-                  <td><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开对账单 DZ202610200031">DZ202610200031</button><span class="finance-mini-status success">已对账</span></div><span class="finance-ref-meta">客户对账单 · 2026-10-21</span><div class="finance-commission">佣金比例 <strong>1.5%</strong> · 佣金金额 <strong>60.00</strong></div></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开发票 SR202610200018">SR202610200018</button><span class="finance-mini-status success">已开票</span></div><span class="finance-ref-meta">原币金额 3,000.00</span></div><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开发票 SR202610200019">SR202610200019</button><span class="finance-mini-status success">已开票</span></div><span class="finance-ref-meta">原币金额 1,000.00</span></div></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开收款单 SK202610200007">SK202610200007</button><span class="finance-mini-status success">已收款</span></div><span class="finance-ref-meta">原币金额 3,000.00</span></div><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开收款单 SK202610200008">SK202610200008</button><span class="finance-mini-status success">已收款</span></div><span class="finance-ref-meta">原币金额 1,000.00</span></div></div></td>
-                </tr>
-                <tr>
-                  <td><strong class="finance-party-name">青岛绿洲园花生食品有限公司</strong><span class="finance-party-order">物流需求单号 LD202610270019</span></td>
-                  <td><span class="finance-fee-name">报关费</span></td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">计费单价</span><strong>3,000.00</strong></span><span class="finance-line"><span class="finance-label">计费数量</span><strong>1</strong></span><span class="finance-line"><span class="finance-label">计量单位</span><strong>票</strong></span></div></td>
-                  <td>CNY</td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">原币金额</span><strong>3,000.00</strong></span><span class="finance-line"><span class="finance-label">汇率</span><strong>1.0000</strong></span><span class="finance-line"><span class="finance-label">本位币金额</span><strong>3,000.00</strong></span></div></td>
-                  <td><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开对账单 DZ202610200031">DZ202610200031</button><span class="finance-mini-status success">已对账</span></div><span class="finance-ref-meta">客户对账单 · 2026-10-21</span><div class="finance-commission">佣金比例 <strong>1.0%</strong> · 佣金金额 <strong>30.00</strong></div></div></td>
-                  <td><span class="finance-empty">未开票</span></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开收款单 SK202610200008">SK202610200008</button><span class="finance-mini-status warning">部分收款</span></div><span class="finance-ref-meta">原币金额 1,500.00</span></div></div></td>
-                </tr>
-                <tr>
-                  <td><strong class="finance-party-name">中联铁运集团有限公司</strong><span class="finance-party-order">物流需求单号 LD202610270020</span></td>
-                  <td><span class="finance-fee-name">垫付费用</span></td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">计费单价</span><strong>1,500.00</strong></span><span class="finance-line"><span class="finance-label">计费数量</span><strong>2</strong></span><span class="finance-line"><span class="finance-label">计量单位</span><strong>票</strong></span></div></td>
-                  <td>CNY</td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">原币金额</span><strong>3,000.00</strong></span><span class="finance-line"><span class="finance-label">汇率</span><strong>1.0000</strong></span><span class="finance-line"><span class="finance-label">本位币金额</span><strong>3,000.00</strong></span></div></td>
-                  <td><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开对账单 DZ202610200023">DZ202610200023</button><span class="finance-mini-status warning">待确认</span></div><span class="finance-ref-meta">代理对账单 · 2026-10-21</span><div class="finance-commission">佣金比例 <strong>1.0%</strong> · 佣金金额 <strong>30.00</strong></div></div></td>
-                  <td><span class="finance-empty">未开票</span></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开收款单 SK202610200009">SK202610200009</button><span class="finance-mini-status warning">待收款</span></div><span class="finance-ref-meta">原币金额 0.00</span></div></div></td>
-                </tr></tbody></table></div>
-            </section>
-            <section class="actual-finance-card" id="actualPayableTable" data-finance-side="payable">
-              <div class="actual-finance-head"><div class="actual-finance-title"><span>实际应付</span><span class="actual-finance-direction payable">应付</span></div><button class="detail-btn outline-primary" type="button" data-toast="已模拟维护实际应付">维护实际应付</button></div>
-              <div class="actual-finance-table-wrap"><table class="actual-finance-table" aria-label="客户订单实际应付"><colgroup><col style="width:190px"><col style="width:105px"><col style="width:150px"><col style="width:86px"><col style="width:160px"><col style="width:255px"><col style="width:210px"><col style="width:210px"></colgroup><thead><tr><th>结算对象 / 物流需求单号</th><th>费用科目</th><th>计费信息</th><th>计费币种</th><th>金额信息</th><th>对账信息</th><th>开票信息</th><th>收付款信息</th></tr></thead><tbody>
-                <tr>
-                  <td><strong class="finance-party-name">中联铁运集团有限公司</strong><span class="finance-party-order">物流需求单号 LD202610270018</span></td>
-                  <td><span class="finance-fee-name">海运费</span></td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">计费单价</span><strong>100.00</strong></span><span class="finance-line"><span class="finance-label">计费数量</span><strong>100</strong></span><span class="finance-line"><span class="finance-label">计量单位</span><strong>柜</strong></span></div></td>
-                  <td>CNY</td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">原币金额</span><strong>10,000.00</strong></span><span class="finance-line"><span class="finance-label">汇率</span><strong>1.0000</strong></span><span class="finance-line"><span class="finance-label">本位币金额</span><strong>10,000.00</strong></span></div></td>
-                  <td><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开对账单 DZ202610200022">DZ202610200022</button><span class="finance-mini-status warning">待确认</span></div><span class="finance-ref-meta">供应商对账单 · 2026-10-20</span></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开发票 CB202610200016">CB202610200016</button><span class="finance-mini-status success">已登记</span></div><span class="finance-ref-meta">原币金额 10,000.00</span></div></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开付款单 FK202610200009">FK202610200009</button><span class="finance-mini-status success">已付款</span></div><span class="finance-ref-meta">原币金额 6,000.00</span></div><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开付款单 FK202610200010">FK202610200010</button><span class="finance-mini-status success">已付款</span></div><span class="finance-ref-meta">原币金额 4,000.00</span></div></div></td>
-                </tr>
-                <tr>
-                  <td><strong class="finance-party-name">中联铁运集团有限公司</strong><span class="finance-party-order">物流需求单号 LD202610270018</span></td>
-                  <td><span class="finance-fee-name">港杂费</span></td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">计费单价</span><strong>100.00</strong></span><span class="finance-line"><span class="finance-label">计费数量</span><strong>50</strong></span><span class="finance-line"><span class="finance-label">计量单位</span><strong>吨</strong></span></div></td>
-                  <td>CNY</td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">原币金额</span><strong>5,000.00</strong></span><span class="finance-line"><span class="finance-label">汇率</span><strong>1.0000</strong></span><span class="finance-line"><span class="finance-label">本位币金额</span><strong>5,000.00</strong></span></div></td>
-                  <td><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开对账单 DZ202610200022">DZ202610200022</button><span class="finance-mini-status warning">待确认</span></div><span class="finance-ref-meta">供应商对账单 · 2026-10-20</span></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开发票 CB202610200016">CB202610200016</button><span class="finance-mini-status success">已登记</span></div><span class="finance-ref-meta">原币金额 5,000.00</span></div></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开付款单 FK202610200009">FK202610200009</button><span class="finance-mini-status warning">部分付款</span></div><span class="finance-ref-meta">原币金额 2,000.00</span></div></div></td>
-                </tr>
-                <tr>
-                  <td><strong class="finance-party-name">中联铁运集团有限公司</strong><span class="finance-party-order">物流需求单号 LD202610270019</span></td>
-                  <td><span class="finance-fee-name">代理费</span></td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">计费单价</span><strong>5,500.00</strong></span><span class="finance-line"><span class="finance-label">计费数量</span><strong>1</strong></span><span class="finance-line"><span class="finance-label">计量单位</span><strong>票</strong></span></div></td>
-                  <td>CNY</td>
-                  <td><div class="finance-stack"><span class="finance-line"><span class="finance-label">原币金额</span><strong>5,500.00</strong></span><span class="finance-line"><span class="finance-label">汇率</span><strong>1.0000</strong></span><span class="finance-line"><span class="finance-label">本位币金额</span><strong>5,500.00</strong></span></div></td>
-                  <td><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开对账单 DZ202610200023">DZ202610200023</button><span class="finance-mini-status warning">待确认</span></div><span class="finance-ref-meta">代理对账单 · 2026-10-21</span></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开发票 CB202610200016">CB202610200016</button><span class="finance-mini-status success">已登记</span></div><span class="finance-ref-meta">原币金额 5,500.00</span></div></div></td>
-                  <td><div class="finance-ref-list"><div class="finance-ref"><div class="finance-ref-title"><button class="finance-doc-link" type="button" data-toast="打开付款单 FK202610200011">FK202610200011</button><span class="finance-mini-status warning">待审批</span></div><span class="finance-ref-meta">原币金额 0.00</span></div></div></td>
-                </tr></tbody></table></div>
-            </section>
-            <section class="actual-profit-statistics" id="actualProfitStatistics" data-collapsible-section aria-labelledby="actual-profit-statistics-title">
-              <div class="actual-profit-statistics-head">
-                <div class="detail-section-title actual-profit-statistics-title" id="actual-profit-statistics-title"><svg><use href="#p-down"/></svg>利润统计</div>
-              </div>
-              <div class="detail-section-body">
-                <div class="actual-profit-stat-table-wrap">
-                  <table class="actual-profit-stat-table" aria-label="实际费用利润统计">
-                    <colgroup><col style="width:25%"><col style="width:37.5%"><col style="width:37.5%"></colgroup>
-                    <thead><tr><th>币种</th><th>业务预估</th><th>执行侧预估</th></tr></thead>
-                    <tbody>
-                    <tr>
-                      <th scope="row">CNY</th>
-                      <td><div class="actual-profit-value-list">
-                        <div class="actual-profit-value-line"><span>应收</span><strong>19,000.00</strong></div>
-                        <div class="actual-profit-value-line"><span>应付</span><strong>15,000.00</strong></div>
-                        <div class="actual-profit-value-line is-total"><span>利润</span><strong>4,000.00</strong></div>
-                      </div></td>
-                      <td><div class="actual-profit-value-list">
-                        <div class="actual-profit-value-line"><span>应收</span><strong>22,000.00</strong></div>
-                        <div class="actual-profit-value-line"><span>应付</span><strong>20,500.00</strong></div>
-                        <div class="actual-profit-value-line is-total"><span>利润</span><strong>1,500.00</strong></div>
-                      </div></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">折本位币（CNY）</th>
-                      <td><div class="actual-profit-value-list">
-                        <div class="actual-profit-value-line"><span>应收</span><strong>19,000.00</strong></div>
-                        <div class="actual-profit-value-line"><span>应付</span><strong>15,000.00</strong></div>
-                        <div class="actual-profit-value-line is-total"><span>利润</span><strong>4,000.00</strong></div>
-                      </div></td>
-                      <td><div class="actual-profit-value-list">
-                        <div class="actual-profit-value-line"><span>应收</span><strong>22,000.00</strong></div>
-                        <div class="actual-profit-value-line"><span>应付</span><strong>20,500.00</strong></div>
-                        <div class="actual-profit-value-line is-total"><span>利润</span><strong>1,500.00</strong></div>
-                      </div></td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
         <section class="detail-section" id="transportRequirementSection" aria-labelledby="transport-title">
           <div class="detail-section-head"><div class="detail-section-title" id="transport-title"><svg><use href="#p-down"/></svg>运输要求</div></div>
           <div class="detail-section-body">
@@ -1026,7 +955,6 @@
             </div>
             <div class="field" style="margin-top:16px"><div class="field-label">其他特殊要求</div><textarea class="control textarea" placeholder="请输入" aria-label="其他特殊要求"></textarea></div>
           </div>
-        </section>
         </section>
 
         <section class="detail-view feedback-view" id="feedbackView" role="tabpanel" aria-labelledby="feedbackTab" hidden><div class="feedback-overview">
@@ -1190,7 +1118,7 @@
   </div>
 
   <div class="order-route-preview-backdrop" id="orderLinkedItemPicker" hidden>
-    <section class="order-route-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="orderLinkedItemPickerTitle" tabindex="-1">
+    <section class="order-route-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="orderLinkedItemPickerTitle" tabindex="-1" style="width:min(1280px,calc(100vw - 40px))">
       <div class="order-route-preview-head">
         <div><div class="order-route-preview-title" id="orderLinkedItemPickerTitle">关联其他线路商品</div><div class="order-route-preview-subtitle">勾选其他线路的商品行，关联后将在当前线路中引用原商品数据。</div></div>
         <button class="feedback-preview-close" id="orderLinkedItemPickerClose" type="button" aria-label="关闭商品关联"><svg><use href="#p-close"/></svg></button>
@@ -1227,31 +1155,6 @@
     </aside>
   </div>
 
-  <div class="order-fee-entry-backdrop" id="logisticsFeeEntryDialog" hidden>
-    <section class="order-fee-entry-modal" role="dialog" aria-modal="true" aria-labelledby="logisticsFeeEntryTitle" tabindex="-1">
-      <div class="order-fee-entry-head">
-        <div>
-          <h2 class="order-fee-entry-title" id="logisticsFeeEntryTitle">选择物流需求</h2>
-          <p class="order-fee-entry-subtitle">一个客户订单可关联多个物流需求。请选择需要录入执行侧预估应收/应付的物流需求。</p>
-        </div>
-        <button class="order-fee-entry-close" type="button" data-logistics-fee-close aria-label="关闭">✕</button>
-      </div>
-      <div class="order-fee-entry-body">
-        <div class="order-fee-entry-tip"><strong>操作说明</strong><span>费用录入和发起均在物流需求单的“费用与利润 → 执行侧预估应收/应付”中完成，客户订单自动汇总实际应收、实际应付和利润。</span></div>
-        <div class="order-fee-entry-table-wrap">
-          <table class="order-fee-entry-table" aria-label="客户订单关联物流需求">
-            <thead><tr><th>选择</th><th>物流需求单号</th><th>需求状态</th><th>执行侧应收</th><th>执行侧应付</th><th>费用录入情况</th></tr></thead>
-            <tbody>
-              <tr><td><input class="order-fee-entry-radio" type="radio" name="logisticsFeeDemand" value="logistics-demand-detail-prototype.html?no=LD202610270018&amp;mode=exec&amp;section=fees&amp;from=customer-order-detail" aria-label="选择 LD202610270018" checked></td><td><span class="order-fee-entry-demand">LD202610270018</span></td><td><span class="order-fee-entry-status">执行中</span></td><td class="order-fee-entry-money">16,000.00</td><td class="order-fee-entry-money">15,000.00</td><td><span class="order-fee-entry-state">应收 2/2 · 应付 2/2 · 待发起</span></td></tr>
-              <tr><td><input class="order-fee-entry-radio" type="radio" name="logisticsFeeDemand" value="logistics-demand-detail-prototype.html?no=LD202610270019&amp;mode=exec&amp;section=fees&amp;from=customer-order-detail" aria-label="选择 LD202610270019"></td><td><span class="order-fee-entry-demand">LD202610270019</span></td><td><span class="order-fee-entry-status">执行中</span></td><td class="order-fee-entry-money">3,000.00</td><td class="order-fee-entry-money">5,500.00</td><td><span class="order-fee-entry-state">应收 1/1 · 应付 1/1 · 已发起</span></td></tr>
-              <tr><td><input class="order-fee-entry-radio" type="radio" name="logisticsFeeDemand" value="logistics-demand-detail-prototype.html?no=LD202610270020&amp;mode=exec&amp;section=fees&amp;from=customer-order-detail" aria-label="选择 LD202610270020"></td><td><span class="order-fee-entry-demand">LD202610270020</span></td><td><span class="order-fee-entry-status pending">待安排</span></td><td class="order-fee-entry-money">3,000.00</td><td class="order-fee-entry-money">0.00</td><td><span class="order-fee-entry-state">应收 1/1 · 应付未录入 · 未发起</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="order-fee-entry-foot"><button class="detail-btn" type="button" data-logistics-fee-close>取消</button><button class="detail-btn primary" id="confirmLogisticsFeeEntryBtn" type="button">前往录入费用</button></div>
-    </section>
-  </div>
   <script>
     (function () {
       const params = new URLSearchParams(window.location.search);
@@ -1370,6 +1273,7 @@
   </script>
   <script src="../assets/ui-state.js"></script>
   <script src="../assets/customer-order-detail.js"></script>
+  <script src="../assets/customer-order-contract-link.js?v=20261120a"></script>
   <script src="../assets/customer-order-feedback.js"></script>
   <script>
     (() => {
@@ -1398,13 +1302,13 @@
       });
 
       const orderActionSequences = {
-        draft: ['saveDraftBtn', 'submitOrderBtn', 'submitFillLogisticsBtn', 'submitGeneratePlanBtn', 'submitAutoTaskBtn', 'viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        draft: ['saveDraftBtn', 'submitOrderBtn', 'submitFillLogisticsBtn', 'submitAutoTaskBtn', 'viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
         review: ['viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
         pendingConfirm: ['confirmOrderBtn', 'versionMaintenanceBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
-        confirmedFulfillment: ['attachmentBtn', 'viewLogisticsPlanBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'voidOrderBtn'],
-        fulfillment: ['attachmentBtn', 'viewLogisticsPlanBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'voidOrderBtn'],
+        confirmedFulfillment: ['attachmentBtn', 'viewLogisticsPlanBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
+        fulfillment: ['attachmentBtn', 'viewLogisticsPlanBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
         completed: ['cancelCompleteBtn', 'attachmentBtn', 'viewLogisticsPlanBtn', 'historyVersionBtn', 'approvalProgressBtn'],
-        voided: ['attachmentBtn', 'viewLogisticsPlanBtn', 'historyVersionBtn', 'approvalProgressBtn']
+        cancelled: ['attachmentBtn', 'viewLogisticsPlanBtn', 'historyVersionBtn', 'approvalProgressBtn']
       };
       const secondaryActionIds = new Set(['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn']);
       const moreMenuHost = document.getElementById('detailMoreMenu');
@@ -1425,9 +1329,12 @@
         else if (status === '待履约' && confirmation === '待确认') sequence = orderActionSequences.pendingConfirm;
         else if (status === '待履约' && confirmation === '已确认') sequence = orderActionSequences.confirmedFulfillment;
         else if (status === '待履约') sequence = orderActionSequences.pendingConfirm.filter((id) => id !== 'confirmOrderBtn');
-        else if (status === '履约中') sequence = orderActionSequences.fulfillment;
+        else if (status === '履约中') {
+          sequence = orderActionSequences.fulfillment.slice();
+          if (!confirmation || confirmation === '待确认') sequence.unshift('confirmOrderBtn');
+        }
         else if (status === '已完结') sequence = orderActionSequences.completed;
-        else if (status === '已作废') sequence = orderActionSequences.voided;
+        else if (status === '已取消') sequence = orderActionSequences.cancelled;
         else sequence = orderActionSequences.review;
         const arrangementStatus = document.getElementById('orderArrangementStatusField')?.textContent.trim() || '';
         if (status === '待履约' && confirmation === '已确认' && arrangementStatus === '待安排') {
@@ -1435,14 +1342,19 @@
           const insertAt = sequence.indexOf('viewLogisticsPlanBtn') + 1;
           sequence = sequence.slice(0, insertAt).concat(logisticsGenerationActions, sequence.slice(insertAt));
         }
-        const contractStatus = document.getElementById('contractStatus')?.value.trim() || '';
-        const signMethod = document.getElementById('signMethod')?.value.trim() || '';
+        const contractStatus = (document.getElementById('orderContractOverviewStatus')?.textContent || '').trim();
+        const signMethodValue = document.querySelector('[data-contract-setting="signMethod"]')?.value || '';
+        const signMethod = ({ elb: 'E建签签约', offline: '线下签约', no_sign: '无需签署' })[signMethodValue] || '';
         const signingActions = contractStatus === '待签约'
           ? ['initiateSignBtn']
           : (contractStatus === '签约中' && signMethod === 'E建签签约'
             ? ['withdrawSignBtn']
             : (contractStatus === '签约中' && signMethod === '线下签约' ? ['reclaimOriginalBtn'] : []));
         sequence = sequence.concat(signingActions);
+        const versionControlEl = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '版本号');
+        const currentVersionValue = (versionControlEl?.value || '1.0').trim();
+        if ((status === '创建' || status === '驳回') && currentVersionValue !== '1.0') sequence = sequence.concat(['deleteVersionBtn']);
+        if (currentVersionValue !== '1.0') sequence = sequence.filter((id) => !['submitFillLogisticsBtn', 'submitAutoTaskBtn'].includes(id));
         window.__visibleOrderActionIds = sequence.slice();
         document.querySelectorAll('#detailActions .detail-btn, #detailMoreMenu .detail-btn').forEach((button) => { button.hidden = true; });
         const primarySequence = sequence.filter((id) => !secondaryActionIds.has(id));
@@ -1561,6 +1473,8 @@
         window.__orderSubmitAttempts = (window.__orderSubmitAttempts || 0) + 1;
         UIState.clearFormAlert(scope);
         if (validate) {
+          const referenceCheck = window.OrderRoutes?.validateSubmitReferences?.();
+          if (referenceCheck && referenceCheck.valid === false) return;
           const hasServiceScope = Boolean(scope.querySelector('input[name="orderServiceScope"]:checked'));
           if (!hasServiceScope) {
             UIState.showFormAlert(scope, 'error', '请至少选择一项服务范围。');
@@ -1624,7 +1538,7 @@
       submitFlowBtn.addEventListener('click', (event) => {
         simulate(event.currentTarget, true, '客户订单已提交，已发起物流委托。', markOrderPendingConfirmation);
       });
-      [['submitFillLogisticsBtn', '客户订单已提交，请继续填写物流需求。'], ['submitGeneratePlanBtn', '客户订单已提交，正在生成物流安排。'], ['submitAutoTaskBtn', '客户订单已提交，任务已自动提交。']].forEach(([id, message]) => {
+      [['submitFillLogisticsBtn', '客户订单已提交，请继续填写物流需求。'], ['submitAutoTaskBtn', '客户订单已提交，任务已自动提交。']].forEach(([id, message]) => {
         document.getElementById(id)?.addEventListener('click', (event) => {
           simulate(event.currentTarget, true, message, markOrderPendingConfirmation);
         });
@@ -1633,16 +1547,49 @@
         document.getElementById(id)?.addEventListener('click', () => UIState.showFormAlert(scope, 'success', message));
       };
       showDocumentActionMessage('attachmentBtn', '订单附件功能已打开。');
-      showDocumentActionMessage('historyVersionBtn', '订单历史版本已打开。');
       showDocumentActionMessage('approvalProgressBtn', '审批进度已打开。');
       const incrementOrderVersion = (value) => {
-        const raw = String(value || 'V1.0').replace(/^V/i, '');
-        const parts = raw.split('.').map((part) => Number(part) || 0);
-        if (parts.length > 1) parts[1] += 1;
-        else parts[0] = (parts[0] || 1) + 1;
-        return 'V' + parts.join('.');
+        const raw = String(value || '1.0').replace(/^V/i, '').trim();
+        const major = Number(raw.split('.')[0]) || 1;
+        return (major + 1).toFixed(1);
+      };
+      const versionHistoryKey = () => 'ct:customerOrderVersionHistory:' + (document.body.dataset.orderNo || '');
+      const readVersionHistory = () => {
+        try {
+          const raw = sessionStorage.getItem(versionHistoryKey());
+          if (raw) {
+            const rows = JSON.parse(raw);
+            if (Array.isArray(rows) && rows.length) return rows;
+          }
+        } catch (error) { /* ignore */ }
+        const valueOf = (label) => Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === label)?.value || '';
+        return [{
+          version: valueOf('版本号') || '1.0',
+          status: document.getElementById('orderStatusField')?.textContent.trim() || '创建',
+          creator: valueOf('创建人') || '李琪',
+          createdAt: valueOf('创建时间') || '',
+          effectiveAt: valueOf('当前版本生效时间') || ''
+        }];
+      };
+      const writeVersionHistory = (rows) => {
+        try { sessionStorage.setItem(versionHistoryKey(), JSON.stringify(rows)); } catch (error) { /* ignore */ }
       };
       const launchVersionMaintenance = () => {
+        const currentStatus = document.getElementById('orderStatusField')?.textContent.trim() || '';
+        if (['创建', '驳回'].includes(currentStatus) && !window.UIState.validateRequired(scope).valid) {
+          window.UIState.showFormAlert(scope, 'error', '请先修正必填字段，再发起版本维护。');
+          return;
+        }
+        const referenceCheck = window.OrderRoutes?.validateReferences?.();
+        if (referenceCheck && referenceCheck.valid === false) {
+          window.UIState.showFormAlert(scope, 'error', referenceCheck.message || '商品被下游单据引用，请先处理引用关系。');
+          return;
+        }
+        const pendingDraft = (() => { try { return sessionStorage.getItem('ct:customerOrderVersionDraft'); } catch (error) { return null; } })();
+        if (pendingDraft && new URLSearchParams(window.location.search).get('maintenance') !== '1') {
+          window.UIState.showFormAlert(scope, 'error', '该订单已有待提交的修改单，请先提交或删除后再发起版本维护。');
+          return;
+        }
         const fields = {};
         scope.querySelectorAll('input, select, textarea').forEach((control) => {
           const label = control.getAttribute('aria-label');
@@ -1656,8 +1603,17 @@
           name: chip.dataset.recipientName || '',
           email: chip.dataset.recipientEmail || ''
         }));
-        const currentVersion = fields['版本号'] || 'V1.0';
+        const currentVersion = fields['版本号'] || '1.0';
         const nextVersion = incrementOrderVersion(currentVersion);
+        const historyRows = readVersionHistory();
+        historyRows.push({
+          version: nextVersion,
+          status: '创建',
+          creator: fields['创建人'] || '李琪',
+          createdAt: new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-'),
+          effectiveAt: '—'
+        });
+        writeVersionHistory(historyRows);
         const sourceNo = document.body.dataset.orderNo || document.getElementById('orderOverviewNumber')?.textContent.replace(/[()]/g, '').trim() || '';
         const snapshot = {
           fields,
@@ -1677,6 +1633,7 @@
         }
         const url = new URL('customer-order-detail-prototype.html', window.location.href);
         url.search = '';
+        url.searchParams.set('no', document.body.dataset.orderNo || sourceNo);
         url.searchParams.set('mode', 'create');
         url.searchParams.set('maintenance', '1');
         url.searchParams.set('version', nextVersion);
@@ -1709,15 +1666,18 @@
         syncOrderDocumentActions();
         UIState.showFormAlert(scope, 'success', '已取消完结。');
       });
-      document.getElementById('voidOrderBtn')?.addEventListener('click', () => {
+      document.getElementById('cancelOrderBtn')?.addEventListener('click', () => {
         if (window.OrderDetailPage) return;
-        if (!window.confirm('作废后该客户订单将停止后续签署与履约，确定作废吗？')) return;
+        const currentStatus = document.getElementById('orderStatusField')?.textContent.trim();
+        if (!['待履约', '履约中'].includes(currentStatus)) {
+          UIState.showFormAlert(scope, 'error', '当前客户订单状态不允许取消');
+          return;
+        }
+        if (!window.confirm('取消后该客户订单将停止后续签署与履约，确定取消吗？')) return;
         const statusField = document.getElementById('orderStatusField');
-        if (statusField) { statusField.textContent = '已作废'; statusField.dataset.status = '已作废'; }
-        const contractField = document.getElementById('contractStatus');
-        if (contractField) contractField.value = '拒签';
+        if (statusField) { statusField.textContent = '已取消'; statusField.dataset.status = '已取消'; }
         syncOrderDocumentActions();
-        UIState.showFormAlert(scope, 'success', '客户订单已作废。');
+        UIState.showFormAlert(scope, 'success', '客户订单已取消。');
       });
       document.getElementById('confirmOrderBtn').addEventListener('click', () => {
         if (window.OrderDetailPage?.confirmOrder) {
@@ -1753,6 +1713,14 @@
         const version = pageParams.get('version') || restoredDraft.version || 'V1.1';
         const versionControl = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '版本号');
         if (versionControl) versionControl.value = version;
+        const modifyStatusField = document.getElementById('orderStatusField');
+        if (modifyStatusField) { modifyStatusField.textContent = '创建'; modifyStatusField.dataset.status = '创建'; }
+        const modifyConfirmField = document.querySelector('[data-order-confirmation-status-field]');
+        if (modifyConfirmField) { modifyConfirmField.textContent = ''; modifyConfirmField.dataset.status = ''; }
+        const modifyArrangeField = document.querySelector('[data-order-arrangement-status-field]');
+        if (modifyArrangeField) { modifyArrangeField.textContent = ''; modifyArrangeField.dataset.status = ''; }
+        window.syncOrderDocumentActions?.();
+        window.syncContractFieldRules?.();
         const sourceNo = pageParams.get('sourceNo') || restoredDraft.sourceNo || '';
         const sourceControl = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '来源单号');
         if (sourceControl) sourceControl.value = sourceNo;
@@ -1763,12 +1731,12 @@
           else titleNode.insertBefore(document.createTextNode('客户订单修改单 '), titleNode.firstChild);
         }
         const overviewNumber = document.getElementById('orderOverviewNumber');
-        if (overviewNumber) { overviewNumber.textContent = '(' + version + ')'; overviewNumber.hidden = false; }
+        if (overviewNumber) { overviewNumber.textContent = '(' + (sourceNo ? sourceNo + ' ' : '') + version + ')'; overviewNumber.hidden = false; }
         const breadcrumb = document.querySelector('.breadcrumb strong');
         if (breadcrumb) breadcrumb.textContent = '客户订单修改单';
         const srTitle = document.querySelector('h1.sr-only');
         if (srTitle) srTitle.textContent = '客户订单修改单';
-        document.title = '客户订单修改单 ' + version + ' - OMS原型';
+        document.title = '客户订单修改单 ' + (sourceNo ? sourceNo + ' ' : '') + version + ' - OMS原型';
         const chipHost = document.getElementById('consignmentChips');
         if (chipHost && Array.isArray(restoredDraft.consignments)) {
           chipHost.innerHTML = restoredDraft.consignments.map((value) => '<span class="consignment-chip" data-value="' + escapeHtml(value) + '"><span title="' + escapeHtml(value) + '">' + escapeHtml(value) + '</span><button class="chip-remove" type="button" aria-label="删除客户单号 ' + escapeHtml(value) + '">×</button></span>').join('');
@@ -1886,9 +1854,9 @@
         const routeWaterPiece = Boolean(window.orderRouteHasWaterPiece);
         const hasWaterTransport = hasTransport && hasSpecifiedMode && (routeWaterPiece || transportCheckboxes.some((checkbox) => checkbox.value === '水运' && checkbox.checked));
         const hasPieceCargo = hasWaterTransport && (routeWaterPiece || shippingCheckboxes.some((checkbox) => checkbox.value === '件杂' && checkbox.checked));
-        document.getElementById('orderSpecifiedTransportModeField').hidden = !hasTransport;
+        document.getElementById('orderSpecifiedTransportModeField').hidden = true; // 本期不做，字段隐藏，取值固定为“是”
         document.getElementById('orderRoutesSection').hidden = !hasTransport;
-        if (specifiedMode) specifiedMode.required = hasTransport;
+        if (specifiedMode) specifiedMode.required = false; // 字段本期隐藏，不参与必填校验
         const transportTypeField = document.getElementById('orderTransportTypeField');
         const shippingCategoryField = document.getElementById('orderShippingCategoryField');
         if (transportTypeField) transportTypeField.hidden = !hasTransport || !hasSpecifiedMode;
@@ -1979,36 +1947,151 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261117f"></script>
+  <script src="../assets/customer-order-routes.js?v=20261118c"></script>
   <script>
     (function () {
-      const dialog = document.getElementById('logisticsFeeEntryDialog');
-      const trigger = document.getElementById('openLogisticsFeeEntryBtn');
-      const confirm = document.getElementById('confirmLogisticsFeeEntryBtn');
-      if (!dialog || !trigger || !confirm) return;
-      const modal = dialog.querySelector('.order-fee-entry-modal');
-      const open = () => {
-        const selected = dialog.querySelector('input[name="logisticsFeeDemand"]:checked') || dialog.querySelector('input[name="logisticsFeeDemand"]');
-        if (selected) selected.checked = true;
-        dialog.hidden = false;
-        document.body.classList.add('order-fee-entry-open');
-        modal.focus();
+      const typeSelect = document.getElementById('customerTypeSelect');
+      const orgField = document.getElementById('innerCustomerOrgField');
+      const deptField = document.getElementById('innerCustomerDeptField');
+      const orgSelect = document.getElementById('innerCustomerOrgSelect');
+      const deptSelect = document.getElementById('innerCustomerDeptSelect');
+      if (!typeSelect || !orgField || !deptField || !orgSelect || !deptSelect) return;
+      const sync = () => {
+        const isInternal = typeSelect.value === '内部客户';
+        orgField.hidden = !isInternal;
+        deptField.hidden = !isInternal;
+        orgSelect.disabled = !isInternal;
+        deptSelect.disabled = !isInternal;
+        orgSelect.required = isInternal;
+        deptSelect.required = false;
+        if (!isInternal) {
+          window.UIState?.clearFieldState?.(orgSelect);
+          window.UIState?.clearFieldState?.(deptSelect);
+        }
       };
-      const close = () => {
-        dialog.hidden = true;
-        document.body.classList.remove('order-fee-entry-open');
-        trigger.focus();
+      typeSelect.addEventListener('change', sync);
+      window.addEventListener('load', sync);
+      sync();
+    })();
+  </script>
+
+  <div class="contract-modal-backdrop" id="orderVersionHistoryDialog" hidden>
+    <section class="contract-modal" role="dialog" aria-modal="true" aria-labelledby="orderVersionHistoryTitle" tabindex="-1">
+      <div class="contract-modal-head">
+        <div>
+          <div class="contract-modal-title" id="orderVersionHistoryTitle">客户订单历史版本</div>
+          <div class="contract-modal-subtitle">按版本号倒序排列，当前版本置顶</div>
+        </div>
+        <button class="contract-modal-close" id="orderVersionHistoryClose" type="button" title="关闭历史版本" aria-label="关闭历史版本">✕</button>
+      </div>
+      <div class="contract-modal-body">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:#f7f9fc;color:#4a5568">
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">版本号</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">订单状态</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">创建人</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">创建时间</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">生效时间</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">操作</th>
+            </tr>
+          </thead>
+          <tbody id="orderVersionHistoryBody"></tbody>
+        </table>
+      </div>
+      <div class="contract-modal-foot" style="display:flex;justify-content:flex-end;padding:12px 18px;border-top:1px solid #eef1f5">
+        <button class="detail-btn" id="orderVersionHistoryDone" type="button">关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      const scope = document.getElementById('orderDetailForm');
+      if (!scope) return;
+      const key = () => 'ct:customerOrderVersionHistory:' + (document.body.dataset.orderNo || '');
+      const fieldValue = (label) => Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === label)?.value || '';
+      const readRows = () => {
+        try {
+          const raw = sessionStorage.getItem(key());
+          if (raw) {
+            const rows = JSON.parse(raw);
+            if (Array.isArray(rows) && rows.length) return rows;
+          }
+        } catch (error) { /* ignore */ }
+        return [{
+          version: fieldValue('版本号') || '1.0',
+          status: document.getElementById('orderStatusField')?.textContent.trim() || '创建',
+          creator: fieldValue('创建人') || '李琪',
+          createdAt: fieldValue('创建时间') || '',
+          effectiveAt: fieldValue('当前版本生效时间') || ''
+        }];
       };
-      trigger.addEventListener('click', open);
-      dialog.querySelectorAll('[data-logistics-fee-close]').forEach((button) => button.addEventListener('click', close));
-      dialog.addEventListener('click', (event) => { if (event.target === dialog) close(); });
-      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !dialog.hidden) close(); });
-      confirm.addEventListener('click', () => {
-        const selected = dialog.querySelector('input[name="logisticsFeeDemand"]:checked');
-        if (!selected) return;
-        const url = new URL(selected.value, window.location.href);
-        if (window.self !== window.top || new URLSearchParams(window.location.search).get('embed') === '1') url.searchParams.set('embed', '1');
-        window.location.href = url.href;
+      const writeRows = (rows) => { try { sessionStorage.setItem(key(), JSON.stringify(rows)); } catch (error) { /* ignore */ } };
+
+      const dialog = document.getElementById('orderVersionHistoryDialog');
+      const body = document.getElementById('orderVersionHistoryBody');
+      const close = () => { if (dialog) dialog.hidden = true; };
+      const renderRows = () => {
+        if (!body) return;
+        const rows = readRows().slice().sort((a, b) => Number(b.version) - Number(a.version));
+        const current = (fieldValue('版本号') || '1.0').trim();
+        body.innerHTML = rows.map((row) => {
+          const isCurrent = String(row.version) === current;
+          return '<tr>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + row.version + (isCurrent ? ' <span style="color:#1f6feb">（当前版本）</span>' : '') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.status || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.creator || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.createdAt || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.effectiveAt || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7"><button class="detail-btn" type="button" data-version-view="' + row.version + '">查看</button></td>' +
+            '</tr>';
+        }).join('') || '<tr><td colspan="6" style="padding:12px;color:#8a94a6">暂无历史版本</td></tr>';
+      };
+      const open = () => { renderRows(); if (dialog) dialog.hidden = false; };
+      document.getElementById('historyVersionBtn')?.addEventListener('click', open);
+      document.getElementById('orderVersionHistoryClose')?.addEventListener('click', close);
+      document.getElementById('orderVersionHistoryDone')?.addEventListener('click', close);
+      dialog?.addEventListener('click', (event) => { if (event.target === dialog) close(); });
+      body?.addEventListener('click', (event) => {
+        const trigger = event.target.closest('[data-version-view]');
+        if (!trigger) return;
+        close();
+        window.UIState?.showFormAlert(scope, 'info', '已只读打开版本 ' + trigger.dataset.version + ' 的客户订单详情。');
+      });
+
+      document.getElementById('deleteVersionBtn')?.addEventListener('click', () => {
+        const version = (fieldValue('版本号') || '1.0').trim();
+        if (version === '1.0') {
+          window.UIState?.showFormAlert(scope, 'error', '当前客户订单不支持撤销版本维护！');
+          window.setTimeout(() => window.location.reload(), 900);
+          return;
+        }
+        if (!window.confirm('是否确认撤销版本维护？')) return;
+        const status = document.getElementById('orderStatusField')?.textContent.trim();
+        if (!['创建', '驳回'].includes(status)) {
+          window.UIState?.showFormAlert(scope, 'error', '当前客户订单委托状态不支持撤销版本维护，请刷新页面后重试');
+          return;
+        }
+        let routes = { routes: [] };
+        try { routes = JSON.parse(document.getElementById('orderRoutesData')?.value || '{}'); } catch (error) { /* ignore */ }
+        const overArranged = (routes.routes || []).some((route) => (route.items || []).some((item) => Number(item.arrangedQty || 0) > Number(item.standardQty ?? item.count ?? 0)));
+        if (overArranged) {
+          window.UIState?.showFormAlert(scope, 'error', '客户订单商品超量安排，无法删除版本维护');
+          return;
+        }
+        const rows = readRows();
+        rows.pop();
+        writeRows(rows);
+        try { sessionStorage.removeItem('ct:customerOrderVersionDraft'); } catch (error) { /* ignore */ }
+        window.UIState?.showFormAlert(scope, 'success', '已撤销版本维护，正在打开历史最新版本。');
+        window.setTimeout(() => {
+          const url = new URL('customer-order-detail-prototype.html', window.location.href);
+          url.search = '';
+          url.searchParams.set('no', document.body.dataset.orderNo || '');
+          window.location.href = url.href;
+        }, 900);
       });
     })();
   </script>

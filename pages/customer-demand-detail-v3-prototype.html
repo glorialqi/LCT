@@ -263,33 +263,6 @@
               </div>
             </section>
 
-            <section class="demand-section" id="createQuoteSection" aria-labelledby="createQuoteTitle">
-              <div class="demand-section-head">
-                <h2 class="demand-section-title" id="createQuoteTitle"><svg><use href="#p-money"/></svg>需求报价与目标成本</h2>
-              </div>
-              <div class="demand-section-body">
-                <div class="demand-quote-split">
-                  <section class="demand-quote-panel" aria-labelledby="createReceivableQuoteTitle">
-                    <div class="demand-quote-panel-head"><h3 id="createReceivableQuoteTitle">预估应收</h3><button class="btn" id="addReceivableQuoteBtn" type="button">添加应收行</button></div>
-                    <div class="demand-data-table-wrap">
-                      <table class="demand-data-table demand-quote-form-table demand-quote-subtable" aria-label="预估应收">
-                        <thead><tr><th>费用科目<span class="required">*</span></th><th>税率（%）</th><th>报价单价（含税）</th><th>币种</th><th>预计数量</th><th>单位</th><th>报价金额</th><th>汇率</th><th>本位币金额</th><th>操作</th></tr></thead>
-                        <tbody id="createReceivableQuoteBody" data-quote-direction="应收"></tbody>
-                      </table>
-                    </div>
-                  </section>
-                  <section class="demand-quote-panel" aria-labelledby="createPayableQuoteTitle">
-                    <div class="demand-quote-panel-head"><h3 id="createPayableQuoteTitle">预估应付</h3><button class="btn" id="addPayableQuoteBtn" type="button">添加应付行</button></div>
-                    <div class="demand-data-table-wrap">
-                      <table class="demand-data-table demand-quote-form-table demand-quote-subtable" aria-label="预估应付">
-                        <thead><tr><th>费用科目<span class="required">*</span></th><th>税率（%）</th><th>报价单价（含税）</th><th>币种</th><th>预计数量</th><th>单位</th><th>报价金额</th><th>汇率</th><th>本位币金额</th><th>操作</th></tr></thead>
-                        <tbody id="createPayableQuoteBody" data-quote-direction="应付"></tbody>
-                      </table>
-                    </div>
-                  </section>
-                </div>
-              </div>
-            </section>
           </form>
 
           <section class="demand-section" id="staticDemandInfoSection" aria-labelledby="basicInfoTitle">
@@ -351,37 +324,6 @@
               <div class="demand-booking-note-field">
                 <div class="demand-field-label">订舱备注</div>
                 <textarea id="bookingExtensionTextDisplay" class="demand-booking-extension-textarea demand-booking-extension-readonly" aria-label="订舱备注" readonly></textarea>
-              </div>
-            </div>
-          </section>
-
-          <section class="demand-section" id="staticQuoteSection" aria-labelledby="quoteTitle">
-            <div class="demand-section-head">
-              <h2 class="demand-section-title" id="quoteTitle"><svg><use href="#p-money"/></svg>需求报价与目标成本</h2>
-              <span class="status pending">价格基线，不作为结算依据</span>
-            </div>
-            <div class="demand-section-body">
-              <div class="demand-metric-grid demand-metric-grid--4" id="quoteMetrics"></div>
-              <div class="demand-table-toolbar"><span class="demand-muted">报价随需求版本冻结；订单合同价独立维护。</span></div>
-              <div class="demand-quote-split">
-                <section class="demand-quote-panel" aria-labelledby="receivableQuoteTitle">
-                  <div class="demand-quote-panel-head"><h3 id="receivableQuoteTitle">预估应收</h3><span class="demand-muted" id="quoteReceivableCount">0 行</span></div>
-                  <div class="demand-data-table-wrap">
-                    <table class="demand-data-table demand-quote-table demand-quote-subtable" aria-label="预估应收">
-                      <thead><tr><th>费用科目</th><th class="num">税率（%）</th><th class="num">报价单价（含税）</th><th>币种</th><th class="num">预计数量</th><th>单位</th><th class="num">报价金额</th><th class="num">汇率</th><th class="num">本位币金额</th></tr></thead>
-                      <tbody id="quoteReceivableBody"></tbody>
-                    </table>
-                  </div>
-                </section>
-                <section class="demand-quote-panel" aria-labelledby="payableQuoteTitle">
-                  <div class="demand-quote-panel-head"><h3 id="payableQuoteTitle">预估应付</h3><span class="demand-muted" id="quotePayableCount">0 行</span></div>
-                  <div class="demand-data-table-wrap">
-                    <table class="demand-data-table demand-quote-table demand-quote-subtable" aria-label="预估应付">
-                      <thead><tr><th>费用科目</th><th class="num">税率（%）</th><th class="num">报价单价（含税）</th><th>币种</th><th class="num">预计数量</th><th>单位</th><th class="num">报价金额</th><th class="num">汇率</th><th class="num">本位币金额</th></tr></thead>
-                      <tbody id="quotePayableBody"></tbody>
-                    </table>
-                  </div>
-                </section>
               </div>
             </div>
           </section>

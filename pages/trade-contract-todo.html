@@ -2852,6 +2852,108 @@ html.ct-embedded .app { width:100% !important; height:100vh !important; }
 html.ct-embedded .main { min-width:0 !important; width:auto !important; }
 html.ct-embedded .ct-main { position:fixed !important; left:0 !important; top:0 !important; right:0 !important; bottom:0 !important; }
 html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!important}html.ct-embedded body{background:var(--ct-bg)!important}
+
+    /* 人工分配（平铺）弹窗：对齐手动拉入弹窗样式 */
+    #allocationFlatModal .alloc-flat-table { width: 100%; table-layout: auto; border-collapse: collapse; }
+    #allocationFlatModal .alloc-flat-table th { position: sticky; top: 0; z-index: 4; background: #f7f8fa !important; white-space: nowrap; }
+    #allocationFlatModal .alloc-flat-table td { white-space: nowrap; }
+    #allocationFlatModal .alloc-flat-table tbody tr:hover { background: #fafbfc; }
+    #allocationFlatModal .alloc-flat-table .manual-number { text-align: right; font-variant-numeric: tabular-nums; }
+    #allocationFlatModal .alloc-flat-table .manual-control { text-align: center; }
+    #allocationFlatModal .alloc-flat-input {
+      width: 100%; max-width: 104px; height: 30px; padding: 0 8px;
+      border: 1px solid #d7dde5; border-radius: 5px; background: #fff; color: #26313e;
+      text-align: right; font-size: 12px; font-family: inherit; outline: none;
+    }
+    #allocationFlatModal .alloc-flat-input:focus { border-color: #8bb8e8; box-shadow: 0 0 0 2px rgba(139,184,232,.16); }
+
+    /* 人工分配弹窗：完全套用「手动拉入」的 Reference modal system 配色 */
+    #allocationFlatModal { padding: 18px !important; }
+    #allocationFlatModal > div {
+      width: calc(100vw - 36px) !important;
+      max-width: none !important;
+      height: calc(100vh - 110px) !important;
+      max-height: none !important;
+      border: 0 !important;
+      border-radius: 8px !important;
+      background: #fff !important;
+      box-shadow: 0 10px 34px rgba(15, 23, 42, .2) !important;
+    }
+    #allocationFlatModal > div > div:first-child {
+      min-height: 72px !important;
+      padding: 0 28px !important;
+      border-bottom: 0 !important;
+      background: #fff !important;
+      color: #141d29 !important;
+    }
+    #allocationFlatModal h3 { color: #141d29 !important; font-size: 20px !important; font-weight: 700 !important; }
+    #allocationFlatModal > div > div:first-child > div:first-child > i { display: none !important; }
+    #allocationFlatModal > div > div:first-child button { color: #667385 !important; }
+    #allocationFlatModal > div > div:nth-child(2) {
+      padding: 14px 28px 18px !important;
+      background: #fff !important;
+      gap: 16px !important;
+    }
+    #allocationFlatModal > div > div:last-child {
+      min-height: 72px !important;
+      padding: 0 28px !important;
+      border-top: 0 !important;
+      background: #fff !important;
+      color: #25303d !important;
+    }
+    #allocationFlatModal table { border-collapse: collapse !important; font-size: 13px !important; }
+    #allocationFlatModal thead { background: #f7f8fa !important; color: #283340 !important; }
+    #allocationFlatModal th {
+      height: 44px !important; padding: 0 14px !important;
+      border-right: 1px solid #e4e8ed !important; border-bottom: 1px solid #dfe4ea !important;
+      background: #f7f8fa !important; font-weight: 500 !important; white-space: nowrap;
+    }
+    #allocationFlatModal td {
+      height: 42px !important; padding: 8px 14px !important;
+      border-bottom: 1px solid #edf0f3 !important; color: #2c3744 !important;
+    }
+    #allocationFlatModal button { border-radius: 5px !important; }
+    #allocationFlatModal button.bg-sky-500 {
+      border-color: var(--ct-blue) !important;
+      background: var(--ct-blue) !important;
+      color: #fff !important;
+      box-shadow: none !important;
+    }
+    #allocationFlatModal button.bg-sky-500:hover { background: var(--ct-blue-hover) !important; }
+    #allocationFlatModal .bg-sky-50\/70 {
+      background: #f5f8fc !important;
+      border-color: #dbe5f0 !important;
+      color: #334152 !important;
+    }
+    #allocationFlatModal .manual-table-shell {
+      border: 1px solid #dfe4ea !important;
+      border-radius: 5px !important;
+      background: #fff;
+    }
+    #allocationFlatModal .alloc-flat-input { height: 32px !important; }
+
+    /* 本次分配数量：表头悬浮说明 */
+    .alloc-qty-help {
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-left: 4px; color: #8a95a5; cursor: help; vertical-align: middle;
+    }
+    .alloc-qty-help:hover { color: var(--ct-blue); }
+    #allocQtyTip {
+      position: fixed; z-index: 1200; width: 300px; padding: 10px 12px;
+      background: #fff; border: 1px solid #dfe4ea; border-radius: 6px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, .16);
+      font-size: 12px; color: #2c3744; line-height: 1.7; text-align: left;
+    }
+    #allocQtyTip.hidden { display: none !important; }
+    #allocQtyTip .alloc-qty-tip-title { font-weight: 700; color: #141d29; margin-bottom: 4px; }
+    #allocQtyTip ul { margin: 0; padding-left: 16px; }
+    #allocQtyTip li { list-style: disc; }
+    #allocQtyTip b { color: #141d29; }
+    #allocationFlatModal .alloc-flat-dir {
+      height: 32px; padding: 0 6px; border: 1px solid #d7dde5; border-radius: 5px;
+      background: #fff; color: #26313e; font-size: 12px; font-family: inherit; outline: none;
+    }
+    #allocationFlatModal .alloc-flat-dir:focus { border-color: #8bb8e8; box-shadow: 0 0 0 2px rgba(139,184,232,.16); }
 </style>
   <link rel="stylesheet" href="../assets/query-conditions.css">
   <link rel="stylesheet" href="../assets/component-system.css">
@@ -3047,7 +3149,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         <h2 class="ct-panel-title">订舱工作台</h2>
         <div class="ct-list-actions">
           <span class="ct-scroll-hint">↔ 横向滚动查看更多</span>
-          <button onclick="openBatchAllocationModal()" class="ct-button">人工分配</button>
+          <button onclick="openFlatAllocationModal()" class="ct-button">人工分配</button>
           <button onclick="clearSelectedManualAllocations()" class="ct-button">清空人工分配并重算</button>
           <button onclick="batchDeleteRows()" class="ct-button">删除</button>
           <button onclick="batchCloseRows()" class="ct-button">完结</button>
@@ -3085,12 +3187,15 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <th>提交状态</th>
               <th>项目号</th>
               <th>商品中文名</th>
-              <th style="text-align:right">合同总量</th>
+              <th style="text-align:right">合同商品数量</th>
               <th style="text-align:right">可订舱数量</th>
               <th style="text-align:right">已订舱数量</th>
               <th style="text-align:right">待订舱数量</th>
+              <th>单位</th>
               <th class="dest-column-hidden">采购合同号</th>
               <th class="dest-column-hidden">采购合同状态</th>
+              <th style="text-align:right">自动分配数量</th>
+              <th style="text-align:right">有效人工分配数量</th>
               <th>经营单位</th>
               <th>公司抬头</th>
               <th>部门</th>
@@ -3105,7 +3210,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <th>对内交货期</th>
               <th>结算方式</th>
               <th>是否控单业务</th>
-              <th class="dest-column-hidden">贷前收款比例</th>
+              <th class="dest-column-hidden">货前收款比例</th>
               <th style="text-align:right">运费测算单价</th>
               <th>价格条款</th>
               <th>控货模式</th>
@@ -3113,10 +3218,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
               <th style="text-align:right">港杂预估单价</th>
               <th>贸易类型</th>
               <th>完结状态</th>
-              <th>风险标记</th>
-              <th style="text-align:right">自动分配数量</th>
-              <th style="text-align:right">有效人工调入数量</th>
-              <th style="text-align:right">有效人工调出数量</th>
               <th>贸易合同类型</th>
               <th class="dest-column-hidden">关联合同类型</th>
               <th>生效日期</th>
@@ -3160,7 +3261,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       <div class="p-4 flex-1 overflow-y-auto flex flex-col gap-3">
         <div class="p-3 bg-sky-50/70 border border-sky-200 rounded text-sky-800 text-xs flex items-start gap-2">
           <i data-lucide="info" class="w-4 h-4 text-sky-600 shrink-0 mt-0.5"></i>
-          <span>说明：此处列出控制塔中满足可订舱条件的贸易合同，选中后点击“确认拉入”即可加入当前待办工作台。</span>
+          <span>说明：此处按商品明细维度列出控制塔中满足可订舱条件的商品明细（一条明细一行），勾选后可一次拉入同一合同下的多个商品明细，点击“确认拉入”加入当前待办工作台。</span>
         </div>
 
         <div class="manual-filter-grid text-xs">
@@ -3169,7 +3270,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <input type="text" id="manualProjectNoFilter" list="manualProjectNoOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请输入" />
           </label>
           <label class="manual-filter-field">
-            <span>买卖合同号</span>
+            <span>贸易合同号</span>
             <input type="text" id="manualTradeNoFilter" list="manualTradeNoOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请输入" />
           </label>
           <label class="manual-filter-field">
@@ -3209,13 +3310,12 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <table class="manual-contract-table text-left text-xs">
             <thead class="bg-sky-50/80 border-b border-sky-100 font-semibold text-sky-800">
               <tr>
-                <th class="manual-control" style="width:46px"><input type="checkbox" id="manualSelectAll" aria-label="全选当前合同列表" onchange="toggleManualSelectAll(this)"></th>
-                <th class="manual-control" style="width:42px"></th>
+                <th class="manual-control" style="width:46px"><input type="checkbox" id="manualSelectAll" aria-label="全选当前商品明细" onchange="toggleManualSelectAll(this)"></th>
                 <th>贸易合同号</th>
                 <th>贸易合同类型</th>
                 <th>项目号</th>
                 <th>商品名称</th>
-                <th class="manual-number">合同总量</th>
+                <th class="manual-number">合同商品数量</th>
                 <!-- <th>采购合同号</th>
                 <th>关联合同类型</th> -->
                 <th>经营单位</th>
@@ -3232,7 +3332,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <th>对内交货期</th>
                 <th>结算方式</th>
                 <th>是否控单业务</th>
-                <th>贷前收款比例</th>
+                <th>货前收款比例</th>
                 <th class="manual-number">运费测算单价</th>
                 <th>价格条款</th>
                 <th>控货模式</th>
@@ -3250,13 +3350,83 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       </div>
 
       <div class="p-4 border-t border-sky-100 bg-sky-50/50 flex items-center justify-between text-xs">
-        <span class="text-slate-500">已选择 <strong class="text-sky-600" id="manualSelectedCount">0</strong> 条合同</span>
+        <span class="text-slate-500">已选择 <strong class="text-sky-600" id="manualSelectedCount">0</strong> 条商品明细</span>
         <div class="flex items-center gap-2">
           <button onclick="closeModal('manualModal')" class="px-4 py-1.5 border border-sky-200 rounded text-slate-700 hover:bg-sky-50">取消</button>
           <button onclick="confirmManualPullIn()" class="px-4 py-1.5 bg-sky-500 text-white rounded hover:bg-sky-600 font-medium shadow-sm">确认拉入工作台</button>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Modal 2A: 人工分配（按商品明细行平铺，逐行录入调入/调出） -->
+  <div id="allocationFlatModal" class="fixed inset-0 z-40 modal-backdrop hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="allocationFlatTitle" tabindex="-1">
+    <div class="bg-white rounded-xl shadow-2xl border border-sky-200 w-full max-w-5xl flex flex-col max-h-[85vh] overflow-hidden">
+      <div class="p-4 border-b border-sky-100 flex items-center justify-between bg-sky-50">
+        <div class="flex items-center gap-2">
+          <i data-lucide="arrow-left-right" class="w-5 h-5 text-sky-600"></i>
+          <h3 id="allocationFlatTitle" class="font-bold text-sky-900 text-sm sm:text-base">人工分配</h3>
+        </div>
+        <button onclick="closeModal('allocationFlatModal')" class="text-sky-400 hover:text-sky-600 p-1" aria-label="关闭人工分配弹窗">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 flex-1 overflow-y-auto flex flex-col gap-3">
+        <div class="p-3 bg-sky-50/70 border border-sky-200 rounded text-sky-800 text-xs flex flex-wrap items-center gap-x-5 gap-y-1.5">
+          <span>业务项目号：<strong class="font-mono text-sky-900" id="flatAllocProjectNo">-</strong></span>
+          <span>商品中文名：<strong class="text-sky-900" id="flatAllocGoodsName">-</strong></span>
+          <span>标准单位：<strong class="text-sky-900" id="flatAllocUnit">-</strong></span>
+          <span>采购合同：<strong class="font-mono text-sky-900" id="flatAllocPurchaseNo">-</strong></span>
+          <span>已选 <strong class="text-sky-900" id="flatAllocRowCount">0</strong> 条商品明细</span>
+        </div>
+
+        <div class="manual-table-shell">
+          <table class="alloc-flat-table text-left text-xs">
+            <thead class="bg-sky-50/80 border-b border-sky-100 font-semibold text-sky-800">
+              <tr>
+                <th class="manual-control" style="width:44px">#</th>
+                <th>贸易合同号</th>
+                <th>业务项目号</th>
+                <th>商品中文名</th>
+                <th>标准单位</th>
+                <th class="manual-number">合同商品数量</th>
+                <th class="manual-number">已订舱数量</th>
+                <th class="manual-number">当前待订舱数量</th>
+                <th style="width:96px">分配方向</th>
+                <th class="manual-number" style="width:132px">
+                  本次分配数量<span class="alloc-qty-help" onmouseenter="showAllocQtyTip(this)" onmouseleave="hideAllocQtyTip()" aria-label="查看本次分配数量填写说明"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i></span>
+                </th>
+                <th class="manual-number">调整后待订舱数量</th>
+              </tr>
+            </thead>
+            <tbody id="flatAllocTableBody" class="divide-y divide-sky-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-sky-100 bg-sky-50/50 flex flex-col sm:flex-row items-center justify-between text-xs gap-3">
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-slate-500">
+          <span>调入总计：<strong id="flatAllocInTotal" class="font-mono text-sky-700 text-sm">0</strong></span>
+          <span>调出总计：<strong id="flatAllocOutTotal" class="font-mono text-sky-700 text-sm">0</strong></span>
+          <div id="flatAllocStatus" class="font-bold px-2.5 py-1 rounded"></div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="closeModal('allocationFlatModal')" class="px-4 py-1.5 border border-sky-200 rounded text-slate-700 hover:bg-sky-50">取消</button>
+          <button onclick="confirmFlatAllocation()" id="flatAllocConfirmBtn" class="px-4 py-1.5 bg-sky-500 text-white rounded hover:bg-sky-600 font-medium shadow-sm transition disabled:opacity-40 disabled:cursor-not-allowed">确认分配</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="allocQtyTip" class="alloc-qty-tip hidden" role="tooltip">
+    <div class="alloc-qty-tip-title">本次分配数量怎么填</div>
+    <ul>
+      <li>先选择<b>分配方向</b>：调入 / 调出；<b>本次分配数量一律填写正数</b>，如 10 表示 10 个单位。</li>
+      <li>0 或不填表示该行不参与本次分配。</li>
+      <li>方向=调出的行，“调整后待订舱数量”必须大于 0。</li>
+      <li>所有行合计：调入总量必须等于调出总量。</li>
+    </ul>
   </div>
 
   <!-- Modal 2: 划转配额弹窗 (项目维度多源合同到目标合同配额划转) -->
@@ -3437,7 +3607,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <th>贸易合同号</th>
                 <th>业务项目号</th>
                 <th>商品名称</th>
-                <th class="candidate-number">合同总量</th>
+                <th class="candidate-number">合同商品数量</th>
                 <th class="candidate-number">可订舱数量</th>
                 <th class="candidate-number">已订舱数量</th>
                 <th class="candidate-number">待订舱数量</th>
@@ -3455,7 +3625,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <th>对内交货期</th>
                 <th>结算方式</th>
                 <th>是否控单业务</th>
-                <th>贷前收款比例</th>
+                <th>货前收款比例</th>
                 <th class="candidate-number">运费测算单价</th>
                 <th>采购价格条款</th>
                 <th>销售价格条款</th>
@@ -4057,7 +4227,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       ]
     };
 
-    const MAIN_TABLE_COLSPAN = 43;
+    const MAIN_TABLE_COLSPAN = 42;
 
     function getMainTableColspan() {
       return state.currentTab === 'dest' ? MAIN_TABLE_COLSPAN - 5 : MAIN_TABLE_COLSPAN;
@@ -4580,15 +4750,18 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td><span class="${statusBadgeClass}">${status}</span></td>
           <td class="ct-key-cell" title="${escapeHtml(projectNo)}">${escapeHtml(projectNo)}</td>
           <td class="ct-long-cell" title="${escapeHtml(goods.name || '-')}">${escapeHtml(goods.name || '-')}</td>
-          <td class="ct-number">${formatQty(contractQty, unit)}</td>
-          <td class="ct-number" style="font-weight:600">${formatQty(allocatableQty, unit)}</td>
-          <td class="ct-number">${formatQty(allocatedQty, unit)}</td>
+          <td class="ct-number">${formatQty(contractQty)}</td>
+          <td class="ct-number" style="font-weight:600">${formatQty(allocatableQty)}</td>
+          <td class="ct-number">${formatQty(allocatedQty)}</td>
           <td class="ct-number">
-            ${formatQty(pendingQty, unit)}
+            ${formatQty(pendingQty)}
             ${pendingQty <= 0 ? '<span class="ct-no-available">无可订舱</span>' : ''}
           </td>
+          <td>${escapeHtml(unit || '-')}</td>
           <td class="dest-column-hidden ct-muted-cell" title="${escapeHtml(getAssociatedContractNo(item))}">${escapeHtml(getAssociatedContractNo(item))}</td>
           <td class="dest-column-hidden"><span class="${getPurchaseContractStatusClass(item)}">${escapeHtml(getPurchaseContractStatusLabel(item))}</span></td>
+          <td class="ct-number">${formatQty(autoAllocatedQty)}</td>
+          <td class="ct-number">${manualInQty - manualOutQty > 0 ? '+' : ''}${formatQty(manualInQty - manualOutQty)}</td>
           <td>${escapeHtml(item.operatingUnit)}</td>
           <td class="ct-long-cell" title="${escapeHtml(item.companyTitle)}">${escapeHtml(item.companyTitle)}</td>
           <td>${escapeHtml(item.department)}</td>
@@ -4611,12 +4784,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           <td class="ct-number">${escapeHtml(item.portMiscUnitPrice)}</td>
           <td>${escapeHtml(item.tradeType)}</td>
           <td><span class="${closedBadgeClass}">${closedStatus}</span></td>
-          <td>
-            <button type="button" class="${riskBadgeClass} ${riskCount ? 'ct-risk-label-button' : ''}" ${riskCount ? `data-risk-item-id="${item.id}" aria-expanded="false" aria-describedby="riskPopover" aria-label="查看风险提醒" onmouseenter="scheduleRiskPopover(this)" onmouseleave="scheduleRiskPopoverClose()" onfocus="showRiskPopover(this)" onblur="scheduleRiskPopoverClose()" onclick="toggleRiskPopover(this, event)"` : ''}>${escapeHtml(riskSummary)}</button>
-          </td>
-          <td class="ct-number">${formatQty(autoAllocatedQty, unit)}</td>
-          <td class="ct-number">${formatQty(manualInQty, unit)}</td>
-          <td class="ct-number">${formatQty(manualOutQty, unit)}</td>
           <td>${escapeHtml(getTradeContractType(item))}</td>
           <td class="dest-column-hidden">${escapeHtml(getAssociatedContractType(item))}</td>
           <td>${escapeHtml(item.effectiveDate)}</td>
@@ -5086,7 +5253,225 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const firstRowKey = item ? getWorkbenchGoodsRows(item)[0]?.key : '';
       state.selectedRowIds.clear();
       if (firstRowKey) state.selectedRowIds.add(firstRowKey);
-      openBatchAllocationModal();
+      openFlatAllocationModal();
+    }
+
+    // ===== 人工分配（平铺：所选商品明细行逐行录入调入/调出） =====
+    let flatAllocContext = { rows: [], unit: '', projectNo: '', goodsName: '', purchaseNo: '' };
+
+    function getFlatAllocGroupKey(row) {
+      const goods = row.goods || {};
+      const projectNo = goods.projectNo || row.item.projectNo || '';
+      const goodsName = goods.name || '';
+      const unit = goods.unit || '';
+      const purchaseDetail = `${row.item.purchaseNo || ''}|${goods.code || goods.name || ''}`;
+      return [projectNo, goodsName, unit, purchaseDetail].join('::');
+    }
+
+    function openFlatAllocationModal() {
+      if (state.selectedRowIds.size === 0) {
+        showToast('请先勾选需要分配的商品明细行！', 'warning');
+        return;
+      }
+      const rows = getSelectedWorkbenchRows();
+      if (rows.some(row => row.item.type !== 'non_dest')) {
+        showToast('目的港库存业务不支持人工分配，请仅选择非目的港库存业务。', 'danger');
+        return;
+      }
+      if (rows.some(row => getRowClosedStatus(row) === '已完结')) {
+        showToast('已完结的商品明细行必须先点击“取消完结”后才能人工分配。', 'danger');
+        return;
+      }
+      const keys = new Set(rows.map(getFlatAllocGroupKey));
+      if (keys.size > 1) {
+        showToast('请选择业务项目号、商品中文名、商品标准单位、采购合同商品明细均相同的商品明细行。', 'danger');
+        return;
+      }
+
+      const first = rows[0];
+      flatAllocContext = {
+        rows: rows.map(row => ({
+          key: row.key,
+          item: row.item,
+          goods: row.goods,
+          dir: '1',
+          qty: 0
+        })),
+        unit: first.goods?.unit || '',
+        projectNo: first.goods?.projectNo || first.item.projectNo || '',
+        goodsName: first.goods?.name || '',
+        purchaseNo: first.item.purchaseNo || ''
+      };
+
+      document.getElementById('flatAllocProjectNo').textContent = flatAllocContext.projectNo || '-';
+      document.getElementById('flatAllocGoodsName').textContent = flatAllocContext.goodsName || '-';
+      document.getElementById('flatAllocUnit').textContent = flatAllocContext.unit || '-';
+      document.getElementById('flatAllocPurchaseNo').textContent = flatAllocContext.purchaseNo || '-';
+      document.getElementById('flatAllocRowCount').textContent = String(flatAllocContext.rows.length);
+
+      renderFlatAllocTable();
+      openModal('allocationFlatModal');
+    }
+
+    function getFlatAllocSignedQty(row) {
+      const qty = Math.abs(Number(row.qty || 0));
+      return row.dir === '-1' ? -qty : qty;
+    }
+
+    function getFlatAllocAfterQty(row) {
+      const goods = row.goods || {};
+      const pendingQty = Number(goods.allocatable || 0) - Number(goods.allocated || 0);
+      return pendingQty + getFlatAllocSignedQty(row);
+    }
+
+    function renderFlatAllocTable() {
+      const tbody = document.getElementById('flatAllocTableBody');
+      tbody.innerHTML = '';
+
+      flatAllocContext.rows.forEach((row, index) => {
+        const goods = row.goods || {};
+        const unit = goods.unit || '';
+        const contractQty = Number(goods.contractQty ?? goods.allocatable ?? 0);
+        const allocatedQty = Number(goods.allocated || 0);
+        const pendingQty = Number(goods.allocatable || 0) - allocatedQty;
+        const afterQty = pendingQty + getFlatAllocSignedQty(row);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-2 text-slate-400">${index + 1}</td>
+          <td class="p-2 font-mono font-bold text-brand-600">${escapeHtml(getMainContractNo(row.item))}</td>
+          <td class="p-2 font-mono">${escapeHtml(goods.projectNo || row.item.projectNo || '-')}</td>
+          <td class="p-2">${escapeHtml(goods.name || '-')}</td>
+          <td class="p-2">${escapeHtml(unit || '-')}</td>
+          <td class="p-2 text-right font-mono">${formatQty(contractQty)}</td>
+          <td class="p-2 text-right font-mono">${formatQty(allocatedQty)}</td>
+          <td class="p-2 text-right font-mono font-bold">${formatQty(pendingQty)}</td>
+          <td class="p-2">
+            <select class="alloc-flat-dir" data-key="${row.key}" onchange="onFlatAllocDirChange(this)">
+              <option value="1" ${row.dir !== '-1' ? 'selected' : ''}>调入</option>
+              <option value="-1" ${row.dir === '-1' ? 'selected' : ''}>调出</option>
+            </select>
+          </td>
+          <td class="p-2 text-right">
+            <input type="number" min="0" step="1" inputmode="numeric" class="alloc-flat-input" data-key="${row.key}" value="${row.qty ? row.qty : ''}" placeholder="0" oninput="onFlatAllocInput(this)">
+          </td>
+          <td class="p-2 text-right font-mono" id="flat-after-${row.key}">${formatQty(afterQty)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (window.lucide) lucide.createIcons();
+      recalcFlatAlloc();
+    }
+
+    function onFlatAllocDirChange(select) {
+      const row = flatAllocContext.rows.find(candidate => candidate.key === select.dataset.key);
+      if (!row) return;
+      row.dir = select.value === '-1' ? '-1' : '1';
+      updateFlatAllocRow(row);
+      recalcFlatAlloc();
+    }
+
+    function onFlatAllocInput(input) {
+      const key = input.dataset.key;
+      const row = flatAllocContext.rows.find(candidate => candidate.key === key);
+      if (!row) return;
+
+      const value = Math.max(0, Number(input.value || 0));
+      row.qty = Number.isFinite(value) ? value : 0;
+
+      updateFlatAllocRow(row);
+      recalcFlatAlloc();
+    }
+
+    function updateFlatAllocRow(row) {
+      const cell = document.getElementById(`flat-after-${row.key}`);
+      if (!cell) return;
+      const afterQty = getFlatAllocAfterQty(row);
+      cell.textContent = formatQty(afterQty);
+      const isOver = row.dir === '-1' && Number(row.qty || 0) > 0 && afterQty <= 0;
+      cell.classList.toggle('text-rose-600', isOver);
+      cell.classList.toggle('font-bold', isOver);
+    }
+
+    function evaluateFlatAlloc() {
+      let inTotal = 0;
+      let outTotal = 0;
+      flatAllocContext.rows.forEach(row => {
+        const qty = Number(row.qty || 0);
+        if (!qty) return;
+        if (row.dir === '-1') outTotal += qty;
+        else inTotal += qty;
+      });
+      const netTotal = inTotal - outTotal;
+      const overRows = flatAllocContext.rows.filter(row => {
+        if (row.dir !== '-1' || Number(row.qty || 0) <= 0) return false;
+        return getFlatAllocAfterQty(row) <= 0;
+      });
+      const balanced = Math.abs(netTotal) < 1e-6;
+      return { inTotal, outTotal, netTotal, overRows, balanced };
+    }
+
+    function recalcFlatAlloc() {
+      const { inTotal, outTotal, netTotal, overRows, balanced } = evaluateFlatAlloc();
+      const unit = flatAllocContext.unit || '';
+      document.getElementById('flatAllocInTotal').textContent = formatQty(inTotal, unit);
+      document.getElementById('flatAllocOutTotal').textContent = formatQty(outTotal, unit);
+
+      const status = document.getElementById('flatAllocStatus');
+      const confirmBtn = document.getElementById('flatAllocConfirmBtn');
+      let valid = false;
+      let message = '';
+      let tone = 'bg-amber-100 text-amber-800';
+
+      if (!inTotal && !outTotal) {
+        message = '请选择分配方向并录入本次分配数量';
+      } else if (overRows.length) {
+        message = `调出后待订舱数量需 >0（请检查 ${getMainContractNo(overRows[0].item)}）`;
+        tone = 'bg-rose-100 text-rose-700';
+      } else if (!balanced) {
+        message = `调入与调出不一致，差额 ${formatQty(netTotal, unit)}`;
+        tone = 'bg-rose-100 text-rose-700';
+      } else {
+        valid = true;
+        message = '校验通过，可确认分配';
+        tone = 'bg-emerald-100 text-emerald-700';
+      }
+
+      status.className = `font-bold px-2.5 py-1 rounded ${tone}`;
+      status.textContent = message;
+      if (confirmBtn) confirmBtn.disabled = !valid;
+      return valid;
+    }
+
+    function confirmFlatAllocation() {
+      if (!recalcFlatAlloc()) return;
+
+      let affected = 0;
+      flatAllocContext.rows.forEach(row => {
+        if (!row.qty) return;
+        const goods = row.goods;
+        if (!goods) return;
+        const autoAllocated = Number(goods.autoAllocated ?? goods.allocatable ?? 0);
+        const qty = Number(row.qty || 0);
+        if (row.dir === '-1') goods.manualOut = Number(goods.manualOut || 0) + qty;
+        else goods.manualIn = Number(goods.manualIn || 0) + qty;
+        goods.allocatable = autoAllocated + goods.manualIn - goods.manualOut;
+        goods.hasAllocation = true;
+        affected += 1;
+      });
+
+      const touchedItems = [...new Map(flatAllocContext.rows.map(row => [row.item.id, row.item])).values()];
+      touchedItems.forEach(item => {
+        syncItemQtyFromLines(item);
+        item.proposedQty = Math.max(0, getPendingQty(item));
+        if (item.status !== '已关闭') item.status = getDisplayStatus(item);
+      });
+
+      state.selectedRowIds.clear();
+      document.getElementById('selectedCount').textContent = '0';
+      closeModal('allocationFlatModal');
+      renderWorkbenchTable();
+      showToast(`已完成 ${affected} 条商品明细的人工分配`, 'success');
     }
 
     // Main Entry for Allocation Modal with Validation & Equal Project Check
@@ -5199,7 +5584,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <tr>
                   <th class="p-1.5 alloc-project-col">业务项目号</th>
                   <th class="p-1.5">商品名称</th>
-                  <th class="p-1.5 text-right">合同总量</th>
+                  <th class="p-1.5 text-right">合同商品数量</th>
                   <th class="p-1.5 text-right">可订舱数量</th>
                   <th class="p-1.5 text-right">已订舱数量</th>
                   <th class="p-1.5 text-right">当前待订舱数量</th>
@@ -5285,7 +5670,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                 <tr>
                   <th class="p-1.5 alloc-project-col">业务项目号</th>
                   <th class="p-1.5">商品名称</th>
-                  <th class="p-1.5 text-right">合同总量</th>
+                  <th class="p-1.5 text-right">合同商品数量</th>
                   <th class="p-1.5 text-right">可订舱数量</th>
                   <th class="p-1.5 text-right">已订舱数量</th>
                   <th class="p-1.5 text-right">当前待订舱数量</th>
@@ -5547,7 +5932,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
                     <tr>
                       <th>业务项目号</th>
                       <th>商品名称</th>
-                      <th class="candidate-number">合同总量</th>
+                      <th class="candidate-number">合同商品数量</th>
                       <th class="candidate-number">可订舱数量</th>
                       <th class="candidate-number">已订舱数量</th>
                       <th class="candidate-number">待订舱数量</th>
@@ -6241,7 +6626,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         ['客户', getDemandContractFieldValue(item, 'customer')],
         ['结算方式', getDemandContractFieldValue(item, 'settlementMethod')],
         ['是否控单业务', getDemandContractFieldValue(item, 'controlledOrder')],
-        ['贷前收款比例', getDemandContractFieldValue(item, 'prepaymentRatio')],
+        ['货前收款比例', getDemandContractFieldValue(item, 'prepaymentRatio')],
         ['预付收款情况', getDemandContractFieldValue(item, 'prepaymentStatus')],
         ['销售价格条款', getDemandContractFieldValue(item, 'salesTerms')],
         ['采购价格条款', getDemandContractFieldValue(item, 'purchaseTerms')],
@@ -7819,6 +8204,18 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       return [...new Set(projects.length ? projects : [ct.projectNo].filter(Boolean))];
     }
 
+    function getManualPoolRows(ct) {
+      const lines = Array.isArray(ct.goodsLines) && ct.goodsLines.length
+        ? ct.goodsLines
+        : [{ projectNo: ct.projectNo, name: ct.goodsName || '-', contractQty: ct.contractQty || 0, unit: '吨' }];
+      return lines.map((goods, goodsIndex) => ({
+        key: `${ct.id}::${goodsIndex}`,
+        ct,
+        goods,
+        goodsIndex
+      }));
+    }
+
     function populateManualDatalist(id, values) {
       const datalist = document.getElementById(id);
       if (!datalist) return;
@@ -7831,7 +8228,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function renderManualFilterOptions() {
       const pool = state.controlTowerPool || [];
       populateManualDatalist('manualProjectNoOptions', pool.flatMap(getManualPoolProjects));
-      populateManualDatalist('manualTradeNoOptions', pool.flatMap(ct => [ct.salesNo, ct.purchaseNo]));
+      populateManualDatalist('manualTradeNoOptions', pool.map(ct => (ct.type === 'dest' ? ct.purchaseNo : ct.salesNo)));
       populateManualDatalist('manualCompanyOptions', pool.map(ct => ct.companyTitle));
       populateManualDatalist('manualSalesmanOptions', pool.map(ct => ct.salesman));
     }
@@ -7850,8 +8247,9 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         const projectText = getManualPoolProjects(ct).join(',');
         if (projectNoFilter && !projectText.toLowerCase().includes(projectNoFilter)) return false;
         if (tradeNoFilter) {
-          const tradeNoText = `${ct.salesNo || ''} ${ct.purchaseNo || ''}`.toLowerCase();
-          if (!tradeNoText.includes(tradeNoFilter)) return false;
+          // 贸易合同号：销售待办取销售合同号，采购待办取采购合同号
+          const tradeNo = String(ct.type === 'dest' ? (ct.purchaseNo || '') : (ct.salesNo || '')).toLowerCase();
+          if (!tradeNo.includes(tradeNoFilter)) return false;
         }
         if (controlledOrderFilter && String(ct.controlledOrder || '') !== controlledOrderFilter) return false;
         if (companyFilter && !String(ct.companyTitle || '').toLowerCase().includes(companyFilter)) return false;
@@ -7861,84 +8259,56 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       });
 
       if (filteredPool.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="28" class="p-6 text-center text-slate-400">没有匹配的控制塔合同</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="27" class="p-6 text-center text-slate-400">没有匹配的控制塔商品明细</td></tr>';
         updateManualSelectedCount();
         return;
       }
 
       filteredPool.forEach(ct => {
-        const isExpanded = state.manualExpandedIds.has(ct.id);
-        const isChecked = state.manualSelectedIds.has(ct.id);
-        const contractQty = getManualPoolContractQty(ct);
-        const unit = ct.goodsLines?.[0]?.unit || '';
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50';
-        tr.innerHTML = `
-          <td class="manual-control"><input type="checkbox" value="${ct.id}" class="manual-cb rounded text-brand-500" aria-label="选择合同 ${escapeHtml(ct.salesNo || ct.id)}" ${isChecked ? 'checked' : ''} onchange="toggleManualSelect('${ct.id}', this.checked)"></td>
-          <td class="manual-control manual-expand" onclick="toggleManualExpand('${ct.id}')"><i data-lucide="${isExpanded ? 'chevron-down' : 'chevron-right'}" class="w-4 h-4"></i></td>
-          <td class="font-mono font-bold text-brand-600">${escapeHtml(ct.salesNo)}</td>
-          <td>${escapeHtml(ct.type === 'dest' ? '采购合同' : '销售合同')}</td>
-          <td class="font-mono text-brand-600" title="${escapeHtml(getManualPoolProjectDisplay(ct))}">${escapeHtml(getManualPoolProjectDisplay(ct))}</td>
-          <td class="manual-long-cell" title="${escapeHtml(getManualPoolGoodsSummary(ct))}">${escapeHtml(getManualPoolGoodsSummary(ct))}</td>
-          <td class="manual-number">${formatQty(contractQty, unit)}</td>
-          <!--<td class="font-mono text-slate-600">${escapeHtml(ct.purchaseNo || '-')}</td>
-          <td>${escapeHtml(ct.type === 'dest' ? '无' : '采购合同')}</td> -->
-          <td>${escapeHtml(ct.operatingUnit)}</td>
-          <td class="manual-long-cell" title="${escapeHtml(ct.companyTitle)}">${escapeHtml(ct.companyTitle)}</td>
-          <td>${escapeHtml(ct.department)}</td>
-          <td>${escapeHtml(ct.accountingGroup)}</td>
-          <td>${escapeHtml(ct.salesman)}</td>
-          <td>${escapeHtml(ct.loadingPort || '厦门港')}</td>
-          <td>${escapeHtml(ct.unloadingPort || '大连港')}</td>
-          <td>${escapeHtml(ct.shipmentDeadline)}</td>
-          <td class="manual-long-cell" title="${escapeHtml(ct.customer)}">${escapeHtml(ct.customer)}</td>
-          <td>${escapeHtml(ct.isInternalCustomer || '是')}</td>
-          <td class="manual-long-cell" title="${escapeHtml(ct.supplier)}">${escapeHtml(ct.supplier)}</td>
-          <td>${escapeHtml(ct.internalDeliveryDate || '-')}</td>
-          <td>${escapeHtml(ct.settlementMethod)}</td>
-          <td>${escapeHtml(ct.controlledOrder)}</td>
-          <td>${escapeHtml(ct.prepaymentRatio || '-')}</td>
-          <td class="manual-number">${escapeHtml(ct.freightUnitPrice || '-')}</td>
-          <td>${escapeHtml(getPriceTerms(ct))}</td>
-          <td>${escapeHtml(getControlledMode(ct))}</td>
-          <td>${escapeHtml(ct.dispatchedByUs || '-')}</td>
-          <td class="manual-number">${escapeHtml(ct.portMiscUnitPrice || '-')}</td>
-          <td>${escapeHtml(ct.tradeType)}</td>
-          <!--<td><span class="${getManualPoolStatusClass(ct)}">${escapeHtml(ct.status)}</span></td>-->
-        `;
-        tbody.appendChild(tr);
-
-        if (isExpanded && ct.goodsLines?.length) {
-          const subTr = document.createElement('tr');
-          const subRows = ct.goodsLines.map(goods => `
-            <tr>
-              <td class="font-mono font-bold text-brand-600">${escapeHtml(goods.projectNo || ct.projectNo)}</td>
-              <td>${escapeHtml(goods.name)}</td>
-              <td class="manual-number">${formatQty(goods.contractQty, goods.unit)}</td>
-            </tr>
-          `).join('');
-          subTr.innerHTML = `
-            <td colspan="28" class="manual-detail-cell">
-              <div class="manual-subtable-wrap">
-                <div class="manual-subtable-title"><i data-lucide="layers" class="w-3.5 h-3.5 text-brand-500"></i>商品明细</div>
-                <table class="manual-subtable">
-                  <thead><tr><th>项目号</th><th>商品名称</th><th class="manual-number">合同总量</th></tr></thead>
-                  <tbody>${subRows}</tbody>
-                </table>
-              </div>
-            </td>
+        const typeLabel = ct.type === 'dest' ? '采购合同' : '销售合同';
+        getManualPoolRows(ct).forEach(row => {
+          const { goods } = row;
+          const isChecked = state.manualSelectedIds.has(row.key);
+          const projectNo = goods.projectNo || ct.projectNo || '-';
+          const goodsName = goods.name || '-';
+          const goodsQty = Number(goods.contractQty || 0);
+          const unit = goods.unit || '';
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50';
+          tr.innerHTML = `
+            <td class="manual-control"><input type="checkbox" value="${row.key}" class="manual-cb rounded text-brand-500" aria-label="选择商品 ${escapeHtml(goodsName)}" ${isChecked ? 'checked' : ''} onchange="toggleManualSelect('${row.key}', this.checked)"></td>
+            <td class="font-mono font-bold text-brand-600">${escapeHtml(ct.salesNo)}</td>
+            <td>${escapeHtml(typeLabel)}</td>
+            <td class="font-mono text-brand-600" title="${escapeHtml(projectNo)}">${escapeHtml(projectNo)}</td>
+            <td class="manual-long-cell" title="${escapeHtml(goodsName)}">${escapeHtml(goodsName)}</td>
+            <td class="manual-number">${formatQty(goodsQty, unit)}</td>
+            <td>${escapeHtml(ct.operatingUnit)}</td>
+            <td class="manual-long-cell" title="${escapeHtml(ct.companyTitle)}">${escapeHtml(ct.companyTitle)}</td>
+            <td>${escapeHtml(ct.department)}</td>
+            <td>${escapeHtml(ct.accountingGroup)}</td>
+            <td>${escapeHtml(ct.salesman)}</td>
+            <td>${escapeHtml(ct.loadingPort || '厦门港')}</td>
+            <td>${escapeHtml(ct.unloadingPort || '大连港')}</td>
+            <td>${escapeHtml(ct.shipmentDeadline)}</td>
+            <td class="manual-long-cell" title="${escapeHtml(ct.customer)}">${escapeHtml(ct.customer)}</td>
+            <td>${escapeHtml(ct.isInternalCustomer || '是')}</td>
+            <td class="manual-long-cell" title="${escapeHtml(ct.supplier)}">${escapeHtml(ct.supplier)}</td>
+            <td>${escapeHtml(ct.internalDeliveryDate || '-')}</td>
+            <td>${escapeHtml(ct.settlementMethod)}</td>
+            <td>${escapeHtml(ct.controlledOrder)}</td>
+            <td>${escapeHtml(ct.prepaymentRatio || '-')}</td>
+            <td class="manual-number">${escapeHtml(ct.freightUnitPrice || '-')}</td>
+            <td>${escapeHtml(getPriceTerms(ct))}</td>
+            <td>${escapeHtml(getControlledMode(ct))}</td>
+            <td>${escapeHtml(ct.dispatchedByUs || '-')}</td>
+            <td class="manual-number">${escapeHtml(ct.portMiscUnitPrice || '-')}</td>
+            <td>${escapeHtml(ct.tradeType)}</td>
           `;
-          tbody.appendChild(subTr);
-        }
+          tbody.appendChild(tr);
+        });
       });
       updateManualSelectedCount();
       if (window.lucide) lucide.createIcons();
-    }
-
-    function toggleManualExpand(contractId) {
-      if (state.manualExpandedIds.has(contractId)) state.manualExpandedIds.delete(contractId);
-      else state.manualExpandedIds.add(contractId);
-      renderManualTable();
     }
 
     function toggleManualSelectAll(masterCb) {
@@ -8003,74 +8373,92 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         showToast('网络连接已断开，合同尚未拉入，请恢复网络后重试。', 'danger');
         return;
       }
-      const selectedIds = Array.from(state.manualSelectedIds);
-      if (selectedIds.length === 0) {
-        showToast('请选择需要拉入的控制塔合同', 'warning');
+      const selectedKeys = Array.from(state.manualSelectedIds);
+      if (selectedKeys.length === 0) {
+        showToast('请选择需要拉入的控制塔商品明细', 'warning');
         return;
       }
 
-      selectedIds.forEach(ctId => {
-        const ctItem = state.controlTowerPool.find(c => c.id === ctId);
-        if (ctItem) {
-          const goodsLines = (ctItem.goodsLines || []).map(goods => ({
-            code: goods.code,
-            projectNo: goods.projectNo || ctItem.projectNo,
-            name: goods.name,
-            contractQty: Number(goods.contractQty || 0),
-            allocatable: Number(goods.contractQty || 0),
-            allocated: 0,
-            proposed: Number(goods.contractQty || 0),
-            unit: goods.unit || '吨'
-          }));
-          const contractQty = getManualPoolContractQty(ctItem);
-          const newItem = {
-            id: 'WB-' + Math.floor(1000 + Math.random()*9000),
-            projectNo: ctItem.projectNo,
-            projectNos: ctItem.projectNos || goodsLines.map(goods => goods.projectNo),
-            type: ctItem.type || state.currentTab,
-            salesNo: ctItem.salesNo,
-            salesDate: new Date().toISOString().slice(0,10),
-            purchaseNo: ctItem.purchaseNo,
-            customer: ctItem.customer,
-            supplier: ctItem.supplier,
-            salesman: ctItem.salesman,
-            status: ctItem.status || '待安排',
-            riskFlag: '正常',
-            pullType: 'MANUAL',
-            contractQty,
-            allocatableQty: contractQty,
-            allocatedQty: 0,
-            proposedQty: contractQty,
-            expanded: false,
-            goodsLines,
-            logisticsDemands: []
-          };
-          initializeItemDefaults(newItem);
-          newItem.operatingUnit = ctItem.operatingUnit;
-          newItem.companyTitle = ctItem.companyTitle;
-          newItem.department = ctItem.department;
-          newItem.accountingGroup = ctItem.accountingGroup;
-          newItem.shipmentDeadline = ctItem.shipmentDeadline;
-          newItem.internalDeliveryDate = ctItem.internalDeliveryDate || '-';
-          newItem.settlementMethod = ctItem.settlementMethod;
-          newItem.receiptStatus = ctItem.receiptStatus;
-          newItem.controlledOrder = ctItem.controlledOrder;
-          newItem.prepaymentRatio = ctItem.prepaymentRatio;
-          newItem.freightUnitPrice = ctItem.freightUnitPrice;
-          newItem.purchaseTerms = ctItem.purchaseTerms || '-';
-          newItem.salesTerms = ctItem.salesTerms;
-          newItem.dispatchedByUs = ctItem.dispatchedByUs;
-          newItem.portMiscUnitPrice = ctItem.portMiscUnitPrice;
-          newItem.tradeType = ctItem.tradeType;
-          newItem.effectiveDate = new Date().toISOString().slice(0, 10);
-          state.items.unshift(newItem);
+      const grouped = new Map();
+      selectedKeys.forEach(key => {
+        const sep = key.lastIndexOf('::');
+        const ctId = sep >= 0 ? key.slice(0, sep) : key;
+        const goodsIndex = sep >= 0 ? Number(key.slice(sep + 2)) : 0;
+        if (!grouped.has(ctId)) grouped.set(ctId, new Set());
+        grouped.get(ctId).add(goodsIndex);
+      });
 
+      grouped.forEach((indexes, ctId) => {
+        const ctItem = state.controlTowerPool.find(c => c.id === ctId);
+        if (!ctItem) return;
+        const allLines = ctItem.goodsLines || [];
+        const pickedLines = allLines.filter((goods, index) => indexes.has(index));
+        if (pickedLines.length === 0) return;
+
+        const goodsLines = pickedLines.map(goods => ({
+          code: goods.code,
+          projectNo: goods.projectNo || ctItem.projectNo,
+          name: goods.name,
+          contractQty: Number(goods.contractQty || 0),
+          allocatable: Number(goods.contractQty || 0),
+          allocated: 0,
+          proposed: Number(goods.contractQty || 0),
+          unit: goods.unit || '吨'
+        }));
+        const contractQty = goodsLines.reduce((total, goods) => total + Number(goods.contractQty || 0), 0);
+        const newItem = {
+          id: 'WB-' + Math.floor(1000 + Math.random()*9000),
+          projectNo: goodsLines[0]?.projectNo || ctItem.projectNo,
+          projectNos: [...new Set(goodsLines.map(goods => goods.projectNo).filter(Boolean))],
+          type: ctItem.type || state.currentTab,
+          salesNo: ctItem.salesNo,
+          salesDate: new Date().toISOString().slice(0,10),
+          purchaseNo: ctItem.purchaseNo,
+          customer: ctItem.customer,
+          supplier: ctItem.supplier,
+          salesman: ctItem.salesman,
+          status: ctItem.status || '待安排',
+          riskFlag: '正常',
+          pullType: 'MANUAL',
+          contractQty,
+          allocatableQty: contractQty,
+          allocatedQty: 0,
+          proposedQty: contractQty,
+          expanded: false,
+          goodsLines,
+          logisticsDemands: []
+        };
+        initializeItemDefaults(newItem);
+        newItem.operatingUnit = ctItem.operatingUnit;
+        newItem.companyTitle = ctItem.companyTitle;
+        newItem.department = ctItem.department;
+        newItem.accountingGroup = ctItem.accountingGroup;
+        newItem.shipmentDeadline = ctItem.shipmentDeadline;
+        newItem.internalDeliveryDate = ctItem.internalDeliveryDate || '-';
+        newItem.settlementMethod = ctItem.settlementMethod;
+        newItem.receiptStatus = ctItem.receiptStatus;
+        newItem.controlledOrder = ctItem.controlledOrder;
+        newItem.prepaymentRatio = ctItem.prepaymentRatio;
+        newItem.freightUnitPrice = ctItem.freightUnitPrice;
+        newItem.purchaseTerms = ctItem.purchaseTerms || '-';
+        newItem.salesTerms = ctItem.salesTerms;
+        newItem.dispatchedByUs = ctItem.dispatchedByUs;
+        newItem.portMiscUnitPrice = ctItem.portMiscUnitPrice;
+        newItem.tradeType = ctItem.tradeType;
+        newItem.effectiveDate = new Date().toISOString().slice(0, 10);
+        state.items.unshift(newItem);
+
+        // 未全选时仅从控制塔池中移除已拉入的商品明细行
+        if (indexes.size >= allLines.length) {
           state.controlTowerPool = state.controlTowerPool.filter(c => c.id !== ctId);
+        } else {
+          ctItem.goodsLines = allLines.filter((goods, index) => !indexes.has(index));
+          ctItem.projectNos = [...new Set(ctItem.goodsLines.map(goods => goods.projectNo || ctItem.projectNo).filter(Boolean))];
         }
       });
 
       state.manualSelectedIds.clear();
-      showToast(`成功手动拉入 ${selectedIds.length} 条合同至待办工作台`, 'success');
+      showToast(`成功手动拉入 ${selectedKeys.length} 条商品明细至待办工作台`, 'success');
       closeModal('manualModal');
       renderWorkbenchTable();
     }
