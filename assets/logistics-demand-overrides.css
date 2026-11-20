@@ -166,7 +166,7 @@ body.bill-modal-open{overflow:hidden}
 @media(max-width:1360px){.bill-task-overlay{padding:16px}.bill-task-modal{width:calc(100vw - 32px);height:calc(100vh - 32px)}.bill-task-query-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* 费用与利润 - 分阶段利润统计 */
-.finance-profit-table{min-width:900px}
+.finance-profit-table{min-width:1080px}
 .finance-profit-table th{height:36px;padding:0 12px;background:#f8fafc;color:#64748b;font-size:11px;font-weight:600;text-align:left;white-space:nowrap}
 .finance-profit-table th small{margin-left:4px;color:#94a3b8;font-size:10px;font-weight:400}
 .finance-profit-table td{height:42px!important;padding:7px 12px!important;vertical-align:middle;white-space:nowrap}
@@ -177,6 +177,12 @@ body.bill-modal-open{overflow:hidden}
 .finance-profit-result{margin:0;padding:0;border:0}
 .finance-profit-result>span,.finance-profit-result>strong{font-weight:700}
 .finance-profit-result.is-negative>strong{color:#dc2626}
+.finance-profit-table.finance-profit-matrix-table{min-width:1120px}
+.finance-profit-matrix-table th{text-align:center}
+.finance-profit-matrix-table td{text-align:center}
+.finance-profit-matrix-table .finance-profit-currency{color:#334155;font-weight:600}
+.finance-profit-matrix-table .finance-profit-number{color:#334155;font-size:11px;font-variant-numeric:tabular-nums}
+.finance-profit-matrix-table .finance-profit-base-row td{background:#f8fafc!important}
 .exec-finance-ref-local{color:#475569;font-size:11px;line-height:1.45}
 .exec-finance-statement-amount{margin-top:7px;padding-top:7px;border-top:1px solid #eef2f7}
 .finance-profit-table .finance-profit-currency{width:132px;background:#fbfcfe;color:#475569;font-size:12px;font-weight:600;vertical-align:middle!important}
@@ -258,3 +264,108 @@ body.maintain-fee-modal-open{overflow:hidden}
 
 
 .list-mode-hint{display:inline-flex;height:24px;align-items:center;margin:0 8px;padding:0 8px;border-radius:12px;background:#eff6ff;color:#2563eb;font-size:10px;font-weight:600;white-space:nowrap}
+
+/* 发起物流需求 - 与客户订单列表一致 */
+.arrangement-backdrop { position:fixed; inset:0; z-index:260; display:grid; place-items:center; padding:20px; background:rgba(15,23,42,.48); }
+    .arrangement-backdrop[hidden] { display:none; }
+    .arrangement-dialog { width:min(1480px,calc(100vw - 32px)); height:min(900px,calc(100vh - 32px)); max-height:calc(100vh - 32px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #d7dfe9; border-radius:8px; background:#fff; box-shadow:0 24px 70px rgba(15,23,42,.26); }
+    .arrangement-head { min-height:58px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; border-bottom:1px solid #e9edf3; }
+    .arrangement-title { color:#253044; font-size:18px; font-weight:700; }
+    .arrangement-close { width:30px; height:30px; border:0; border-radius:5px; color:#8b95a4; background:transparent; font-size:23px; cursor:pointer; }
+    .arrangement-close:hover { color:#c62828; background:#fff4f3; }
+    .arrangement-body { flex:1; overflow:auto; padding:18px 22px 22px; background:#fff; }
+    .arrangement-section + .arrangement-section { margin-top:18px; padding-top:16px; border-top:1px solid #eef1f5; }
+    .arrangement-section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .arrangement-section-title { color:#263246; font-size:14px; font-weight:700; }
+    .arrangement-section-note { color:#8b95a5; font-size:11px; }
+    .arrangement-form-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px 14px; }
+    .arrangement-field { min-width:0; }
+    .arrangement-field > label, .arrangement-field-label { display:block; margin-bottom:5px; color:#6b7789; font-size:11px; }
+    .arrangement-field .required { color:#c62828; margin-left:2px; }
+    .arrangement-field input, .arrangement-field select { width:100%; height:32px; padding:0 9px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; box-sizing:border-box; }
+    .arrangement-field input:focus, .arrangement-field select:focus { outline:none; border-color:#6da2f4; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .arrangement-field input[readonly] { color:#5d6879; background:#f7f9fc; }
+    .arrangement-route-pool { display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; }
+    .arrangement-route-card { width:260px; flex:0 0 260px; padding:10px 11px; border:1px solid #dce4ef; border-radius:6px; background:#f9fbfe; cursor:grab; }
+    .arrangement-route-card.is-assigned { opacity:.58; cursor:not-allowed; }
+    .arrangement-route-card.dragging { opacity:.45; }
+    .arrangement-route-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; color:#2563eb; font-size:12px; font-weight:700; }
+    .arrangement-route-card-path { margin-top:6px; overflow:hidden; color:#334155; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+    .arrangement-route-card-mode { margin-top:3px; color:#8490a2; font-size:11px; }
+    .arrangement-route-drag-hint { margin-top:9px; color:#2563eb; font-size:10px; }
+    .arrangement-route-card.is-assigned .arrangement-route-drag-hint { color:#94a3b8; }
+    .arrangement-mini-btn { height:27px; padding:0 8px; border:1px solid #bcd4fa; border-radius:4px; color:#2563eb; background:#f7fbff; font-size:10px; cursor:pointer; }
+    .arrangement-mini-btn:disabled { color:#a4adba; border-color:#e2e7ee; background:#f7f9fb; cursor:not-allowed; }
+    .arrangement-add-consignment { height:28px; padding:0 10px; border:1px solid #bcd4fa; border-radius:5px; color:#2563eb; background:#f7fbff; font-size:11px; cursor:pointer; }
+    .arrangement-consignment { margin-bottom:14px; padding:14px; border:1px solid #dfe6ef; border-radius:7px; background:#fff; transition:border-color .15s, background-color .15s, box-shadow .15s; }
+    .arrangement-consignment.is-dragover { border-color:#2563eb; background:#f8fbff; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .arrangement-consignment:last-child { margin-bottom:0; }
+    .arrangement-consignment-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .arrangement-consignment-title { color:#1f2b3d; font-size:13px; font-weight:700; }
+    .arrangement-consignment-actions { display:flex; gap:6px; }
+    .arrangement-icon-btn { width:27px; height:27px; display:grid; place-items:center; border:1px solid #d7dee8; border-radius:4px; color:#8793a3; background:#fff; cursor:pointer; }
+    .arrangement-icon-btn:hover { color:#c62828; border-color:#efc7c2; background:#fff6f5; }
+    .arrangement-tasks { margin-top:12px; padding-top:10px; border-top:1px solid #eef2f6; }
+    .arrangement-task-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .arrangement-task-title { color:#526176; font-size:12px; font-weight:600; }
+    .arrangement-task-list { display:grid; gap:7px; }
+    .arrangement-task-card { display:grid; grid-template-columns:1.4fr 1fr 1fr 28px; gap:8px; align-items:end; padding:9px; border:1px solid #e4e9f1; border-radius:5px; background:#fbfcfe; }
+    .arrangement-task-field { min-width:0; }
+    .arrangement-task-field label { display:block; margin-bottom:4px; color:#7b8798; font-size:10px; }
+    .arrangement-task-field select { width:100%; height:29px; padding:0 6px; border:1px solid #d6dee8; border-radius:4px; color:#475569; background:#fff; font-size:11px; }
+    .arrangement-task-route-value { min-height:29px; display:flex; align-items:center; padding:0 8px; border:1px solid #e2e8f0; border-radius:4px; color:#526176; background:#f8fafc; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .arrangement-task-delete { width:28px; height:29px; border:1px solid #d7dee8; border-radius:4px; color:#8b95a4; background:#fff; cursor:pointer; }
+    .arrangement-task-delete:hover { color:#c62828; border-color:#efc7c2; background:#fff5f4; }
+    .arrangement-dropzone { margin-top:9px; padding:10px; border:1px dashed #bcd4fa; border-radius:5px; color:#7e8da2; background:#f8fbff; text-align:center; font-size:11px; }
+    .arrangement-dropzone.is-dragover { border-color:#2563eb; background:#eef5ff; color:#2563eb; }
+    .arrangement-task-empty { padding:9px; color:#9aa4b2; font-size:11px; text-align:center; }
+    .arrangement-empty-consignment { padding:28px 16px; border:1px dashed #d8e0eb; border-radius:6px; color:#8b95a5; text-align:center; font-size:12px; }
+    .arrangement-foot { display:flex; justify-content:flex-end; gap:9px; min-height:56px; align-items:center; padding:0 22px; border-top:1px solid #e9edf3; background:#fff; }
+    .arrangement-foot .btn { min-width:88px; justify-content:center; }
+    @media(max-width:900px) { .arrangement-form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .arrangement-task-card { grid-template-columns:1fr 1fr; } .arrangement-task-delete { width:100%; } }
+
+.related-order-open{display:inline-flex;width:24px;height:24px;flex:0 0 24px;align-items:center;justify-content:center;border:1px solid #dbe3ee;border-radius:5px;background:#fff;color:#2563eb;cursor:pointer}.related-order-open:hover{border-color:#93c5fd;background:#eff6ff}.related-order-open svg{width:13px;height:13px}
+
+.goods-route-summary{display:grid;min-width:180px;gap:1px;line-height:1.3}.goods-route-summary strong{color:#2563eb;font-size:11px;font-weight:600}.goods-route-summary span{overflow:hidden;color:#64748b;font-size:10px;text-overflow:ellipsis;white-space:nowrap}.goods-route-summary span:last-child{color:#475569}
+
+/* 商品明细 · 选择商品弹窗（对齐线上 OMS 交互） */
+body.pd-picker-open{overflow:hidden}
+.pd-picker-overlay{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(15,23,42,.45)}
+.pd-picker-modal{display:flex;flex-direction:column;width:min(1520px,94vw);height:min(820px,88vh);overflow:hidden;background:#fff;border-radius:10px;box-shadow:0 24px 60px rgba(15,23,42,.28)}
+.pd-picker-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #eef2f7}
+.pd-picker-head h2{margin:0;font-size:18px;font-weight:600;color:#1f2937}
+.pd-picker-close{border:0;background:none;font-size:24px;line-height:1;color:#94a3b8;cursor:pointer}
+.pd-picker-close:hover{color:#475569}
+.pd-picker-body{display:flex;flex:1;flex-direction:column;min-height:0;padding:12px 20px 0}
+.pd-picker-query{margin-bottom:10px;border:1px solid #e8edf3;border-radius:8px}
+.pd-picker-query-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px}
+.pd-picker-query-toggle{display:flex;align-items:center;gap:6px;border:0;background:none;font-size:13px;font-weight:600;color:#374151;cursor:pointer}
+.pd-picker-query-toggle .pd-caret{color:#94a3b8;font-size:11px;transition:transform .15s}
+.pd-picker-query.is-collapsed .pd-caret{transform:rotate(-90deg)}
+.pd-picker-query-actions{display:flex;gap:8px}
+.pd-picker-query-body{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px 16px;padding:2px 12px 14px}
+.pd-picker-query.is-collapsed .pd-picker-query-body{display:none}
+.pd-field{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#64748b}
+.pd-field input,.pd-field select{height:30px;padding:0 8px;border:1px solid #dbe2ea;border-radius:4px;background:#fff;font-size:12px;color:#1f2937}
+.pd-picker-tablebar{display:flex;align-items:center;justify-content:space-between;height:28px}
+.pd-picker-count{font-size:12px;color:#94a3b8}
+.pd-picker-tablewrap{flex:1;min-height:0;overflow:auto;border:1px solid #eef2f7;border-radius:6px}
+.pd-picker-table{width:100%;min-width:2100px;border-collapse:separate;border-spacing:0;font-size:12px}
+.pd-picker-table th{position:sticky;top:0;z-index:2;padding:8px 10px;background:#f5f7fa;border-bottom:1px solid #e8edf3;color:#475569;font-weight:600;text-align:left;white-space:nowrap}
+.pd-picker-table td{max-width:220px;padding:8px 10px;overflow:hidden;border-bottom:1px solid #f1f5f9;color:#334155;white-space:nowrap;text-overflow:ellipsis}
+.pd-picker-table tbody tr:hover{background:#f8fafc}
+.pd-picker-table th.pd-check,.pd-picker-table td.pd-check{width:44px;padding:0;text-align:center}
+.pd-status{display:inline-block;padding:0 6px;border:1px solid #f7d08a;border-radius:3px;background:#fff7e6;color:#b45309;font-size:11px;line-height:18px}
+.pd-empty{padding:36px 0!important;text-align:center;color:#94a3b8}
+.pd-picker-pager{display:flex;align-items:center;justify-content:flex-end;gap:10px;height:40px;font-size:12px;color:#64748b}
+.pd-page{min-width:26px;height:26px;border:1px solid #dbe2ea;border-radius:4px;background:#fff;color:#475569;cursor:pointer}
+.pd-page.is-active{border-color:#2563eb;color:#2563eb}
+.pd-page-size{color:#94a3b8}
+.pd-picker-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid #eef2f7;background:#fcfdff}
+.pd-picker-stats{display:flex;gap:18px;font-size:12px;color:#64748b}
+.pd-picker-stats b{margin-left:4px;color:#1f2937;font-weight:600}
+.pd-picker-actions{display:flex;gap:10px}
+.goods-panel-head>span{flex:0 0 auto}
+.goods-panel-head>button{margin-left:auto}
+.goods-panel-hint{margin-left:auto;font-size:12px;color:#9aa5b1}
+@media(max-width:1200px){.pd-picker-query-body{grid-template-columns:repeat(2,minmax(0,1fr))}}
