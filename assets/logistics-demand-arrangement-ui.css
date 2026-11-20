@@ -1,0 +1,108 @@
+/* 物流需求单 - 发起物流安排 / 新增任务弹窗 */
+body.ld-arrangement-dialog-open{overflow:hidden}
+.ld-arrangement-backdrop{position:fixed;inset:0;z-index:360;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.48)}
+.ld-arrangement-dialog{width:min(1480px,calc(100vw - 32px));height:min(900px,calc(100vh - 32px));max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #d7dfe9;border-radius:8px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.26)}
+.ld-arrangement-head{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 22px;border-bottom:1px solid #e9edf3}
+.ld-arrangement-title{margin:0;color:#253044;font-size:18px;font-weight:700}
+.ld-arrangement-close{width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:5px;color:#8b95a4;background:transparent;font-size:23px;line-height:1;cursor:pointer}
+.ld-arrangement-close:hover{color:#c62828;background:#fff4f3}
+.ld-arrangement-body{flex:1;overflow:auto;padding:18px 22px 22px;background:#fff}
+.ld-arrangement-section+.ld-arrangement-section{margin-top:18px;padding-top:16px;border-top:1px solid #eef1f5}
+.ld-arrangement-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.ld-arrangement-section-title{color:#263246;font-size:14px;font-weight:700}
+.ld-arrangement-section-note{color:#8b95a5;font-size:11px}
+.ld-arrangement-form-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 14px}
+.ld-arrangement-field{min-width:0}
+.ld-arrangement-field>label{display:block;margin-bottom:5px;color:#6b7789;font-size:11px}
+.ld-arrangement-field .required{color:#c62828;margin-left:2px}
+.ld-arrangement-field input,.ld-arrangement-field select{width:100%;height:32px;padding:0 9px;border:1px solid #d9e0ea;border-radius:5px;color:#334155;background:#fff;font-size:12px;box-sizing:border-box;outline:none}
+.ld-arrangement-field input:focus,.ld-arrangement-field select:focus{border-color:#6da2f4;box-shadow:0 0 0 2px rgba(37,99,235,.1)}
+.ld-arrangement-field input[readonly]{color:#5d6879;background:#f7f9fc}
+.ld-arrangement-route-pool{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.ld-arrangement-route-card{width:260px;flex:0 0 260px;padding:10px 11px;border:1px solid #dce4ef;border-radius:6px;background:#f9fbfe;cursor:grab}
+.ld-arrangement-route-card.is-assigned{opacity:.58;cursor:not-allowed}
+.ld-arrangement-route-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#2563eb;font-size:12px;font-weight:700}
+.ld-arrangement-route-card-path{margin-top:6px;overflow:hidden;color:#334155;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.ld-arrangement-route-card-mode{margin-top:3px;color:#8490a2;font-size:11px}
+.ld-arrangement-route-drag-hint{margin-top:9px;color:#2563eb;font-size:10px}
+.ld-arrangement-route-card.is-assigned .ld-arrangement-route-drag-hint{color:#94a3b8}
+.ld-arrangement-add-consignment{height:28px;padding:0 10px;border:1px solid #bcd4fa;border-radius:5px;color:#2563eb;background:#f7fbff;font-size:11px;cursor:pointer}
+.ld-arrangement-consignment{margin-bottom:14px;padding:14px;border:1px solid #dfe6ef;border-radius:7px;background:#fff}
+.ld-arrangement-consignment:last-child{margin-bottom:0}
+.ld-arrangement-consignment-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.ld-arrangement-consignment-title{color:#1f2b3d;font-size:13px;font-weight:700}
+.ld-arrangement-consignment-actions{display:flex;align-items:center;gap:6px}
+.ld-arrangement-mini-btn{height:27px;padding:0 8px;border:1px solid #bcd4fa;border-radius:4px;color:#2563eb;background:#f7fbff;font-size:10px;cursor:pointer}
+.ld-arrangement-icon-btn{width:27px;height:27px;display:grid;place-items:center;border:1px solid #d7dee8;border-radius:4px;color:#8793a3;background:#fff;cursor:pointer}
+.ld-arrangement-icon-btn:hover{color:#c62828;border-color:#efc7c2;background:#fff6f5}
+.ld-arrangement-tasks{margin-top:12px;padding-top:10px;border-top:1px solid #eef2f6}
+.ld-arrangement-task-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.ld-arrangement-task-title{color:#526176;font-size:12px;font-weight:600}
+.ld-arrangement-task-list{display:grid;gap:7px}
+.ld-arrangement-task-card{display:grid;grid-template-columns:1.4fr 1fr 1fr 28px;gap:8px;align-items:end;padding:9px;border:1px solid #e4e9f1;border-radius:5px;background:#fbfcfe}
+.ld-arrangement-task-field{min-width:0}
+.ld-arrangement-task-field label{display:block;margin-bottom:4px;color:#7b8798;font-size:10px}
+.ld-arrangement-task-field select{width:100%;height:29px;padding:0 6px;border:1px solid #d6dee8;border-radius:4px;color:#475569;background:#fff;font-size:11px}
+.ld-arrangement-task-route-value{min-height:29px;display:flex;align-items:center;padding:0 8px;border:1px solid #e2e8f0;border-radius:4px;color:#526176;background:#f8fafc;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ld-arrangement-task-delete{width:28px;height:29px;border:1px solid #d7dee8;border-radius:4px;color:#8b95a4;background:#fff;cursor:pointer}
+.ld-arrangement-task-delete:hover{color:#c62828;border-color:#efc7c2;background:#fff5f4}
+.ld-arrangement-task-empty{padding:9px;color:#9aa4b2;font-size:11px;text-align:center}
+.ld-arrangement-foot{display:flex;justify-content:flex-end;gap:9px;min-height:56px;align-items:center;padding:0 22px;border-top:1px solid #e9edf3;background:#fff}
+.ld-arrangement-foot .btn{min-width:88px;justify-content:center}
+
+/* 新增任务弹窗 */
+.ld-task-dialog{width:min(860px,calc(100vw - 32px));height:auto;max-height:min(760px,calc(100vh - 32px))}
+.ld-task-title-row{display:flex;align-items:center;gap:12px;min-width:0}
+.ld-task-reference-btn{height:28px;display:inline-flex;align-items:center;gap:5px;padding:0 9px;border:1px solid #bcd4fa;border-radius:5px;color:#2563eb;background:#f7fbff;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap}
+.ld-task-reference-btn:hover{border-color:#8ebcf8;background:#eff6ff}
+.ld-task-reference-btn svg{width:13px;height:13px}
+.ld-task-body{padding:6px 22px 18px}
+.ld-task-row{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:start;padding:16px 0;border-bottom:1px solid #eef2f6}
+.ld-task-row:last-of-type{border-bottom:0}
+.ld-task-label{padding-top:7px;color:#3f4a5a;font-size:13px;font-weight:500}
+.ld-task-options{display:flex;flex-wrap:wrap;gap:8px}
+.ld-task-option{height:32px;padding:0 16px;border:1px solid #e1e6ed;border-radius:4px;color:#394352;background:#f5f6f8;font-size:13px;cursor:pointer;transition:border-color .15s,background .15s,color .15s}
+.ld-task-option:hover{border-color:#b9d5fa;color:#2563eb;background:#f7fbff}
+.ld-task-option.is-selected{border-color:#bfdbfe;color:#2563eb;background:#edf5ff;font-weight:600}
+.ld-task-route-summary{margin-top:14px;border:1px solid #dbeafe;border-radius:6px;background:#f8fbff;overflow:hidden}
+.ld-task-route-summary[hidden]{display:none}
+.ld-task-route-summary-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;padding:0 12px;border-bottom:1px solid #e6effc;color:#1e40af;font-size:12px;font-weight:600}
+.ld-task-route-summary-head span:last-child{color:#7c8ca3;font-size:10px;font-weight:400}
+.ld-task-route-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
+.ld-task-route-field{min-width:0;padding:11px 12px;border-right:1px solid #e6effc}
+.ld-task-route-field:last-child{border-right:0}
+.ld-task-route-field span{display:block;margin-bottom:4px;color:#8a97a9;font-size:10px}
+.ld-task-route-field strong{display:block;overflow:hidden;color:#334155;font-size:12px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+
+/* 引用物流需求线路 */
+.ld-route-picker-backdrop{position:fixed;inset:0;z-index:390;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.36)}
+.ld-route-picker-dialog{width:min(980px,calc(100vw - 32px));height:min(620px,calc(100vh - 32px));max-height:calc(100vh - 32px)}
+.ld-route-picker-body{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 22px 18px;overflow:hidden}
+.ld-route-picker-tip{display:flex;align-items:center;gap:7px;margin-bottom:10px;color:#64748b;font-size:11px}
+.ld-route-picker-tip i{width:16px;height:16px;display:inline-grid;place-items:center;border-radius:50%;background:#eff6ff;color:#2563eb;font-style:normal;font-size:10px;font-weight:700}
+.ld-route-picker-table-wrap{flex:1;min-height:0;overflow:auto;border:1px solid #e2e8f0;border-radius:5px}
+.ld-route-picker-table{width:100%;min-width:820px;border-collapse:separate;border-spacing:0}
+.ld-route-picker-table th{position:sticky;top:0;z-index:1;height:36px;padding:0 12px;border-bottom:1px solid #e2e8f0;color:#64748b;background:#f8fafc;font-size:10px;font-weight:600;text-align:left;white-space:nowrap}
+.ld-route-picker-table td{height:48px;padding:7px 12px;border-bottom:1px solid #eef2f7;color:#475569;font-size:11px;white-space:nowrap}
+.ld-route-picker-table tbody tr:last-child td{border-bottom:0}
+.ld-route-picker-table tbody tr{cursor:pointer}
+.ld-route-picker-table tbody tr:hover td{background:#f8fbff}
+.ld-route-picker-table tbody tr.is-selected td{background:#eff6ff}
+.ld-route-picker-table input[type="radio"]{width:15px;height:15px;margin:0;accent-color:#2563eb}
+.ld-route-line-name{color:#1e293b;font-weight:600}
+.ld-route-status{display:inline-flex;min-height:20px;align-items:center;padding:0 7px;border-radius:4px;color:#1d4ed8;background:#eff6ff;font-size:10px;font-weight:600}
+.ld-route-status.is-pending{color:#b45309;background:#fff7ed}
+.ld-route-picker-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;padding-top:12px}
+.ld-route-picker-selected{color:#64748b;font-size:11px}
+.ld-route-picker-actions{display:flex;gap:8px}
+@media(max-width:980px){.ld-arrangement-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ld-task-route-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ld-task-route-field{border-bottom:1px solid #e6effc}.ld-task-row{grid-template-columns:1fr}.ld-task-label{padding-top:0}}
+.ld-arrangement-dropzone{margin-top:9px;padding:10px;border:1px dashed #bcd4fa;border-radius:5px;color:#7e8da2;background:#f8fbff;text-align:center;font-size:11px}.ld-arrangement-dropzone.is-dragover{border-color:#2563eb;background:#eef5ff;color:#2563eb}
+.ld-inline-task-panel{margin-top:10px;overflow:hidden;border:1px solid #dfe6ef;border-radius:7px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.03)}
+.ld-inline-task-head{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:54px;padding:0 14px;border-bottom:1px solid #eef2f6}
+.ld-inline-task-title{margin:0;color:#253044;font-size:15px;font-weight:700}
+.ld-inline-task-close{width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:5px;color:#8b95a4;background:transparent;font-size:20px;line-height:1;cursor:pointer}
+.ld-inline-task-close:hover{color:#c62828;background:#fff4f3}
+.ld-inline-task-body{padding:2px 14px 4px}
+.ld-inline-task-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 14px;border-top:1px solid #eef2f6;background:#fff}
+.ld-inline-task-panel .ld-task-row{padding:12px 0}
+.ld-inline-task-panel .ld-task-route-summary{margin-bottom:12px}
