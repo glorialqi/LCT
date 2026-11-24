@@ -337,7 +337,7 @@
       border-radius: 7px;
       box-shadow: none;
     }
-    .ct-query-panel { flex: 0 0 auto; }
+    .ct-query-panel { position: relative; z-index: 20; flex: 0 0 auto; }
     .ct-panel-head {
       min-height: 60px;
       padding: 0 22px;
@@ -2802,6 +2802,8 @@
     .demand-search-option:hover,
     .demand-search-option.active { background: #eef5ff; color: #0868df; }
     .demand-search-empty { padding: 8px; color: #8a95a4; font-size: 11px; text-align: center; }
+    .ct-customer-filter { position: relative; min-width: 0; }
+    .ct-customer-filter > input { padding-right: 30px; cursor: text; }
     .demand-multi-select { position: relative; min-width: 0; }
     .demand-multi-control { min-height: 26px; padding: 2px 28px 2px 4px; display: flex; align-items: center; gap: 4px; overflow: hidden; border: 1px solid #d4dce6; border-radius: 5px; background: #fff; cursor: text; }
     .demand-multi-control:focus-within { border-color: #1976e9; box-shadow: 0 0 0 2px rgba(8, 104, 223, .08); }
@@ -3038,13 +3040,11 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         </div>
         <div>
           <label for="filter-customer">客户</label>
-          <select id="filter-customer" name="customer">
-            <option value=""></option>
-            <option value="客户1">客户1</option>
-            <option value="客户2">客户2</option>
-            <option value="客户3">客户3</option>
-            <option value="客户4">客户4</option>
-          </select>
+            <div class="ct-customer-filter">
+              <input id="filter-customer" name="customer" type="text" list="filterCustomerOptions" autocomplete="off" placeholder="搜索或选择客户" onfocus="renderCustomerFilterOptions()" />
+              <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+              <datalist id="filterCustomerOptions"></datalist>
+            </div>
         </div>
         <div>
           <label for="filter-status">提交状态</label>
@@ -3124,15 +3124,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             </select>
           </div>
           <div>
-            <label for="filter-risk">风险标记</label>
-            <select id="filter-risk" name="risk">
-              <option value=""></option>
-              <option value="待订舱数量为负">待订舱数量为负</option>
-              <option value="业务类型变更">业务类型变更</option>
-              <option value="贸易合同变更">贸易合同变更</option>
-            </select>
-          </div>
-          <div>
             <label for="filter-internalCustomer">是否内部客商</label>
             <select id="filter-internalCustomer" name="internalCustomer">
               <option value="">全部</option>
@@ -3166,9 +3157,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           采购待办<span class="count">(<span id="badge-dest">1</span>)</span>
         </button>
         <div class="ct-metrics">
-          <button type="button" id="submissionOverview-pending" class="ct-overview-item neutral" onclick="applySubmissionOverview('未提交')" title="筛选未提交数据"><i data-lucide="clock-3"></i>未提交 <strong id="stat-pending">2</strong></button>
-          <button type="button" id="submissionOverview-submitted" class="ct-overview-item partial" onclick="applySubmissionOverview('已提交')" title="筛选已提交数据"><i data-lucide="list-checks"></i>已提交 <strong id="stat-partial">1</strong></button>
-          <button type="button" id="completionOverview-completed" class="ct-overview-item completed" onclick="applyCompletionOverview('已完结')" title="筛选已完结数据"><i data-lucide="circle-check-big"></i>已完结 <strong id="stat-completed">0</strong></button>
           <button type="button" id="riskOverview-all" class="ct-overview-item risk-all" onclick="applyRiskOverview()" title="查看风险记录"><i data-lucide="shield-alert"></i>风险 <strong id="stat-risk">1</strong></button>
           <span class="ct-overview-item ct-overview-selected"><i data-lucide="check-square"></i>已选 <strong id="selectedCount">0</strong></span>
         </div>
@@ -4050,8 +4038,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       manualSelectedIds: new Set(),
       visibleWorkbenchRowKeys: [],
       riskOverview: '',
-      submissionOverview: '',
-      completionOverview: '',
 
       // Control Tower Pull-In Pool
       controlTowerPool: [
@@ -4572,6 +4558,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       return 'ct-status pending';
     }
 
+    function getCustomerFilterOptions() {
+      return [...new Set((state.items || []).map(item => item.customer).filter(Boolean))]
+        .sort((a, b) => String(a).localeCompare(String(b), 'zh-Hans-CN'));
+    }
+
+    function renderCustomerFilterOptions() {
+      const list = document.getElementById('filterCustomerOptions');
+      if (!list) return;
+      list.innerHTML = getCustomerFilterOptions()
+        .map(value => `<option value="${escapeHtml(value)}"></option>`)
+        .join('');
+    }
+
     // --- Workbench Main Table Rendering & Operations ---
 
     // Render Table Rows based on Tab & Filter Criteria
@@ -4635,7 +4634,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const shipmentTo = document.getElementById('filter-shipmentDateTo')?.value || '';
       const availabilityVal = document.getElementById('filter-availability')?.value || '';
       const completionVal = document.getElementById('filter-completion')?.value || '';
-      const riskVal = document.getElementById('filter-risk')?.value || '';
       const internalCustomerVal = document.getElementById('filter-internalCustomer')?.value || '';
 
       const filteredItems = state.items.filter(item => {
@@ -4657,12 +4655,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         if (supplierVal && !supplier.includes(supplierVal)) return false;
         if (shipmentFrom && (item.shipmentDeadline || '') < shipmentFrom) return false;
         if (shipmentTo && (item.shipmentDeadline || '') > shipmentTo) return false;
-        if (riskVal) {
-          const matchedRisk = getRiskTitles(item).some(title =>
-            title === riskVal || (riskVal === '贸易合同变更' && title === '贸易合同号变更')
-          );
-          if (!matchedRisk) return false;
-        }
         if (internalCustomerVal && getInternalCustomerValue(item) !== internalCustomerVal) return false;
         return true;
       });
@@ -4676,9 +4668,7 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         if (prjVal && !projectNo.includes(prjVal)) return false;
         if (goodsVal && !goodsName.includes(goodsVal) && !goodsCode.includes(goodsVal)) return false;
         if (statusVal && getRowDisplayStatus(row) !== statusVal) return false;
-        if (state.submissionOverview && getRowDisplayStatus(row) !== state.submissionOverview) return false;
         if (completionVal && getRowClosedStatus(row) !== completionVal) return false;
-        if (state.completionOverview && getRowClosedStatus(row) !== state.completionOverview) return false;
         if (availabilityVal === 'none' && rowPendingQty > 0) return false;
         if (availabilityVal === 'available' && rowPendingQty <= 0) return false;
         return true;
@@ -5018,8 +5008,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
     function resetFilters() {
       document.getElementById('filterForm').reset();
       state.riskOverview = '';
-      state.submissionOverview = '';
-      state.completionOverview = '';
       renderWorkbenchTable();
       showToast('已重置筛选条件', 'info');
     }
@@ -5050,51 +5038,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       document.getElementById('badge-dest').textContent = destRows.length;
 
       const currentTabRows = rowsOfTab(state.currentTab);
-      const pendingCount = currentTabRows.filter(row => getRowDisplayStatus(row) === '未提交').length;
-      const partialCount = currentTabRows.filter(row => getRowDisplayStatus(row) === '已提交').length;
-      const completedCount = currentTabRows.filter(row => getRowClosedStatus(row) === '已完结').length;
       const riskCount = currentTabRows.filter(row => getRiskLevel(row.item) !== 'normal').length;
-      document.getElementById('stat-pending').textContent = pendingCount;
-      document.getElementById('stat-partial').textContent = partialCount;
-      document.getElementById('stat-completed').textContent = completedCount;
       document.getElementById('stat-risk').textContent = riskCount;
       document.getElementById('totalRecords').textContent = totalRows;
 
       const riskOverviewButton = document.getElementById('riskOverview-all');
       if (riskOverviewButton) riskOverviewButton.classList.toggle('active', state.riskOverview === 'all');
-      const pendingButton = document.getElementById('submissionOverview-pending');
-      if (pendingButton) pendingButton.classList.toggle('active', state.submissionOverview === '未提交');
-      const submittedButton = document.getElementById('submissionOverview-submitted');
-      if (submittedButton) submittedButton.classList.toggle('active', state.submissionOverview === '已提交');
-      const completedButton = document.getElementById('completionOverview-completed');
-      if (completedButton) completedButton.classList.toggle('active', state.completionOverview === '已完结');
     }
 
     function applyRiskOverview() {
       const isActive = state.riskOverview === 'all';
       state.riskOverview = isActive ? '' : 'all';
-      state.submissionOverview = '';
-      state.completionOverview = '';
       renderWorkbenchTable();
       showToast(state.riskOverview ? '已筛选风险记录' : '已取消风险筛选', 'info');
-    }
-
-    function applySubmissionOverview(status) {
-      const isActive = state.submissionOverview === status;
-      state.submissionOverview = isActive ? '' : status;
-      state.completionOverview = '';
-      state.riskOverview = '';
-      renderWorkbenchTable();
-      showToast(state.submissionOverview ? `已筛选${status}数据` : '已取消提交状态筛选', 'info');
-    }
-
-    function applyCompletionOverview(status) {
-      const isActive = state.completionOverview === status;
-      state.completionOverview = isActive ? '' : status;
-      state.submissionOverview = '';
-      state.riskOverview = '';
-      renderWorkbenchTable();
-      showToast(state.completionOverview ? `已筛选${status}数据` : '已取消完结状态筛选', 'info');
     }
 
     // Global Active State for Allocation Modal

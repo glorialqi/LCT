@@ -465,7 +465,26 @@
       .profit-metric:last-child { border-bottom:0; }
       .contract-meta-grid, .contract-party-grid, .contract-preview-grid, .contract-preview-parties { grid-template-columns:1fr; }
     }
-  </style>
+      /* ===== 线路商品行复制 / 关联商品弹窗（分组列表） ===== */
+    .order-route-row-action { height:24px; padding:0 8px; margin-right:6px; border:1px solid #cfe0f6; border-radius:4px; background:#f4f9ff; color:#1d4ed8; font-size:10px; cursor:pointer; }
+    .order-route-row-action:hover { border-color:#93c0f8; background:#e8f1ff; }
+    .order-link-picker { display:grid; gap:10px; }
+    .order-link-summary { padding:10px 12px; border:1px solid #dbeafe; border-radius:6px; background:#f4f9ff; color:#1e3a8a; font-size:12px; font-weight:600; }
+    .order-link-table-wrap { max-height:56vh; overflow:auto; border:1px solid #e3eaf3; border-radius:6px; }
+    .order-link-table { width:100%; border-collapse:collapse; background:#fff; font-size:12px; white-space:nowrap; }
+    .order-link-table th { position:sticky; top:0; z-index:2; padding:8px 10px; border-bottom:1px solid #e5ebf3; background:#f7f9fc; color:#526176; font-size:11px; font-weight:700; text-align:left; }
+    .order-link-table td { padding:8px 10px; border-bottom:1px solid #eef2f7; color:#334155; }
+    .order-link-table tr:last-child td { border-bottom:0; }
+    .order-link-group-row td { padding:8px 10px; border-top:1px solid #e5ebf3; background:#fbfdff; }
+    .order-link-group-toggle { display:flex; align-items:center; gap:8px; width:100%; border:0; background:transparent; color:#0f172a; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
+    .order-link-caret { color:#64748b; }
+    .order-link-group-count { margin-left:auto; color:#94a3b8; font-size:11px; font-weight:400; }
+    .order-link-group.collapsed .order-link-item-row { display:none; }
+    .order-link-item-row.selected td { background:#e8f1ff; }
+    .order-link-item-row.is-linked td { color:#94a3b8; }
+    .order-link-check { width:36px; text-align:center; }
+    .order-link-tag { display:inline-flex; height:18px; align-items:center; padding:0 6px; border-radius:9px; background:#f1f5f9; color:#64748b; font-size:10px; }
+</style>
   <script>
     (() => {
       const params = new URLSearchParams(window.location.search);
@@ -563,7 +582,6 @@
               <button class="detail-btn primary" id="confirmOrderBtn" type="button" hidden>确认</button>
               <button class="detail-btn outline-primary" id="viewContractBtn" type="button">查看合同</button>
               <button class="detail-btn" id="attachmentBtn" type="button">附件</button>
-              <button class="detail-btn" id="viewLogisticsPlanBtn" type="button" hidden>查看物流安排</button>
               <button class="detail-btn outline-primary" id="generateLogisticsDemandBtn" type="button" hidden>生成物流需求</button>
               <button class="detail-btn outline-primary" id="submitLogisticsPlanBtn" type="button" hidden>提交物流安排</button>
               <button class="detail-btn" id="versionMaintenanceBtn" type="button" hidden>版本维护</button>
@@ -577,6 +595,7 @@
               <button class="detail-btn" id="withdrawSignBtn" type="button" hidden>撤销签署（E建签签约）</button>
               <button class="detail-btn primary" id="reclaimOriginalBtn" type="button" hidden>正本回收（线下签约）</button>
               <button class="detail-btn primary" id="submitFlowBtn" type="button" hidden>提交并发起物流委托</button>
+              <button class="detail-btn" id="viewLogisticsPlanBtn" type="button" hidden>查看物流安排</button>
             </div>
             <button class="detail-btn" id="detailMoreToggle" type="button" aria-haspopup="menu" aria-expanded="false" hidden>更多</button>
           </div>
@@ -1305,10 +1324,10 @@
         draft: ['saveDraftBtn', 'submitOrderBtn', 'submitFillLogisticsBtn', 'submitAutoTaskBtn', 'viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
         review: ['viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
         pendingConfirm: ['confirmOrderBtn', 'versionMaintenanceBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
-        confirmedFulfillment: ['attachmentBtn', 'viewLogisticsPlanBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
-        fulfillment: ['attachmentBtn', 'viewLogisticsPlanBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
-        completed: ['cancelCompleteBtn', 'attachmentBtn', 'viewLogisticsPlanBtn', 'historyVersionBtn', 'approvalProgressBtn'],
-        cancelled: ['attachmentBtn', 'viewLogisticsPlanBtn', 'historyVersionBtn', 'approvalProgressBtn']
+        confirmedFulfillment: ['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
+        fulfillment: ['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
+        completed: ['cancelCompleteBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        cancelled: ['attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn']
       };
       const secondaryActionIds = new Set(['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn']);
       const moreMenuHost = document.getElementById('detailMoreMenu');
@@ -1339,8 +1358,7 @@
         const arrangementStatus = document.getElementById('orderArrangementStatusField')?.textContent.trim() || '';
         if (status === '待履约' && confirmation === '已确认' && arrangementStatus === '待安排') {
           const logisticsGenerationActions = ['generateLogisticsDemandBtn', 'submitLogisticsPlanBtn'];
-          const insertAt = sequence.indexOf('viewLogisticsPlanBtn') + 1;
-          sequence = sequence.slice(0, insertAt).concat(logisticsGenerationActions, sequence.slice(insertAt));
+          sequence = sequence.concat(logisticsGenerationActions);
         }
         const contractStatus = (document.getElementById('orderContractOverviewStatus')?.textContent || '').trim();
         const signMethodValue = document.querySelector('[data-contract-setting="signMethod"]')?.value || '';
@@ -1355,6 +1373,10 @@
         const currentVersionValue = (versionControlEl?.value || '1.0').trim();
         if ((status === '创建' || status === '驳回') && currentVersionValue !== '1.0') sequence = sequence.concat(['deleteVersionBtn']);
         if (currentVersionValue !== '1.0') sequence = sequence.filter((id) => !['submitFillLogisticsBtn', 'submitAutoTaskBtn'].includes(id));
+        // 【查看物流安排】与列表页「更多 → 查看物流安排」一致：待履约（已确认）/ 履约中显示，且始终排在按钮区最后
+        const canViewArrangement = (status === '待履约' && confirmation === '已确认') || status === '履约中';
+        sequence = sequence.filter((id) => id !== 'viewLogisticsPlanBtn');
+        if (canViewArrangement) sequence = sequence.concat(['viewLogisticsPlanBtn']);
         window.__visibleOrderActionIds = sequence.slice();
         document.querySelectorAll('#detailActions .detail-btn, #detailMoreMenu .detail-btn').forEach((button) => { button.hidden = true; });
         const primarySequence = sequence.filter((id) => !secondaryActionIds.has(id));
@@ -1643,7 +1665,7 @@
         window.location.href = url.href;
       };
       document.getElementById('versionMaintenanceBtn')?.addEventListener('click', launchVersionMaintenance);
-      showDocumentActionMessage('viewLogisticsPlanBtn', '物流安排详情已打开。');
+      showDocumentActionMessage('viewLogisticsPlanBtn', '已打开该客户订单的物流委托列表。');
       showDocumentActionMessage('generateLogisticsDemandBtn', '物流需求生成任务已发起。');
       showDocumentActionMessage('submitLogisticsPlanBtn', '物流安排已提交。');
       document.getElementById('completeOrderBtn')?.addEventListener('click', () => {

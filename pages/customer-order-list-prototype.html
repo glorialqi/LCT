@@ -245,7 +245,7 @@
     @media(max-width:760px) { .merge-drawer { width:100vw; } }
     .arrangement-backdrop { position:fixed; inset:0; z-index:260; display:grid; place-items:center; padding:20px; background:rgba(15,23,42,.48); }
     .arrangement-backdrop[hidden] { display:none; }
-    .arrangement-dialog { width:min(1480px,calc(100vw - 32px)); height:min(900px,calc(100vh - 32px)); max-height:calc(100vh - 32px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #d7dfe9; border-radius:8px; background:#fff; box-shadow:0 24px 70px rgba(15,23,42,.26); }
+    .arrangement-dialog { width:min(1240px,calc(100vw - 32px)); height:auto; max-height:calc(100vh - 48px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #d7dfe9; border-radius:8px; background:#fff; box-shadow:0 24px 70px rgba(15,23,42,.26); }
     .arrangement-head { min-height:58px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; border-bottom:1px solid #e9edf3; }
     .arrangement-title { color:#253044; font-size:18px; font-weight:700; }
     .arrangement-close { width:30px; height:30px; border:0; border-radius:5px; color:#8b95a4; background:transparent; font-size:23px; cursor:pointer; }
@@ -255,6 +255,46 @@
     .arrangement-section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
     .arrangement-section-title { color:#263246; font-size:14px; font-weight:700; }
     .arrangement-section-note { color:#8b95a5; font-size:11px; }
+    .arrangement-routes-actions { display:flex; align-items:center; gap:10px; }
+    .arrangement-link-btn { height:26px; padding:0 9px; border:1px solid #cfe0ff; border-radius:4px; color:#2563eb; background:#f5f9ff; font-size:11px; cursor:pointer; }
+    .arrangement-link-btn:hover { background:#eaf2ff; }
+    .arrangement-route-table { border:1px solid #e2e8f1; border-radius:6px; overflow:hidden; }
+    .arrangement-route-table.is-hidden { display:none; }
+    .arr-task-head, .arr-task-row { display:grid; grid-template-columns:58px 56px minmax(180px,1.6fr) 74px 74px 82px 178px 186px 80px; align-items:center; gap:10px; padding:8px 12px; }
+    .arr-task-group { color:#2563eb; font-size:11px; }
+    .arr-task-head { color:#6b7789; background:#f7f9fc; font-size:11px; }
+    .arr-task-row { border-top:1px solid #eef1f5; color:#334155; font-size:12px; }
+    .arr-task-row.is-empty { background:#fffaf0; }
+    .arr-task-no { color:#2563eb; font-weight:600; }
+    .arr-task-route { color:#2563eb; }
+    .arr-task-muted { color:#98a2b3; }
+    .arr-task-text { color:#5d6879; }
+    .arr-task-path, .arr-task-qty { overflow:hidden; color:#5d6879; text-overflow:ellipsis; white-space:nowrap; }
+    .arr-task-row select { width:100%; height:30px; padding:0 8px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; }
+    .arr-group-row { border:1px solid #dfe6ef; border-radius:7px; margin-bottom:8px; background:#fff; }
+    .arr-group-row:last-child { margin-bottom:0; }
+    .arr-group-main { display:flex; align-items:center; gap:10px; padding:9px 12px; }
+    .arr-group-no { color:#1f2b3d; font-size:13px; font-weight:600; }
+    .arr-group-supplier { color:#2563eb; font-size:12px; }
+    .arr-group-total { margin-left:auto; color:#5d6879; font-size:11px; }
+    .arr-group-toggle { height:24px; padding:0 8px; border:1px solid #cfe0ff; border-radius:4px; color:#2563eb; background:#f5f9ff; font-size:11px; cursor:pointer; }
+    .arr-group-fields { display:grid; grid-template-columns:1.4fr 1.15fr 1.15fr 1fr 1.25fr .9fr; gap:8px 10px; padding:0 12px 12px; }
+    .arr-group-fields label { display:block; color:#6b7789; font-size:11px; }
+    .arr-group-fields input, .arr-group-fields select { width:100%; height:30px; margin-top:4px; padding:0 8px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; }
+    .arr-group-fields input[readonly] { color:#5d6879; background:#f7f9fc; border-color:#e6ebf2; }
+    .arrangement-section.is-hidden { display:none; }
+    .arr-route-head { color:#6b7789; background:#f7f9fc; font-size:11px; }
+    .arr-route-row { border-top:1px solid #eef1f5; color:#334155; font-size:12px; }
+    .arr-route-row.is-empty { background:#fff8f6; }
+    .arr-route-no { color:#2563eb; font-weight:600; }
+    .arr-route-path, .arr-route-mode { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .arr-route-text, .arr-route-qty { color:#5d6879; }
+    .arr-group-tag { margin-left:6px; padding:1px 7px; border-radius:10px; color:#526176; background:#eef2f7; font-size:11px; font-weight:400; }
+    .arr-route-supplier select { width:100%; height:30px; padding:0 8px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; }
+    .arr-group-supplier { margin-left:8px; color:#2563eb; font-size:12px; font-weight:400; }
+    .arr-group-chips { display:inline-flex; gap:4px; margin-right:10px; }
+    .arr-group-chip { padding:1px 7px; border-radius:10px; color:#5d6879; background:#f1f4f8; font-size:11px; }
+    .arr-group-total { color:#5d6879; font-size:11px; }
     .arrangement-form-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px 14px; }
     .arrangement-field { min-width:0; }
     .arrangement-field > label, .arrangement-field-label { display:block; margin-bottom:5px; color:#6b7789; font-size:11px; }
@@ -576,12 +616,24 @@
             <div class="arrangement-field"><label>业务员经营单位<span class="required">*</span></label><input id="arrangementBusinessUnit" value="供应链物流科技" placeholder="请输入经营单位"></div>
             <div class="arrangement-field"><label>业务员核算组<span class="required">*</span></label><input id="arrangementAccountingGroup" value="数字化中心" placeholder="请输入核算组"></div>
             <div class="arrangement-field"><label>业务员公司<span class="required">*</span></label><input id="arrangementCompany" placeholder="请输入业务员公司"></div>
-            <div class="arrangement-field"><label>作业组织<span class="required">*</span></label><input id="arrangementOperationOrg" value="数字化中心" placeholder="请输入作业组织"></div>
-            <div class="arrangement-field"><label>作业组织人员<span class="required">*</span></label><input id="arrangementOperationPerson" placeholder="请输入作业组织人员"></div>
+            <div class="arrangement-field" style="grid-column:1;"><label>作业组织<span class="required">*</span></label><input id="arrangementOperationOrg" value="数字化中心" placeholder="请输入作业组织"></div>
+            <div class="arrangement-field"><label>作业组织人员<span class="required">*</span></label><input id="arrangementOperationPerson" value="鲤鱼旗" placeholder="请输入作业组织人员"></div>
           </div>
         </section>
+                <section class="arrangement-section">
+          <div class="arrangement-section-head">
+            <div class="arrangement-section-title">任务清单</div>
+            <div class="arrangement-routes-actions">
+              <button class="arrangement-link-btn" id="arrangementAddTask" type="button">+ 添加任务</button>
+            </div>
+          </div>
+          <div class="arrangement-route-table" id="arrangementTaskTable"></div>
+        </section>
         <section class="arrangement-section">
-          <div class="arrangement-section-head"><div class="arrangement-section-title">物流委托</div><div class="arrangement-section-note">仅支持创建一个物流委托</div></div>
+          <div class="arrangement-section-head">
+            <div class="arrangement-section-title">将生成 <span id="arrangementGroupCount">0</span> 个物流委托</div>
+            <div class="arrangement-section-note">相同供应商的任务自动合并</div>
+          </div>
           <div id="arrangementConsignmentList"></div>
         </section>
       </div>
@@ -625,8 +677,10 @@
       const toast = document.getElementById('toast');
       const arrangementDialog = document.getElementById('arrangementDialog');
       const arrangementConsignmentList = document.getElementById('arrangementConsignmentList');
+      const arrangementTaskTable = document.getElementById('arrangementTaskTable');
+      const arrangementGroupCount = document.getElementById('arrangementGroupCount');
       const arrangementConfirmBtn = document.getElementById('arrangementConfirmBtn');
-      const arrangementState = { orderNo: '', routes: [], consignments: [], sequence: 0, taskInitMode: 'yes' };
+      const arrangementState = { orderNo: '', tasks: [], groups: [], legalCompany: '', sequence: 0 };
       const mergeSplitDrawer = document.getElementById('mergeSplitDrawer');
       const mergeDrawerBody = document.getElementById('mergeDrawerBody');
       const mergeSelectedCount = document.getElementById('mergeSelectedCount');
@@ -780,50 +834,168 @@
       const arrangementLoadTypes = ['散货', '件杂', '集装箱'];
       const arrangementOptions = (items, selected, placeholder = '') => (placeholder ? '<option value="">' + placeholder + '</option>' : '') + items.map((item) => '<option value="' + item + '"' + (item === selected ? ' selected' : '') + '>' + item + '</option>').join('');
       const arrangementEsc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
-      const arrangementTaskMarkup = (commission, task) => {
-        const isManual = arrangementState.taskInitMode === 'no';
-        const route = arrangementState.routes.find((item) => item.id === task.routeId);
-        const routeLabel = route ? route.label + ' · ' + route.origin + ' → ' + route.destination : '';
-        const routeField = isManual ? '' : '<div class="arrangement-task-field"><label>关联线路</label><div class="arrangement-task-route-value" title="' + arrangementEsc(routeLabel) + '">' + arrangementEsc(routeLabel) + '</div></div>';
-        return '<div class="arrangement-task-card' + (isManual ? ' is-manual' : '') + '" data-arr-task="' + arrangementEsc(task.id) + '" data-arr-commission="' + arrangementEsc(commission.id) + '">' +
-          routeField +
-          '<div class="arrangement-task-field"><label>首段运输任务类型</label><select data-arr-task-field="taskType">' + arrangementOptions(arrangementTaskTypes, task.taskType, isManual ? '请选择' : '') + '</select></div>' +
-          '<div class="arrangement-task-field"><label>装运类别</label><select data-arr-task-field="loadType">' + arrangementOptions(arrangementLoadTypes, task.loadType, isManual ? '请选择' : '') + '</select></div>' +
-          '<button class="arrangement-task-delete" type="button" data-delete-arr-task="' + arrangementEsc(task.id) + '" data-arr-commission="' + arrangementEsc(commission.id) + '" aria-label="删除任务">×</button>' +
+            const ARRANGEMENT_SUPPLIERS = [
+        { name: '中远海运物流', merchant: '中远海运物流供应链（厦门）' },
+        { name: '中铁物流', merchant: '中铁物流集团厦门分公司' },
+        { name: '中外运华南', merchant: '中外运华南有限公司' },
+        { name: '厦门港务物流', merchant: '厦门港务物流有限公司' }
+      ];
+      const ARRANGEMENT_ENTRUST_TYPES = ['我司委托-已准入供应商', '我司委托-未准入供应商', '供应商指定'];
+      const ARRANGEMENT_FEEDBACK_TYPES = ['协同反馈', '自反馈'];
+      const arrangementSupplierOption = (supplier, selected) => '<option value="' + arrangementEsc(supplier.name) + '"' + (supplier.name === selected ? ' selected' : '') + '>' + arrangementEsc(supplier.name) + '</option>';
+      const arrangementEntrustOption = (value, selected) => '<option value="' + arrangementEsc(value) + '"' + (value === selected ? ' selected' : '') + '>' + arrangementEsc(value) + '</option>';
+      const arrangementDefaultSupplier = (type) => (type === '铁运' ? '中铁物流' : type === '汽运' ? '中外运华南' : '中远海运物流');
+      const arrangementDateStamp = () => {
+        const now = new Date();
+        return String(now.getFullYear()) + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+      };
+      const arrangementEntrustTag = (entrustType) => {
+        const text = String(entrustType || '');
+        if (text.indexOf('未准入') >= 0) return '未准入';
+        if (text.indexOf('已准入') >= 0) return '已准入';
+        return '指定';
+      };
+      const arrangementTaskTableMarkup = () => {
+        const head = '<div class="arr-task-head"><span>任务</span><span>线路</span><span>起运地 → 目的地</span><span>运输类型</span><span>装运类别</span><span>数量</span><span>物流委托类型</span><span>物流供应商</span><span>归属委托</span></div>';
+        const rows = arrangementState.tasks.map((task, index) => {
+          const supplierOptions = '<option value="">请选择供应商</option>' + ARRANGEMENT_SUPPLIERS.map((item) => arrangementSupplierOption(item, task.supplier)).join('');
+          const entrustOptions = ARRANGEMENT_ENTRUST_TYPES.map((item) => arrangementEntrustOption(item, task.entrustType)).join('');
+          const typeCell = task.manual
+            ? '<select data-arr-task-type="' + arrangementEsc(task.id) + '">' + arrangementOptions(arrangementTaskTypes, task.type, '请选择') + '</select>'
+            : '<span class="arr-task-text">' + arrangementEsc(task.type) + '</span>';
+          const loadCell = task.manual
+            ? '<select data-arr-task-load="' + arrangementEsc(task.id) + '">' + arrangementOptions(arrangementLoadTypes, task.loadType, '请选择') + '</select>'
+            : '<span class="arr-task-text">' + arrangementEsc(task.loadType) + '</span>';
+          const routeCell = task.manual ? '<span class="arr-task-muted">未关联线路</span>' : '<span class="arr-task-route">' + arrangementEsc(task.label) + '</span>';
+          const pathCell = task.manual ? '<span class="arr-task-muted">--</span>' : arrangementEsc(task.origin + ' → ' + task.destination);
+          return '<div class="arr-task-row' + (task.supplier ? '' : ' is-empty') + '" data-arr-task-row="' + arrangementEsc(task.id) + '">' +
+            '<span class="arr-task-no">任务' + (index + 1) + '</span>' +
+            '<span>' + routeCell + '</span>' +
+            '<span class="arr-task-path">' + pathCell + '</span>' +
+            '<span>' + typeCell + '</span>' +
+            '<span>' + loadCell + '</span>' +
+            '<span class="arr-task-qty">' + arrangementEsc(task.qtyText || '--') + '</span>' +
+            '<span class="arr-task-supplier"><select data-arr-task-entrust="' + arrangementEsc(task.id) + '">' + entrustOptions + '</select></span>' +
+            '<span class="arr-task-supplier"><select data-arr-task-supplier="' + arrangementEsc(task.id) + '">' + supplierOptions + '</select></span>' +
+            '<span class="arr-task-group">' + (task.supplier ? '委托 ' + (arrangementState.groups.findIndex((group) => group.supplier === task.supplier) + 1) : '<span class="arr-task-muted">未分配</span>') + '</span>' +
+            '</div>';
+        }).join('');
+        return head + rows;
+      };
+      const arrangementGroupTotal = (group) => {
+        const totals = {};
+        group.tasks.forEach((task) => {
+          const unit = task.qtyUnit || '';
+          totals[unit] = (totals[unit] || 0) + (task.qtyNumber || 0);
+        });
+        return Object.keys(totals).map((unit) => formatMergeNumber(totals[unit]) + (unit ? ' ' + unit : '')).join(' + ') || '--';
+      };
+      const arrangementRebuildGroups = () => {
+        const previous = new Map(arrangementState.groups.map((item) => [item.key, item]));
+        const groups = [];
+        const index = new Map();
+        arrangementState.tasks.forEach((task) => {
+          if (!task.supplier) return;
+          const key = task.supplier + '||' + (task.entrustType || '');
+          if (!index.has(key)) {
+            const group = { key, supplier: task.supplier, entrustType: task.entrustType, id: 'C' + (++arrangementState.sequence), tasks: [], legalCompany: arrangementState.legalCompany || '', feedback: '协同反馈', name: '' };
+            index.set(key, group);
+            groups.push(group);
+          }
+          index.get(key).tasks.push(task);
+        });
+        groups.forEach((group) => {
+          const old = previous.get(group.key);
+          if (old) {
+            group.id = old.id;
+            group.legalCompany = old.legalCompany;
+            group.feedback = old.feedback;
+            group.name = old.name;
+          }
+          if (!group.name) group.name = group.supplier + '-' + arrangementEntrustTag(group.entrustType) + '-' + arrangementDateStamp();
+        });
+        arrangementState.groups = groups;
+      };
+      const arrangementGroupMarkup = (group, index) => {
+        const chips = group.tasks.map((task) => '<span class="arr-group-chip">任务' + (arrangementState.tasks.indexOf(task) + 1) + '</span>').join('');
+        const merchant = (ARRANGEMENT_SUPPLIERS.find((item) => item.name === group.supplier) || {}).merchant || '--';
+        return '<div class="arr-group-row" data-arr-group-row="' + arrangementEsc(group.id) + '">' +
+          '<div class="arr-group-main">' +
+            '<span class="arr-group-no">委托 ' + (index + 1) + '</span>' +
+            '<span class="arr-group-supplier">' + arrangementEsc(group.supplier) + '</span>' +
+            '<span class="arr-group-chips">' + chips + '</span>' +
+          '</div>' +
+          '<div class="arr-group-fields">' +
+            '<label>物流委托名称<input data-arr-group-field="name" data-arr-group="' + arrangementEsc(group.id) + '" value="' + arrangementEsc(group.name) + '"></label>' +
+            '<label>委托方法人公司<input data-arr-group-field="legalCompany" data-arr-group="' + arrangementEsc(group.id) + '" value="' + arrangementEsc(group.legalCompany) + '"></label>' +
+            '<label>物流委托类型<input value="' + arrangementEsc(group.entrustType) + '" readonly></label>' +
+            '<label>物流供应商<input value="' + arrangementEsc(group.supplier) + '" readonly></label>' +
+            '<label>供应商商户<input value="' + arrangementEsc(merchant) + '" readonly></label>' +
+            '<label>反馈方式<select data-arr-group-field="feedback" data-arr-group="' + arrangementEsc(group.id) + '">' + ARRANGEMENT_FEEDBACK_TYPES.map((item) => '<option' + (item === group.feedback ? ' selected' : '') + '>' + item + '</option>').join('') + '</select></label>' +
+          '</div>' +
         '</div>';
       };
-      const arrangementConsignmentMarkup = (commission) => {
-        return '<article class="arrangement-consignment" data-arr-consignment-card="' + arrangementEsc(commission.id) + '">' +
-          '<div class="arrangement-consignment-head"><div class="arrangement-consignment-title">物流委托</div><span class="arrangement-single-note">单委托 · 任务可自动带出或手工录入</span></div>' +
-          '<div class="arrangement-form-grid">' +
-            '<div class="arrangement-field"><label>物流委托名称<span class="required">*</span></label><input data-arr-consignment-field="name" data-arr-commission="' + arrangementEsc(commission.id) + '" value="' + arrangementEsc(commission.name) + '" placeholder="请输入物流委托名称"></div>' +
-            '<div class="arrangement-field"><label>委托方法人公司<span class="required">*</span></label><input data-arr-consignment-field="legalCompany" data-arr-commission="' + arrangementEsc(commission.id) + '" value="' + arrangementEsc(commission.legalCompany) + '"></div>' +
-            '<div class="arrangement-field"><label>运输委托类型<span class="required">*</span></label><select data-arr-consignment-field="type" data-arr-commission="' + arrangementEsc(commission.id) + '"><option>我司委托-已准入供应商</option><option>供应商直委托</option></select></div>' +
-            '<div class="arrangement-field"><label>物流供应商<span class="required">*</span></label><select data-arr-consignment-field="supplier" data-arr-commission="' + arrangementEsc(commission.id) + '"><option>中联铁运集团有限公司</option><option>青岛远洋物流有限公司</option><option>待分配承运商</option></select></div>' +
-            '<div class="arrangement-field"><label>供应商商户</label><select data-arr-consignment-field="supplierMerchant" data-arr-commission="' + arrangementEsc(commission.id) + '"><option value="">请选择</option><option>默认商户</option></select></div>' +
-          '</div>' +
-          '<div class="arrangement-tasks"><div class="arrangement-task-head"><div class="arrangement-task-title">任务信息（' + commission.tasks.length + '）</div><div class="arrangement-task-head-actions"><div class="arrangement-task-init"><span class="arrangement-task-init-label">是否带出全部线路</span><div class="arrangement-task-init-options"><label class="arrangement-init-option"><input type="radio" name="arrangementTaskInitMode" value="yes" data-arr-task-init ' + (arrangementState.taskInitMode === 'yes' ? 'checked' : '') + '><span>是</span></label><label class="arrangement-init-option"><input type="radio" name="arrangementTaskInitMode" value="no" data-arr-task-init ' + (arrangementState.taskInitMode === 'no' ? 'checked' : '') + '><span>否</span></label></div></div></div></div>' +
-            '<div class="arrangement-task-list">' + (commission.tasks.length ? commission.tasks.map((task) => arrangementTaskMarkup(commission, task)).join('') : '<div class="arrangement-task-empty">暂无任务，请新增并填写任务类型与装运类别</div>') + '</div>' +
-          '</div>' +
-        '</article>';
-      };
       const renderArrangement = () => {
-        arrangementConsignmentList.innerHTML = arrangementState.consignments.length ? arrangementState.consignments.map(arrangementConsignmentMarkup).join('') : '<div class="arrangement-empty-consignment">暂无物流委托。</div>';
-        arrangementConfirmBtn.disabled = !arrangementState.consignments.length;
+        arrangementState.groups.forEach((group) => { group.totalText = arrangementGroupTotal(group); });
+        arrangementTaskTable.innerHTML = arrangementTaskTableMarkup();
+        arrangementConsignmentList.innerHTML = arrangementState.groups.length
+          ? arrangementState.groups.map((group, index) => arrangementGroupMarkup(group, index)).join('')
+          : '<div class="arrangement-empty-consignment">为任务选择物流供应商后，相同供应商的任务会自动合并为一个物流委托。</div>';
+        arrangementGroupCount.textContent = String(arrangementState.groups.length);
+        const count = arrangementState.groups.length;
+        const missing = arrangementState.tasks.some((task) => !task.supplier) || arrangementState.tasks.some((task) => task.manual && (!task.type || !task.loadType));
+        arrangementConfirmBtn.textContent = count ? '创建 ' + count + ' 个物流委托' : '确认创建';
+        arrangementConfirmBtn.disabled = !count || missing;
       };
-      const buildArrangementTasks = () => arrangementState.routes.map((route) => ({
-        id: 'T' + (++arrangementState.sequence),
-        routeId: route.id,
-        taskType: route.type,
-        loadType: route.loadType
-      }));
-      const makeManualArrangementTask = () => ({ id: 'T' + (++arrangementState.sequence), routeId: '', taskType: '', loadType: '' });
-      const applyArrangementTaskInit = (mode) => {
-        arrangementState.taskInitMode = mode === 'no' ? 'no' : 'yes';
-        const commission = arrangementState.consignments[0];
-        if (!commission) return;
-        commission.tasks = arrangementState.taskInitMode === 'yes' ? buildArrangementTasks() : [makeManualArrangementTask()];
+      const arrangementAddManualTask = () => {
+        arrangementState.tasks.push({
+          id: 'K' + (++arrangementState.sequence),
+          manual: true,
+          routeId: '',
+          label: '',
+          origin: '',
+          destination: '',
+          type: '',
+          loadType: '',
+          qtyNumber: 0,
+          qtyUnit: '',
+          qtyText: '--',
+          entrustType: ARRANGEMENT_ENTRUST_TYPES[0],
+          supplier: ''
+        });
         renderArrangement();
+      };
+      const arrangementTasksFromRow = (row) => {
+        const list = ROUTE_MAP[row.dataset.order] || [{
+          no: 1,
+          from: row.dataset.origin || '起运地',
+          to: row.dataset.destination || '目的地',
+          type: row.dataset.transportType || '水运',
+          load: row.dataset.loadType || '散货'
+        }];
+        const pending = parseQuantityText(row.dataset.unscheduled || '');
+        const each = list.length ? Math.round((pending.number / list.length) * 100) / 100 : pending.number;
+        let allocated = 0;
+        return list.map((route, index) => {
+          const isLast = index === list.length - 1;
+          const quantity = isLast ? Math.max(0, Math.round((pending.number - allocated) * 100) / 100) : each;
+          allocated = Math.round((allocated + quantity) * 100) / 100;
+          return {
+            id: 'K' + (++arrangementState.sequence),
+            manual: false,
+            routeId: 'R' + (index + 1),
+            label: '线路' + route.no,
+            origin: route.from,
+            destination: route.to,
+            type: route.type,
+            loadType: route.load,
+            entrustType: ARRANGEMENT_ENTRUST_TYPES[0],
+            qtyNumber: quantity,
+            qtyUnit: pending.unit || '',
+            qtyText: formatMergeNumber(quantity) + (pending.unit ? ' ' + pending.unit : ''),
+            supplier: arrangementDefaultSupplier(route.type)
+          };
+        });
       };
       const openArrangementDialog = (orderNo) => {
         const row = rows.find((item) => item.dataset.order === orderNo);
@@ -834,20 +1006,17 @@
         document.getElementById('arrangementSales').value = sales;
         document.getElementById('arrangementDepartment').value = department;
         document.getElementById('arrangementCompany').value = company;
-        document.getElementById('arrangementOperationPerson').value = sales;
-        const type = row.dataset.transportType || '水运';
-        const loadType = row.dataset.loadType || '散货';
-        const primary = { id: 'R1', label: '线路 #1', origin: row.dataset.origin || '起运地', destination: row.dataset.destination || '目的地', type, loadType };
-        const second = { id: 'R2', label: '线路 #2', origin: type === '水运' ? '苏州/工业园区海关监管库' : '中转仓', destination: type === '水运' ? '成都/青白江铁路港' : '目的仓', type, loadType };
+
         arrangementState.orderNo = orderNo;
-        arrangementState.routes = [primary, second];
-        arrangementState.taskInitMode = 'yes';
-        arrangementState.consignments = [{ id: 'C' + (++arrangementState.sequence), name: '未命名物流委托', legalCompany: company, type: '我司委托-已准入供应商', supplier: '中联铁运集团有限公司', supplierMerchant: '', tasks: buildArrangementTasks() }];
+        arrangementState.legalCompany = company;
+        arrangementState.tasks = arrangementTasksFromRow(row);
+        arrangementState.groups = [];
+        arrangementRebuildGroups();
         renderArrangement();
         arrangementDialog.hidden = false;
         arrangementDialog.querySelector('.arrangement-close')?.focus();
       };
-      const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
+const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
 
       /* ===== 列表行：填写物流需求 / 发起物流安排 ===== */
 
@@ -1438,49 +1607,63 @@
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && arrangementDialog && !arrangementDialog.hidden) closeArrangementDialog();
       });
+                        const arrangementFindGroup = (id) => arrangementState.groups.find((item) => item.id === id);
+      arrangementTaskTable?.addEventListener('change', (event) => {
+        const supplierSelect = event.target.closest('[data-arr-task-supplier]');
+        if (supplierSelect) {
+          const task = arrangementState.tasks.find((item) => item.id === supplierSelect.dataset.arrTaskSupplier);
+          if (!task) return;
+          task.supplier = supplierSelect.value;
+          arrangementRebuildGroups();
+          renderArrangement();
+          return;
+        }
+        const entrustSelect = event.target.closest('[data-arr-task-entrust]');
+        if (entrustSelect) {
+          const task = arrangementState.tasks.find((item) => item.id === entrustSelect.dataset.arrTaskEntrust);
+          if (task) task.entrustType = entrustSelect.value;
+          arrangementRebuildGroups();
+          renderArrangement();
+          return;
+        }
+        const typeSelect = event.target.closest('[data-arr-task-type]');
+        if (typeSelect) {
+          const task = arrangementState.tasks.find((item) => item.id === typeSelect.dataset.arrTaskType);
+          if (task) task.type = typeSelect.value;
+          return;
+        }
+        const loadSelect = event.target.closest('[data-arr-task-load]');
+        if (loadSelect) {
+          const task = arrangementState.tasks.find((item) => item.id === loadSelect.dataset.arrTaskLoad);
+          if (task) task.loadType = loadSelect.value;
+          arrangementConfirmBtn.disabled = arrangementState.tasks.some((item) => !item.supplier) || arrangementState.tasks.some((item) => item.manual && (!item.type || !item.loadType));
+        }
+      });
+      document.getElementById('arrangementAddTask')?.addEventListener('click', arrangementAddManualTask);
       arrangementConsignmentList?.addEventListener('input', (event) => {
-        const field = event.target.dataset.arrConsignmentField;
+        const field = event.target.dataset.arrGroupField;
         if (!field) return;
-        const commission = arrangementState.consignments.find((item) => item.id === event.target.dataset.arrCommission);
-        if (commission) commission[field] = event.target.value;
+        const group = arrangementFindGroup(event.target.dataset.arrGroup);
+        if (group) group[field] = event.target.value;
       });
       arrangementConsignmentList?.addEventListener('change', (event) => {
-        if (event.target.matches('[data-arr-task-init]')) {
-          if (event.target.checked) applyArrangementTaskInit(event.target.value);
-          return;
-        }
-        const field = event.target.dataset.arrConsignmentField;
-        if (field) {
-          const commission = arrangementState.consignments.find((item) => item.id === event.target.dataset.arrCommission);
-          if (commission) commission[field] = event.target.value;
-          return;
-        }
-        const taskField = event.target.dataset.arrTaskField;
-        if (!taskField) return;
-        const taskCard = event.target.closest('[data-arr-task]');
-        const commission = arrangementState.consignments.find((item) => item.id === taskCard?.dataset.arrCommission);
-        const task = commission?.tasks.find((item) => item.id === taskCard?.dataset.arrTask);
-        if (!task) return;
-        task[taskField] = event.target.value;
-      });
-      arrangementConsignmentList?.addEventListener('click', (event) => {
-        const deleteTask = event.target.closest('[data-delete-arr-task]');
-        if (!deleteTask) return;
-        const commission = arrangementState.consignments.find((item) => item.id === deleteTask.dataset.arrCommission);
-        if (commission) {
-          commission.tasks = commission.tasks.filter((task) => task.id !== deleteTask.dataset.deleteArrTask);
-          renderArrangement();
-        }
+        const field = event.target.dataset.arrGroupField;
+        if (!field) return;
+        const group = arrangementFindGroup(event.target.dataset.arrGroup);
+        if (group) group[field] = event.target.value;
       });
       arrangementConfirmBtn?.addEventListener('click', () => {
         if (arrangementConfirmBtn.disabled) return;
-        const consignmentCount = arrangementState.consignments.length;
-        const taskCount = arrangementState.consignments.reduce((sum, item) => sum + item.tasks.length, 0);
+        const groups = arrangementState.groups;
+        const detail = groups.map((group) => {
+          const names = group.tasks.map((task) => '任务' + (arrangementState.tasks.indexOf(task) + 1)).join('、');
+          return group.supplier + '（' + names + '）';
+        }).join('；');
         closeArrangementDialog();
-        showToast('物流安排已创建：' + consignmentCount + ' 个委托、' + taskCount + ' 个任务');
+        showToast('已创建 ' + groups.length + ' 个物流委托：' + detail);
       });
 
-      document.getElementById('newOrderBtn')?.addEventListener('click', () => {
+document.getElementById('newOrderBtn')?.addEventListener('click', () => {
         captureListState();
         window.location.href = 'customer-order-detail-prototype.html?mode=create&from=customer-order-list';
       });
