@@ -2802,8 +2802,10 @@
     .demand-search-option:hover,
     .demand-search-option.active { background: #eef5ff; color: #0868df; }
     .demand-search-empty { padding: 8px; color: #8a95a4; font-size: 11px; text-align: center; }
-    .ct-customer-filter { position: relative; min-width: 0; }
-    .ct-customer-filter > input { padding-right: 30px; cursor: text; }
+    .ct-customer-filter,
+    .ct-supplier-filter { position: relative; min-width: 0; }
+    .ct-customer-filter > input,
+    .ct-supplier-filter > input { padding-right: 30px; cursor: text; }
     .demand-multi-select { position: relative; min-width: 0; }
     .demand-multi-control { min-height: 26px; padding: 2px 28px 2px 4px; display: flex; align-items: center; gap: 4px; overflow: hidden; border: 1px solid #d4dce6; border-radius: 5px; background: #fff; cursor: text; }
     .demand-multi-control:focus-within { border-color: #1976e9; box-shadow: 0 0 0 2px rgba(8, 104, 223, .08); }
@@ -3073,7 +3075,11 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
           </div>
           <div>
             <label for="filter-supplier">贸易供应商</label>
-            <input type="text" id="filter-supplier" name="supplier" autocomplete="off" placeholder="请输入" />
+            <div class="ct-supplier-filter">
+              <input type="text" id="filter-supplier" name="supplier" list="filterSupplierOptions" autocomplete="off" placeholder="搜索或选择贸易供应商" onfocus="renderSupplierFilterOptions()" />
+              <i data-lucide="chevron-down" class="demand-search-arrow"></i>
+              <datalist id="filterSupplierOptions"></datalist>
+            </div>
           </div>
           <div>
             <label for="filter-salesman">业务员</label>
@@ -4567,6 +4573,19 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const list = document.getElementById('filterCustomerOptions');
       if (!list) return;
       list.innerHTML = getCustomerFilterOptions()
+        .map(value => `<option value="${escapeHtml(value)}"></option>`)
+        .join('');
+    }
+
+    function getSupplierFilterOptions() {
+      return [...new Set((state.items || []).map(item => item.supplier).filter(Boolean))]
+        .sort((a, b) => String(a).localeCompare(String(b), 'zh-Hans-CN'));
+    }
+
+    function renderSupplierFilterOptions() {
+      const list = document.getElementById('filterSupplierOptions');
+      if (!list) return;
+      list.innerHTML = getSupplierFilterOptions()
         .map(value => `<option value="${escapeHtml(value)}"></option>`)
         .join('');
     }
