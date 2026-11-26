@@ -69,11 +69,27 @@
       projectNo: '', tradeTerm: 'FOB', contact: '', phone: '', email: '', remark: ''
     },
     'FCO202610270008': {
-      no: 'FCO202610270008', status: '待履约', orderConfirmationStatus: '待确认', customer: '中国重汽集团',
+      no: 'FCO202610270008', status: '待履约', orderConfirmationStatus: '已确认', orderGoodsQuantity: 300, generatedLogisticsDemandQuantity: 0, customer: '中国重汽集团',
       goods: '重卡卡车', total: '300 台', origin: '青岛港', destination: '上海港',
       businessType: '出口', serviceScope: ['运输'], transportType: '水运', loadType: '件杂货',
       sales: '庄巧玲', company: '厦门建发物流有限公司', department: '件杂部',
       consignments: ['2102960975970095104', '2102960975970095105'], businessDate: '2026-10-26',
+      projectNo: '', tradeTerm: 'FOB', contact: '', phone: '', email: '', remark: ''
+    },
+    'FCO202611250001': {
+      no: 'FCO202611250001', status: '待履约', orderConfirmationStatus: '已确认', orderGoodsQuantity: 1.2, generatedLogisticsDemandQuantity: 0, customer: '青岛绿洲园花生食品有限公司',
+      goods: '进口纸浆', total: '1.20 万吨', origin: '--', destination: '--',
+      businessType: '进口', serviceScope: ['报关清关'], transportType: '', loadType: '',
+      sales: '苏丽蓉', company: '厦门建发物流有限公司', department: '物流运营部',
+      consignments: ['210611250001'], businessDate: '2026-11-25',
+      projectNo: '', tradeTerm: 'CIF', contact: '', phone: '', email: '', remark: ''
+    },
+    'FCO202611250002': {
+      no: 'FCO202611250002', status: '待履约', orderConfirmationStatus: '已确认', orderGoodsQuantity: 300, generatedLogisticsDemandQuantity: 0, customer: '中国重汽集团',
+      goods: '重卡卡车', total: '300 台', origin: '--', destination: '--',
+      businessType: '出口', serviceScope: ['仓储'], transportType: '', loadType: '',
+      sales: '庄巧玲', company: '厦门建发亚投新能源物流有限公司', department: '件杂部',
+      consignments: ['210611250002'], businessDate: '2026-11-25',
       projectNo: '', tradeTerm: 'FOB', contact: '', phone: '', email: '', remark: ''
     },
     'FCO202610270007': {

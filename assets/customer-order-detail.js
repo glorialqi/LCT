@@ -19,6 +19,7 @@
   const dirtyIndicator = document.getElementById('detailDirtyIndicator');
   const chips = document.getElementById('consignmentChips');
   const chipCount = document.getElementById('consignmentCount');
+  const consignmentInput = document.getElementById('customerOrderNoInput');
   let draftSaveTimer = null;
 
   const controls = () => Array.from(scope.querySelectorAll('input, select, textarea'));
@@ -56,8 +57,12 @@
   }
 
   function renderConsignments(values) {
-    if (!chips) return;
     const list = Array.isArray(values) ? values.filter(Boolean) : [];
+    if (consignmentInput) {
+      consignmentInput.value = list[0] || '';
+      return;
+    }
+    if (!chips) return;
     chips.innerHTML = list.map((value) => `
       <span class="consignment-chip" data-value="${String(value).replace(/[&<>"']/g, '')}">
         <span title="${String(value)}">${String(value)}</span>
@@ -175,6 +180,31 @@
     }
   }
 
+  const readonlyOriginalState = new WeakMap();
+
+  function applyOrderReadonlyMode(status) {
+    const orderInfo = document.getElementById('orderInfoView');
+    if (!orderInfo) return;
+    const readonly = Boolean(status) && !['创建', '驳回'].includes(status);
+    document.body.dataset.orderReadonly = readonly ? 'true' : 'false';
+    orderInfo.querySelectorAll('input, select, textarea').forEach((control) => {
+      if (control.type === 'hidden') return;
+      if (!readonlyOriginalState.has(control)) {
+        readonlyOriginalState.set(control, { readOnly: control.readOnly, disabled: control.disabled });
+      }
+      const original = readonlyOriginalState.get(control);
+      if (readonly) {
+        control.readOnly = true;
+        if (control.tagName === 'SELECT' || ['checkbox', 'radio', 'file'].includes(control.type)) control.disabled = true;
+        control.setAttribute('aria-readonly', 'true');
+      } else {
+        control.readOnly = original.readOnly;
+        control.disabled = original.disabled;
+        control.removeAttribute('aria-readonly');
+      }
+    });
+  }
+
   function syncStatusActions() {
     syncArrangementStatus();
     const status = record.status || '';
@@ -185,7 +215,13 @@
     }
     document.body.dataset.orderStatus = status;
     document.body.dataset.contractStatus = contract.status || '';
-    const contractOverview = document.getElementById('orderContractOverviewStatus');
+    applyOrderReadonlyMode(status);
+    const orderInfoReadonlyHost = document.getElementById('orderInfoView');
+  if (orderInfoReadonlyHost) {
+    new MutationObserver(() => applyOrderReadonlyMode(document.getElementById('orderStatusField')?.textContent.trim() || record.status || ''))
+      .observe(orderInfoReadonlyHost, { childList: true, subtree: true });
+  }
+  const contractOverview = document.getElementById('orderContractOverviewStatus');
     if (contractOverview) {
       contractOverview.textContent = contract.status || '';
       contractOverview.dataset.status = contract.status || '';
@@ -360,9 +396,12 @@
       versionControl.value = latestVersion.replace(/^V/i, '');
     }
     const sourceTypeControl = controlByLabel('来源类型');
-    if (sourceTypeControl && !sourceTypeControl.value) sourceTypeControl.value = '手动创建';
-    const sourceSystemControl = controlByLabel('来源系统');
-    if (sourceSystemControl && !sourceSystemControl.value) sourceSystemControl.value = '4PL控制塔';
+    if (sourceTypeControl && record.sourceType) {
+      const recordSource = record.sourceType === '外部系统'
+        ? '外系统接入'
+        : (['手动创建', '客户需求单', '外系统接入'].includes(record.sourceType) ? record.sourceType : '手动创建');
+      sourceTypeControl.value = recordSource;
+    }
     renderContract();
     syncStatusActions();
   }
@@ -373,7 +412,9 @@
       const label = control.getAttribute('aria-label');
       if (label) fields[label] = control.value;
     });
-    const consignments = chips ? Array.from(chips.querySelectorAll('.consignment-chip')).map((chip) => chip.dataset.value) : [];
+    const consignments = consignmentInput
+      ? (consignmentInput.value.trim() ? [consignmentInput.value.trim()] : [])
+      : (chips ? Array.from(chips.querySelectorAll('.consignment-chip')).map((chip) => chip.dataset.value) : []);
     const selectedValues = (name) => Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map((input) => input.value);
     const emailRecipients = Array.from(document.querySelectorAll('#orderEmailRecipientList [data-order-email-recipient]')).map((chip) => ({
       name: chip.dataset.recipientName || '',

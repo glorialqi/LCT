@@ -26,19 +26,21 @@
   const businessTypes = ['出口', '进口', '内贸'];
   const serviceScopes = ['运输、仓储', '运输、报关清关', '仓储、报关清关', '运输、仓储、报关清关'];
   const transportTypes = ['水运', '汽运', '铁运'];
-  const sourceSystems = ['SSP', '物流控制塔'];
+  const sourceSystems = ['股份控制塔'];
+  const sourceTypes = ['原始需求'];
+  const ourCompanies = ['厦门建发物流有限公司', '建发物流（上海）有限公司'];
   const statusPattern = [
-    'created', 'pending', 'received', 'rejected', 'received', 'completed',
-    'received', 'created', 'received', 'pending', 'rejected', 'received',
-    'completed', 'received', 'pending', 'created', 'received', 'completed',
-    'pending', 'received', 'created', 'received', 'pending', 'received'
+    'pending', 'received', 'rejected', 'received', 'completed',
+    'received', 'pending', 'received', 'pending', 'rejected', 'received',
+    'completed', 'received', 'pending', 'received', 'completed',
+    'pending', 'received', 'received', 'pending', 'received',
+    'rejected', 'completed', 'pending'
   ];
   const progressPattern = ['partial', 'none', 'complete', 'none', 'over', 'complete', 'partial', 'none', 'over', 'partial', 'none', 'complete'];
   const statusMeta = {
-    created: { label: '创建', tone: 'created' },
     pending: { label: '待接收', tone: 'pending' },
     received: { label: '执行中', tone: 'running' },
-    rejected: { label: '已驳回', tone: 'rejected' },
+    rejected: { label: '已拒绝', tone: 'rejected' },
     completed: { label: '已完成', tone: 'done' }
   };
   const progressMeta = {
@@ -56,7 +58,7 @@
         : 'none';
       if (progress === 'none' && (status === 'received' || status === 'completed')) progress = 'partial';
       const customer = customers[index % customers.length];
-      const versionNumber = (status === 'created' || status === 'pending' || status === 'rejected') ? 1 : status === 'completed' ? 4 : 2 + (index % 3);
+      const versionNumber = status === 'completed' ? 2 : 1;
       const day = String(28 - (index % 6)).padStart(2, '0');
       const hour = String(9 + (index % 8)).padStart(2, '0');
       const minute = String((index * 7) % 60).padStart(2, '0');
@@ -74,15 +76,17 @@
         status,
         progress,
         version: 'V' + versionNumber,
-        hasPendingVersion: status === 'received' && index % 5 === 0,
+        hasPendingVersion: false,
         customer,
+        ourCompany: ourCompanies[index % ourCompanies.length],
         contact: contacts[index % contacts.length],
-        serviceReq: status === 'created' ? '--' : 'SR20261028' + String(18 + index).padStart(4, '0'),
-        upstreamDemand: status === 'created' ? '--' : 'LD20261027' + String(92 + index).padStart(4, '0'),
+        sourceSystem: sourceSystems[index % sourceSystems.length],
+        sourceType: sourceTypes[index % sourceTypes.length],
+        sourceNo: 'LSR20261028' + String(18 + index).padStart(4, '0'),
+        upstreamDemand: 'LD20261027' + String(92 + index).padStart(4, '0'),
         bizType: businessTypes[index % businessTypes.length],
         serviceScope: serviceScopes[index % serviceScopes.length],
         transportType: transportTypes[index % transportTypes.length],
-        sourceSystem: status === 'created' ? '手工创建' : sourceSystems[index % sourceSystems.length],
         lineCount,
         lineItems,
         overLines: progress === 'over' ? 1 : 0,
@@ -103,8 +107,6 @@
   const pagerSummary = document.getElementById('pagerSummary');
   const prevPageBtn = document.getElementById('prevPageBtn');
   const nextPageBtn = document.getElementById('nextPageBtn');
-  const selectAll = document.getElementById('selectAll');
-  const addDemandBtn = document.getElementById('addDemandBtn');
   const relationDialog = document.getElementById('relationDialog');
   const resetQueryBtn = document.getElementById('resetQueryBtn');
   const submitQueryBtn = document.getElementById('submitQueryBtn');
@@ -124,14 +126,14 @@
     return {
       demandNo: document.getElementById('queryDemandNo').value.trim().toLowerCase(),
       customer: document.getElementById('queryCustomer').value,
-      serviceReq: document.getElementById('queryServiceReq').value.trim().toLowerCase(),
-      version: document.getElementById('queryVersion').value,
+      sourceSystem: document.getElementById('querySourceSystem').value,
+      sourceType: document.getElementById('querySourceType').value,
+      sourceNo: document.getElementById('querySourceNo').value.trim().toLowerCase(),
       progress: document.getElementById('queryProgress').value,
       contact: document.getElementById('queryContact').value.trim().toLowerCase(),
       bizType: document.getElementById('queryBizType').value,
       serviceScope: document.getElementById('queryServiceScope').value,
       transportType: document.getElementById('queryTransportType').value,
-      sourceSystem: document.getElementById('querySourceSystem').value,
       createdFrom: createdFrom.value,
       createdTo: createdTo.value
     };
@@ -143,14 +145,14 @@
       if (state.status !== 'all' && row.status !== state.status) return false;
       if (filters.demandNo && !row.demandNo.toLowerCase().includes(filters.demandNo)) return false;
       if (filters.customer && row.customer !== filters.customer) return false;
-      if (filters.serviceReq && !row.serviceReq.toLowerCase().includes(filters.serviceReq)) return false;
-      if (filters.version && row.version !== filters.version) return false;
+      if (filters.sourceSystem && row.sourceSystem !== filters.sourceSystem) return false;
+      if (filters.sourceType && row.sourceType !== filters.sourceType) return false;
+      if (filters.sourceNo && !row.sourceNo.toLowerCase().includes(filters.sourceNo)) return false;
       if (filters.progress && row.progress !== filters.progress) return false;
       if (filters.contact && !row.contact.toLowerCase().includes(filters.contact)) return false;
       if (filters.bizType && row.bizType !== filters.bizType) return false;
       if (filters.serviceScope && !row.serviceScope.includes(filters.serviceScope)) return false;
       if (filters.transportType && row.transportType !== filters.transportType) return false;
-      if (filters.sourceSystem && row.sourceSystem !== filters.sourceSystem) return false;
       if (filters.createdFrom && row.createdDate < filters.createdFrom) return false;
       if (filters.createdTo && row.createdDate > filters.createdTo) return false;
       return true;
@@ -175,14 +177,9 @@
   }
 
   function updateSelectionUI() {
-    const checkedOnPage = Array.from(body.querySelectorAll('.row-check')).filter((checkbox) => checkbox.checked);
-    const pageChecks = Array.from(body.querySelectorAll('.row-check'));
-    selectAll.checked = pageChecks.length > 0 && checkedOnPage.length === pageChecks.length;
-    selectAll.indeterminate = checkedOnPage.length > 0 && checkedOnPage.length < pageChecks.length;
     document.querySelectorAll('[data-demand-no]').forEach((row) => {
       row.classList.toggle('is-selected', state.selected.has(row.dataset.demandNo));
     });
-
   }
 
   function renderRows() {
@@ -195,17 +192,16 @@
     body.innerHTML = pageRows.map((row) => {
       const status = statusMeta[row.status];
       const progress = progressMeta[row.progress];
-      const checked = state.selected.has(row.demandNo);
-      return '<tr data-demand-no="' + ui.escapeHtml(row.demandNo) + '" data-status="' + row.status + '" tabindex="0" class="' + (checked ? 'is-selected' : '') + '">' +
-        '<td class="sticky-check"><input class="row-check" type="checkbox" ' + (checked ? 'checked' : '') + ' aria-label="选择客户需求 ' + ui.escapeHtml(row.demandNo) + '"></td>' +
+      return '<tr data-demand-no="' + ui.escapeHtml(row.demandNo) + '" data-status="' + row.status + '" tabindex="0">' +
         '<td class="sticky-no"><a class="cell-link" href="' + detailUrl(row.demandNo, row.status) + '">' + ui.escapeHtml(row.demandNo) + '</a></td>' +
         '<td>' + ui.statusTag(status.label, status.tone) + '</td>' +
         '<td>' + ui.statusTag(progress.label, progress.tone) + '</td>' +
-        '<td class="nowrap"><span class="version-chip" title="' + (row.hasPendingVersion ? '存在待接收的新版本' : '当前有效版本') + '">' + row.version + (row.hasPendingVersion ? ' +' : '') + '</span></td>' +
         '<td><span class="truncate-cell" title="' + ui.escapeHtml(row.customer) + '">' + ui.escapeHtml(row.customer) + '</span></td>' +
-        '<td class="nowrap"><span class="cell-link">' + ui.escapeHtml(row.serviceReq) + '</span></td>' +
+        '<td><span class="truncate-cell" title="' + ui.escapeHtml(row.ourCompany) + '">' + ui.escapeHtml(row.ourCompany) + '</span></td>' +
+        '<td class="nowrap">' + ui.escapeHtml(row.sourceSystem) + '</td>' +
+        '<td class="nowrap">' + ui.escapeHtml(row.sourceType) + '</td>' +
+        '<td class="nowrap"><span class="cell-link">' + ui.escapeHtml(row.sourceNo) + '</span></td>' +
         '<td class="num">' + row.lineCount + '</td>' +
-        '<td class="num">' + row.overLines + '</td>' +
         '<td class="num">' + row.orderCount + '</td>' +
         '<td class="nowrap">' + ui.escapeHtml(row.contact) + '</td>' +
         '<td class="nowrap">' + ui.escapeHtml(row.receivedAt) + '</td>' +
@@ -226,15 +222,6 @@
     prevPageBtn.disabled = state.page <= 1;
     nextPageBtn.disabled = state.page >= pageCount;
     pageSizeSelect.value = String(state.pageSize);
-
-    body.querySelectorAll('.row-check').forEach((checkbox) => {
-      checkbox.addEventListener('change', () => {
-        const row = checkbox.closest('tr');
-        if (checkbox.checked) state.selected.add(row.dataset.demandNo);
-        else state.selected.delete(row.dataset.demandNo);
-        updateSelectionUI();
-      });
-    });
 
     updateSelectionUI();
 
@@ -498,16 +485,6 @@
     });
   });
 
-  selectAll.addEventListener('change', () => {
-    body.querySelectorAll('tr[data-demand-no]').forEach((row) => {
-      const checkbox = row.querySelector('.row-check');
-      checkbox.checked = selectAll.checked;
-      if (selectAll.checked) state.selected.add(row.dataset.demandNo);
-      else state.selected.delete(row.dataset.demandNo);
-    });
-    updateSelectionUI();
-  });
-
   pagerPages.addEventListener('click', (event) => {
     const button = event.target.closest('button[data-page]');
     if (!button) return;
@@ -531,11 +508,14 @@
     state.selected.clear();
     renderRows();
   });
-  addDemandBtn.addEventListener('click', () => {
-    const params = new URLSearchParams({ from: 'customer-demand-list-prototype.html', mode: 'new', status: 'created' });
-    if (ui.embedded) params.set('embed', '1');
-    window.location.href = 'customer-demand-detail-v3-prototype.html?' + params.toString();
-  });
+  const addDemandBtn = document.getElementById('addDemandBtn');
+  if (addDemandBtn) {
+    addDemandBtn.addEventListener('click', () => {
+      const params = new URLSearchParams({ from: 'customer-demand-list-prototype.html', mode: 'new', status: 'created' });
+      if (ui.embedded) params.set('embed', '1');
+      window.location.href = 'customer-demand-detail-v3-prototype.html?' + params.toString();
+    });
+  }
 
   body.addEventListener('dblclick', (event) => {
     if (event.target.closest('a, button, input, label')) return;

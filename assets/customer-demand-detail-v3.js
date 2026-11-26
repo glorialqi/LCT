@@ -9,7 +9,7 @@
   const demandCreator = Number.isInteger(demandLastDigit) && demandLastDigit > 0
     ? creatorNames[(demandLastDigit - 1) % creatorNames.length]
     : creatorNames[Array.from(demandNo).reduce((sum, char) => sum + char.charCodeAt(0), 0) % creatorNames.length];
-  const allowedStatuses = ['created', 'pending', 'received', 'rejected', 'completed', 'voided'];
+  const allowedStatuses = ['created', 'pending', 'received', 'rejected', 'completed'];
   const requestedStatus = allowedStatuses.includes(params.get('status'))
     ? params.get('status')
     : allowedStatuses.includes(document.body.dataset.demandStatus)
@@ -21,23 +21,21 @@
     created: '草稿',
     pending: '待接收',
     received: '执行中',
-    rejected: '已驳回',
-    completed: '已完成',
-    voided: '已作废'
+    rejected: '已拒绝',
+    completed: '已完成'
   };
   const statusTones = {
     created: 'created',
     pending: 'pending',
     received: 'running',
     rejected: 'rejected',
-    completed: 'done',
-    voided: 'closed'
+    completed: 'done'
   };
   const versionStatus = {
     created: { label: '草稿', tone: 'created' },
     pending: { label: '待接收', tone: 'pending' },
     received: { label: '已接收', tone: 'done' },
-    rejected: { label: '已驳回', tone: 'rejected' }
+    rejected: { label: '已拒绝', tone: 'rejected' }
   };
 
   function esc(value) {
@@ -412,6 +410,7 @@
     customerType: '外部客户',
     contactName: '王晓琳',
     contactPhone: '138 5320 7618',
+    ourCompany: '厦门建发物流有限公司',
     contactEmail: 'wangxl@example.com',
     contactEmailRecipients: [
       { name: '王晓琳', email: 'wangxl@example.com' },
@@ -448,11 +447,35 @@
       vesselAgeRequirement: '25 年以内',
       commissionRate: 2.5
     },
+    receiveOrg: {
+      salesperson: '苏丽蓉',
+      department: '供应链物流综合部',
+      businessUnit: '供应链物流科技',
+      accountingGroup: '供应链物流综合核算组',
+      salesmanCompany: '厦门建发物流有限公司',
+      operationOrg: '4PL物流运营中心'
+    },
+    contract: {
+      signingMethod: 'E建签签约',
+      bodyType: '系统自动生成',
+      autoOriginalRecovery: '--',
+      tradeMode: '跨境',
+      tradeTerms: 'FOB'
+    },
+    insurance: {
+      exempt: '否',
+      policyholder: '委托方（我司）',
+      method: '控制塔自动投保',
+      company: '中国太平洋财产保险股份有限公司',
+      deductible: '否',
+      mainRisk: '一切险',
+      additionalRisk: '战争险',
+      changeDestination: '否'
+    },
     source: {
-      type: '服务要求转入',
-      system: '物流控制塔',
-      no: 'SR202610280018',
-      version: 'V2',
+      type: '原始需求',
+      system: '股份控制塔',
+      no: 'LSR202610280018',
       receiver: '苏丽蓉',
       receivedAt: '2026-10-28 09:32',
       rejector: '李四',
@@ -534,8 +557,8 @@
     ],
     timeline: [
       { time: '2026-10-27 15:10', title: '首次提交', text: '来源服务要求 V1 推送至 4PL，生成客户需求单。' },
-      { time: '2026-10-27 16:08', title: 'V1 已驳回', text: '李四驳回：客户联系人信息不完整。' },
-      { time: '2026-10-28 09:20', title: 'V2 重新提交', text: '同一客户需求单号下生成新版本，原 V1 保持已驳回。' },
+      { time: '2026-10-27 16:08', title: 'V1 已拒绝', text: '李四拒绝：客户联系人信息不完整。' },
+      { time: '2026-10-28 09:20', title: 'V2 重新提交', text: '同一客户需求单号下生成新版本，原 V1 保持已拒绝。' },
       { time: '2026-10-28 09:32', title: 'V2 已接收', text: '苏丽蓉接收 V2，版本即时生效。' },
       { time: '2026-10-28 13:18', title: 'V3 已接收', text: '修改单 M20261028001 接收后生成当前有效版本 V3。' },
       { time: '2026-10-29 09:42', title: 'V4 待接收', text: '新修改单已提交，当前仍按 V3 执行。' },
@@ -635,7 +658,7 @@
       demand.timeline = [
         { time: '2026-10-27 14:52', title: '需求已创建', text: '客户需求单由服务要求生成。' },
         { time: '2026-10-27 15:10', title: 'V1 已提交', text: '客户需求进入待接收状态。' },
-        { time: '2026-10-27 16:08', title: 'V1 已驳回', text: '李四驳回：客户联系人信息不完整。' }
+        { time: '2026-10-27 16:08', title: 'V1 已拒绝', text: '李四拒绝：客户联系人信息不完整。' }
       ];
     } else if (requestedStatus === 'completed') {
       demand.status = 'completed';
@@ -674,8 +697,8 @@
       }];
       demand.timeline = [
         { time: '2026-10-27 14:52', title: '需求已创建', text: '客户需求单由服务要求生成。' },
-        { time: '2026-10-27 16:08', title: 'V1 已驳回', text: '李四驳回：客户联系人信息不完整。' },
-        { time: '2026-10-29 15:20', title: '客户需求已作废', text: '苏丽蓉作废客户需求：客户取消本次服务要求。' }
+        { time: '2026-10-27 16:08', title: 'V1 已拒绝', text: '李四拒绝：客户联系人信息不完整。' },
+        { time: '2026-10-29 15:20', title: '客户需求已关闭', text: '苏丽蓉关闭客户需求：客户取消本次服务要求。' }
       ];
     }
   }
@@ -749,25 +772,25 @@
 
   function renderSource() {
     const source = demand.source;
-    setText('sourceTypeValue', source.type);
     setText('sourceSystemValue', source.system);
-    const sourceVersionSuffix = source.version ? '(' + source.version + ')' : '';
-    setText('sourceNumberValue', (source.no || '--') + sourceVersionSuffix);
-    setText('sourceTypeBadge', source.type);
+    setText('sourceTypeValue', source.type);
+    setText('sourceNumberValue', source.no);
+    setText('headerSourceSystemValue', source.system);
+    setText('headerSourceTypeValue', source.type);
+    setText('headerSourceNoValue', source.no);
     setText('overviewStatus', statusLabels[demand.status]);
     const isRejected = demand.status === 'rejected';
     const handler = isRejected ? source.rejector : source.receiver;
     const handledAt = isRejected ? source.rejectedAt : source.receivedAt;
-    setText('sourceHandlerLabel', isRejected ? '驳回人' : '接收人');
-    setText('sourceHandledAtLabel', isRejected ? '驳回时间' : '接收时间');
+    setText('sourceHandlerLabel', isRejected ? '拒绝人' : '接收人');
+    setText('sourceHandledAtLabel', isRejected ? '拒绝时间' : '接收时间');
     setText('overviewHandledBy', handler || '--');
     setText('overviewHandledAt', handledAt || '--');
-    const rejected = demand.versions.filter((version) => version.status === 'rejected').slice(-1)[0];
-    const rejectionText = rejected
-      ? rejected.version + ' 于 ' + (source.rejectedAt || '--') + ' 被驳回：' + rejected.reason
-      : '暂无驳回记录';
+    const rejectionText = isRejected
+      ? (source.rejectedAt || '--') + ' 被拒绝：' + (source.rejectionReason || '未填写拒绝原因')
+      : '暂无拒绝记录';
     setText('rejectionRecord', rejectionText);
-    $('rejectionRecord').title = rejectionText;
+    if ($('rejectionRecord')) $('rejectionRecord').title = rejectionText;
     $('sourceAttachmentList').innerHTML = (source.attachments || []).length
       ? source.attachments.map((item) => attachmentButton(item, 'is-compact')).join('')
       : '<span class="demand-muted">暂无附件</span>';
@@ -804,6 +827,30 @@
 
   function renderDemandInfoValues() {
     setText('staticCustomerValue', demand.customer);
+    const receivedOrg = demand.status === 'pending' ? {} : (demand.receiveOrg || {});
+    setText('staticOurCompanyValue', demand.status === 'pending' ? '' : demand.ourCompany);
+    setText('receiveOrgSalespersonValue', receivedOrg.salesperson);
+    setText('receiveOrgDepartmentValue', receivedOrg.department);
+    setText('receiveOrgBusinessUnitValue', receivedOrg.businessUnit);
+    setText('receiveOrgAccountingGroupValue', receivedOrg.accountingGroup);
+    setText('receiveOrgCompanyValue', receivedOrg.salesmanCompany);
+    setText('receiveOrgOperationOrgValue', receivedOrg.operationOrg);
+    setText('receiveOrgHint', demand.status === 'pending' ? '接收时录入' : '已由接收人录入');
+    const contract = demand.contract || {};
+    setText('staticSigningMethodValue', contract.signingMethod);
+    setText('staticContractBodyTypeValue', contract.bodyType);
+    setText('staticAutoOriginalRecoveryValue', contract.autoOriginalRecovery);
+    setText('staticTradeModeValue', contract.tradeMode);
+    setText('staticTradeTermsValue', contract.tradeTerms);
+    const insurance = demand.insurance || {};
+    setText('staticInsuranceExemptValue', insurance.exempt);
+    setText('staticPolicyholderValue', insurance.policyholder);
+    setText('staticInsuranceMethodValue', insurance.method);
+    setText('staticInsuranceCompanyValue', insurance.company);
+    setText('staticDeductibleValue', insurance.deductible);
+    setText('staticMainRiskValue', insurance.mainRisk);
+    setText('staticAdditionalRiskValue', insurance.additionalRisk);
+    setText('staticChangeDestinationInsuranceValue', insurance.changeDestination);
     setText('staticCustomerTypeValue', demand.customerType);
     setText('staticContactValue', demand.contactName);
     setText('staticPhoneValue', demand.contactPhone);
@@ -813,7 +860,6 @@
     $('staticEmailValue').innerHTML = contactEmailRecipientsMarkup(contactRecipients);
     setText('staticBizTypeValue', demand.businessType);
     setText('staticBusinessDateValue', demand.businessDate);
-    setText('staticTradeTermsValue', demand.tradeTerms);
     setText('serviceRequirementValue', demand.serviceRequirement);
     setText('customerRemarkValue', demand.customerRemark);
     $('staticServiceScopeValue').innerHTML = tagMarkup(demand.serviceScopes);
@@ -887,122 +933,42 @@
     $('headerProgress').className = overLines ? 'demand-danger' : '';
   }
 
-  function quoteTotals() {
-    const lines = demand.quote.lines || [];
-    const localAmount = (line) => Number(line.localAmount ?? Number(line.quoteAmount || 0) * Number(line.exchangeRate ?? 1));
-    const receivable = lines.filter((line) => line.direction === '应收').reduce((sum, line) => sum + localAmount(line), 0);
-    const payable = lines.filter((line) => line.direction === '应付').reduce((sum, line) => sum + localAmount(line), 0);
-    const profit = receivable - payable;
-    return {
-      receivable,
-      payable,
-      cost: payable,
-      profit,
-      margin: receivable ? (profit / receivable * 100).toFixed(2) + '%' : '--'
-    };
-  }
-
-  function metric(label, value, tone, detail) {
-    return '<div class="demand-metric ' + (tone ? 'is-' + tone : '') + '">' +
-      '<span>' + esc(label) + '</span><strong>' + esc(value) + '</strong>' +
-      (detail ? '<small>' + esc(detail) + '</small>' : '') + '</div>';
-  }
-
-  function renderQuote() {
-    if (!$('quoteMetrics') || !$('quoteReceivableBody') || !$('quotePayableBody')) return;
-    const totals = quoteTotals();
-    $('quoteMetrics').innerHTML =
-      metric('应收合计', money(totals.receivable), 'primary') +
-      metric('应付合计', money(totals.payable)) +
-      metric('毛利', money(totals.profit), totals.profit >= 0 ? 'success' : 'danger') +
-      metric('毛利率', totals.margin);
-    if (!$('quoteReceivableBody') || !$('quotePayableBody')) return;
-    const receivable = demand.quote.lines.filter((line) => line.direction === '应收');
-    const payable = demand.quote.lines.filter((line) => line.direction === '应付');
-    const rowMarkup = (line) => {
-      const exchangeRate = Number(line.exchangeRate ?? 1);
-      const localAmount = Number(line.localAmount ?? Number(line.quoteAmount || 0) * exchangeRate);
-      return '<tr><td><strong>' + esc(line.feeItem) + '</strong></td>' +
-        '<td class="num">' + line.taxRate + '%</td><td class="num">' + amountText(line.quotePrice) + '</td>' +
-        '<td>' + esc(line.currency) + '</td><td class="num">' + line.quantity + '</td><td>' + esc(line.unit) + '</td>' +
-        '<td class="num">' + amountText(line.quoteAmount) + '</td><td class="num">' + exchangeRate.toFixed(4) + '</td>' +
-        '<td class="num">' + amountText(localAmount) + '</td></tr>';
-    };
-    $('quoteReceivableCount').textContent = receivable.length + ' 行';
-    $('quotePayableCount').textContent = payable.length + ' 行';
-    $('quoteReceivableBody').innerHTML = receivable.length ? receivable.map(rowMarkup).join('') : emptyRow(9, '暂无预估应收');
-    $('quotePayableBody').innerHTML = payable.length ? payable.map(rowMarkup).join('') : emptyRow(9, '暂无预估应付');
-  }
-
   function renderHeader() {
     setText('headerDemandNo', demand.no);
     setText('headerCustomerValue', demand.customer);
-    setText('headerServiceReqValue', demand.source.no);
+    setText('headerSourceSystemValue', demand.source.system);
+    setText('headerSourceTypeValue', demand.source.type);
+    setText('headerSourceNoValue', demand.source.no);
     setText('overviewStatus', statusLabels[demand.status]);
-    const current = currentVersion();
-    const pending = pendingVersion();
-    let versionLabel = '当前有效 ' + demand.currentVersion;
-    if (demand.status === 'created') versionLabel = '当前版本 ' + demand.currentVersion;
-    if (demand.status === 'pending') versionLabel = '待接收版本 ' + demand.currentVersion;
-    if (demand.status === 'rejected') versionLabel = '无有效版本';
-    if (demand.status === 'completed') versionLabel = '最终版本 ' + demand.currentVersion;
-    if (demand.status === 'voided') versionLabel = '无有效版本';
-    setText('headerCurrentVersion', versionLabel);
     $('headerStatusBadge').textContent = statusLabels[demand.status];
     $('headerStatusBadge').className = 'status ' + statusTones[demand.status];
     document.title = '客户需求单详情 · ' + statusLabels[demand.status];
 
     const state = demand.status;
-    const hasDownstream = demand.orders.length || demand.executionFees.length || demand.reconciliations.length || demand.invoices.length || demand.payments.length;
-    const historyCount = demand.versions.filter((version) => version.status === 'rejected' || (version.status === 'received' && version.version !== demand.currentVersion)).length;
-    const buttonIds = ['saveCreatedBtn', 'submitCreatedBtn', 'deleteCreatedBtn', 'rejectPendingBtn', 'receivePendingBtn', 'modifyBtn', 'startCustomerOrderBtn', 'cancelCompleteBtn', 'voidDemandBtn', 'historyBtn', 'moreBtn'];
-    buttonIds.forEach((id) => { if ($(id)) $(id).hidden = true; });
+    ['saveCreatedBtn', 'submitCreatedBtn', 'deleteCreatedBtn', 'rejectPendingBtn', 'receivePendingBtn', 'startCustomerOrderBtn', 'moreActionWrap', 'moreBtn'].forEach((id) => {
+      if ($(id)) $(id).hidden = true;
+    });
+    if ($('moreMenu')) $('moreMenu').hidden = true;
+    if ($('moreBtn')) $('moreBtn').setAttribute('aria-expanded', 'false');
 
     if (state === 'created') {
-      $('saveCreatedBtn').hidden = false;
-      $('submitCreatedBtn').hidden = false;
-      $('deleteCreatedBtn').hidden = false;
+      if ($('saveCreatedBtn')) $('saveCreatedBtn').hidden = false;
+      if ($('submitCreatedBtn')) $('submitCreatedBtn').hidden = false;
+      if ($('deleteCreatedBtn')) $('deleteCreatedBtn').hidden = false;
     } else if (state === 'pending') {
-      $('rejectPendingBtn').hidden = false;
-      $('receivePendingBtn').hidden = false;
+      if ($('rejectPendingBtn')) $('rejectPendingBtn').hidden = false;
+      if ($('receivePendingBtn')) $('receivePendingBtn').hidden = false;
     } else if (state === 'received') {
-      $('modifyBtn').hidden = false;
-      $('startCustomerOrderBtn').hidden = false;
-      $('voidDemandBtn').hidden = false;
-      $('moreBtn').hidden = false;
-      $('modifyBtn').textContent = '版本维护';
-      $('startCustomerOrderBtn').disabled = !current;
-      $('voidDemandBtn').disabled = Boolean(hasDownstream);
-      $('voidDemandBtn').title = hasDownstream ? '存在关联下游单据，不能作废；请使用完结' : '';
-      $('completeDemandBtn').hidden = false;
-      $('completeDemandBtn').disabled = Boolean(pending);
-      $('completeDemandBtn').title = pending ? '请先处理待接收版本' : '';
-    } else if (state === 'completed') {
-      $('cancelCompleteBtn').hidden = false;
-      $('historyBtn').hidden = false;
-    } else if (state === 'rejected') {
-      $('modifyBtn').hidden = false;
-      $('modifyBtn').textContent = '版本维护';
-      $('voidDemandBtn').hidden = false;
-      $('voidDemandBtn').disabled = false;
-      $('voidDemandBtn').title = '';
-    } else if (state === 'voided') {
-      $('historyBtn').hidden = false;
+      if ($('startCustomerOrderBtn')) $('startCustomerOrderBtn').hidden = false;
+      if ($('moreActionWrap')) $('moreActionWrap').hidden = false;
+      if ($('moreBtn')) $('moreBtn').hidden = false;
+      if ($('completeDemandBtn')) {
+        $('completeDemandBtn').hidden = false;
+        $('completeDemandBtn').disabled = false;
+        $('completeDemandBtn').title = '';
+      }
     }
-
-    $('historyBtn').hidden = false;
-    $('historyBtn').disabled = historyCount === 0;
-    $('historyBtn').title = historyCount ? '查看历史版本' : '暂无历史版本';
-    $('moreMenu').hidden = true;
-    $('moreBtn').setAttribute('aria-expanded', 'false');
-    if ($('modifyFromChangesBtn')) {
-      $('modifyFromChangesBtn').hidden = !['received', 'rejected'].includes(state);
-      $('modifyFromChangesBtn').disabled = state === 'received' && Boolean(pending);
-      $('modifyFromChangesBtn').textContent = '版本维护';
-    }
-    setText('lastReceivedVersion', latestReceivedVersion());
   }
-
   function orderContractAttachmentsMarkup(order) {
     const attachments = order.contract && Array.isArray(order.contract.attachments) ? order.contract.attachments : [];
     if (!attachments.length) return '<span class="demand-empty-cell">无附件</span>';
@@ -1210,94 +1176,59 @@
       financeReferenceMarkup(item.no, item.status, item.tone, item.direction + ' · ' + money(item.amount, item.currency) + ' · ' + item.planDate)).join('') + '</div>';
   }
   function renderFinance() {
-    const totals = quoteTotals();
-    const businessReceivable = demand.orders.reduce((sum, order) => sum + order.businessReceivable.reduce((s, line) => s + line.amount, 0), 0);
-    const businessPayable = demand.orders.reduce((sum, order) => sum + order.businessPayable.reduce((s, line) => s + line.amount, 0), 0);
-    const executionReceivable = demand.executionFees.filter((line) => line.direction === '应收').reduce((sum, line) => sum + line.localAmount, 0);
-    const executionPayable = demand.executionFees.filter((line) => line.direction === '应付').reduce((sum, line) => sum + line.localAmount, 0);
-    const businessProfit = businessReceivable - businessPayable;
-    const executionProfit = executionReceivable - executionPayable;
+    const currencyLabel = (currency) => ({ CNY: '人民币', USD: '美元', EUR: '欧元', JPY: '日元' }[currency] || currency || '--');
+    const taxRateFor = (line) => Number(line.taxRate ?? (line.feeItem === '海运费' ? 9 : 6));
+    const containerFor = (line) => line.containerType || (line.unit === '箱' ? '20RF' : '--');
+    const rowMarkup = (line) => {
+      const references = settlementReferences(line);
+      const reconciliationNo = references.reconciliations.map((item) => item.no).join('、') || '--';
+      const invoiceStatus = references.invoices[0]?.status || '未开票';
+      const paymentStatus = references.payments[0]?.status || (line.direction === '应收' ? '未收款' : '未付款');
+      const exchangeRate = Number(line.exchangeRate ?? 1);
+      return '<tr>' +
+        '<td><strong>' + esc(line.feeItem) + '</strong></td>' +
+        '<td>' + esc(line.party) + '</td>' +
+        '<td class="num">' + taxRateFor(line) + '</td>' +
+        '<td>' + esc(line.ppcc || 'SW') + '</td>' +
+        '<td class="num">' + amountText(line.unitPrice) + '</td>' +
+        '<td>' + esc(line.currency) + '</td>' +
+        '<td class="num">' + line.quantity + '</td>' +
+        '<td>' + esc(line.unit) + '</td>' +
+        '<td>' + esc(containerFor(line)) + '</td>' +
+        '<td class="num">' + amountText(line.originalAmount ?? line.localAmount) + '</td>' +
+        '<td class="num">' + exchangeRate.toFixed(4) + '</td>' +
+        '<td class="num">' + amountText(line.localAmount) + '</td>' +
+        '<td><span class="finance-reference-ellipsis" title="' + esc(line.remark || '--') + '">' + esc(line.remark || '--') + '</span></td>' +
+        '<td>' + esc(demand.customer) + '</td>' +
+        '<td><span class="cell-link">' + esc(line.orderId) + '</span></td>' +
+        '<td><span class="cell-link">' + esc(reconciliationNo) + '</span></td>' +
+        '<td class="num">' + amountText(line.localAmount) + '</td>' +
+        '<td><span class="finance-reference-status">' + esc(invoiceStatus) + '</span></td>' +
+        '<td><span class="finance-reference-status">' + esc(paymentStatus) + '</span></td>' +
+        '<td><button class="btn link finance-reference-link" type="button" data-finance-action="settlement" data-line-id="' + esc(line.id) + '">查看对账</button></td>' +
+        '</tr>';
+    };
 
-    const summaryItem = (label, value, tone, detail) =>
-      '<div class="finance-summary-item ' + (tone ? 'is-' + tone : '') + '"><span>' + label + '</span>' +
-      '<strong>' + value + '</strong>' + (detail ? '<small>' + detail + '</small>' : '') + '</div>';
-    const summaryBlock = (title, meta, income, cost, profit) =>
-      '<section class="finance-summary-block"><div class="finance-summary-head"><h3>' + title + '</h3><span>' + meta + '</span></div>' +
-      '<div class="finance-summary-values">' +
-      summaryItem('收入', money(income)) +
-      summaryItem('成本', money(cost)) +
-      summaryItem('毛利', money(profit), profit < 0 ? 'danger' : 'success', '毛利率 ' + percentage(profit, income)) +
-      '</div></section>';
+    const receivableRows = demand.executionFees.filter((line) => line.direction === '应收');
+    const payableRows = demand.executionFees.filter((line) => line.direction === '应付');
+    $('executionReceivableBody').innerHTML = receivableRows.length
+      ? receivableRows.map(rowMarkup).join('')
+      : emptyRow(20, '暂无执行预估应收');
+    $('executionPayableBody').innerHTML = payableRows.length
+      ? payableRows.map(rowMarkup).join('')
+      : emptyRow(20, '暂无执行预估应付');
 
-    $('financeSummaryMetrics').innerHTML =
-      summaryBlock('需求报价', '需求版本 ' + demand.quote.version, totals.receivable, totals.cost, totals.profit) +
-      summaryBlock('预估', demand.orders.length + ' 个客户订单', businessReceivable, businessPayable, businessProfit) +
-      summaryBlock('执行侧', demand.executionFees.length + ' 条执行费用行', executionReceivable, executionPayable, executionProfit);
-
-    const selectedFinanceDirection = $('financeFeeDirection') ? $('financeFeeDirection').value : '';
-    const selectedFinanceOrder = $('financeFeeOrder') ? $('financeFeeOrder').value : '';
-    if ($('financeFeeOrder')) {
-      $('financeFeeOrder').innerHTML = '<option value="">全部订单</option>' + demand.orders.map((order) =>
-        '<option value="' + esc(order.id) + '">' + esc(order.id) + '</option>'
-      ).join('');
-      $('financeFeeOrder').value = selectedFinanceOrder;
-    }
-    const businessRows = businessFeeRows().filter(({ order, direction }) =>
-      (!selectedFinanceDirection || direction === selectedFinanceDirection) &&
-      (!selectedFinanceOrder || order.id === selectedFinanceOrder)
-    );
-    setText('businessFeeCount', '共 ' + businessRows.length + ' 行');
-    $('orderBusinessSummaryBody').innerHTML = businessRows.length
-      ? businessRows.map(({ order, contractNo, direction, line }) =>
-        '<tr><td><div class="demand-business-order-cell"><div><strong class="cell-link">' + esc(order.id) + '</strong>' +
-        statusTag(order.status, order.statusTone) + '</div><span class="demand-business-contract">合同 ' + esc(contractNo) + '</span></div></td>' +
-        '<td>' + statusTag(direction, direction === '应收' ? 'running' : 'pending') + '</td>' +
-        '<td><strong>' + esc(line.item) + '</strong></td><td>' + esc(line.party) + '</td>' +
-        '<td class="num">' + line.taxRate + '%</td><td>' + esc(line.ppcc) + '</td>' +
-        '<td class="num">' + money(line.unitPrice, line.currency) + '</td><td class="num">' + line.quantity + '</td>' +
-        '<td>' + esc(line.unit) + '</td><td>' + esc(line.currency) + '</td>' +
-        '<td class="num">' + money(line.originalAmount, line.currency) + '</td><td class="num">' + Number(line.exchangeRate).toFixed(4) + '</td>' +
-        '<td class="num">' + money(line.localAmount, 'CNY') + '</td><td>' + esc(line.containerType) + '</td>' +
-        '<td>' + esc(line.invoiceType) + '</td><td>' + esc(line.reimbursable) + '</td>' +
-        '<td><span class="truncate-cell" title="' + esc(line.remark) + '">' + esc(line.remark) + '</span></td></tr>'
-      ).join('')
-      : emptyRow(17, '当前筛选条件下暂无业务预估费用');
-
-    const executionRows = demand.executionFees.filter((line) =>
-      (!selectedFinanceOrder || line.orderId === selectedFinanceOrder) &&
-      (!selectedFinanceDirection || line.direction === selectedFinanceDirection)
-    );
-    $('executionFeeCount').textContent = '共 ' + executionRows.length + ' 行';
-    setText('financeGlobalCount', '业务预估 ' + businessRows.length + ' 行 · 执行侧 ' + executionRows.length + ' 行');
-    $('executionFeeBody').innerHTML = executionRows.length
-      ? executionRows.map((line) => {
-        const references = settlementReferences(line);
-        const commissionRate = Number(line.commissionRate || 0);
-        const commissionAmount = Number(line.commissionAmount ?? line.localAmount * commissionRate / 100);
-        const exchangeRate = Number(line.exchangeRate ?? 1);
-        return '<tr><td><div class="demand-finance-order-demand"><strong class="cell-link">' + esc(line.orderId) + '</strong>' +
-          '<span>物流需求 ' + esc(line.logisticsDemandNo) + '</span></div></td>' +
-          '<td>' + esc(line.direction) + '</td>' +
-          '<td><strong>' + esc(line.feeItem) + '</strong></td><td>' + esc(line.party) + '</td>' +
-          '<td><div class="demand-fee-composite is-stacked">' +
-          '<span class="demand-fee-line"><span class="demand-fee-label">单价</span><strong>' + amountText(line.unitPrice) + '</strong></span>' +
-          '<span class="demand-fee-line"><span class="demand-fee-label">数量</span><strong>' + line.quantity + ' ' + esc(line.unit) + '</strong></span>' +
-          '</div></td>' +
-          '<td>' + esc(line.currency) + '</td>' +
-          '<td><div class="demand-amount-info">' +
-          '<span class="demand-amount-line"><span class="demand-fee-label">原币</span><strong>' + amountText(line.originalAmount ?? line.localAmount) + '</strong></span>' +
-          '<span class="demand-amount-line"><span class="demand-fee-label">汇率</span><strong>' + exchangeRate.toFixed(4) + '</strong></span>' +
-          '<span class="demand-amount-line"><span class="demand-fee-label">本位币</span><strong>' + amountText(line.localAmount) + '</strong></span>' +
-          '</div></td>' +
-          '<td><div class="demand-fee-composite is-stacked">' +
-          '<span class="demand-fee-line"><span class="demand-fee-label">比例</span><strong>' + commissionRate.toFixed(1) + '%</strong></span>' +
-          '<span class="demand-fee-line"><span class="demand-fee-label">金额</span><strong>' + amountText(commissionAmount) + '</strong></span>' +
-          '</div></td>' +
-          '<td>' + reconciliationInfoMarkup(references) + '</td><td>' + invoiceInfoMarkup(references) + '</td>' +
-          '<td>' + paymentInfoMarkup(references) + '</td><td>' + statusTag(line.status, line.status === '已确认' ? 'done' : 'pending') + '</td></tr>';
-      }).join('')
-      : emptyRow(12, '当前筛选条件下暂无执行侧预估费用');
-
+    const currencies = Array.from(new Set(demand.executionFees.map((line) => line.currency || 'CNY')));
+    const nativeRows = currencies.map((currency) => {
+      const lines = demand.executionFees.filter((line) => (line.currency || 'CNY') === currency);
+      const receivable = lines.filter((line) => line.direction === '应收').reduce((sum, line) => sum + Number(line.originalAmount ?? line.localAmount), 0);
+      const payable = lines.filter((line) => line.direction === '应付').reduce((sum, line) => sum + Number(line.originalAmount ?? line.localAmount), 0);
+      return '<tr><td>' + esc(currencyLabel(currency)) + '</td><td class="num">' + amountText(receivable) + '</td><td class="num">' + amountText(payable) + '</td><td class="num">' + amountText(receivable - payable) + '</td></tr>';
+    }).join('');
+    const localReceivable = receivableRows.reduce((sum, line) => sum + Number(line.localAmount), 0);
+    const localPayable = payableRows.reduce((sum, line) => sum + Number(line.localAmount), 0);
+    $('profitSummaryBody').innerHTML = (nativeRows || '') +
+      '<tr class="is-converted"><td>折合本位币(CNY)</td><td class="num">' + amountText(localReceivable) + '</td><td class="num">' + amountText(localPayable) + '</td><td class="num">' + amountText(localReceivable - localPayable) + '</td></tr>';
   }
 
   function renderVersions() {
@@ -1317,7 +1248,7 @@
       let actions = '<button class="btn link" type="button" data-version-action="compare" data-version="' + esc(version.version) + '">版本差异</button>';
       if (version.status === 'pending' && demand.status !== 'completed' && demand.status !== 'voided') {
         actions += '<button class="btn link" type="button" data-version-action="receive" data-version="' + esc(version.version) + '">接收此版本</button>';
-        actions += '<button class="btn link demand-danger" type="button" data-version-action="reject" data-version="' + esc(version.version) + '">驳回此版本</button>';
+        actions += '<button class="btn link demand-danger" type="button" data-version-action="reject" data-version="' + esc(version.version) + '">拒绝此版本</button>';
       } else if (version.status === 'rejected' && demand.status !== 'completed' && demand.status !== 'voided') {
         actions += '<button class="btn link" type="button" data-version-action="resubmit" data-version="' + esc(version.version) + '">版本维护</button>';
       }
@@ -1345,7 +1276,6 @@
     renderDemandInfoValues();
     renderSystemInfo();
     renderOverviewLines();
-    renderQuote();
     renderProgress();
     renderOrderList();
     renderFinance();
@@ -1385,17 +1315,18 @@
     }
     if (tabName === 'finance' && !financeLoadingDone) {
       financeLoadingDone = true;
-      [$('orderBusinessTableHost'), $('executionFeeTableHost')].forEach((host) => {
+      const hosts = [$('executionReceivableTableHost'), $('executionPayableTableHost')].filter(Boolean);
+      hosts.forEach((host) => {
         UIState.setTableState(host, {
           state: 'loading',
           preserveHeader: true,
-          title: '正在加载费用数据…',
-          message: '正在汇总订单、执行侧预估及结算单据。',
-          rows: 3
+          title: '正在加载执行预估费用…',
+          message: '正在汇总应收、应付与结算单据。',
+          rows: 2
         });
       });
       window.setTimeout(() => {
-        [$('orderBusinessTableHost'), $('executionFeeTableHost')].forEach((host) => UIState.clearTableState(host));
+        hosts.forEach((host) => UIState.clearTableState(host));
         renderFinance();
       }, 360);
     }
@@ -1741,7 +1672,6 @@
     }
     renderDemandInfoValues();
     renderOverviewLines();
-    renderQuote();
     updateBookingSectionVisibility();
     updateTransportTypeVisibility();
     return true;
@@ -1801,7 +1731,7 @@
     renderSystemInfo();
     if (!silent) {
       if (dirtyState) dirtyState.markClean();
-      ui.showToast('客户需求已保存，当前仍为创建状态', 'success');
+      ui.showToast('客户需求已保存，当前仍为草稿状态', 'success');
     }
     return true;
   }
@@ -1893,6 +1823,91 @@
     });
   }
 
+  function receiveDemand() {
+    if (demand.status !== 'pending') {
+      ui.showToast('当前客户需求不是待接收状态', 'error');
+      return;
+    }
+    const org = demand.receiveOrg || {};
+    const option = (value, label) => '<option value="' + esc(value) + '"' + (value === label ? ' selected' : '') + '>' + esc(value) + '</option>';
+    openActionDialog({
+      title: '接收客户需求',
+      body: '<p class="demand-dialog-copy">请录入 4PL 侧组织和承接主体。来源系统直连数据在接收后只读，不允许手工修改。</p>' +
+        '<div class="demand-dialog-grid">' +
+        '<div class="demand-dialog-field field"><label for="receiveSalesperson">业务员<span class="required">*</span></label><select id="receiveSalesperson" name="salesperson" required>' + option('苏丽蓉') + option('陈一一') + option('丁阳') + '</select><div class="ui-field-message"></div></div>' +
+        '<div class="demand-dialog-field field"><label for="receiveDepartment">业务员部门<span class="required">*</span></label><select id="receiveDepartment" name="department" required>' + option('供应链物流综合部') + option('物流运营部') + '</select><div class="ui-field-message"></div></div>' +
+        '<div class="demand-dialog-field field"><label for="receiveBusinessUnit">经营单位</label><input id="receiveBusinessUnit" name="businessUnit" value="' + esc(org.businessUnit || '供应链物流科技') + '" readonly></div>' +
+        '<div class="demand-dialog-field field"><label for="receiveAccountingGroup">核算组<span class="required">*</span></label><select id="receiveAccountingGroup" name="accountingGroup" required>' + option('供应链物流综合核算组') + option('物流运营核算组') + '</select><div class="ui-field-message"></div></div>' +
+        '<div class="demand-dialog-field field"><label for="receiveSalesmanCompany">业务员公司<span class="required">*</span></label><select id="receiveSalesmanCompany" name="salesmanCompany" required>' + option('厦门建发物流有限公司') + option('建发物流（上海）有限公司') + '</select><div class="ui-field-message"></div></div>' +
+        '<div class="demand-dialog-field field"><label for="receiveOurCompany">我方公司<span class="required">*</span></label><select id="receiveOurCompany" name="ourCompany" required>' + option(demand.ourCompany || '厦门建发物流有限公司') + option('建发物流（上海）有限公司') + '</select><div class="ui-field-message"></div></div>' +
+        '<div class="demand-dialog-field field span-2"><label for="receiveOperationOrg">作业组织</label><select id="receiveOperationOrg" name="operationOrg">' + option(org.operationOrg || '4PL物流运营中心') + option('华东物流运营中心') + '</select></div>' +
+        '</div>',
+      confirmText: '确认接收',
+      onSubmit: async ({ form, submitBtn }) => {
+        const requiredNames = ['salesperson', 'department', 'accountingGroup', 'salesmanCompany', 'ourCompany'];
+        let valid = true;
+        requiredNames.forEach((name) => {
+          const field = form.elements[name];
+          if (!field.value.trim()) {
+            UIState.setFieldState(field, 'invalid', '请填写必填项');
+            valid = false;
+          }
+        });
+        if (!valid) return false;
+        UIState.setButtonLoading(submitBtn, true, '接收中');
+        await ui.delay(320);
+        demand.receiveOrg = {
+          salesperson: form.elements.salesperson.value,
+          department: form.elements.department.value,
+          businessUnit: form.elements.businessUnit.value,
+          accountingGroup: form.elements.accountingGroup.value,
+          salesmanCompany: form.elements.salesmanCompany.value,
+          operationOrg: form.elements.operationOrg.value
+        };
+        demand.ourCompany = form.elements.ourCompany.value;
+        demand.status = 'received';
+        demand.source.receiver = '苏丽蓉';
+        demand.source.receivedAt = nowText();
+        demand.timeline.push({ time: nowText(), title: '客户需求已接收', text: '苏丽蓉接收客户需求，并录入 4PL 组织信息；来源直连数据已锁定为只读。' });
+        UIState.setButtonLoading(submitBtn, false);
+        renderAll();
+        ui.showToast('客户需求已接收，来源数据已锁定为只读', 'success');
+      }
+    });
+  }
+
+  function rejectDemand() {
+    if (demand.status !== 'pending') {
+      ui.showToast('当前客户需求不是待接收状态', 'error');
+      return;
+    }
+    openActionDialog({
+      title: '拒绝客户需求',
+      body: '<p class="demand-dialog-copy">拒绝后客户需求进入已拒绝状态，不生成客户订单。</p>' +
+        '<div class="demand-dialog-grid"><div class="demand-dialog-field field span-2"><label for="rejectDemandReason">拒绝原因<span class="required">*</span></label><textarea id="rejectDemandReason" name="reason" required placeholder="请填写拒绝原因"></textarea><div class="ui-field-message"></div></div></div>',
+      confirmText: '确认拒绝',
+      confirmClass: 'danger',
+      onSubmit: async ({ form, submitBtn }) => {
+        const field = form.elements.reason;
+        if (!field.value.trim()) {
+          UIState.setFieldState(field, 'invalid', '请填写拒绝原因');
+          field.focus();
+          return false;
+        }
+        UIState.setButtonLoading(submitBtn, true, '提交中');
+        await ui.delay(300);
+        demand.status = 'rejected';
+        demand.source.rejector = '苏丽蓉';
+        demand.source.rejectedAt = nowText();
+        demand.source.rejectionReason = field.value.trim();
+        demand.timeline.push({ time: nowText(), title: '客户需求已拒绝', text: '苏丽蓉拒绝客户需求：' + demand.source.rejectionReason });
+        UIState.setButtonLoading(submitBtn, false);
+        renderAll();
+        ui.showToast('客户需求已拒绝', 'success');
+      }
+    });
+  }
+
   function receiveVersion(versionNo) {
     const version = demand.versions.find((item) => item.version === versionNo);
     if (demand.status === 'completed' || demand.status === 'voided') return ui.showToast('当前需求已结束，不能接收新版本', 'error');
@@ -1923,26 +1938,26 @@
 
   function rejectVersion(versionNo) {
     const version = demand.versions.find((item) => item.version === versionNo);
-    if (demand.status === 'completed' || demand.status === 'voided') return ui.showToast('当前需求已结束，不能驳回版本', 'error');
-    if (!version || version.status !== 'pending') return ui.showToast('该版本已处理，不能重复驳回', 'error');
+    if (demand.status === 'completed' || demand.status === 'voided') return ui.showToast('当前需求已结束，不能拒绝版本', 'error');
+    if (!version || version.status !== 'pending') return ui.showToast('该版本已处理，不能重复拒绝', 'error');
     const returnsToDraft = version.type === '版本维护' && effectiveVersions().length > 0;
     const copy = returnsToDraft
-      ? '驳回后，该新版本回到草稿状态，可修改后重新提交；原有效版本历史仍保留。'
-      : '驳回后需求进入草稿状态，可修改后重新提交。';
+      ? '拒绝后，该新版本回到草稿状态，可修改后重新提交；原有效版本历史仍保留。'
+      : '拒绝后需求进入草稿状态，可修改后重新提交。';
     openActionDialog({
-      title: '驳回此版本',
+      title: '拒绝此版本',
       body: '<p class="demand-dialog-copy">' + copy + '</p>' +
-        '<div class="demand-dialog-grid"><div class="demand-dialog-field field span-2"><label for="rejectReason">驳回原因<span class="required">*</span></label><textarea id="rejectReason" name="reason" required placeholder="请填写驳回原因"></textarea><div class="ui-field-message"></div></div></div>',
-      confirmText: '确认驳回',
+        '<div class="demand-dialog-grid"><div class="demand-dialog-field field span-2"><label for="rejectReason">拒绝原因<span class="required">*</span></label><textarea id="rejectReason" name="reason" required placeholder="请填写拒绝原因"></textarea><div class="ui-field-message"></div></div></div>',
+      confirmText: '确认拒绝',
       confirmClass: 'danger',
       onSubmit: async ({ form, submitBtn }) => {
         const field = form.elements.reason;
         if (!field.value.trim()) {
-          UIState.setFieldState(field, 'invalid', '请填写驳回原因');
+          UIState.setFieldState(field, 'invalid', '请填写拒绝原因');
           field.focus();
           return false;
         }
-        UIState.setButtonLoading(submitBtn, true, '驳回中');
+        UIState.setButtonLoading(submitBtn, true, '拒绝中');
         await ui.delay(300);
         version.status = returnsToDraft ? 'created' : 'rejected';
         version.handledBy = '苏丽蓉';
@@ -1953,14 +1968,14 @@
           demand.currentVersion = version.version;
           demand.pickupDate = version.snapshot.pickupDate;
           demand.lines.forEach((line) => { line.required = Number(version.snapshot.quantities[line.id] || line.required); });
-          demand.timeline.push({ time: nowText(), title: version.version + ' 已驳回', text: '苏丽蓉驳回：' + version.rejectionReason + '；新版本回到草稿状态。' });
+          demand.timeline.push({ time: nowText(), title: version.version + ' 已拒绝', text: '苏丽蓉拒绝：' + version.rejectionReason + '；新版本回到草稿状态。' });
         } else {
           demand.status = effectiveVersions().length ? 'received' : 'created';
-          demand.timeline.push({ time: nowText(), title: version.version + ' 已驳回', text: '苏丽蓉驳回：' + version.rejectionReason });
+          demand.timeline.push({ time: nowText(), title: version.version + ' 已拒绝', text: '苏丽蓉拒绝：' + version.rejectionReason });
         }
         UIState.setButtonLoading(submitBtn, false);
         renderAll();
-        ui.showToast(returnsToDraft ? '版本已驳回，已回到草稿状态' : '版本已驳回', 'success');
+        ui.showToast(returnsToDraft ? '版本已拒绝，已回到草稿状态' : '版本已拒绝', 'success');
       }
     });
   }
@@ -1972,13 +1987,13 @@
     const nextVersion = 'V' + nextNumber;
     openActionDialog({
       title: '版本维护',
-      body: '<p class="demand-dialog-copy">客户需求单号保持不变。原 ' + esc(version.version) + ' 保持已驳回，本次生成 <strong>' + nextVersion + '</strong> 并重新进入待接收。</p>',
+      body: '<p class="demand-dialog-copy">客户需求单号保持不变。原 ' + esc(version.version) + ' 保持已拒绝，本次生成 <strong>' + nextVersion + '</strong> 并重新进入待接收。</p>',
       confirmText: '生成 ' + nextVersion,
       onSubmit: async ({ submitBtn }) => {
         UIState.setButtonLoading(submitBtn, true, '提交中');
         await ui.delay(300);
         const copy = JSON.parse(JSON.stringify(version.snapshot));
-        demand.versions.push({ version: nextVersion, type: '版本维护', changeNo: 'M20261030' + String(nextNumber).padStart(3, '0'), status: 'pending', submittedAt: nowText(), handledBy: '--', effectiveAt: '--', reason: '基于已驳回版本 ' + version.version + ' 进行版本维护', snapshot: copy });
+        demand.versions.push({ version: nextVersion, type: '版本维护', changeNo: 'M20261030' + String(nextNumber).padStart(3, '0'), status: 'pending', submittedAt: nowText(), handledBy: '--', effectiveAt: '--', reason: '基于已拒绝版本 ' + version.version + ' 进行版本维护', snapshot: copy });
         if (!effectiveVersions().length) {
           demand.currentVersion = nextVersion;
           demand.status = 'pending';
@@ -1998,7 +2013,7 @@
     const lineOptions = demand.lines.map((line) => '<option value="' + esc(line.id) + '">需求行 ' + line.no + ' · ' + esc(line.name) + '</option>').join('');
     openActionDialog({
       title: '版本维护',
-      body: '<p class="demand-dialog-copy">基于当前有效版本生成新版本。提交后进入待接收状态，接收后新版本生效；驳回后新版本回到草稿，可修改后重新提交。</p>' +
+      body: '<p class="demand-dialog-copy">基于当前有效版本生成新版本。提交后进入待接收状态，接收后新版本生效；拒绝后新版本回到草稿，可修改后重新提交。</p>' +
         '<div class="demand-dialog-grid">' +
         '<div class="demand-dialog-field field"><label for="modifyLine">需求行<span class="required">*</span></label><select id="modifyLine" name="line">' + lineOptions + '</select><div class="ui-field-message"></div></div>' +
         '<div class="demand-dialog-field field"><label for="modifyQty">变更后数量<span class="required">*</span></label><input id="modifyQty" name="qty" type="number" min="0" step="0.01" required><div class="ui-field-message"></div></div>' +
@@ -2038,7 +2053,7 @@
         demand.versions.push({ version: nextVersion, type: '版本维护', changeNo: 'M20261030' + String(nextNumber).padStart(3, '0'), status: 'pending', submittedAt: nowText(), handledBy: '--', effectiveAt: '--', reason: reason.value.trim(), snapshot });
         demand.currentVersion = nextVersion;
         demand.status = 'pending';
-        demand.timeline.push({ time: nowText(), title: nextVersion + ' 待接收', text: '客户需求版本维护已提交，等待接收或驳回：' + reason.value.trim() });
+        demand.timeline.push({ time: nowText(), title: nextVersion + ' 待接收', text: '客户需求版本维护已提交，等待接收或拒绝：' + reason.value.trim() });
         UIState.setButtonLoading(submitBtn, false);
         renderAll();
         ui.showToast(nextVersion + ' 已提交，等待接收', 'success');
@@ -2047,11 +2062,10 @@
   }
 
   function completeDemand() {
-    if (demand.status !== 'received') return ui.showToast('仅已接收状态可以完成客户需求', 'error');
-    if (pendingVersion()) return ui.showToast('请先处理待接收版本', 'error');
+    if (demand.status !== 'received') return ui.showToast('仅执行中状态可以完成客户需求', 'error');
     openActionDialog({
       title: '完成客户需求',
-      body: '<p class="demand-dialog-copy">完成后不能继续接收版本或创建客户订单，历史客户订单、合同、费用和反馈不受影响。</p>' +
+      body: '<p class="demand-dialog-copy">完成后不能继续生成客户订单，客户需求信息只读；历史客户订单、合同、费用和反馈不受影响。</p>' +
         '<div class="demand-dialog-grid"><div class="demand-dialog-field field span-2"><label for="completeReason">完成原因<span class="required">*</span></label><textarea id="completeReason" name="reason" required placeholder="请填写完成原因"></textarea><div class="ui-field-message"></div></div></div>',
       confirmText: '确认完成',
       onSubmit: async ({ form, submitBtn }) => {
@@ -2083,7 +2097,7 @@
   function openHistory() {
     const body = '<p class="demand-dialog-copy">查看提交版本、版本差异和流转记录。</p>' +
       '<section class="demand-history-section"><div class="demand-history-toolbar"><h3>提交版本与修改单</h3><button class="btn" id="historyExportBtn" type="button">导出变更记录</button></div>' +
-      '<div class="demand-data-table-wrap"><table class="demand-data-table demand-version-table" aria-label="客户需求提交版本"><thead><tr><th>版本</th><th>提交类型</th><th>修改单号</th><th>状态</th><th>提交时间</th><th>接收/驳回人</th><th>生效时间</th><th>操作</th></tr></thead><tbody id="versionTableBody"></tbody></table></div></section>' +
+      '<div class="demand-data-table-wrap"><table class="demand-data-table demand-version-table" aria-label="客户需求提交版本"><thead><tr><th>版本</th><th>提交类型</th><th>修改单号</th><th>状态</th><th>提交时间</th><th>接收/拒绝人</th><th>生效时间</th><th>操作</th></tr></thead><tbody id="versionTableBody"></tbody></table></div></section>' +
       '<section class="demand-history-section"><div class="demand-history-toolbar"><h3>流转记录</h3></div><ol class="demand-timeline" id="timelineList"></ol></section>';
     openActionDialog({
       title: '历史版本',
@@ -2121,7 +2135,7 @@
       return;
     }
     openActionDialog({
-      title: '作废客户需求',
+      title: '关闭客户需求',
       body: '<p class="demand-dialog-copy">作废是不可恢复的终态。历史版本仍可查看，但需求不能继续接收、维护版本或发起客户订单。</p>' +
         '<div class="demand-dialog-grid"><div class="demand-dialog-field field span-2"><label for="voidReason">作废原因<span class="required">*</span></label><textarea id="voidReason" name="reason" required placeholder="请填写作废原因"></textarea><div class="ui-field-message"></div></div></div>',
       confirmText: '确认作废',
@@ -2136,11 +2150,11 @@
         UIState.setButtonLoading(submitBtn, true, '作废中');
         await ui.delay(300);
         demand.status = 'voided';
-        demand.timeline.push({ time: nowText(), title: '客户需求已作废', text: '苏丽蓉作废客户需求：' + reason.value.trim() });
+        demand.timeline.push({ time: nowText(), title: '客户需求已关闭', text: '苏丽蓉关闭客户需求：' + reason.value.trim() });
         UIState.setButtonLoading(submitBtn, false);
         renderAll();
         activateTab('overview');
-        ui.showToast('客户需求已作废', 'success');
+        ui.showToast('客户需求已关闭', 'success');
       }
     });
   }
@@ -2366,15 +2380,13 @@
     const rows = [
       ['客户需求单号', demand.no],
       ['客户', demand.customer],
+      ['我方公司', demand.ourCompany],
+      ['来源系统', demand.source.system],
+      ['来源类型', demand.source.type],
       ['来源单号', demand.source.no],
       ['需求状态', statusLabels[demand.status]],
-      ['当前版本', demand.currentVersion],
       ['订单生成进度', progressText()],
-      ['关联客户订单数', demand.orders.length],
-      ['应收合计', money(quoteTotals().receivable)],
-      ['应付合计', money(quoteTotals().payable)],
-      ['毛利', money(quoteTotals().profit)],
-      ['毛利率', quoteTotals().margin]
+      ['关联客户订单数', demand.orders.length]
     ];
     downloadFile('客户需求单_' + demand.no + '.csv', rows.map((row) => row.map((cell) => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\r\n'));
     ui.showToast('客户需求信息已导出', 'success');
@@ -2445,45 +2457,31 @@
 
   function bindEvents() {
     bindTabs();
-    $('resetCreateBtn').addEventListener('click', resetCreateForm);
-    $('saveCreatedBtn').addEventListener('click', () => saveCreateDraft(false, false));
-    $('submitCreatedBtn').addEventListener('click', () => submitCreatedDemand('submit'));
-    $('deleteCreatedBtn').addEventListener('click', deleteDraftDemand);
-    $('receivePendingBtn').addEventListener('click', () => {
-      const pending = pendingVersion();
-      if (pending) receiveVersion(pending.version);
-    });
-    $('rejectPendingBtn').addEventListener('click', () => {
-      const pending = pendingVersion();
-      if (pending) rejectVersion(pending.version);
-    });
-    $('modifyBtn').addEventListener('click', maintainVersion);
-    if ($('modifyFromChangesBtn')) $('modifyFromChangesBtn').addEventListener('click', maintainVersion);
-    $('startCustomerOrderBtn').addEventListener('click', openCreateOrder);
-    $('voidDemandBtn').addEventListener('click', voidDemand);
-    $('cancelCompleteBtn').addEventListener('click', cancelCompletion);
-    $('historyBtn').addEventListener('click', openHistory);
-    $('completeDemandBtn').addEventListener('click', completeDemand);
-    $('exportDemandBtn').addEventListener('click', exportDemand);
-    $('compareVersionMenuBtn').addEventListener('click', () => compareVersion(demand.currentVersion));
-    $('moreBtn').addEventListener('click', (event) => {
+    if ($('resetCreateBtn')) $('resetCreateBtn').addEventListener('click', resetCreateForm);
+    if ($('saveCreatedBtn')) $('saveCreatedBtn').addEventListener('click', () => saveCreateDraft(false, false));
+    if ($('submitCreatedBtn')) $('submitCreatedBtn').addEventListener('click', () => submitCreatedDemand('submit'));
+    if ($('deleteCreatedBtn')) $('deleteCreatedBtn').addEventListener('click', deleteDraftDemand);
+    if ($('receivePendingBtn')) $('receivePendingBtn').addEventListener('click', receiveDemand);
+    if ($('rejectPendingBtn')) $('rejectPendingBtn').addEventListener('click', rejectDemand);
+    if ($('startCustomerOrderBtn')) $('startCustomerOrderBtn').addEventListener('click', openCreateOrder);
+    if ($('completeDemandBtn')) $('completeDemandBtn').addEventListener('click', completeDemand);
+    if ($('exportDemandBtn')) $('exportDemandBtn').addEventListener('click', exportDemand);
+    if ($('moreBtn')) $('moreBtn').addEventListener('click', (event) => {
       event.stopPropagation();
       handleMoreMenu();
     });
-    $('moreMenu').addEventListener('click', () => {
+    if ($('moreMenu')) $('moreMenu').addEventListener('click', () => {
       $('moreMenu').hidden = true;
       $('moreBtn').setAttribute('aria-expanded', 'false');
     });
     document.addEventListener('click', (event) => {
-      if (!event.target.closest('.demand-menu-wrap')) {
-        $('moreMenu').hidden = true;
-        $('moreBtn').setAttribute('aria-expanded', 'false');
-      }
+      if ($('moreMenu')) $('moreMenu').hidden = true;
+      if ($('moreBtn')) $('moreBtn').setAttribute('aria-expanded', 'false');
     });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        $('moreMenu').hidden = true;
-        $('moreBtn').setAttribute('aria-expanded', 'false');
+        if ($('moreMenu')) $('moreMenu').hidden = true;
+        if ($('moreBtn')) $('moreBtn').setAttribute('aria-expanded', 'false');
       }
     });
 
@@ -2619,6 +2617,9 @@
       });
     });
 
+    if ($('maintainReceivableBtn')) $('maintainReceivableBtn').addEventListener('click', () => ui.showToast('已在原型中模拟维护执行预估应收', 'success'));
+    if ($('maintainPayableBtn')) $('maintainPayableBtn').addEventListener('click', () => ui.showToast('已在原型中模拟维护执行预估应付', 'success'));
+
     $('orderListBody').addEventListener('click', (event) => {
       const feedbackLink = event.target.closest('[data-order-feedback]');
       if (feedbackLink) {
@@ -2657,6 +2658,10 @@
       const emptyAction = event.target.closest('[data-empty-action]');
       if (emptyAction) {
         if (emptyAction.dataset.emptyAction === 'create-order') openCreateOrder();
+      }
+      const financeAction = event.target.closest('[data-finance-action]');
+      if (financeAction) {
+        ui.showToast('已在原型中模拟打开对账记录：' + financeAction.dataset.lineId, 'success');
       }
     });
 

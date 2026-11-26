@@ -5,7 +5,7 @@
     "customer-demand-list": {
       domain: "4PL控制塔",
       title: "客户需求列表",
-      description: "服务要求转入、版本接收与订单生成进度",
+      description: "股份原始需求接收、组织补录与客户订单生成进度",
       file: "pages/customer-demand-list-prototype.html"
     },
     "customer-order-list": {
@@ -13,6 +13,12 @@
       title: "客户订单列表",
       description: "客户订单查询、客户委托单号与物流安排入口",
       file: "pages/customer-order-list-prototype.html"
+    },
+    "customer-order-list-prd-aligned": {
+      domain: "4PL控制塔",
+      title: "客户订单列表 · PRD对齐版",
+      description: "隐藏需求文档已删除功能后的客户订单列表与详情原型",
+      file: "pages/customer-order-list-prd-aligned-prototype.html"
     },
     "customer-order": {
       domain: "4PL控制塔",

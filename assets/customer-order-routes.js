@@ -38,7 +38,10 @@
   let flowZoomPercent = 200;
   let activeRouteAnchorIndex = 0;
   const specifiedModeSelect = document.getElementById('orderSpecifiedTransportMode');
-  const existingOrderContext = document.documentElement.classList.contains('detail-mode') || new URLSearchParams(window.location.search).get('maintenance') === '1';
+  const routePageParams = new URLSearchParams(window.location.search);
+  const existingOrderContext = routePageParams.get('mode') !== 'create' && (document.documentElement.classList.contains('detail-mode') || routePageParams.get('maintenance') === '1');
+  const hierarchyMode = document.documentElement.dataset.orderRouteLayout === 'goods-arrangements';
+  const goodsSummaryExpandable = document.body.classList.contains('customer-workbench');
 
   const typeOptions = ['汽运', '铁运', '水运', '航空'];
   const categoryOptionsByType = {
@@ -60,7 +63,10 @@
     '湖北省/武汉市/东西湖枢纽',
     '四川省/成都市/青白江铁路港',
     '山东省/青岛市/前湾港区',
-    '山东省/日照市/岚山港区'
+    '山东省/日照市/岚山港区',
+    '福建省/漳州市/招商局漳州开发区',
+    '福建省/厦门市/海沧港区',
+    '天津市/滨海新区/天津港区'
   ];
   const commodityCatalog = [
     { id: 'C01', name: '精密电子元器件 A3', desc: '防潮防震包装', unit: '箱', weight: 0.05, vol: 0.12, billedUnit: '吨' },
@@ -74,7 +80,9 @@
   const number = (value, fallback) => Number.isFinite(Number(value)) ? Number(value) : (fallback || 0);
   const hasSpecifiedTransportMode = () => specifiedModeSelect?.value !== '否';
   const syncRouteBackedWaterRequirement = () => {
-    window.orderRouteHasWaterPiece = state.routes.some((route) => route.type === '水运' && route.shipmentCategory === '件杂');
+    window.orderRouteHasWaterPiece = hierarchyMode
+      ? state.routes.some((route) => (route.items || []).some((product) => (product.arrangements || []).some((arrangement) => arrangement.type === '水运' && arrangement.shipmentCategory === '件杂')))
+      : state.routes.some((route) => route.type === '水运' && route.shipmentCategory === '件杂');
     window.orderRouteNeedsSupplementalTransport = false;
     if (typeof window.syncOrderTransportVisibility === 'function') window.syncOrderTransportVisibility();
   };
@@ -91,7 +99,7 @@
   };
   const locationTypes = ['工厂', '仓库', '港口', '堆场', '门点'];
   const regionForPlace = (value) => portRegions[value] || locationRegions[value] || '';
-  const portOptions = ['青岛港', '上海港', '宁波舟山港', '天津港', '深圳港', '胡志明港', '海防港', '新加坡港', '鹿特丹港', '洛杉矶港', '舟山鼠浪湖', '武汉青山码头'];
+  const portOptions = ['青岛港', '上海港', '宁波舟山港', '天津港', '深圳港', '胡志明港', '海防港', '新加坡港', '鹿特丹港', '洛杉矶港', '舟山鼠浪湖', '武汉青山码头', '漳州港', '厦门港'];
   const packingMethodOptions = ['整箱运输(FCL)', '拼箱运输(LCL)'];
   const bookingMethodOptions = ['船公司箱(COC)', '货主箱(SOC)'];
   const solicitationMethodOptions = ['我司揽货', '客户指定', '代理揽货'];
@@ -110,7 +118,9 @@
     '天津港': '中国 / 天津市', '深圳港': '中国 / 广东省 / 深圳市', '胡志明港': '越南 / 胡志明市',
     '海防港': '越南 / 海防市', '新加坡港': '新加坡', '鹿特丹港': '荷兰 / 南荷兰省 / 鹿特丹市',
     '洛杉矶港': '美国 / 加利福尼亚州 / 洛杉矶市', '舟山鼠浪湖': '中国 / 浙江省 / 舟山市',
-    '武汉青山码头': '中国 / 湖北省 / 武汉市'
+    '武汉青山码头': '中国 / 湖北省 / 武汉市',
+    '漳州港': '中国 / 福建省 / 漳州市',
+    '厦门港': '中国 / 福建省 / 厦门市'
   };
 
   const makeRoute = (type) => {
@@ -258,11 +268,280 @@
     return existingOrderContext ? routes : routes.slice(0, 1);
   };
 
-  const logisticsDemandProductReferences = {
+  function pendingReviewCoverageRoutes() {
+    const makeCoverageItem = (id, spec) => normalizeItem({
+      id,
+      tradeContractNo: spec.contractNo,
+      tradeContractType: spec.contractType || '销售合同',
+      name: spec.name,
+      description: spec.description,
+      standardQty: spec.quantity,
+      standardUnit: spec.unit,
+      pieceCount: spec.pieceCount ?? spec.quantity,
+      pieceCountUnit: spec.pieceCountUnit || spec.unit,
+      grossWeight: spec.weight,
+      grossWeightUnit: '吨',
+      volume: spec.volume,
+      volumeUnit: 'm³',
+      pieceWeight: spec.pieceWeight ?? 0.5,
+      pieceWeightUnit: '吨',
+      specDimensions: spec.dimensions || '1200 × 1000 × 1100 mm',
+      overRate: spec.overRate ?? 3,
+      underRate: spec.underRate ?? 1,
+      goodsValueUnitPrice: spec.unitPrice ?? 12000,
+      goodsValueAmount: spec.amount ?? (spec.quantity * (spec.unitPrice ?? 12000)),
+      goodsValueCurrency: 'CNY',
+      packageQuantity: spec.packageQuantity ?? spec.quantity,
+      packageUnit: spec.packageUnit || spec.unit,
+      englishName: spec.englishName || '',
+      count: spec.quantity,
+      unit: spec.unit,
+      weight: spec.weight,
+      vol: spec.volume,
+      billedQty: spec.weight,
+      billedUnit: '吨'
+    });
+
+    const makeCoverageRoute = (spec) => {
+      const route = makeRoute(spec.type);
+      Object.assign(route, spec.route || {});
+      route.id = spec.id;
+      route.collapsed = false;
+      route.type = spec.type;
+      route.shipmentCategory = spec.category;
+      if (route.originPort) {
+        route.origin = route.originPort;
+        route.originRegion = (spec.route && spec.route.originRegion) || portRegions[route.originPort] || route.originRegion || '';
+      }
+      if (route.destinationPort) {
+        route.destination = route.destinationPort;
+        route.destinationRegion = (spec.route && spec.route.destinationRegion) || portRegions[route.destinationPort] || route.destinationRegion || '';
+      }
+      route.items = [makeCoverageItem(spec.id + '-ITEM', spec.item)];
+      return route;
+    };
+
+    return [
+      makeCoverageRoute({
+        id: 'COV-R1', type: '汽运', category: '散货',
+        route: {
+          originType: '工厂', destinationType: '仓库',
+          originRegion: '中国 / 上海市', destinationRegion: '中国 / 广东省 / 广州市',
+          consignee: '广州广汽埃安新能源一号工厂',
+          origin: '上海市/嘉定区/陆渡镇物流园区', originDetail: '上海市嘉定区丰茂路888号1号库', originContact: '李发货', originContactPhone: '13900001111',
+          destination: '广东省/广州市/黄埔区保税区', destinationDetail: '广州市黄埔区开创大道999号3号门', destinationContact: '王收货', destinationContactPhone: '13722223333',
+          expectDispatch: '2026-09-22 09:00', latestArrival: '2026-09-24 18:00',
+          specialNotes: '需要车厢净高不低于2.8米，配备尾板。'
+        },
+        item: { name: '新能源汽车动力电池模组', description: '危险品 UN3480', quantity: 20, unit: '托', weight: 17, volume: 22, contractNo: 'HT-2026-001', englishName: 'EV Battery Module', pieceWeight: 0.85, dimensions: '1200 × 1000 × 1100 mm', unitPrice: 12000, packageQuantity: 20, packageUnit: '托' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R2', type: '汽运', category: '集装箱',
+        route: {
+          originType: '仓库', destinationType: '工厂',
+          originRegion: '中国 / 江苏省 / 苏州市', destinationRegion: '中国 / 四川省 / 成都市',
+          consignee: '成都国际铁路港储能中心',
+          origin: '江苏省/苏州市/工业园区海关监管库', originDetail: '苏州市工业园区胜浦路123号', originContact: '陈调度', originContactPhone: '13588889999',
+          destination: '四川省/成都市/青白江铁路港', destinationDetail: '成都市青白江区货运大道2号库', destinationContact: '赵仓管', destinationContactPhone: '13611112222',
+          expectDispatch: '2026-09-23 08:00', latestArrival: '2026-09-28 12:00',
+          specialNotes: '集装箱运输，需提供到场提柜时间。'
+        },
+        item: { name: '精密电子元器件 A3', description: '防潮防震', quantity: 100, unit: '箱', weight: 5, volume: 12, contractNo: 'HT-2026-002', englishName: 'Precision Electronic Components A3', pieceWeight: 0.05, dimensions: '600 × 400 × 300 mm', unitPrice: 680, packageQuantity: 100, packageUnit: '箱' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R3', type: '水运', category: '散货',
+        route: {
+          shippingType: '国内航运', originPort: '青岛港', destinationPort: '宁波舟山港',
+          originTerminal: '青岛前湾集装箱码头', destinationTerminal: '宁波舟山港北仑第三集装箱码头',
+          latestShipmentDate: '2026-11-30', dischargeTerms: 'FIO', directSailing: '是',
+          vesselCertificate: '船级社证书', vesselAge: '不超过15年', commissionRate: 1.2,
+          specialNotes: '散货装船前完成水尺计重。'
+        },
+        item: { name: '进口铁矿石', description: '散装矿石', quantity: 1200, unit: '吨', weight: 1200, volume: 520, contractNo: 'HT-2026-003', englishName: 'Iron Ore', pieceWeight: 1, dimensions: '散装', unitPrice: 820, packageQuantity: 1, packageUnit: '票' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R4', type: '水运', category: '件杂',
+        route: {
+          shippingType: '国际航运', originPort: '上海港', destinationPort: '胡志明港',
+          originTerminal: '上海洋山四期自动化码头', destinationTerminal: '胡志明吉莱港',
+          originContact: '陈调度', originContactPhone: '13588889999', destinationContact: '赵仓管', destinationContactPhone: '13611112222',
+          latestShipmentDate: '2026-12-05', dischargeTerms: 'FIO', isCqd: '否', directSailing: '是', containsLashing: '是',
+          vesselCertificate: '船级社证书', vesselAge: '不超过15年', commissionRate: 2, bookingManager: '王经理',
+          laycanStart: '2026-12-01', laycanEnd: '2026-12-03', mailRecipients: ['叶李滨', '陈一一'],
+          specialNotes: '水运干线运输，需全程跟踪到港及提货节点。',
+          parties: {
+            shipperName: '上海国际物流有限公司', consigneeName: 'Vietnam Energy Co., Ltd.', notifyName: 'Vietnam Energy Co., Ltd.',
+            shipperInfo: '上海市浦东新区港城路88号，陈调度 13588889999', consigneeInfo: 'Ho Chi Minh City Port Zone, 赵仓管 +84 13611112222', notifyInfo: '同收货人'
+          }
+        },
+        item: { name: '智能储能柜整机', description: '重型装备', quantity: 4, unit: '台', weight: 14, volume: 32.8, contractNo: 'HT-2026-004', englishName: 'Energy Storage Cabinet', pieceWeight: 3.5, dimensions: '2400 × 1200 × 2200 mm', unitPrice: 85000, packageQuantity: 4, packageUnit: '台' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R5', type: '水运', category: '集装箱',
+        route: {
+          shippingType: '国际航运', originPort: '宁波舟山港', destinationPort: '鹿特丹港',
+          packingMethod: '整箱运输(FCL)', bookingMethod: '船公司箱(COC)', solicitationMethod: '我司揽货',
+          agent: '中远海运', agentCode: 'COSCO', agentSalesperson: '林海',
+          receivingPlace: '上海市/嘉定区/陆渡镇物流园区', receivingRegion: '中国 / 上海市', receivingDetail: '上海市嘉定区丰茂路888号1号库',
+          originServiceTerms: 'CY/CY', originTerminal: '宁波舟山港北仑第三集装箱码头',
+          destinationServiceTerms: 'CY/CY', destinationTerminal: '鹿特丹Euromax码头',
+          deliveryPlace: '德国/汉堡', deliveryRegion: '德国 / 汉堡', deliveryDetail: 'Hamburg Warehouse, Germany',
+          specialNotes: '重箱不叠放，箱门朝车尾。',
+          containers: [
+            { type: '40HQ', quantity: 2, containerNo: 'TCLU9988776', remark: '重箱不叠放' },
+            { type: '20GP', quantity: 1, containerNo: 'CSNU1122334', remark: '箱门朝车尾' }
+          ]
+        },
+        item: { name: '光伏单晶硅片包套', description: '恒温恒湿要求', quantity: 50, unit: '箱', weight: 10, volume: 22.5, contractNo: 'HT-2026-005', englishName: 'Monocrystalline Silicon Wafer', pieceWeight: 0.2, dimensions: '1800 × 1200 × 1000 mm', unitPrice: 3200, packageQuantity: 50, packageUnit: '箱' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R6', type: '铁运', category: '散货',
+        route: {
+          originType: '工厂', destinationType: '仓库', originRegion: '中国 / 上海市', destinationRegion: '中国 / 广东省 / 广州市',
+          consignee: '广州广汽埃安新能源一号工厂', origin: '上海市/嘉定区/陆渡镇物流园区', originDetail: '上海市嘉定区丰茂路888号1号库', originContact: '李发货', originContactPhone: '13900001111',
+          destination: '广东省/广州市/黄埔区保税区', destinationDetail: '广州市黄埔区开创大道999号3号门', destinationContact: '王收货', destinationContactPhone: '13722223333',
+          expectDispatch: '2026-12-06 08:00', latestArrival: '2026-12-09 18:00', specialNotes: '铁路散货运输，需防雨篷布覆盖。'
+        },
+        item: { name: '冷轧钢卷', description: '防潮防锈', quantity: 80, unit: '吨', weight: 80, volume: 36, contractNo: 'HT-2026-006', englishName: 'Cold Rolled Steel Coil', pieceWeight: 2.5, dimensions: '1500 × 1250 × 1100 mm', unitPrice: 4600, packageQuantity: 32, packageUnit: '托' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R7', type: '铁运', category: '集装箱',
+        route: {
+          originType: '仓库', destinationType: '工厂', originRegion: '中国 / 江苏省 / 苏州市', destinationRegion: '中国 / 四川省 / 成都市',
+          consignee: '四川时代新能源科技有限公司', origin: '江苏省/苏州市/工业园区海关监管库', originDetail: '苏州市工业园区胜浦路123号', originContact: '陈调度', originContactPhone: '13588889999',
+          destination: '四川省/成都市/青白江铁路港', destinationDetail: '成都市青白江区货运大道2号库', destinationContact: '赵仓管', destinationContactPhone: '13611112222',
+          expectDispatch: '2026-12-07 08:00', latestArrival: '2026-12-12 18:00', specialNotes: '铁路集装箱运输，需提供箱号清单。'
+        },
+        item: { name: '高端工业润滑油', description: '防倾倒', quantity: 40, unit: '桶', weight: 8, volume: 18, contractNo: 'HT-2026-007', englishName: 'High-end Industrial Lubricant', pieceWeight: 0.2, dimensions: '600 × 600 × 900 mm', unitPrice: 950, packageQuantity: 40, packageUnit: '桶' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R8', type: '航空', category: '散货',
+        route: {
+          originPort: '上海浦东国际机场', destinationPort: '洛杉矶国际机场', originRegion: '中国 / 上海市', destinationRegion: '美国 / 加利福尼亚州 / 洛杉矶市',
+          airInternalOrderNo: 'AIR-SH-20261125-01', airlineMasterNo: '999-12345678', splitMode: '主分', customerOrderNo: 'CUS-AIR-001',
+          solicitationMethod: '我司揽货', supplier: '华贸物流', agent: '华贸航空', agentCode: 'HMA', agentSalesperson: '周航',
+          airRoute: '上海—洛杉矶', etd: '2026-11-28', eta: '2026-11-29', operationRequirements: ['出分单', '报关'],
+          specialNotes: '精密电子元器件，需防静电包装。'
+        },
+        item: { name: '精密电子元器件 A3', description: '航空急件', quantity: 100, unit: '箱', weight: 5, volume: 12, contractNo: 'HT-2026-008', englishName: 'Precision Electronic Components A3', pieceWeight: 0.05, dimensions: '600 × 400 × 300 mm', unitPrice: 680, packageQuantity: 100, packageUnit: '箱' }
+      }),
+      makeCoverageRoute({
+        id: 'COV-R9', type: '航空', category: '集装箱',
+        route: {
+          originPort: '上海浦东国际机场', destinationPort: '法兰克福机场', originRegion: '中国 / 上海市', destinationRegion: '德国 / 黑森州 / 法兰克福市',
+          airInternalOrderNo: 'AIR-SH-20261125-02', airlineMasterNo: '020-87654321', splitMode: '主单', customerOrderNo: 'CUS-AIR-002',
+          solicitationMethod: '客户指定', supplier: '嘉里大通', agent: '嘉里大通', agentCode: 'KER', agentSalesperson: '王倩',
+          airRoute: '上海—法兰克福', etd: '2026-11-30', eta: '2026-12-01', operationRequirements: ['包板', '接货', '送货'],
+          specialNotes: '航空集装箱运输，需提供集装器编号。'
+        },
+        item: { name: '高端工业润滑油', description: '航空集装货物', quantity: 40, unit: '桶', weight: 8, volume: 18, contractNo: 'HT-2026-009', englishName: 'High-end Industrial Lubricant', pieceWeight: 0.2, dimensions: '600 × 600 × 900 mm', unitPrice: 950, packageQuantity: 40, packageUnit: '桶' }
+      })
+    ];
+  }
+
+  let hierarchySequence = 0;
+  function makeHierarchyArrangement(config) {
+    hierarchySequence += 1;
+    const arrangement = makeRoute(config.type || '汽运');
+    arrangement.id = 'ARR' + Date.now() + hierarchySequence;
+    arrangement.items = [];
+    arrangement.collapsed = config.collapsed ?? true;
+    arrangement.type = config.type || '汽运';
+    arrangement.shipmentCategory = config.shipmentCategory || categoriesForType(arrangement.type)[0];
+    arrangement.origin = config.origin || '';
+    arrangement.destination = config.destination || '';
+    arrangement.originType = config.originType || '工厂';
+    arrangement.destinationType = config.destinationType || '港口';
+    arrangement.originRegion = config.originRegion || locationRegions[arrangement.origin] || portRegions[config.originPort] || '';
+    arrangement.destinationRegion = config.destinationRegion || locationRegions[arrangement.destination] || portRegions[config.destinationPort] || '';
+    arrangement.originPort = config.originPort || '';
+    arrangement.destinationPort = config.destinationPort || '';
+    arrangement.originTerminal = config.originTerminal || '';
+    arrangement.destinationTerminal = config.destinationTerminal || '';
+    arrangement.originContact = config.originContact || '';
+    arrangement.originContactPhone = config.originContactPhone || '';
+    arrangement.destinationContact = config.destinationContact || '';
+    arrangement.destinationContactPhone = config.destinationContactPhone || '';
+    arrangement.latestShipmentDate = config.latestShipmentDate || '';
+    arrangement.dischargeTerms = config.dischargeTerms || '';
+    arrangement.directSailing = config.directSailing || '';
+    arrangement.vesselCertificate = config.vesselCertificate || '';
+    arrangement.vesselAge = config.vesselAge || '';
+    arrangement.commissionRate = config.commissionRate ?? 0;
+    arrangement.bookingManager = config.bookingManager || '';
+    arrangement.laycanStart = config.laycanStart || '';
+    arrangement.laycanEnd = config.laycanEnd || '';
+    arrangement.packingMethod = config.packingMethod || '整箱运输(FCL)';
+    arrangement.bookingMethod = config.bookingMethod || '船公司箱(COC)';
+    arrangement.solicitationMethod = config.solicitationMethod || '我司揽货';
+    arrangement.agent = config.agent || '';
+    arrangement.agentCode = config.agentCode || '';
+    arrangement.agentSalesperson = config.agentSalesperson || '';
+    arrangement.deliveryPlace = config.deliveryPlace || config.destination || '';
+    arrangement.deliveryRegion = config.deliveryRegion || arrangement.destinationRegion;
+    arrangement.deliveryDetail = config.deliveryDetail || '';
+    arrangement.hierarchyQuantity = config.quantity ?? 0;
+    arrangement.hierarchyUnit = config.unit || '吨';
+    arrangement.productId = config.productId || '';
+    arrangement.upstreamIds = Array.isArray(config.upstreamIds) ? config.upstreamIds.slice() : [];
+    arrangement.containers = (config.containers || []).map((container, index) => ({ id: 'CT' + Date.now() + hierarchySequence + index, type: container.type || '', quantity: container.quantity ?? 0, containerNo: container.containerNo || '', remark: container.remark || '' }));
+    return arrangement;
+  }
+
+  function makeHierarchyProduct(config) {
+    return normalizeItem({
+      id: config.id,
+      name: config.name,
+      description: config.description || '',
+      tradeContractNo: config.tradeContractNo || '',
+      tradeContractType: config.tradeContractType || '销售合同',
+      standardQty: config.quantity,
+      standardUnit: config.unit || '吨',
+      count: config.quantity,
+      unit: config.unit || '吨',
+      pieceCount: config.pieceCount ?? config.quantity,
+      pieceCountUnit: config.pieceCountUnit || config.unit || '吨',
+      grossWeight: config.grossWeight ?? config.quantity,
+      grossWeightUnit: config.grossWeightUnit || '吨',
+      volume: config.volume ?? 0,
+      volumeUnit: config.volumeUnit || 'm³',
+      pieceWeight: config.pieceWeight ?? 0,
+      pieceWeightUnit: '吨',
+      specDimensions: config.specDimensions || '',
+      overRate: config.overRate ?? 0,
+      underRate: config.underRate ?? 0,
+      goodsValueUnitPrice: config.goodsValueUnitPrice ?? 0,
+      goodsValueAmount: config.goodsValueAmount ?? 0,
+      goodsValueCurrency: config.goodsValueCurrency || 'CNY',
+      englishName: config.englishName || '',
+      collapsed: config.collapsed ?? false,
+      arrangements: config.arrangements || []
+    });
+  }
+
+  function hierarchySampleRoutes() {
+    const steelRoad1 = makeHierarchyArrangement({ type: '汽运', shipmentCategory: '散货', origin: '福建省/漳州市/招商局漳州开发区', destination: '福建省/厦门市/海沧港区', originType: '工厂', destinationType: '港口', originContact: '陈国强', originContactPhone: '13860001231', destinationContact: '厦门港收货组', destinationContactPhone: '0592-6688123', quantity: 80, unit: '吨', productId: 'P-STEEL-01', collapsed: false });
+    const steelRoad2 = makeHierarchyArrangement({ type: '汽运', shipmentCategory: '散货', origin: '福建省/漳州市/招商局漳州开发区', destination: '福建省/厦门市/海沧港区', originType: '工厂', destinationType: '港口', originContact: '陈国强', originContactPhone: '13860001231', destinationContact: '厦门港收货组', destinationContactPhone: '0592-6688123', quantity: 20, unit: '吨', productId: 'P-STEEL-01', collapsed: true });
+    const steelSea = makeHierarchyArrangement({ type: '水运', shipmentCategory: '集装箱', origin: '福建省/厦门市/海沧港区', destination: '天津市/滨海新区/天津港区', originPort: '厦门港', destinationPort: '天津港', originType: '港口', destinationType: '港口', originContact: '厦门港操作部', originContactPhone: '0592-6688001', destinationContact: '天津港操作部', destinationContactPhone: '022-25700001', quantity: 100, unit: '吨', productId: 'P-STEEL-01', upstreamIds: [steelRoad1.id, steelRoad2.id], packingMethod: '整箱运输(FCL)', bookingMethod: '船公司箱(COC)', solicitationMethod: '我司揽货', agent: '中远海运', agentCode: 'COSCO', agentSalesperson: '林海', deliveryPlace: '天津市/滨海新区/天津港区', latestShipmentDate: '2026-11-28', dischargeTerms: 'CY/CY', directSailing: '是', vesselCertificate: '船级社证书', vesselAge: '不超过15年', commissionRate: 1.5, bookingManager: '赵磊', laycanStart: '2026-11-25', laycanEnd: '2026-11-27', containers: [{ type: '40HQ', quantity: 4, containerNo: '', remark: '钢卷加固' }] });
+    const cornRoad1 = makeHierarchyArrangement({ type: '汽运', shipmentCategory: '散货', origin: '福建省/漳州市/招商局漳州开发区', destination: '福建省/厦门市/海沧港区', originType: '工厂', destinationType: '港口', originContact: '黄志明', originContactPhone: '13960002345', destinationContact: '厦门港收货组', destinationContactPhone: '0592-6688123', quantity: 60, unit: '吨', productId: 'P-CORN-01', collapsed: true });
+    const cornRoad2 = makeHierarchyArrangement({ type: '汽运', shipmentCategory: '散货', origin: '福建省/漳州市/招商局漳州开发区', destination: '福建省/厦门市/海沧港区', originType: '工厂', destinationType: '港口', originContact: '黄志明', originContactPhone: '13960002345', destinationContact: '厦门港收货组', destinationContactPhone: '0592-6688123', quantity: 20, unit: '吨', productId: 'P-CORN-01', collapsed: true });
+    const cornSea = makeHierarchyArrangement({ type: '水运', shipmentCategory: '集装箱', origin: '福建省/厦门市/海沧港区', destination: '天津市/滨海新区/天津港区', originPort: '厦门港', destinationPort: '天津港', originType: '港口', destinationType: '港口', originContact: '厦门港操作部', originContactPhone: '0592-6688001', destinationContact: '天津港操作部', destinationContactPhone: '022-25700001', quantity: 80, unit: '吨', productId: 'P-CORN-01', upstreamIds: [cornRoad1.id, cornRoad2.id], packingMethod: '整箱运输(FCL)', bookingMethod: '船公司箱(COC)', solicitationMethod: '我司揽货', agent: '中远海运', agentCode: 'COSCO', agentSalesperson: '林海', deliveryPlace: '天津市/滨海新区/天津港区', latestShipmentDate: '2026-11-28', dischargeTerms: 'CY/CY', directSailing: '是', vesselCertificate: '船级社证书', vesselAge: '不超过15年', commissionRate: 1, bookingManager: '赵磊', laycanStart: '2026-11-25', laycanEnd: '2026-11-27', containers: [{ type: '40HQ', quantity: 3, containerNo: '', remark: '粮食专用箱' }] });
+    return [{
+      id: 'R-HIER-1', collapsed: false, type: '汽运', shipmentCategory: '散货',
+      origin: '福建省/漳州市/招商局漳州开发区', destination: '天津市/滨海新区/天津港区',
+      originType: '工厂', destinationType: '港口', originRegion: '中国 / 福建省 / 漳州市', destinationRegion: '中国 / 天津市 / 滨海新区',
+      items: [
+        makeHierarchyProduct({ id: 'P-STEEL-01', name: '钢卷', description: '冷轧钢卷，防潮防撞', tradeContractNo: 'HT-SC-20261123-01', tradeContractType: '销售合同', quantity: 100, unit: '吨', pieceCount: 100, pieceCountUnit: '件', grossWeight: 0.1, grossWeightUnit: '吨', volume: 0.02, volumeUnit: 'm³', pieceWeight: 0.001, specDimensions: '1.2m × 1.0m', goodsValueUnitPrice: 4200, goodsValueAmount: 420000, englishName: 'Steel Coil', arrangements: [steelRoad1, steelRoad2, steelSea] }),
+        makeHierarchyProduct({ id: 'P-CORN-01', name: '玉米', description: '散装粮食，防潮运输', tradeContractNo: 'HT-SC-20261123-02', tradeContractType: '销售合同', quantity: 80, unit: '吨', pieceCount: 80, pieceCountUnit: '件', grossWeight: 0.1, grossWeightUnit: '吨', volume: 0.01, volumeUnit: 'm³', pieceWeight: 0.001, specDimensions: '', goodsValueUnitPrice: 2800, goodsValueAmount: 224000, englishName: 'Corn', arrangements: [cornRoad1, cornRoad2, cornSea] })
+      ]
+    }];
+  }
+
+  const logisticsDemandProductReferences = existingOrderContext ? {
     'R1:101': { qty: 15, demandNo: 'FLR202611160017' },
     'R1:102': { qty: 30, demandNo: 'FLR202611160017' },
     'R2:201': { qty: 2, demandNo: 'FLR202611160018' }
-  };
+  } : {};
 
   function normalizeItem(item) {
     return {
@@ -297,15 +576,48 @@
     };
   }
 
+  function ensureHierarchyState(nextState) {
+    if (!hierarchyMode) return nextState;
+    nextState.routes = (nextState.routes || []).map((route) => {
+      const products = (route.items || []).map((product) => {
+        const normalizedProduct = { ...product, collapsed: product.collapsed ?? false };
+        if (!Array.isArray(normalizedProduct.arrangements)) {
+          normalizedProduct.arrangements = [makeHierarchyArrangement({
+            type: route.type || '汽运', shipmentCategory: route.shipmentCategory, origin: route.origin, destination: route.destination,
+            originType: route.originType, destinationType: route.destinationType, originPort: route.originPort, destinationPort: route.destinationPort,
+            originContact: route.originContact, originContactPhone: route.originContactPhone, destinationContact: route.destinationContact,
+            destinationContactPhone: route.destinationContactPhone, quantity: product.standardQty ?? product.count, unit: product.standardUnit ?? product.unit,
+            productId: product.id, containers: route.containers || [], collapsed: false
+          })];
+        }
+        normalizedProduct.arrangements = normalizedProduct.arrangements.map((arrangement) => ({
+          ...arrangement,
+          items: [],
+          productId: normalizedProduct.id,
+          collapsed: arrangement.collapsed ?? true,
+          upstreamIds: Array.isArray(arrangement.upstreamIds) ? arrangement.upstreamIds : [],
+          containers: (arrangement.containers || []).map((container, index) => ({ ...container, id: container.id || 'CT' + Date.now() + index }))
+        }));
+        return normalizedProduct;
+      });
+      return { ...route, collapsed: route.collapsed ?? false, items: products };
+    });
+    return nextState;
+  }
+
   function normalizeState(nextState) {
     nextState.routes = (nextState.routes || []).map((route) => ({ ...route, items: (route.items || []).map(normalizeItem) }));
     nextState.estimatedReceivables = Array.isArray(nextState.estimatedReceivables) ? nextState.estimatedReceivables : [];
     nextState.estimatedPayables = Array.isArray(nextState.estimatedPayables) ? nextState.estimatedPayables : [];
-    return nextState;
+    return ensureHierarchyState(nextState);
   }
 
   let state = normalizeState(loadState());
   function loadState() {
+    const scenario = new URLSearchParams(window.location.search).get('scenario');
+    if (scenario === 'single-transport') {
+      return { viewMode: 'card', activeTab: 0, routes: defaultRoutes().slice(0, 1), estimatedReceivables: [], estimatedPayables: [] };
+    }
     const candidates = [window.__restoredOrderDraft && window.__restoredOrderDraft.fields && window.__restoredOrderDraft.fields['运输线路数据'], hiddenData && hiddenData.value];
     for (const value of candidates) {
       if (!value) continue;
@@ -374,7 +686,7 @@
         // Ignore stale draft payloads and keep deterministic defaults.
       }
     }
-    return { viewMode: 'card', activeTab: 0, routes: defaultRoutes(), estimatedReceivables: [], estimatedPayables: [] };
+    return { viewMode: 'card', activeTab: 0, routes: hierarchyMode ? hierarchySampleRoutes() : defaultRoutes(), estimatedReceivables: [], estimatedPayables: [] };
   }
 
   function resolveLinkedItem(item) {
@@ -425,7 +737,7 @@
     if (summary.demandRefQty > 0) {
       reasons.push('物流需求单' + (summary.demandNos.length ? ' ' + summary.demandNos.join('、') + ' ' : '') + '引用 ' + summary.demandRefQty);
     }
-    if (summary.externalRefQty > 0) reasons.push('其他线路引用 ' + summary.externalRefQty);
+    if (summary.externalRefQty > 0) reasons.push('其他服务要求引用 ' + summary.externalRefQty);
     return '商品「' + (item.name || item.description || '未命名商品') + '」对应数量 ' + quantity + '，不能小于被引用数量 ' + summary.minimumQty + '（' + reasons.join('；') + '）。';
   }
 
@@ -433,7 +745,7 @@
     if (summary.demandRefQty <= 0 && summary.externalRefQty <= 0) return '';
     const reasons = [];
     if (summary.demandRefQty > 0) reasons.push('物流需求单' + (summary.demandNos.length ? ' ' + summary.demandNos.join('、') + ' ' : '') + '引用 ' + summary.demandRefQty);
-    if (summary.externalRefQty > 0) reasons.push('其他线路引用 ' + summary.externalRefQty);
+    if (summary.externalRefQty > 0) reasons.push('其他服务要求引用 ' + summary.externalRefQty);
     return '商品「' + (item.name || item.description || '未命名商品') + '」已被' + reasons.join('、') + '，不允许删除商品行。';
   }
 
@@ -486,7 +798,7 @@
 
   function validateSubmitReferences() {
     if (detectLinkCycle()) {
-      const message = '线路关联商品导致任务循环联动，请删除相关关联商品后重试';
+      const message = '服务要求关联商品导致任务循环联动，请删除相关关联商品后重试';
       window.__lastOrderReferenceError = message;
       notify('error', message);
       return { valid: false, message };
@@ -521,7 +833,7 @@
     const sourceRouteIndex = state.routes.findIndex((route) => route.id === item.linkedRouteId);
     const sourceRoute = state.routes[sourceRouteIndex];
     const sourceItemIndex = sourceRoute ? sourceRoute.items.findIndex((sourceItem) => sourceItem.id === item.linkedItemId) : -1;
-    return sourceRoute && sourceItemIndex >= 0 ? '线路 #' + (sourceRouteIndex + 1) + ' / 商品行 ' + (sourceItemIndex + 1) : '原商品已删除';
+    return sourceRoute && sourceItemIndex >= 0 ? '服务要求 #' + (sourceRouteIndex + 1) : '原商品已删除';
   }
 
   function routeTotals(route) {
@@ -545,17 +857,38 @@
     return '<div class="order-route-field ' + (spanClass || '') + '"><label>' + label + '</label>' + control + '</div>';
   }
 
+  function routePlaceRegion(route, side) {
+    const isOrigin = side === 'origin';
+    const place = isOrigin ? route.origin : route.destination;
+    const port = isOrigin ? route.originPort : route.destinationPort;
+    return (isOrigin ? route.originRegion : route.destinationRegion) || locationRegions[place] || portRegions[port] || '';
+  }
+
+  function routeTitleMarkup(route) {
+    const originRegion = routePlaceRegion(route, 'origin');
+    const destinationRegion = routePlaceRegion(route, 'destination');
+    const routeDescriptor = hasSpecifiedTransportMode() && route.type
+      ? '<span class="order-route-descriptor">(' + escapeHtml(route.type) + (route.shipmentCategory ? ' · ' + escapeHtml(route.shipmentCategory) : '') + ')</span>'
+      : '';
+    return '<span class="order-route-place">' + escapeHtml(route.origin || '未指定起运地') +
+      (originRegion ? '<em>（' + escapeHtml(originRegion) + '）</em>' : '') + '</span>' +
+      '<span class="order-route-arrow">→</span>' +
+      '<span class="order-route-place">' + escapeHtml(route.destination || '未指定目的地') +
+      (destinationRegion ? '<em>（' + escapeHtml(destinationRegion) + '）</em>' : '') + '</span>' +
+      routeDescriptor;
+  }
+
   function routeCardMarkup(route, index) {
     const isMultimodal = hasSpecifiedTransportMode() && route.type === '多式联运';
     const routeId = escapeHtml(route.id);
     const singleRouteMode = state.routes.length === 1;
     const collapsed = !singleRouteMode && route.collapsed;
-    const routeDescriptor = hasSpecifiedTransportMode() ? '<span>(' + escapeHtml(route.type) + (route.type === '航空' ? '' : ' · ' + escapeHtml(route.shipmentCategory)) + ')</span>' : '';
-    const cardHead = singleRouteMode ? '' : '<div class="order-route-card-head"><div class="order-route-card-title"><span class="order-route-index">线路 #' + (index + 1) + '</span><span class="order-route-route-copy" data-route-route-copy="' + routeId + '">' + escapeHtml(route.origin || '未指定起运地') + ' → ' + escapeHtml(route.destination || '未指定目的地') + routeDescriptor + '</span></div>' +
+    const hideSingleCardHead = singleRouteMode && !orderRouteReadonly();
+    const cardHead = hideSingleCardHead ? '' : '<div class="order-route-card-head"><div class="order-route-card-title"><span class="order-route-index">服务要求 #' + (index + 1) + '</span><span class="order-route-route-copy" data-route-route-copy="' + routeId + '">' + routeTitleMarkup(route) + '</span></div>' +
       '<div class="order-route-card-controls">' +
-      '<button class="order-route-icon-btn" type="button" data-route-action="duplicate" data-route-id="' + routeId + '" title="复制线路" aria-label="复制线路">⧉</button>' +
-      '<button class="order-route-icon-btn" type="button" data-route-action="toggle" data-route-id="' + routeId + '" title="' + (route.collapsed ? '展开线路' : '折叠线路') + '" aria-label="' + (route.collapsed ? '展开线路' : '折叠线路') + '">' + (route.collapsed ? '⌄' : '⌃') + '</button>' +
-      '<button class="order-route-icon-btn danger" type="button" data-route-action="remove" data-route-id="' + routeId + '" title="删除线路" aria-label="删除线路">×</button></div></div>';
+      '<button class="order-route-icon-btn" type="button" data-route-action="duplicate" data-route-id="' + routeId + '" title="复制服务要求" aria-label="复制服务要求">⧉</button>' +
+      '<button class="order-route-icon-btn" type="button" data-route-action="toggle" data-route-id="' + routeId + '" title="' + (route.collapsed ? '展开服务要求' : '折叠服务要求') + '" aria-label="' + (route.collapsed ? '展开服务要求' : '折叠服务要求') + '">' + (route.collapsed ? '⌄' : '⌃') + '</button>' +
+      '<button class="order-route-icon-btn danger" type="button" data-route-action="remove" data-route-id="' + routeId + '" title="删除服务要求" aria-label="删除服务要求">×</button></div></div>';
     return '<article class="order-route-card ' + (isMultimodal ? 'multimodal ' : '') + (singleRouteMode ? 'single-route-card' : '') + '" id="order-route-card-' + routeId + '" data-route-card="' + routeId + '">' +
       cardHead +
       (collapsed ? '' : routeBodyMarkup(route)) +
@@ -564,10 +897,10 @@
 
   function simplifiedRouteBodyMarkup(route) {
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     return '<div class="order-route-card-body">' +
       itemsMarkup(route) +
-      '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
+      '<div class="order-route-block order-route-transport-requirements"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
         field('起运地类型', '<select class="control" data-route-field="originType" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '起运地类型">' + selectOptions(locationTypes, route.originType) + '</select>') +
         field('起运地<span class="required">*</span>', '<select class="control" data-route-field="origin" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '起运地">' + selectOptions(locationOptions, route.origin) + '</select>') +
         field('起运地国别地区', '<input class="control" data-route-field="originRegion" data-route-id="' + routeId + '" value="' + escapeHtml(route.originRegion || locationRegions[route.origin] || '') + '" readonly aria-label="线路' + routeIndex + '起运地国别地区">') +
@@ -580,11 +913,11 @@
 
   function waterBulkBodyMarkup(route) {
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     const portSelect = (fieldName, selected) => '<select class="control" data-route-field="' + fieldName + '" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + fieldName + '"><option value="">请选择</option>' + selectOptions(portOptions, selected) + '</select>';
     return '<div class="order-route-card-body">' +
       itemsMarkup(route) +
-      '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
+      '<div class="order-route-block order-route-transport-requirements"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
         field('运输类型<span class="required">*</span>', '<select class="control" data-route-field="type" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '运输类型">' + selectOptions(typeOptions, route.type) + '</select>') +
         field('航运类型<span class="required">*</span>', '<select class="control" data-route-field="shippingType" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '航运类型">' + selectOptions(['国际航运', '国内航运'], route.shippingType) + '</select>') +
         field('装运类别<span class="required">*</span>', '<select class="control" data-route-field="shipmentCategory" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '装运类别">' + selectOptions(categoriesForType(route.type), route.shipmentCategory) + '</select>') +
@@ -607,11 +940,11 @@
 
   function waterContainerBodyMarkup(route) {
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     const portSelect = (fieldName, selected) => '<select class="control" data-route-field="' + fieldName + '" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + fieldName + '"><option value="">请选择</option>' + selectOptions(portOptions, selected) + '</select>';
     return '<div class="order-route-card-body">' +
       itemsMarkup(route) +
-      '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
+      '<div class="order-route-block order-route-transport-requirements"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
         field('运输类型<span class="required">*</span>', '<select class="control" data-route-field="type" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '运输类型">' + selectOptions(typeOptions, route.type) + '</select>') +
         field('航运类型<span class="required">*</span>', '<select class="control" data-route-field="shippingType" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '航运类型"><option value="">请选择</option>' + selectOptions(['国际航运', '国内航运'], route.shippingType) + '</select>') +
         field('装运类别<span class="required">*</span>', '<select class="control" data-route-field="shipmentCategory" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '装运类别">' + selectOptions(categoriesForType(route.type), route.shipmentCategory) + '</select>') +
@@ -643,12 +976,12 @@
 
   function airBodyMarkup(route) {
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     const airportSelect = (fieldName, selected) => '<select class="control" data-route-field="' + fieldName + '" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + fieldName + '"><option value="">请选择</option>' + selectOptions(airportOptions, selected) + '</select>';
     const operationChecks = airOperationOptions.map((option) => '<label class="demand-check-option"><input type="checkbox" data-route-operation="' + escapeHtml(option) + '" data-route-id="' + routeId + '"' + ((route.operationRequirements || []).includes(option) ? ' checked' : '') + '>' + escapeHtml(option) + '</label>').join('');
     return '<div class="order-route-card-body">' +
       itemsMarkup(route) +
-      '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
+      '<div class="order-route-block order-route-transport-requirements"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
         field('运输类型<span class="required">*</span>', '<select class="control" data-route-field="type" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '运输类型">' + selectOptions(typeOptions, route.type) + '</select>') +
         field('我司分单号<span class="required">*</span>', '<input class="control" data-route-field="airInternalOrderNo" data-route-id="' + routeId + '" value="' + escapeHtml(route.airInternalOrderNo) + '" placeholder="请输入" aria-label="线路' + routeIndex + '我司分单号">') +
         field('航司主单号<span class="required">*</span>', '<input class="control" data-route-field="airlineMasterNo" data-route-id="' + routeId + '" value="' + escapeHtml(route.airlineMasterNo) + '" placeholder="请输入" aria-label="线路' + routeIndex + '航司主单号">') +
@@ -671,12 +1004,12 @@
 
   function waterBreakbulkBodyMarkup(route) {
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     const portSelect = (fieldName, selected) => '<select class="control" data-route-field="' + fieldName + '" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + fieldName + '"><option value="">请选择</option>' + selectOptions(portOptions, selected) + '</select>';
     const mailChips = (route.mailRecipients || []).map((name, index) => '<span class="demand-email-recipient-chip"><span class="demand-email-recipient-chip-copy"><strong>' + escapeHtml(name) + '</strong></span><button type="button" data-route-action="remove-route-mail" data-route-id="' + routeId + '" data-mail-index="' + index + '" aria-label="删除邮件接收人">×</button></span>').join('');
     return '<div class="order-route-card-body">' +
       itemsMarkup(route) +
-      '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
+      '<div class="order-route-block order-route-transport-requirements"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
         field('运输类型<span class="required">*</span>', '<select class="control" data-route-field="type" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '运输类型">' + selectOptions(typeOptions, route.type) + '</select>') +
         field('航运类型<span class="required">*</span>', '<select class="control" data-route-field="shippingType" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '航运类型"><option value="">请选择</option>' + selectOptions(['国际航运', '国内航运'], route.shippingType) + '</select>') +
         field('装运类别<span class="required">*</span>', '<select class="control" data-route-field="shipmentCategory" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '装运类别">' + selectOptions(categoriesForType(route.type), route.shipmentCategory) + '</select>') +
@@ -714,11 +1047,11 @@
     if (route.type === '水运' && route.shipmentCategory === '集装箱') return waterContainerBodyMarkup(route);
     if (route.type === '航空') return airBodyMarkup(route);
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     const isMultimodal = route.type === '多式联运';
     return '<div class="order-route-card-body">' +
       itemsMarkup(route) +
-      '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
+      '<div class="order-route-block order-route-transport-requirements"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
         field('运输类型<span class="required">*</span>', '<select class="control" data-route-field="type" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '运输类型">' + selectOptions(typeOptions, route.type) + '</select>') +
         field('装运类别<span class="required">*</span>', '<select class="control" data-route-field="shipmentCategory" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + '装运类别">' + selectOptions(categoriesForType(route.type), route.shipmentCategory) + '</select>') +
         field('收货单位', '<input class="control" data-route-field="consignee" data-route-id="' + routeId + '" value="' + escapeHtml(route.consignee) + '" placeholder="请输入" aria-label="线路' + routeIndex + '收货单位">') +
@@ -755,7 +1088,60 @@
       ).join('') + '</div></div>';
   }
 
+  // 只读态：摘要行固定展示关键数量；点击“查看全部商品字段”后横向展开完整字段
+  function readonlyItemsMarkup(route) {
+    const items = route.items || [];
+    if (!items.length) return '<div class="ro-goods-empty">暂无商品</div>';
+    const cards = items.map((rowItem, itemIndex) => {
+      const linked = Boolean(rowItem.linkedRouteId && rowItem.linkedItemId);
+      const sourceItem = resolveLinkedItem(rowItem);
+      const item = linked && sourceItem
+        ? { ...sourceItem, standardQty: rowItem.linkedQty ?? sourceItem.standardQty, count: rowItem.linkedQty ?? sourceItem.count }
+        : (sourceItem || rowItem);
+      const quantity = (value, suffix) => (value === '' || value === null || value === undefined ? '—' : number(value) + (suffix ? ' ' + suffix : ''));
+      const text = (value) => (value === '' || value === null || value === undefined ? '—' : String(value));
+      const summaryFields = [
+        ['标准数量', quantity(item.standardQty, item.standardUnit)],
+        ['件数', quantity(item.pieceCount, item.pieceCountUnit)],
+        ['毛重', quantity(item.grossWeight, item.grossWeightUnit)],
+        ['体积', quantity(item.volume, item.volumeUnit)]
+      ];
+      const detailFields = [
+        ['英文名', text(item.englishName)],
+        ['单件重量', item.pieceWeight !== '' && item.pieceWeight !== null && item.pieceWeight !== undefined ? number(item.pieceWeight) + ' ' + (item.pieceWeightUnit || '') : '—'],
+        ['规格尺寸', text(item.specDimensions)],
+        ['溢装率', item.overRate !== '' && item.overRate !== null && item.overRate !== undefined ? item.overRate + '%' : '—'],
+        ['短装率', item.underRate !== '' && item.underRate !== null && item.underRate !== undefined ? item.underRate + '%' : '—'],
+        ['货值单价', item.goodsValueUnitPrice !== '' && item.goodsValueUnitPrice !== null && item.goodsValueUnitPrice !== undefined ? number(item.goodsValueUnitPrice) : '—'],
+        ['货值金额', item.goodsValueAmount !== '' && item.goodsValueAmount !== null && item.goodsValueAmount !== undefined ? number(item.goodsValueAmount) + ' ' + (item.goodsValueCurrency || '') : '—'],
+        ['货值币种', text(item.goodsValueCurrency)],
+        ['合同号', text(item.tradeContractNo)],
+        ['合同类型', text(item.tradeContractType)]
+      ];
+      const fieldMarkup = (fields, extra) => fields.map(([label, value]) => '<div class="ro-goods-field' + (extra ? ' ro-goods-field-extra' : '') + '" data-goods-extra="' + (extra ? 'true' : 'false') + '" title="' + escapeHtml(label + '：' + value) + '"><span>' + escapeHtml(label) + '</span><b>' + escapeHtml(value) + '</b></div>').join('');
+      const itemTitle = (item.name || '未命名商品') + (item.description ? ' · ' + item.description : '');
+      if (!goodsSummaryExpandable) {
+        const legacyFieldMarkup = summaryFields.concat(detailFields).map(([label, value]) => '<div class="ro-goods-field" title="' + escapeHtml(label + '：' + value) + '"><span>' + escapeHtml(label) + '</span><b>' + escapeHtml(value) + '</b></div>').join('');
+        return '<article class="ro-goods">' +
+          '<div class="ro-goods-main" title="' + escapeHtml(itemTitle) + '"><div class="ro-goods-title"><span class="ro-goods-name">' + escapeHtml(item.name || '未命名商品') + '</span>' + (item.description ? '<span class="ro-goods-desc">' + escapeHtml(item.description) + '</span>' : '') + '</div></div>' +
+          '<div class="ro-goods-fields" tabindex="0" aria-label="' + escapeHtml((item.name || '商品') + '全部字段') + '">' + legacyFieldMarkup + '</div>' +
+        '</article>';
+      }
+      const contractText = item.tradeContractNo
+        ? '合同 ' + item.tradeContractNo + (item.tradeContractType ? '（' + item.tradeContractType + '）' : '')
+        : '贸易合同未填写';
+      const panelId = 'ro-goods-fields-' + String(route.id) + '-' + String(item.id || itemIndex);
+      return '<article class="ro-goods" data-goods-row>' +
+        '<div class="ro-goods-main" title="' + escapeHtml(itemTitle) + '"><div class="ro-goods-title"><div class="ro-goods-name-line"><span class="ro-goods-name">' + escapeHtml(item.name || '未命名商品') + '</span>' + (item.description ? '<span class="ro-goods-desc">' + escapeHtml(item.description) + '</span>' : '') + '</div><span class="ro-goods-contract" title="' + escapeHtml(contractText) + '">' + escapeHtml(contractText) + '</span></div></div>' +
+        '<div class="ro-goods-fields" id="' + escapeHtml(panelId) + '" tabindex="0" aria-label="' + escapeHtml((item.name || '商品') + '商品字段') + '">' + fieldMarkup(summaryFields, false) + fieldMarkup(detailFields, true) + '</div>' +
+        '<button class="ro-goods-toggle" type="button" data-goods-toggle aria-expanded="false" aria-controls="' + escapeHtml(panelId) + '" title="展开全部商品字段"><span class="ro-goods-toggle-label">查看全部商品字段</span><span class="ro-goods-toggle-chevron" aria-hidden="true"></span></button>' +
+      '</article>';
+    }).join('');
+    return '<div class="ro-goods-list">' + cards + '</div>';
+  }
+
   function itemsMarkup(route) {
+    if (orderRouteReadonly()) return readonlyItemsMarkup(route);
     const routeId = escapeHtml(route.id);
     const contractTypes = ['销售合同', '采购合同', '框架合同'];
     const standardUnits = ['吨', '千克', '立方米', '件'];
@@ -771,7 +1157,7 @@
         : (sourceItem || rowItem);
       const lockedFields = ['name', 'tradeContractNo', 'tradeContractType', 'standardUnit', 'pieceCountUnit', 'grossWeightUnit', 'volumeUnit'];
       const lock = (field) => (linked && lockedFields.includes(field)) ? ' disabled' : '';
-      return '<tr><td>' + (itemIndex + 1) + '</td>' +
+      return '<tr>' +
         '<td><select class="control" data-item-field="name" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="商品分类"' + lock('name') + '>' + selectOptions(commodityCatalog.map((entry) => entry.name), item.name) + '</select></td>' +
         '<td><input class="control" data-item-field="description" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.description) + '" placeholder="请输入商品描述" aria-label="商品描述"' + lock('description') + '></td>' +
         '<td><input class="control" type="number" min="0" step="0.01" data-item-field="standardQty" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.standardQty) + '" aria-label="标准数量"' + lock('standardQty') + '></td>' +
@@ -790,20 +1176,19 @@
         '<td><input class="control" type="number" min="0" step="0.01" data-item-field="goodsValueUnitPrice" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.goodsValueUnitPrice) + '" aria-label="货值单价"' + lock('goodsValueUnitPrice') + '></td>' +
         '<td><input class="control" type="number" data-item-field="goodsValueAmount" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.goodsValueAmount) + '" readonly aria-label="货值金额"' + lock('goodsValueAmount') + '></td>' +
         '<td><select class="control" data-item-field="goodsValueCurrency" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="货值币种"' + lock('goodsValueCurrency') + '>' + selectOptions(currencies, item.goodsValueCurrency) + '</select></td>' +
-        '<td><span class="order-route-source-ref">' + escapeHtml(linkedItemReference(rowItem)) + '</span></td>' +
         '<td><input class="control" data-item-field="englishName" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.englishName) + '" placeholder="请输入商品英文名" aria-label="商品英文名"' + lock('englishName') + '></td>' +
         '<td><input class="control" data-item-field="tradeContractNo" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.tradeContractNo) + '" placeholder="请输入合同号" aria-label="贸易合同号"' + lock('tradeContractNo') + '></td>' +
         '<td><select class="control" data-item-field="tradeContractType" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="贸易合同类型"' + lock('tradeContractType') + '>' + selectOptions(contractTypes, item.tradeContractType) + '</select></td>' +
-        '<td><button class="order-route-icon-btn danger" type="button" data-route-action="remove-item" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="删除商品">×</button></td></tr>';
+        '<td>' + (orderItemsCopyEnabled() ? '<button class="order-route-row-action" type="button" data-route-action="duplicate-item" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '">复制</button>' : '') + '<button class="order-route-icon-btn danger" type="button" data-route-action="remove-item" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="删除商品">×</button></td></tr>';
     }).join('');
-    return '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">线路商品清单 <span>(' + route.items.length + ' 项)</span></div><div class="order-route-block-actions"><button class="detail-btn" type="button" data-route-action="link-items" data-route-id="' + routeId + '">关联其他线路商品</button><button class="detail-btn outline-primary" type="button" data-route-action="add-item" data-route-id="' + routeId + '">+ 添加商品</button></div></div>' +
-      '<div class="order-route-items-wrap"><table class="order-route-items" aria-label="线路商品清单"><thead><tr><th>行号</th><th>商品分类 *</th><th>商品描述</th><th>标准数量 *</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>关联线路/商品行号</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' +
+    return '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">服务要求商品清单 <span>(' + route.items.length + ' 项)</span></div><div class="order-route-block-actions"><button class="detail-btn outline-primary" type="button" data-route-action="add-item" data-route-id="' + routeId + '">+ 添加商品</button></div></div>' +
+      '<div class="order-route-items-wrap"><table class="order-route-items" aria-label="服务要求商品清单"><thead><tr><th>商品分类 *</th><th>商品描述</th><th>标准数量 *</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' +
       rows + '</tbody></table></div></div>';
   }
 
   function partiesMarkup(route) {
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     const parties = route.parties || {};
     const textField = (key, label, placeholder) => '<input class="control" data-party-field="' + key + '" data-route-id="' + routeId + '" value="' + escapeHtml(parties[key] || '') + '" placeholder="' + placeholder + '" aria-label="线路' + routeIndex + label + '">';
     const memoField = (key, label, placeholder) => '<textarea class="control textarea" data-party-field="' + key + '" data-route-id="' + routeId + '" placeholder="' + placeholder + '" aria-label="线路' + routeIndex + label + '">' + escapeHtml(parties[key] || '') + '</textarea>';
@@ -820,7 +1205,7 @@
 
   function containersMarkup(route) {
     const routeId = escapeHtml(route.id);
-    const routeIndex = state.routes.indexOf(route) + 1;
+    const routeIndex = routeDisplayIndex(route);
     const containers = route.containers || [];
     const boxTypes = containerBoxTypeOptions;
     const rows = containers.map((container, containerIndex) =>
@@ -850,7 +1235,7 @@
 
   function feeRouteOptionText(route, index) {
     const typeCopy = hasSpecifiedTransportMode() && route.type ? ' · ' + route.type : '';
-    return '线路 #' + (index + 1) + typeCopy;
+    return '服务要求 #' + (index + 1) + typeCopy;
   }
 
   function selectedFeeRouteIds(fee) {
@@ -883,7 +1268,7 @@
     const routeOptions = state.routes.length
       ? state.routes.map((route, index) => '<label class="order-fee-route-option"><input type="radio" name="fee-route-' + escapeHtml(fee.id) + '" data-fee-route-option value="' + escapeHtml(route.id) + '"' + (selectedIds.has(route.id) ? ' checked' : '') + '><span><strong>' + escapeHtml(feeRouteOptionText(route, index)) + '</strong><small>' + escapeHtml((route.origin || '未指定起运地') + ' → ' + (route.destination || '未指定目的地')) + '</small></span></label>').join('')
       : '<div class="order-fee-route-empty">暂无可选线路</div>';
-    return routeOptions + '<div class="order-fee-route-hint">每条费用只能选择一条线路，新增费用默认选择线路 #1</div>';
+    return routeOptions + '<div class="order-fee-route-hint">每条费用只能选择一条服务要求，新增费用默认选择服务要求 #1</div>';
   }
 
   function syncFeeRoutesByServiceScope() {
@@ -914,7 +1299,6 @@
     const id = escapeHtml(fee.id);
     const attrs = ' data-fee-direction="' + direction + '" data-fee-id="' + id + '"';
     return '<tr><td><input type="checkbox" data-fee-select' + attrs + ' aria-label="选择第' + (index + 1) + '行费用"></td>' +
-      '<td>' + feeRoutePickerMarkup(direction, fee) + '</td>' +
       '<td><select class="control" data-fee-field="feeItem"' + attrs + ' required aria-label="费用科目">' + selectOptions(feeItemOptions, fee.feeItem) + '</select></td>' +
       '<td><input class="control" data-fee-field="settlementObject"' + attrs + ' value="' + escapeHtml(fee.settlementObject) + '" placeholder="请输入结算对象" required aria-label="结算对象"></td>' +
       '<td><input class="control" type="number" min="0" step="0.01" data-fee-field="taxRate"' + attrs + ' value="' + escapeHtml(fee.taxRate) + '" required aria-label="税率"></td>' +
@@ -928,6 +1312,7 @@
       '<td><input class="control" type="number" min="0" step="0.0001" data-fee-field="exchangeRate"' + attrs + ' value="' + escapeHtml(fee.exchangeRate) + '" required aria-label="汇率"></td>' +
       '<td><input class="control" type="number" data-fee-field="localAmount"' + attrs + ' value="' + number(fee.localAmount).toFixed(2) + '" readonly aria-label="本位币金额含税"></td>' +
       '<td><input class="control" data-fee-field="remark"' + attrs + ' value="' + escapeHtml(fee.remark) + '" placeholder="请输入备注" aria-label="备注"></td>' +
+      '<td>' + feeRoutePickerMarkup(direction, fee) + '</td>' +
       '<td><select class="control" data-fee-field="invoiceType"' + attrs + ' aria-label="发票类型">' + selectOptions(invoiceTypeOptions, fee.invoiceType) + '</select></td>' +
       '<td><select class="control" data-fee-field="actualProcurement"' + attrs + ' required aria-label="是否实际采购">' + selectOptions(['是', '否'], fee.actualProcurement) + '</select></td>' +
       '<td><button class="order-route-icon-btn danger" type="button" data-fee-action="remove" data-fee-direction="' + direction + '" data-fee-id="' + id + '" aria-label="删除费用">×</button></td></tr>';
@@ -938,7 +1323,7 @@
     const label = feeDirectionLabel(direction);
     const otherLabel = direction === 'receivable' ? '应付' : '应收';
     return '<section class="order-business-fee-card" data-fee-card="' + direction + '"><div class="order-business-fee-head"><div class="order-business-fee-title">业务预估' + label + '费用</div><div class="order-business-fee-actions"><button class="detail-btn outline-primary" type="button" data-fee-action="copy" data-fee-direction="' + direction + '">拷贝到' + otherLabel + '</button><button class="detail-btn primary" type="button" data-fee-action="add" data-fee-direction="' + direction + '">添加费用</button></div></div>' +
-      '<div class="order-business-fee-table-wrap"><table class="order-business-fee-table" aria-label="业务预估' + label + '费用"><thead><tr><th><input type="checkbox" data-fee-select-all="' + direction + '" aria-label="全选' + label + '费用"></th><th>线路</th><th>费用科目 *</th><th>结算对象 *</th><th>税率(%) *</th><th>PP/CC</th><th>计费单价(含税) *</th><th>计费币种 *</th><th>计费数量 *</th><th>计量单位 *</th><th>柜型</th><th>原币金额(含税)</th><th>汇率 *</th><th>本位币金额(含税)</th><th>备注</th><th>发票类型</th><th>是否实际采购 *</th><th>操作</th></tr></thead><tbody>' +
+      '<div class="order-business-fee-table-wrap"><table class="order-business-fee-table" aria-label="业务预估' + label + '费用"><thead><tr><th><input type="checkbox" data-fee-select-all="' + direction + '" aria-label="全选' + label + '费用"></th><th>费用科目 *</th><th>结算对象 *</th><th>税率(%) *</th><th>PP/CC</th><th>计费单价(含税) *</th><th>计费币种 *</th><th>计费数量 *</th><th>计量单位 *</th><th>柜型</th><th>原币金额(含税)</th><th>汇率 *</th><th>本位币金额(含税)</th><th>备注</th><th>服务要求</th><th>发票类型</th><th>是否实际采购 *</th><th>操作</th></tr></thead><tbody>' +
       (fees.length ? fees.map((fee, index) => feeRowMarkup(direction, fee, index)).join('') : '<tr><td colspan="18" class="order-business-fee-empty">暂无数据</td></tr>') + '</tbody></table></div></section>';
   }
 
@@ -946,6 +1331,87 @@
     return feeCardMarkup('receivable') + feeCardMarkup('payable');
   }
 
+
+  function hierarchyArrangementNo(product, arrangement, route) {
+    const ownerRoute = route || state.routes.find((entry) => (entry.items || []).includes(product));
+    const routeArrangements = ownerRoute
+      ? (ownerRoute.items || []).flatMap((entry) => entry.arrangements || [])
+      : (product.arrangements || []);
+    const index = routeArrangements.findIndex((entry) => entry.id === arrangement.id) + 1;
+    return escapeHtml(arrangement.type || '物流') + (index > 0 ? index : '');
+  }
+
+  function hierarchyProductQuantity(product) {
+    return number(product.standardQty ?? product.count).toFixed(2).replace(/\.00$/, '') + (product.standardUnit || product.unit || '');
+  }
+
+  function hierarchyArrangementDownstream(product, arrangement) {
+    return (product.arrangements || []).filter((entry) => (entry.upstreamIds || []).includes(arrangement.id));
+  }
+
+  function hierarchyRelationsMarkup(product, arrangement) {
+    const upstreamOptions = (product.arrangements || []).filter((entry) => entry.id !== arrangement.id).map((entry) =>
+      '<label class="hierarchy-relation-option"><input type="checkbox" data-arrangement-upstream data-product-id="' + escapeHtml(product.id) + '" data-arrangement-id="' + escapeHtml(arrangement.id) + '" value="' + escapeHtml(entry.id) + '"' + ((arrangement.upstreamIds || []).includes(entry.id) ? ' checked' : '') + '><span>' + hierarchyArrangementNo(product, entry) + ' · ' + escapeHtml(entry.origin || '未指定') + ' → ' + escapeHtml(entry.destination || '未指定') + ' · ' + escapeHtml(entry.hierarchyQuantity) + escapeHtml(entry.hierarchyUnit || product.standardUnit || '') + '</span></label>'
+    ).join('');
+    const downstream = hierarchyArrangementDownstream(product, arrangement);
+    return '<div class="hierarchy-arrangement-relations"><div class="hierarchy-relation-head"><strong>上下游关联</strong><span>同一商品下自动关联运输段</span></div><div class="hierarchy-relation-grid"><div><div class="hierarchy-relation-label">上游物流安排</div><div class="hierarchy-relation-options">' + (upstreamOptions || '<span class="demand-muted">无其他物流安排</span>') + '</div></div><div><div class="hierarchy-relation-label">下游物流安排</div><div class="hierarchy-relation-chips">' + (downstream.length ? downstream.map((entry) => '<span class="hierarchy-relation-chip">' + hierarchyArrangementNo(product, entry) + ' · ' + escapeHtml(entry.hierarchyQuantity) + escapeHtml(entry.hierarchyUnit || '') + '</span>').join('') : '<span class="demand-muted">暂无下游安排</span>') + '</div></div><div class="hierarchy-relation-quantity"><label>本段运输数量</label><input class="control" type="number" min="0" step="0.01" data-arrangement-quantity data-route-id="' + escapeHtml(arrangement.id) + '" value="' + escapeHtml(arrangement.hierarchyQuantity) + '" aria-label="本段运输数量"><span>' + escapeHtml(arrangement.hierarchyUnit || product.standardUnit || '') + '</span></div></div></div>';
+  }
+
+  function hierarchyArrangementCardMarkup(route, product, arrangement, productIndex, arrangementIndex) {
+    arrangement.__displayIndex = arrangementIndex + 1;
+    const collapsed = Boolean(arrangement.collapsed);
+    const typeCopy = arrangement.type ? escapeHtml(arrangement.type) + (arrangement.type === '航空' ? '' : ' · ' + escapeHtml(arrangement.shipmentCategory || '')) : '待配置运输方式';
+    const downstream = hierarchyArrangementDownstream(product, arrangement);
+    return '<section class="hierarchy-arrangement-card" data-arrangement-card="' + escapeHtml(arrangement.id) + '">' +
+      '<div class="hierarchy-arrangement-head"><div class="hierarchy-arrangement-title"><span class="hierarchy-arrangement-no">' + hierarchyArrangementNo(product, arrangement) + '</span><strong>' + typeCopy + '</strong><span>' + escapeHtml(arrangement.origin || '未指定起点') + ' → ' + escapeHtml(arrangement.destination || '未指定终点') + '</span><span class="hierarchy-arrangement-qty">' + escapeHtml(arrangement.hierarchyQuantity) + ' ' + escapeHtml(arrangement.hierarchyUnit || product.standardUnit || '') + '</span>' + (downstream.length ? '<span class="hierarchy-arrangement-downstream">下游：' + downstream.map((entry) => hierarchyArrangementNo(product, entry)).join('、') + '</span>' : '') + '</div><div class="hierarchy-arrangement-actions"><button class="detail-btn outline-primary" type="button" data-route-action="toggle-arrangement" data-route-id="' + escapeHtml(route.id) + '" data-product-id="' + escapeHtml(product.id) + '" data-arrangement-id="' + escapeHtml(arrangement.id) + '">' + (collapsed ? '展开' : '收起') + '</button><button class="order-route-icon-btn danger" type="button" data-route-action="remove-arrangement" data-route-id="' + escapeHtml(route.id) + '" data-product-id="' + escapeHtml(product.id) + '" data-arrangement-id="' + escapeHtml(arrangement.id) + '" aria-label="删除物流安排">×</button></div></div>' +
+      (collapsed ? '' : '<div class="hierarchy-arrangement-body">' + hierarchyRelationsMarkup(product, arrangement) + routeBodyMarkup(arrangement) + '</div>') +
+    '</section>';
+  }
+
+  function hierarchyProductCardMarkup(route, product, productIndex) {
+    const collapsed = Boolean(product.collapsed);
+    const arrangements = product.arrangements || [];
+    return '<section class="hierarchy-product-card" data-product-card="' + escapeHtml(product.id) + '">' +
+      '<div class="hierarchy-product-head"><div class="hierarchy-product-title"><span class="hierarchy-product-index">商品 #' + (productIndex + 1) + '</span><strong>' + escapeHtml(product.name || '未命名商品') + '</strong><span class="hierarchy-product-qty">' + hierarchyProductQuantity(product) + '</span><span class="hierarchy-product-count">' + arrangements.length + ' 条物流安排</span></div><div class="hierarchy-product-actions"><button class="detail-btn outline-primary" type="button" data-route-action="add-arrangement" data-route-id="' + escapeHtml(route.id) + '" data-product-id="' + escapeHtml(product.id) + '">+ 添加物流安排</button><button class="detail-btn" type="button" data-route-action="toggle-product" data-route-id="' + escapeHtml(route.id) + '" data-product-id="' + escapeHtml(product.id) + '">' + (collapsed ? '展开商品' : '收起商品') + '</button><button class="order-route-icon-btn danger" type="button" data-route-action="remove-product" data-route-id="' + escapeHtml(route.id) + '" data-product-id="' + escapeHtml(product.id) + '" aria-label="删除商品">×</button></div></div>' +
+      (collapsed ? '' : '<div class="hierarchy-product-body"><div class="hierarchy-product-fields">' + itemsMarkup({ ...route, items: [product] }) + '</div><div class="hierarchy-arrangements">' + (arrangements.length ? arrangements.map((arrangement, index) => hierarchyArrangementCardMarkup(route, product, arrangement, productIndex, index)).join('') : '<div class="hierarchy-empty">该商品暂无物流安排，请点击「添加物流安排」。</div>') + '</div></div>') +
+    '</section>';
+  }
+
+  function hierarchyRouteInfoMarkup(route) {
+    const routeId = escapeHtml(route.id);
+    return '<div class="hierarchy-route-info"><div class="hierarchy-route-info-head"><strong>线路信息</strong><span>线路定义整体起点和终点，具体运输方式及分段由商品物流安排维护</span></div><div class="order-route-grid hierarchy-route-grid">' +
+      field('起运地类型', '<select class="control" data-route-field="originType" data-route-id="' + routeId + '">' + selectOptions(locationTypes, route.originType) + '</select>') +
+      field('起运地<span class="required">*</span>', '<select class="control" data-route-field="origin" data-route-id="' + routeId + '">' + selectOptions(locationOptions, route.origin) + '</select>') +
+      field('起运地国别/省市', '<input class="control" data-route-field="originRegion" data-route-id="' + routeId + '" value="' + escapeHtml(route.originRegion || locationRegions[route.origin] || '') + '" readonly>') +
+      field('目的地类型', '<select class="control" data-route-field="destinationType" data-route-id="' + routeId + '">' + selectOptions(locationTypes, route.destinationType) + '</select>') +
+      field('目的地<span class="required">*</span>', '<select class="control" data-route-field="destination" data-route-id="' + routeId + '">' + selectOptions(locationOptions, route.destination) + '</select>') +
+      field('目的地国别/省市', '<input class="control" data-route-field="destinationRegion" data-route-id="' + routeId + '" value="' + escapeHtml(route.destinationRegion || locationRegions[route.destination] || '') + '" readonly>') +
+    '</div></div>';
+  }
+
+  function hierarchyRouteCardMarkup(route, index) {
+    const collapsed = Boolean(route.collapsed);
+    const products = route.items || [];
+    const arrangementCount = products.reduce((sum, product) => sum + (product.arrangements || []).length, 0);
+    return '<article class="order-route-card hierarchy-route-card" data-route-card="' + escapeHtml(route.id) + '">' +
+      '<div class="order-route-card-head hierarchy-route-head"><div class="order-route-card-title"><span class="order-route-index">服务要求 #' + (index + 1) + '</span><span class="order-route-route-copy">' + escapeHtml(route.origin || '未指定起运地') + ' → ' + escapeHtml(route.destination || '未指定目的地') + '</span><span class="hierarchy-route-summary">' + products.length + ' 种商品 · ' + arrangementCount + ' 条物流安排</span></div><div class="order-route-card-controls"><button class="detail-btn outline-primary" type="button" data-route-action="add-product" data-route-id="' + escapeHtml(route.id) + '">+ 添加商品</button><button class="detail-btn" type="button" data-route-action="generate-delegation" data-route-id="' + escapeHtml(route.id) + '">按线路生成物流委托</button><button class="order-route-icon-btn" type="button" data-route-action="toggle" data-route-id="' + escapeHtml(route.id) + '" aria-label="' + (collapsed ? '展开线路' : '收起线路') + '">' + (collapsed ? '⌄' : '⌃') + '</button><button class="order-route-icon-btn danger" type="button" data-route-action="remove" data-route-id="' + escapeHtml(route.id) + '" aria-label="删除线路">×</button></div></div>' +
+      (collapsed ? '' : '<div class="order-route-card-body hierarchy-route-body">' + hierarchyRouteInfoMarkup(route) + '<div class="hierarchy-products">' + products.map((product, productIndex) => hierarchyProductCardMarkup(route, product, productIndex)).join('') + '</div></div>') +
+    '</article>';
+  }
+
+  function renderHierarchy() {
+    countLabel.textContent = state.routes.length + ' 条线路';
+    if (modeCopy) modeCopy.textContent = '三级物流安排：线路定义整体起止地，商品定义货量，物流安排定义具体运输段、方式和运输要求。';
+    section.classList.add('hierarchy-mode');
+    section.classList.remove('single-route-mode');
+    const flowButton = document.getElementById('orderRouteFlowBtn');
+    if (flowButton) flowButton.hidden = true;
+    cardsHost.innerHTML = state.routes.map((route, index) => hierarchyRouteCardMarkup(route, index)).join('');
+    renderRouteAnchorTabs();
+    estimateHost.innerHTML = businessEstimatesMarkup();
+    syncHidden(false);
+    syncRouteBackedWaterRequirement();
+  }
 
   function renderRouteAnchorTabs() {
     if (!anchorTabsHost) return;
@@ -956,14 +1422,14 @@
     }
     anchorTabsHost.hidden = false;
     activeRouteAnchorIndex = Math.max(0, Math.min(activeRouteAnchorIndex, state.routes.length - 1));
-    anchorTabsHost.innerHTML = state.routes.map((route, index) => { const routeType = hasSpecifiedTransportMode() ? (route.type || '综合运输') : '综合运输'; return '<button class="order-route-anchor-tab ' + (index === activeRouteAnchorIndex ? 'active' : '') + '" type="button" role="tab" aria-selected="' + (index === activeRouteAnchorIndex) + '" aria-controls="order-route-card-' + escapeHtml(route.id) + '" data-route-anchor="' + index + '">线路' + (index + 1) + ' ' + escapeHtml(routeType) + '</button>'; }).join('');
+    anchorTabsHost.innerHTML = state.routes.map((route, index) => { const routeType = hierarchyMode ? '' : (hasSpecifiedTransportMode() ? (route.type || '综合运输') + (orderRouteReadonly() && route.shipmentCategory ? ' · ' + route.shipmentCategory : '') : '综合运输'); return '<button class="order-route-anchor-tab ' + (index === activeRouteAnchorIndex ? 'active' : '') + '" type="button" role="tab" aria-selected="' + (index === activeRouteAnchorIndex) + '" aria-controls="order-route-card-' + escapeHtml(route.id) + '" data-route-anchor="' + index + '">服务要求' + (index + 1) + (routeType ? ' ' + escapeHtml(routeType) : '') + '</button>'; }).join('');
   }
 
   function syncRouteHeaderActions() {
     const status = document.getElementById('orderStatusField')?.textContent.trim() || '';
     const feedbackUnavailable = status === '创建' || status === '驳回';
     const flowButton = document.getElementById('orderRouteFlowBtn');
-    if (flowButton) flowButton.hidden = !hasSpecifiedTransportMode() || state.routes.length === 1;
+    if (flowButton) flowButton.hidden = hierarchyMode || !hasSpecifiedTransportMode() || state.routes.length === 1;
     const feedbackButton = document.getElementById('orderRouteFeedbackBtn');
     if (feedbackButton) feedbackButton.hidden = !hasSpecifiedTransportMode() || feedbackUnavailable;
     const editable = status === '创建' || status === '驳回';
@@ -975,6 +1441,7 @@
 
   function render() {
     closeFeeRouteMenu();
+    if (hierarchyMode) { renderHierarchy(); return; }
     const singleRouteMode = state.routes.length === 1;
     section.classList.toggle('single-route-mode', singleRouteMode);
     anchorTabsHost.hidden = state.routes.length <= 1;
@@ -985,11 +1452,12 @@
         ? '一单多线路：每条线路独立配置运输方式、起止节点、时间要求及关联商品。'
         : '一单多线路：未指定运输方式，仅配置起运地、目的地及关联商品。');
     const addRouteButton = section.querySelector('[data-route-action="add-route"]');
-    if (addRouteButton) addRouteButton.textContent = '+ 添加线路';
+    if (addRouteButton) addRouteButton.textContent = '+ 添加服务要求';
     syncRouteHeaderActions();
-    cardsHost.innerHTML = state.routes.length ? state.routes.map((route) => routeCardMarkup(route, state.routes.indexOf(route))).join('') : '<div class="order-route-empty">暂无运输线路，请添加线路。</div>';
+    cardsHost.innerHTML = state.routes.length ? state.routes.map((route) => routeCardMarkup(route, state.routes.indexOf(route))).join('') : '<div class="order-route-empty">暂无运输服务要求，请添加服务要求。</div>';
     syncRouteHeaderActions();
     renderRouteAnchorTabs();
+    applyRouteReadonlyState();
     syncFeeRoutesByServiceScope();
     estimateHost.innerHTML = businessEstimatesMarkup();
     syncHidden(false);
@@ -1010,11 +1478,230 @@
     if (notify) hiddenData.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  const orderEditableStatuses = ['创建', '驳回'];
+  function currentOrderStatus() {
+    return document.getElementById('orderStatusField')?.textContent.trim() || '';
+  }
+  // 待审核使用紧凑只读态；待履约、已完结保持现有线路卡片
+  // 非创建/驳回状态一律只读（待审核、待履约、履约中、已完结、已取消）
+  function orderRouteReadonly() {
+    const status = currentOrderStatus();
+    return Boolean(status) && status !== '创建' && status !== '驳回';
+  }
+
+  const readonlyControlProps = ['border', 'background', 'box-shadow', 'height', 'padding', 'color', 'font-size', 'border-radius', 'appearance', 'background-image', 'line-height', 'resize'];
+  function applyReadonlyControlStyle(el) {
+    const props = {
+      border: '0', background: 'transparent', 'box-shadow': 'none', height: 'auto',
+      padding: '2px 0', color: '#0f172a', 'font-size': '13px', 'border-radius': '0', 'line-height': '1.5'
+    };
+    if (el.tagName === 'SELECT') { props.appearance = 'none'; props['background-image'] = 'none'; }
+    if (el.tagName === 'TEXTAREA') props.resize = 'none';
+    Object.keys(props).forEach((key) => el.style.setProperty(key, props[key], 'important'));
+  }
+  function clearReadonlyControlStyle(el) {
+    readonlyControlProps.forEach((key) => el.style.removeProperty(key));
+  }
+
+  // 只读态隐藏与卡片头重复的结构字段（运输类型/装运类别/起运地/目的地/港口/国别省市），其余字段空值显示「—」
+  const readonlySuppressedRouteFields = new Set([
+    'type',
+    'shipmentCategory',
+    'origin',
+    'destination',
+    'originPort',
+    'destinationPort',
+    'originRegion',
+    'destinationRegion'
+  ]);
+
+  function routeReadonlyFieldValue(fieldEl) {
+    const recipientBox = fieldEl.querySelector('.demand-email-recipient-box');
+    if (recipientBox) {
+      const names = Array.from(recipientBox.querySelectorAll('.demand-email-recipient-chip-copy strong'))
+        .map((node) => node.textContent.trim())
+        .filter(Boolean);
+      return names.length ? names.join('、') : '—';
+    }
+
+    const dateRange = fieldEl.querySelector('.order-date-range');
+    if (dateRange) {
+      const values = Array.from(dateRange.querySelectorAll('input'))
+        .map((input) => input.value.trim())
+        .filter(Boolean);
+      return values.length ? values.join(' ～ ') : '—';
+    }
+
+    const checkGroup = fieldEl.querySelector('.demand-check-group');
+    if (checkGroup) {
+      const checked = Array.from(checkGroup.querySelectorAll('input[type="checkbox"]:checked'))
+        .map((input) => input.closest('label')?.textContent.trim() || input.value)
+        .filter(Boolean);
+      return checked.length ? checked.join('、') : '—';
+    }
+
+    const control = fieldEl.querySelector('input, select, textarea');
+    if (!control) return '—';
+    if (control.type === 'checkbox') return control.checked ? '是' : '否';
+    const value = String(control.value || '').trim();
+    if (!value) return '—';
+    return control.dataset.routeField === 'commissionRate' ? value + '%' : value;
+  }
+
+  function clearRouteReadonlyField(fieldEl) {
+    fieldEl.style.display = '';
+    fieldEl.style.removeProperty('order');
+    fieldEl.style.removeProperty('grid-column-start');
+    fieldEl.classList.remove('route-readonly-field', 'readonly-row-start');
+    fieldEl.querySelectorAll(':scope > .route-readonly-value').forEach((node) => node.remove());
+  }
+
+  const readonlyRouteLayouts = {
+    '汽运|散货': {
+      order: ['consignee', 'expectDispatch', 'latestArrival', 'originContact', 'originContactPhone', 'originDetail', 'destinationContact', 'destinationContactPhone', 'destinationDetail', 'specialNotes'],
+      rowStarts: ['originContact', 'destinationContact', 'specialNotes']
+    },
+    '汽运|集装箱': {
+      order: ['consignee', 'expectDispatch', 'latestArrival', 'originContact', 'originContactPhone', 'originDetail', 'destinationContact', 'destinationContactPhone', 'destinationDetail', 'specialNotes'],
+      rowStarts: ['originContact', 'destinationContact', 'specialNotes']
+    },
+    '水运|散货': {
+      order: ['shippingType', 'latestShipmentDate', 'dischargeTerms', 'directSailing', 'originTerminal', 'vesselCertificate', 'vesselAge', 'commissionRate', 'destinationTerminal', 'specialNotes'],
+      rowStarts: []
+    },
+    '水运|件杂': {
+      order: ['shippingType', 'latestShipmentDate', 'dischargeTerms', 'directSailing', 'originContact', 'originContactPhone', 'originTerminal', 'destinationContact', 'destinationContactPhone', 'destinationTerminal', 'isCqd', 'containsLashing', 'vesselCertificate', 'vesselAge', 'commissionRate', 'bookingManager', 'laycanStart', 'mailRecipients', 'specialNotes'],
+      rowStarts: ['originContact', 'destinationContact', 'isCqd']
+    },
+    '水运|集装箱': {
+      order: ['shippingType', 'packingMethod', 'bookingMethod', 'solicitationMethod', 'agent', 'agentCode', 'agentSalesperson', 'receivingPlace', 'receivingRegion', 'receivingDetail', 'originServiceTerms', 'originTerminal', 'destinationServiceTerms', 'destinationTerminal', 'deliveryPlace', 'deliveryRegion', 'deliveryDetail', 'specialNotes'],
+      rowStarts: ['receivingPlace', 'originServiceTerms', 'destinationServiceTerms', 'deliveryPlace']
+    }
+  };
+
+  function readonlyRouteFieldKey(fieldEl) {
+    const routeControl = fieldEl.querySelector('[data-route-field]');
+    if (routeControl) return routeControl.dataset.routeField || '';
+    const partyControl = fieldEl.querySelector('[data-party-field]');
+    if (partyControl) return partyControl.dataset.partyField || '';
+    if (fieldEl.querySelector('[data-route-action="add-route-mail"]')) return 'mailRecipients';
+    return '';
+  }
+
+  function applyReadonlyRouteLayout() {
+    section.querySelectorAll('[data-route-card]').forEach((card) => {
+      const route = state.routes.find((entry) => entry.id === card.dataset.routeCard);
+      if (!route) return;
+      const layout = readonlyRouteLayouts[route.type + '|' + route.shipmentCategory];
+      if (!layout) return;
+      const grid = card.querySelector('.order-route-transport-requirements > .order-route-grid');
+      if (!grid) return;
+      const fields = new Map();
+      Array.from(grid.children).forEach((fieldEl) => {
+        const key = readonlyRouteFieldKey(fieldEl);
+        if (key) fields.set(key, fieldEl);
+      });
+      layout.order.forEach((key, index) => {
+        const fieldEl = fields.get(key);
+        if (fieldEl) fieldEl.style.order = String(index + 1);
+      });
+      layout.rowStarts.forEach((key) => {
+        const fieldEl = fields.get(key);
+        if (fieldEl) {
+          fieldEl.classList.add('readonly-row-start');
+          fieldEl.style.setProperty('grid-column-start', '1', 'important');
+        }
+      });
+      card.querySelectorAll('.order-route-parties .order-route-field').forEach((fieldEl) => {
+        const key = readonlyRouteFieldKey(fieldEl);
+        if (key === 'shipperInfo') {
+          fieldEl.classList.add('readonly-row-start');
+          fieldEl.style.setProperty('grid-column-start', '1', 'important');
+        }
+      });
+    });
+  }
+
+  function applyRouteReadonlyState() {
+    if (!section) return;
+    const readonly = orderRouteReadonly();
+    section.dataset.routeReadonly = readonly ? 'true' : 'false';
+    section.querySelectorAll('.route-readonly-chip').forEach((chip) => chip.remove());
+
+    if (!readonly) {
+      section.querySelectorAll('.order-route-field').forEach(clearRouteReadonlyField);
+      section.querySelectorAll('input, textarea').forEach((el) => {
+        el.readOnly = false;
+        clearReadonlyControlStyle(el);
+      });
+      section.querySelectorAll('select').forEach((el) => {
+        el.disabled = false;
+        delete el.dataset.empty;
+        clearReadonlyControlStyle(el);
+      });
+      section.querySelectorAll('[data-ro-label]').forEach((node) => { node.textContent = node.dataset.roLabel; delete node.dataset.roLabel; });
+      return;
+    }
+
+    section.querySelectorAll('.order-route-field').forEach((fieldEl) => {
+      clearRouteReadonlyField(fieldEl);
+      const control = fieldEl.querySelector('[data-route-field], input, select, textarea');
+      const fieldName = control?.dataset.routeField || '';
+      if (readonlySuppressedRouteFields.has(fieldName)) {
+        fieldEl.style.display = 'none';
+        return;
+      }
+      fieldEl.classList.add('route-readonly-field');
+      const output = document.createElement('span');
+      output.className = 'route-readonly-value';
+      output.textContent = routeReadonlyFieldValue(fieldEl);
+      output.dataset.empty = output.textContent === '—' ? 'true' : 'false';
+      fieldEl.appendChild(output);
+    });
+
+    section.querySelectorAll('.order-route-items thead th, .order-route-containers-table thead th, .order-business-fee-table thead th').forEach((th) => {
+      if (!th.dataset.roLabel) th.dataset.roLabel = th.textContent;
+      th.textContent = th.dataset.roLabel.replace(/\s*\*\s*$/, '');
+    });
+    section.querySelectorAll('input, textarea').forEach((el) => {
+      if (el.type === 'checkbox') return;
+      el.readOnly = true;
+      applyReadonlyControlStyle(el);
+    });
+    section.querySelectorAll('select').forEach((el) => {
+      el.disabled = true;
+      if (!el.value) el.dataset.empty = 'true'; else delete el.dataset.empty;
+      applyReadonlyControlStyle(el);
+    });
+    applyReadonlyRouteLayout();
+  }
+
+  function orderItemsCopyEnabled() {
+    const status = currentOrderStatus();
+    // 首屏状态可能尚未写入，按可编辑处理
+    return status === '' || orderEditableStatuses.includes(status);
+  }
+
   function notify(kind, message) {
     if (window.UIState && pageScope) window.UIState.showFormAlert(pageScope, kind, message);
   }
 
-  function findRoute(id) { return state.routes.find((route) => route.id === id); }
+  function findRoute(id) {
+    for (const route of state.routes) {
+      if (route.id === id) return route;
+      for (const product of (route.items || [])) {
+        const arrangement = (product.arrangements || []).find((entry) => entry.id === id);
+        if (arrangement) return arrangement;
+      }
+    }
+    return null;
+  }
+
+  function routeDisplayIndex(route) {
+    if (route && route.__displayIndex) return route.__displayIndex;
+    const index = state.routes.indexOf(route);
+    return index >= 0 ? index + 1 : 1;
+  }
 
   function updateControl(target) {
     if (target.dataset.partyField) {
@@ -1064,14 +1751,14 @@
         const allowedCategories = categoriesForType(route.type);
         if (!allowedCategories.includes(route.shipmentCategory)) route.shipmentCategory = allowedCategories[0];
       }
-      if (target.dataset.routeField === 'origin' || target.dataset.routeField === 'destination') {
-        const copy = section.querySelector('[data-route-route-copy="' + route.id + '"]');
-        if (copy) copy.innerHTML = escapeHtml(route.origin) + ' → ' + escapeHtml(route.destination) + (hasSpecifiedTransportMode() ? '<span>(' + escapeHtml(route.type) + ' · ' + escapeHtml(route.shipmentCategory) + ')</span>' : '');
-        if (target.dataset.routeField === 'origin') route.originRegion = locationRegions[route.origin] || route.originRegion;
-        if (target.dataset.routeField === 'destination') route.destinationRegion = locationRegions[route.destination] || route.destinationRegion;
-      }
+      if (target.dataset.routeField === 'origin') route.originRegion = locationRegions[route.origin] || route.originRegion;
+      if (target.dataset.routeField === 'destination') route.destinationRegion = locationRegions[route.destination] || route.destinationRegion;
       if (target.dataset.routeField === 'originPort') { route.origin = route.originPort; route.originRegion = portRegions[route.originPort] || ''; }
       if (target.dataset.routeField === 'destinationPort') { route.destination = route.destinationPort; route.destinationRegion = portRegions[route.destinationPort] || ''; }
+      if (['origin', 'destination', 'originPort', 'destinationPort'].includes(target.dataset.routeField)) {
+        const copy = section.querySelector('[data-route-route-copy="' + route.id + '"]');
+        if (copy) copy.innerHTML = routeTitleMarkup(route);
+      }
       if (target.dataset.routeField === 'agent') route.agentCode = agentCodes[route.agent] || '';
       if (target.dataset.routeField === 'receivingPlace') { route.receivingRegion = regionForPlace(route.receivingPlace); const regionInput = section.querySelector('[data-route-field="receivingRegion"][data-route-id="' + route.id + '"]'); if (regionInput) regionInput.value = route.receivingRegion; }
       if (target.dataset.routeField === 'deliveryPlace') route.deliveryRegion = regionForPlace(route.deliveryPlace);
@@ -1216,15 +1903,91 @@
       const newRoute = makeRoute(button.dataset.routeType || '汽运');
       newRoute.collapsed = false;
       state.routes.push(newRoute);
+      if (hierarchyMode) ensureHierarchyState(state);
       state.activeTab = state.routes.length - 1;
       activeRouteAnchorIndex = state.activeTab;
       render();
-      notify('success', '已添加新的运输线路。');
+      notify('success', '已添加新的运输服务要求。');
+      return;
+    }
+    if (hierarchyMode && action === 'add-product') {
+      route.items.push(makeHierarchyProduct({ id: 'P' + Date.now(), name: '新商品', quantity: 1, unit: '吨', arrangements: [] }));
+      route.collapsed = false;
+      render();
+      notify('success', '已添加商品，请继续添加物流安排。');
+      return;
+    }
+    if (hierarchyMode && action === 'add-arrangement') {
+      const product = (route.items || []).find((item) => item.id === button.dataset.productId);
+      if (!product) return;
+      product.arrangements = product.arrangements || [];
+      product.arrangements.push(makeHierarchyArrangement({
+        type: route.type || '汽运', shipmentCategory: route.shipmentCategory, origin: route.origin, destination: route.destination,
+        originType: route.originType, destinationType: route.destinationType, originContact: route.originContact, originContactPhone: route.originContactPhone,
+        destinationContact: route.destinationContact, destinationContactPhone: route.destinationContactPhone, quantity: product.standardQty ?? 1,
+        unit: product.standardUnit || product.unit || '吨', productId: product.id, collapsed: false
+      }));
+      product.collapsed = false;
+      route.collapsed = false;
+      render();
+      notify('success', '已添加物流安排，系统已自动编号。');
+      return;
+    }
+    if (hierarchyMode && action === 'toggle-product') {
+      const product = (route.items || []).find((item) => item.id === button.dataset.productId);
+      if (product) { product.collapsed = !product.collapsed; render(); }
+      return;
+    }
+    if (hierarchyMode && action === 'remove-product') {
+      const product = (route.items || []).find((item) => item.id === button.dataset.productId);
+      if (!product) return;
+      if ((product.arrangements || []).length) { notify('error', '该商品下仍有物流安排，请先删除物流安排后再删除商品。'); return; }
+      route.items = route.items.filter((item) => item.id !== product.id);
+      render();
+      notify('success', '商品已删除。');
+      return;
+    }
+    if (hierarchyMode && action === 'toggle-arrangement') {
+      const product = (route.items || []).find((item) => item.id === button.dataset.productId);
+      const arrangement = (product?.arrangements || []).find((item) => item.id === button.dataset.arrangementId);
+      if (arrangement) { arrangement.collapsed = !arrangement.collapsed; render(); }
+      return;
+    }
+    if (hierarchyMode && action === 'remove-arrangement') {
+      const product = (route.items || []).find((item) => item.id === button.dataset.productId);
+      if (!product) return;
+      product.arrangements = (product.arrangements || []).filter((item) => item.id !== button.dataset.arrangementId);
+      product.arrangements.forEach((item) => { item.upstreamIds = (item.upstreamIds || []).filter((id) => id !== button.dataset.arrangementId); });
+      render();
+      notify('success', '物流安排已删除。');
+      return;
+    }
+    if (hierarchyMode && action === 'generate-delegation') {
+      notify('success', '已按线路 #' + (state.routes.indexOf(route) + 1) + ' 整体生成物流委托，包含该线路全部商品及物流安排。');
       return;
     }
     if (action === 'preview') { openPreview(); return; }
     if (action === 'view-flow') { openFlowDrawer(); return; }
     if (action === 'feedback') { document.getElementById('feedbackTab')?.click(); return; }
+    if (action === 'duplicate-item') {
+      const source = route.items.find((item) => item.id === button.dataset.itemId);
+      if (!source) return;
+      if (!orderItemsCopyEnabled()) { notify('error', '仅创建或驳回状态可以复制商品。'); return; }
+      const copy = JSON.parse(JSON.stringify(source));
+      copy.id = 'IT' + Date.now() + Math.floor(Math.random() * 1000);
+      delete copy.linkedRouteId;
+      delete copy.linkedItemId;
+      delete copy.linkedQty;
+      delete copy.demandMissing;
+      delete copy.demandNo;
+      delete copy.delegationNo;
+      copy.arrangedQty = 0;
+      const index = route.items.indexOf(source);
+      route.items.splice(index + 1, 0, normalizeItem(copy));
+      render();
+      notify('success', '已复制商品「' + (source.name || '未命名商品') + '」。');
+      return;
+    }
     if (!route) return;
     if (action === 'add-container') {
       route.containers = route.containers || [];
@@ -1266,7 +2029,7 @@
       state.activeTab = index + 1;
       activeRouteAnchorIndex = state.activeTab;
       render();
-      notify('success', '已复制当前运输线路。');
+      notify('success', '已复制当前运输服务要求。');
       return;
     }
     if (action === 'toggle') {
@@ -1276,7 +2039,6 @@
       return;
     }
     if (action === 'remove') {
-      if (state.routes.length <= 1) { notify('error', '订单至少需要保留 1 条运输线路。'); return; }
       const blockingItem = (route.items || []).find((item) => {
         if (item.linkedRouteId) return false;
         const summary = referenceSummary(route, item);
@@ -1284,7 +2046,7 @@
       });
       if (blockingItem) {
         const summary = referenceSummary(route, blockingItem);
-        const message = deletionBlockMessage(blockingItem, summary).replace('不允许删除商品行。', '不允许删除该运输线路。');
+        const message = deletionBlockMessage(blockingItem, summary).replace('不允许删除商品行。', '不允许删除该运输服务要求。');
         window.__lastOrderReferenceError = message;
         notify('error', message);
         return;
@@ -1295,7 +2057,7 @@
       state.routes = state.routes.filter((entry) => entry.id !== route.id);
       activeRouteAnchorIndex = Math.min(activeRouteAnchorIndex, Math.max(0, state.routes.length - 1));
       render();
-      notify('success', '运输线路已删除。');
+      notify('success', '运输服务要求已删除。');
       return;
     }
     if (action === 'add-leg') {
@@ -1376,7 +2138,7 @@
   }
 
   function flowCardsMarkup() {
-    if (!state.routes.length) return '<div class="order-flow-empty">暂无运输线路</div>';
+    if (!state.routes.length) return '<div class="order-flow-empty">暂无运输服务要求</div>';
     return state.routes.map((route, index) => {
       const type = hasSpecifiedTransportMode() ? (route.type || '汽运') : '综合运输';
       const category = hasSpecifiedTransportMode() && route.type !== '航空' ? (route.shipmentCategory || '') : '';
@@ -1423,53 +2185,56 @@
       .sort((a, b) => a.routeIndex - b.routeIndex);
 
     const cell = (value) => '<td>' + escapeHtml(value == null || value === '' ? '—' : value) + '</td>';
-    const bodyRows = groups.map(({ sourceRoute, routeIndex }) => {
-      const headText = '线路 #' + (routeIndex + 1) + ' · ' + (sourceRoute.origin || '未指定起运地') + ' → ' + (sourceRoute.destination || '未指定目的地') +
-        ' · ' + (sourceRoute.type || '') + (sourceRoute.shipmentCategory ? ' · ' + sourceRoute.shipmentCategory : '');
-      const headRow = '<tr class="order-route-link-group-row"><td colspan="24">' + escapeHtml(headText) + '</td></tr>';
-      const itemRows = (sourceRoute.items || [])
-        .map((sourceRow, itemIndex) => ({ sourceRow, itemIndex }))
-        .sort((a, b) => a.itemIndex - b.itemIndex)
-        .map(({ sourceRow, itemIndex }) => {
-          const sourceItem = resolveLinkedItem(sourceRow) || sourceRow;
-          const disabled = existingLinks.has(sourceRoute.id + '::' + sourceRow.id) ? ' disabled' : '';
-          return '<tr>' +
-            '<td><input type="checkbox" data-link-source-route="' + escapeHtml(sourceRoute.id) + '" data-link-source-item="' + escapeHtml(sourceRow.id) + '" aria-label="选择线路' + (routeIndex + 1) + '商品行' + (itemIndex + 1) + '"' + disabled + '></td>' +
-            cell(itemIndex + 1) +
-            cell(sourceItem.name) +
-            cell(sourceItem.description) +
-            cell(sourceItem.pieceCount) +
-            cell(sourceItem.pieceCountUnit) +
-            cell(sourceItem.grossWeight) +
-            cell(sourceItem.grossWeightUnit) +
-            cell(sourceItem.volume) +
-            cell(sourceItem.volumeUnit) +
-            cell(sourceItem.standardQty) +
-            cell(sourceItem.standardUnit) +
-            cell(sourceItem.pieceWeight) +
-            cell(sourceItem.pieceWeightUnit) +
-            cell(sourceItem.specDimensions) +
-            cell(sourceItem.overRate) +
-            cell(sourceItem.underRate) +
-            cell(sourceItem.goodsValueUnitPrice) +
-            cell(sourceItem.goodsValueAmount) +
-            cell(sourceItem.goodsValueCurrency) +
-            cell(linkedItemReference(sourceRow)) +
-            cell(sourceItem.englishName) +
-            cell(sourceItem.tradeContractNo) +
-            cell(sourceItem.tradeContractType) +
-            '</tr>';
-        }).join('');
-      return itemRows ? headRow + itemRows : '';
+    const groupBlocks = groups.map(({ sourceRoute, routeIndex }) => {
+      const items = (sourceRoute.items || []).map((sourceRow, itemIndex) => ({ sourceRow, itemIndex })).sort((a, b) => a.itemIndex - b.itemIndex);
+      if (!items.length) return '';
+      const headText = '【线路' + (routeIndex + 1) + '】' + (sourceRoute.origin || '未指定起运地') + ' — ' + (sourceRoute.destination || '未指定目的地') + '（' + (sourceRoute.type || '未指定方式') + (sourceRoute.shipmentCategory ? ' · ' + sourceRoute.shipmentCategory : '') + '）';
+      const rows = items.map(({ sourceRow }) => {
+        const sourceItem = resolveLinkedItem(sourceRow) || sourceRow;
+        const total = number(sourceItem.standardQty ?? sourceItem.count);
+        const arranged = number(sourceRow.arrangedQty);
+        const linked = existingLinks.has(sourceRoute.id + '::' + sourceRow.id);
+        const originRouteIndex = sourceRow.linkedRouteId ? state.routes.findIndex((entry) => entry.id === sourceRow.linkedRouteId) : -1;
+        return '<tr class="order-link-item-row' + (linked ? ' is-linked' : '') + '" data-link-row>' +
+          '<td class="order-link-check"><input type="checkbox" data-link-source-route="' + escapeHtml(sourceRoute.id) + '" data-link-source-item="' + escapeHtml(sourceRow.id) + '" data-link-qty="' + total + '" data-link-unit="' + escapeHtml(sourceItem.standardUnit || sourceItem.unit || '') + '" data-link-piece="' + number(sourceItem.pieceCount) + '" aria-label="选择商品"' + (linked ? ' disabled' : '') + '></td>' +
+          cell(sourceItem.name) +
+          cell(sourceItem.description) +
+          cell((sourceItem.tradeContractNo || '—') + (sourceItem.tradeContractType ? '（' + sourceItem.tradeContractType + '）' : '')) +
+          cell((total - arranged) + ' / ' + total) +
+          cell(sourceItem.standardUnit || sourceItem.unit) +
+          cell(number(sourceItem.pieceCount) + ' ' + (sourceItem.pieceCountUnit || '')) +
+          cell(number(sourceItem.grossWeight) + ' ' + (sourceItem.grossWeightUnit || '')) +
+          cell(number(sourceItem.volume) + ' ' + (sourceItem.volumeUnit || '')) +
+          '<td>' + (originRouteIndex >= 0 ? '线路' + (originRouteIndex + 1) : '—') + '</td>' +
+        '</tr>';
+      }).join('');
+      return '<tbody class="order-link-group" data-link-group>' +
+        '<tr class="order-link-group-row"><td colspan="10"><button class="order-link-group-toggle" type="button" aria-expanded="true"><span class="order-link-caret">▾</span><span class="order-link-group-title">' + escapeHtml(headText) + '</span><span class="order-link-group-count">' + items.length + ' 项</span></button></td></tr>' +
+        rows + '</tbody>';
     }).join('');
 
-    const headers = ['', '行号', '商品分类', '商品描述', '件数', '件数单位', '毛重', '毛重单位', '体积', '体积单位', '标准数量', '标准单位', '单件重量', '单件重量单位', '规格尺寸', '溢装率（%）', '短装率（%）', '货值单价', '货值金额', '货值币种', '关联线路/商品行号', '商品英文名', '贸易合同号', '贸易合同类型'];
-    const content = bodyRows
-      ? '<div style="overflow:auto;max-height:52vh"><table class="order-route-link-table" style="border-collapse:collapse;font-size:12px;white-space:nowrap"><thead><tr>' + headers.map((text) => '<th style="position:sticky;top:0;background:#f7f9fc;padding:6px 8px;border-bottom:1px solid #e5ebf3;text-align:left">' + text + '</th>').join('') + '</tr></thead><tbody>' + bodyRows + '</tbody></table></div>'
+    const headers = ['', '商品分类', '商品描述', '贸易合同号（类型）', '剩余/总计标准数量', '标准单位', '件数', '毛重', '体积', '关联线路'];
+    const content = groupBlocks
+      ? '<div class="order-link-picker"><div class="order-link-summary" id="orderLinkSummary">已选 0 条，合计标准数量 0</div><div class="order-link-table-wrap"><table class="order-link-table"><thead><tr>' + headers.map((text) => '<th>' + text + '</th>').join('') + '</tr></thead>' + groupBlocks + '</table></div></div>'
       : '<div class="order-route-empty">暂无可关联的其他线路商品。</div>';
     linkPickerBody.innerHTML = content;
+    updateLinkedPickerSummary();
     linkPicker.hidden = false;
     linkPicker.querySelector('.order-route-preview-dialog').focus();
+  }
+
+  function updateLinkedPickerSummary() {
+    const summary = document.getElementById('orderLinkSummary');
+    if (!summary) return;
+    const checked = Array.from(linkPickerBody.querySelectorAll('input[data-link-source-item]:checked'));
+    const totalQty = checked.reduce((sum, box) => sum + number(box.dataset.linkQty), 0);
+    const totalPiece = checked.reduce((sum, box) => sum + number(box.dataset.linkPiece), 0);
+    const units = Array.from(new Set(checked.map((box) => box.dataset.linkUnit).filter(Boolean)));
+    summary.textContent = '已选 ' + checked.length + ' 条，合计标准数量 ' + totalQty + (units.length === 1 ? ' ' + units[0] : '');
+    linkPickerBody.querySelectorAll('[data-link-row]').forEach((row) => {
+      const box = row.querySelector('input[data-link-source-item]');
+      row.classList.toggle('selected', Boolean(box && box.checked));
+    });
   }
 
   function closeLinkedItemPicker() {
@@ -1493,6 +2258,17 @@
     render();
     closeLinkedItemPicker();
     if (checked.length) notify('success', '已关联 ' + checked.length + ' 项其他线路商品。');
+  }
+
+  const routeStatusField = document.getElementById('orderStatusField');
+  if (routeStatusField) {
+    let lastRouteStatus = routeStatusField.textContent.trim();
+    new MutationObserver(() => {
+      const nextStatus = routeStatusField.textContent.trim();
+      if (nextStatus === lastRouteStatus) return;
+      lastRouteStatus = nextStatus;
+      render();
+    }).observe(routeStatusField, { childList: true, characterData: true, subtree: true });
   }
 
   anchorTabsHost?.addEventListener('click', (event) => {
@@ -1519,6 +2295,19 @@
     }
   }, true);
   pageScope.addEventListener('click', (event) => {
+    const goodsToggle = event.target.closest('[data-goods-toggle]');
+    if (goodsToggle) {
+      const row = goodsToggle.closest('[data-goods-row]');
+      if (row) {
+        const expanded = !row.classList.contains('is-expanded');
+        row.classList.toggle('is-expanded', expanded);
+        goodsToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        goodsToggle.setAttribute('title', expanded ? '收起商品字段' : '展开全部商品字段');
+        const label = goodsToggle.querySelector('.ro-goods-toggle-label');
+        if (label) label.textContent = expanded ? '收起商品字段' : '查看全部商品字段';
+      }
+      return;
+    }
     const feeRouteToggle = event.target.closest('[data-fee-route-toggle]');
     if (feeRouteToggle) { openFeeRouteMenu(feeRouteToggle); return; }
     const feeButton = event.target.closest('[data-fee-action]');
@@ -1527,19 +2316,40 @@
     if (button) handleAction(button);
   });
   pageScope.addEventListener('input', (event) => {
+    if (hierarchyMode && event.target.matches('[data-arrangement-quantity]')) {
+      const arrangement = findRoute(event.target.dataset.routeId);
+      if (arrangement) arrangement.hierarchyQuantity = Math.max(0, number(event.target.value));
+      return;
+    }
     if (event.target.matches('[data-route-field], [data-route-operation], [data-leg-field], [data-item-field], [data-fee-field], [data-container-field], [data-party-field]')) {
       updateControl(event.target);
+      if (hierarchyMode && (event.target.dataset.arrangementQuantity !== undefined || event.target.dataset.itemField === 'standardQty')) return;
       refreshDerived();
     }
   });
   pageScope.addEventListener('change', (event) => {
+    if (hierarchyMode && event.target.matches('[data-arrangement-upstream]')) {
+      const topRoute = state.routes.find((route) => (route.items || []).some((product) => product.id === event.target.dataset.productId));
+      const product = topRoute?.items.find((item) => item.id === event.target.dataset.productId);
+      const arrangement = (product?.arrangements || []).find((item) => item.id === event.target.dataset.arrangementId);
+      if (!arrangement) return;
+      const selected = new Set(arrangement.upstreamIds || []);
+      if (event.target.checked) selected.add(event.target.value); else selected.delete(event.target.value);
+      arrangement.upstreamIds = Array.from(selected);
+      render();
+      return;
+    }
+    if (hierarchyMode && event.target.matches('[data-arrangement-quantity]')) {
+      render();
+      return;
+    }
     if (event.target.matches('[data-fee-select-all]')) {
       estimateHost.querySelectorAll('[data-fee-select][data-fee-direction="' + event.target.dataset.feeSelectAll + '"]').forEach((checkbox) => { checkbox.checked = event.target.checked; });
       return;
     }
     if (!event.target.matches('[data-route-field], [data-route-operation], [data-leg-field], [data-item-field], [data-fee-field], [data-container-field], [data-party-field]')) return;
     updateControl(event.target);
-    if (['type', 'shipmentCategory', 'origin', 'destination', 'originPort', 'destinationPort', 'agent', 'deliveryPlace'].includes(event.target.dataset.routeField) || event.target.dataset.itemField === 'name') render();
+    if (['type', 'shipmentCategory', 'origin', 'destination', 'originPort', 'destinationPort', 'agent', 'deliveryPlace'].includes(event.target.dataset.routeField) || event.target.dataset.itemField === 'name' || (hierarchyMode && event.target.dataset.itemField === 'standardQty')) render();
     else refreshDerived();
   });
   feeRouteMenu?.addEventListener('change', (event) => {
@@ -1556,6 +2366,19 @@
   linkPickerCancel.addEventListener('click', closeLinkedItemPicker);
   linkPicker.addEventListener('click', (event) => { if (event.target === linkPicker) closeLinkedItemPicker(); });
   linkPickerConfirm.addEventListener('click', confirmLinkedItems);
+  linkPickerBody.addEventListener('change', (event) => {
+    if (event.target.matches('input[data-link-source-item]')) updateLinkedPickerSummary();
+  });
+  linkPickerBody.addEventListener('click', (event) => {
+    const toggle = event.target.closest('.order-link-group-toggle, [data-link-group-toggle]');
+    if (!toggle) return;
+    const group = toggle.closest('[data-link-group]');
+    if (!group) return;
+    const collapsed = group.classList.toggle('collapsed');
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    const caret = toggle.querySelector('.order-link-caret');
+    if (caret) caret.textContent = collapsed ? '▸' : '▾';
+  });
   flowClose.addEventListener('click', closeFlowDrawer);
   flowZoomOut.addEventListener('click', () => {
     flowZoomPercent = Math.max(100, flowZoomPercent - 25);
@@ -1583,7 +2406,7 @@
   previewCancel.addEventListener('click', closePreview);
   preview.addEventListener('click', (event) => { if (event.target === preview) closePreview(); });
   previewConfirm.addEventListener('click', () => {
-    notify('success', '已按 ' + state.routes.length + ' 条运输线路生成物流需求，等待承运商调度。');
+    notify('success', '已按 ' + state.routes.length + ' 条运输服务要求生成物流需求，等待承运商调度。');
     closePreview();
   });
   specifiedModeSelect?.addEventListener('change', () => {
@@ -1617,5 +2440,10 @@
   window.OrderRoutes = window.OrderRoutesValidation;
   const serviceScopeInputs = Array.from(document.querySelectorAll('input[name="orderServiceScope"]'));
   serviceScopeInputs.forEach((input) => input.addEventListener('change', () => render()));
+  const singleTransportScenario = new URLSearchParams(window.location.search).get('scenario') === 'single-transport';
+  if (orderRouteReadonly() && !singleTransportScenario) {
+    state.routes = pendingReviewCoverageRoutes();
+    activeRouteAnchorIndex = 0;
+  }
   render();
 })();

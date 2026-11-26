@@ -1121,3 +1121,177 @@ body.customer-workbench {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Customer demand list: source and 4PL fields */
+.customer-workbench .demand-list-table {
+  min-width: 1740px;
+}
+
+.customer-workbench .demand-list-table .sticky-no {
+  left: 0;
+  min-width: 188px;
+}
+
+.customer-workbench .demand-list-table :is(th, td):nth-child(2),
+.customer-workbench .demand-list-table :is(th, td):nth-child(3),
+.customer-workbench .demand-list-table :is(th, td):nth-child(6),
+.customer-workbench .demand-list-table :is(th, td):nth-child(7) {
+  min-width: 92px;
+  white-space: nowrap;
+}
+
+.customer-workbench .demand-list-table :is(th, td):nth-child(3) {
+  min-width: 120px;
+}
+
+.customer-workbench .demand-list-table :is(th, td):nth-child(4),
+.customer-workbench .demand-list-table :is(th, td):nth-child(5) {
+  min-width: 190px;
+}
+
+.customer-workbench .demand-list-table .status {
+  display: inline-flex;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+/* Customer demand finance reference layout */
+.customer-workbench #financePanel {
+  padding: 2px 0 18px;
+  background: transparent;
+}
+
+.customer-workbench .finance-reference-section {
+  margin-bottom: 14px;
+  padding: 8px 12px 12px;
+  border: 1px solid #e5e9ef;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.customer-workbench .finance-reference-head {
+  display: flex;
+  min-height: 28px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.customer-workbench .finance-reference-head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.customer-workbench .finance-reference-dot {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  background: #64748b;
+  transform: rotate(45deg);
+}
+
+.customer-workbench .finance-maintain-btn {
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.customer-workbench .finance-reference-table-wrap {
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid #eef1f4;
+  scrollbar-width: thin;
+}
+
+.customer-workbench .finance-reference-table {
+  width: 100%;
+  min-width: 1780px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.customer-workbench .finance-reference-table th,
+.customer-workbench .finance-reference-table td {
+  height: 31px;
+  padding: 5px 7px;
+  border: 1px solid #eef1f4;
+  color: #475569;
+  background: #fff;
+  font-size: 9px;
+  line-height: 1.35;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.customer-workbench .finance-reference-table th {
+  height: 29px;
+  color: #64748b;
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.customer-workbench .finance-reference-table tbody tr:nth-child(even) td {
+  background: #fcfdff;
+}
+
+.customer-workbench .finance-reference-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.customer-workbench .finance-reference-ellipsis {
+  display: inline-block;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.customer-workbench .finance-reference-status {
+  color: #64748b;
+}
+
+.customer-workbench .finance-reference-link {
+  min-height: 20px;
+  padding: 0;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.customer-workbench .finance-profit-table {
+  min-width: 100%;
+}
+
+.customer-workbench .finance-profit-table th,
+.customer-workbench .finance-profit-table td {
+  height: 34px;
+  font-size: 10px;
+}
+
+.customer-workbench .finance-profit-table .is-converted td {
+  color: #334155;
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .customer-workbench .finance-reference-section {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .customer-workbench .finance-reference-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
