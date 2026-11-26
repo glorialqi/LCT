@@ -80,6 +80,8 @@
             <button class="btn danger" id="rejectPendingBtn" type="button" hidden>拒绝</button>
             <button class="btn primary" id="receivePendingBtn" type="button" hidden>接收</button>
             <button class="btn primary" id="startCustomerOrderBtn" type="button" hidden>发起客户订单</button>
+            <button class="btn outline-primary" id="modifyBtn" type="button" hidden>版本维护</button>
+            <button class="btn" id="historyBtn" type="button" hidden>历史版本</button>
             <div class="demand-menu-wrap" id="moreActionWrap" hidden>
               <button class="btn" id="moreBtn" type="button" aria-haspopup="menu" aria-expanded="false">更多</button>
               <div class="demand-menu" id="moreMenu" role="menu" hidden>
@@ -194,16 +196,6 @@
                     </details>
                     <div class="ui-field-message"></div>
                   </div>
-                  <div class="demand-form-field field" id="createExtensionSceneField">
-                    <label>扩展场景</label>
-                    <details class="demand-multi-select" data-multi-select-name="extensionScenes">
-                      <summary><span class="demand-multi-select-value" data-multi-select-value data-placeholder="请选择扩展场景">请选择扩展场景</span><svg aria-hidden="true"><use href="#p-chevron"/></svg></summary>
-                      <div class="demand-multi-select-menu">
-                        <label class="demand-multi-select-option"><input id="createBookingScene" type="checkbox" name="extensionScenes" value="订舱">订舱</label>
-                      </div>
-                    </details>
-                    <div class="ui-field-message"></div>
-                  </div>
                   <div class="demand-form-field span-2 field"><label for="createServiceRequirement">服务内容</label><textarea id="createServiceRequirement" name="serviceRequirement" rows="1" placeholder="请输入服务要求"></textarea><div class="ui-field-message"></div></div>
                   <div class="demand-form-field span-2 field"><label for="createCustomerRemark">其他特殊要求 / 客户备注</label><textarea id="createCustomerRemark" name="customerRemark" rows="1" placeholder="请输入"></textarea><div class="ui-field-message"></div></div>
                 </div>
@@ -227,7 +219,7 @@
 
             <section class="demand-section" id="createBookingExtensionSection" aria-labelledby="createBookingExtensionTitle" hidden>
               <div class="demand-section-head">
-                <h2 class="demand-section-title" id="createBookingExtensionTitle"><svg><use href="#p-contract"/></svg>订舱扩展</h2>
+                <h2 class="demand-section-title" id="createBookingExtensionTitle"><svg><use href="#p-contract"/></svg>水运件杂</h2>
               </div>
               <div class="demand-section-body">
                 <div id="createWaterTransportFields" hidden>
@@ -275,7 +267,6 @@
                                 <div class="demand-field"><div class="demand-field-label">服务范围</div><div class="demand-readonly-value" id="staticServiceScopeValue"></div></div>
                 <div class="demand-field" id="staticTransportTypeField"><div class="demand-field-label">运输类型</div><div class="demand-readonly-value" id="staticServiceItemsValue"></div></div>
                 <div class="demand-field" id="staticShippingCategoriesField"><div class="demand-field-label">装运类别</div><div class="demand-readonly-value" id="staticShippingCategoriesValue"></div></div>
-                <div class="demand-field" id="staticExtensionSceneField"><div class="demand-field-label">扩展场景</div><div class="demand-readonly-value" id="staticExtensionScenesValue"></div></div>
                 <div class="demand-field span-2"><div class="demand-field-label">服务内容</div><div class="demand-readonly-value is-multiline" id="serviceRequirementValue"></div></div>
                 <div class="demand-field span-2"><div class="demand-field-label">其他特殊要求 / 客户备注</div><div class="demand-readonly-value is-multiline" id="customerRemarkValue"></div></div>
               </div>
@@ -311,7 +302,7 @@
             </div>
           </section>
           <section class="demand-section" id="staticBookingExtensionSection" aria-labelledby="bookingExtensionTitle" hidden>
-            <div class="demand-section-head"><h2 class="demand-section-title" id="bookingExtensionTitle"><svg><use href="#p-contract"/></svg>订舱扩展</h2><span class="status running">订舱</span></div>
+            <div class="demand-section-head"><h2 class="demand-section-title" id="bookingExtensionTitle"><svg><use href="#p-contract"/></svg>水运件杂</h2><span class="status running">水运件杂</span></div>
             <div class="demand-section-body">
               <div id="staticWaterTransportFields" hidden>
                 <div class="demand-readonly-grid">
@@ -430,7 +421,6 @@
           <section class="finance-reference-section" aria-labelledby="executionReceivableTitle">
             <div class="finance-reference-head">
               <h2 id="executionReceivableTitle"><span class="finance-reference-dot" aria-hidden="true"></span>执行预估应收</h2>
-              <button class="btn outline-primary finance-maintain-btn" id="maintainReceivableBtn" type="button">维护执行预估应收</button>
             </div>
             <div class="finance-reference-table-wrap ui-table-state-host" id="executionReceivableTableHost">
               <table class="finance-reference-table" aria-label="执行预估应收">
@@ -443,7 +433,6 @@
           <section class="finance-reference-section" aria-labelledby="executionPayableTitle">
             <div class="finance-reference-head">
               <h2 id="executionPayableTitle"><span class="finance-reference-dot" aria-hidden="true"></span>执行预估应付</h2>
-              <button class="btn outline-primary finance-maintain-btn" id="maintainPayableBtn" type="button">维护执行预估应付</button>
             </div>
             <div class="finance-reference-table-wrap ui-table-state-host" id="executionPayableTableHost">
               <table class="finance-reference-table" aria-label="执行预估应付">

@@ -1197,14 +1197,6 @@ body.customer-workbench {
   transform: rotate(45deg);
 }
 
-.customer-workbench .finance-maintain-btn {
-  min-height: 26px;
-  padding: 0 9px;
-  border-radius: 2px;
-  font-size: 10px;
-  font-weight: 500;
-}
-
 .customer-workbench .finance-reference-table-wrap {
   min-width: 0;
   overflow: auto;

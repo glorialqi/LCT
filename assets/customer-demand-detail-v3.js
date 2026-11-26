@@ -421,7 +421,6 @@
     serviceScopes: ['运输', '仓储', '报关'],
     serviceItems: ['水运'],
     shippingCategories: ['件杂'],
-    extensionScenes: ['订舱'],
     tradeTerms: 'FOB',
     origin: '青岛港',
     destination: '胡志明港',
@@ -502,8 +501,7 @@
     versions: [
       { version: 'V1', type: '首次提交', changeNo: '--', status: 'rejected', submittedAt: '2026-10-27 15:10', handledBy: '李四', effectiveAt: '--', reason: '客户联系人信息不完整', snapshot: { quantities: { L1: 100, L2: 24 }, pickupDate: '2026-11-03' } },
       { version: 'V2', type: '重新提交', changeNo: '--', status: 'received', submittedAt: '2026-10-28 09:20', handledBy: '苏丽蓉', effectiveAt: '2026-10-28 09:32', reason: '补齐联系人信息后重新提交', snapshot: { quantities: { L1: 100, L2: 24 }, pickupDate: '2026-11-03' } },
-      { version: 'V3', type: '需求修改', changeNo: 'M20261028001', status: 'received', submittedAt: '2026-10-28 13:06', handledBy: '苏丽蓉', effectiveAt: '2026-10-28 13:18', reason: '调整计划提货日期与包装要求', snapshot: { quantities: { L1: 100, L2: 24 }, pickupDate: '2026-11-03' } },
-      { version: 'V4', type: '需求修改', changeNo: 'M20261029001', status: 'pending', submittedAt: '2026-10-29 09:42', handledBy: '--', effectiveAt: '--', reason: '客户增加脱皮花生仁需求数量，并同步调整提货日期', snapshot: { quantities: { L1: 120, L2: 24 }, pickupDate: '2026-11-05' } }
+      { version: 'V3', type: '需求修改', changeNo: 'M20261028001', status: 'received', submittedAt: '2026-10-28 13:06', handledBy: '苏丽蓉', effectiveAt: '2026-10-28 13:18', reason: '调整计划提货日期与包装要求', snapshot: { quantities: { L1: 100, L2: 24 }, pickupDate: '2026-11-03' } }
     ],
     booking: {
       salesContractNo: 'FGQXE260721CD-2',
@@ -561,7 +559,6 @@
       { time: '2026-10-28 09:20', title: 'V2 重新提交', text: '同一客户需求单号下生成新版本，原 V1 保持已拒绝。' },
       { time: '2026-10-28 09:32', title: 'V2 已接收', text: '苏丽蓉接收 V2，版本即时生效。' },
       { time: '2026-10-28 13:18', title: 'V3 已接收', text: '修改单 M20261028001 接收后生成当前有效版本 V3。' },
-      { time: '2026-10-29 09:42', title: 'V4 待接收', text: '新修改单已提交，当前仍按 V3 执行。' },
       { time: '2026-10-29 13:20', title: '新增订单反馈', text: '任务跟踪新增订舱信息反馈，等待船东确认。' }
     ]
   };
@@ -863,13 +860,11 @@
     setText('serviceRequirementValue', demand.serviceRequirement);
     setText('customerRemarkValue', demand.customerRemark);
     $('staticServiceScopeValue').innerHTML = tagMarkup(demand.serviceScopes);
-    if ($('staticExtensionScenesValue')) $('staticExtensionScenesValue').innerHTML = tagMarkup(demand.extensionScenes);
 
     const hasTransport = (demand.serviceScopes || []).includes('运输');
     const hasWaterTransport = hasTransport && (demand.serviceItems || []).includes('水运');
     if ($('staticTransportTypeField')) $('staticTransportTypeField').hidden = !hasTransport;
     if ($('staticShippingCategoriesField')) $('staticShippingCategoriesField').hidden = !hasTransport;
-    if ($('staticExtensionSceneField')) $('staticExtensionSceneField').hidden = !hasTransport;
     if ($('staticServiceItemsValue')) $('staticServiceItemsValue').innerHTML = hasTransport ? tagMarkup(demand.serviceItems) : '--';
     if ($('staticShippingCategoriesValue')) $('staticShippingCategoriesValue').innerHTML = hasTransport ? tagMarkup(demand.shippingCategories) : '--';
 
@@ -890,9 +885,9 @@
     setText('staticVesselCertificateValue', transport.vesselCertificateRequirement);
     setText('staticTransportVesselAgeValue', transport.vesselAgeRequirement);
     setText('staticCommissionRateValue', transport.commissionRate == null ? '--' : transport.commissionRate + '%');
-    const bookingScene = (demand.extensionScenes || []).includes('订舱');
-    if ($('staticBookingExtensionSection')) $('staticBookingExtensionSection').hidden = !(hasWaterTransport || bookingScene);
-    if ($('staticWaterTransportFields')) $('staticWaterTransportFields').hidden = !hasWaterTransport;
+    const showWaterBulk = hasWaterTransport && (demand.shippingCategories || []).includes('件杂');
+    if ($('staticBookingExtensionSection')) $('staticBookingExtensionSection').hidden = !showWaterBulk;
+    if ($('staticWaterTransportFields')) $('staticWaterTransportFields').hidden = !showWaterBulk;
 
     const booking = demand.booking || {};
     if ($('bookingExtensionTextDisplay')) $('bookingExtensionTextDisplay').value = booking.text || bookingExtensionContent(booking);
@@ -945,7 +940,7 @@
     document.title = '客户需求单详情 · ' + statusLabels[demand.status];
 
     const state = demand.status;
-    ['saveCreatedBtn', 'submitCreatedBtn', 'deleteCreatedBtn', 'rejectPendingBtn', 'receivePendingBtn', 'startCustomerOrderBtn', 'moreActionWrap', 'moreBtn'].forEach((id) => {
+    ['saveCreatedBtn', 'submitCreatedBtn', 'deleteCreatedBtn', 'rejectPendingBtn', 'receivePendingBtn', 'startCustomerOrderBtn', 'modifyBtn', 'historyBtn', 'moreActionWrap', 'moreBtn'].forEach((id) => {
       if ($(id)) $(id).hidden = true;
     });
     if ($('moreMenu')) $('moreMenu').hidden = true;
@@ -960,6 +955,7 @@
       if ($('receivePendingBtn')) $('receivePendingBtn').hidden = false;
     } else if (state === 'received') {
       if ($('startCustomerOrderBtn')) $('startCustomerOrderBtn').hidden = false;
+      if ($('modifyBtn')) $('modifyBtn').hidden = false;
       if ($('moreActionWrap')) $('moreActionWrap').hidden = false;
       if ($('moreBtn')) $('moreBtn').hidden = false;
       if ($('completeDemandBtn')) {
@@ -967,6 +963,12 @@
         $('completeDemandBtn').disabled = false;
         $('completeDemandBtn').title = '';
       }
+    }
+
+    if (state !== 'created' && demand.versions.length > 1 && $('historyBtn')) {
+      $('historyBtn').hidden = false;
+      $('historyBtn').disabled = false;
+      $('historyBtn').title = '查看历史版本';
     }
   }
   function orderContractAttachmentsMarkup(order) {
@@ -1245,18 +1247,10 @@
       let marker = '';
       if (isCurrent) marker = '<span class="demand-version-current">' + (demand.status === 'completed' ? '最终版本' : '当前有效') + '</span>';
       if (isCurrentDraft) marker = '<span class="demand-version-current">当前版本</span>';
-      let actions = '<button class="btn link" type="button" data-version-action="compare" data-version="' + esc(version.version) + '">版本差异</button>';
-      if (version.status === 'pending' && demand.status !== 'completed' && demand.status !== 'voided') {
-        actions += '<button class="btn link" type="button" data-version-action="receive" data-version="' + esc(version.version) + '">接收此版本</button>';
-        actions += '<button class="btn link demand-danger" type="button" data-version-action="reject" data-version="' + esc(version.version) + '">拒绝此版本</button>';
-      } else if (version.status === 'rejected' && demand.status !== 'completed' && demand.status !== 'voided') {
-        actions += '<button class="btn link" type="button" data-version-action="resubmit" data-version="' + esc(version.version) + '">版本维护</button>';
-      }
       return '<tr><td><span class="version-chip">' + esc(version.version) + '</span>' + marker + '</td>' +
         '<td>' + esc(version.type) + '</td><td>' + esc(version.changeNo) + '</td>' +
         '<td>' + statusTag(displayMeta.label, displayMeta.tone) + '</td><td>' + esc(version.submittedAt) + '</td>' +
-        '<td>' + esc(version.handledBy) + '</td><td>' + esc(version.effectiveAt) + '</td>' +
-        '<td class="action-cell">' + actions + '</td></tr>';
+        '<td>' + esc(version.handledBy) + '</td><td>' + esc(version.effectiveAt) + '</td></tr>';
     }).join('');
   }
 
@@ -1394,7 +1388,6 @@
     setCheckboxValues('serviceScopes', demand.serviceScopes);
     setCheckboxValues('serviceItems', demand.serviceItems);
     setCheckboxValues('shippingCategories', demand.shippingCategories);
-    setCheckboxValues('extensionScenes', demand.extensionScenes);
     const booking = demand.booking || {};
     $('createBookingExtensionText').value = demand.source.type === '手工创建'
       ? (booking.text || '')
@@ -1552,11 +1545,11 @@
 
   function updateBookingSectionVisibility() {
     const transportScope = document.querySelector('input[name="serviceScopes"][value="运输"]')?.checked;
-    const bookingScene = transportScope && Boolean(document.querySelector('input[name="extensionScenes"][value="订舱"]')?.checked);
     const waterTransport = transportScope && Boolean(document.querySelector('input[name="serviceItems"][value="水运"]')?.checked);
-    if ($('createBookingExtensionSection')) $('createBookingExtensionSection').hidden = !(bookingScene || waterTransport);
-    if ($('createWaterTransportFields')) $('createWaterTransportFields').hidden = !waterTransport;
-    updateMultiSelectSummary('extensionScenes');
+    const pieceCargo = transportScope && Boolean(document.querySelector('input[name="shippingCategories"][value="件杂"]')?.checked);
+    const showWaterBulk = waterTransport && pieceCargo;
+    if ($('createBookingExtensionSection')) $('createBookingExtensionSection').hidden = !showWaterBulk;
+    if ($('createWaterTransportFields')) $('createWaterTransportFields').hidden = !showWaterBulk;
   }
 
   function updatePortRegions() {
@@ -1579,16 +1572,18 @@
   function updateTransportTypeVisibility() {
     const transportScope = document.querySelector('input[name="serviceScopes"][value="运输"]')?.checked;
     if (!transportScope) {
-      document.querySelectorAll('input[name="serviceItems"], input[name="shippingCategories"], input[name="extensionScenes"]').forEach((input) => { input.checked = false; });
+      document.querySelectorAll('input[name="serviceItems"], input[name="shippingCategories"]').forEach((input) => { input.checked = false; });
       updateBookingSectionVisibility();
     }
     const waterTransport = transportScope && Boolean(document.querySelector('input[name="serviceItems"][value="水运"]')?.checked);
-    ['createTransportTypeField', 'createShippingCategoryField', 'createExtensionSceneField'].forEach((id) => {
+    ['createTransportTypeField', 'createShippingCategoryField'].forEach((id) => {
       if ($(id)) $(id).hidden = !transportScope;
     });
-    $('createWaterTransportFields').hidden = !waterTransport;
+    const pieceCargo = transportScope && Boolean(document.querySelector('input[name="shippingCategories"][value="件杂"]')?.checked);
+    const showWaterBulk = waterTransport && pieceCargo;
+    $('createWaterTransportFields').hidden = !showWaterBulk;
     ['createOriginPort', 'createDestinationPort'].forEach((id) => {
-      if ($(id)) $(id).required = waterTransport;
+      if ($(id)) $(id).required = showWaterBulk;
     });
     updateMultiSelectSummary('serviceItems');
     updateMultiSelectSummary('shippingCategories');
@@ -1609,7 +1604,6 @@
     demand.serviceScopes = Array.from(form.querySelectorAll('input[name="serviceScopes"]:checked')).map((input) => input.value);
     demand.serviceItems = Array.from(form.querySelectorAll('input[name="serviceItems"]:checked')).map((input) => input.value);
     demand.shippingCategories = Array.from(form.querySelectorAll('input[name="shippingCategories"]:checked')).map((input) => input.value);
-    demand.extensionScenes = Array.from(form.querySelectorAll('input[name="extensionScenes"]:checked')).map((input) => input.value);
     demand.tradeTerms = form.elements.tradeTerms.value;
     demand.serviceRequirement = form.elements.serviceRequirement.value.trim();
     demand.customerRemark = form.elements.customerRemark.value.trim();
@@ -1791,36 +1785,6 @@
     }
     ui.openDialog(dialog);
     if (options.onMount) options.onMount({ form, submitBtn });
-  }
-
-  function previousEffective(versionNo) {
-    const currentIndex = demand.versions.findIndex((item) => item.version === versionNo);
-    for (let index = currentIndex - 1; index >= 0; index -= 1) {
-      if (demand.versions[index].status === 'received') return demand.versions[index];
-    }
-    return null;
-  }
-
-  function compareVersion(versionNo) {
-    const version = demand.versions.find((item) => item.version === versionNo);
-    if (!version) return;
-    const previous = previousEffective(versionNo);
-    const rows = demand.lines.map((line) => {
-      const before = previous ? previous.snapshot.quantities[line.id] : '--';
-      const after = version.snapshot.quantities[line.id];
-      return '<tr><th>需求行 ' + line.no + '：' + esc(line.name) + '</th><td>' + before + ' ' + esc(line.unit) + '</td><td>' + after + ' ' + esc(line.unit) + '</td></tr>';
-    }).join('');
-    const previousDate = previous ? previous.snapshot.pickupDate : '--';
-    openActionDialog({
-      title: version.version + ' 版本差异',
-      body: '<p class="demand-dialog-copy">仅展示本版本相对前一有效版本的主要变化。提交版本号保持不变，接收只生效一次。</p>' +
-        '<div class="demand-data-table-wrap"><table class="demand-compare-table"><thead><tr><th>字段</th><th>变更前</th><th>变更后</th></tr></thead><tbody>' +
-        rows + '<tr><th>计划提货日期</th><td>' + esc(previousDate) + '</td><td>' + esc(version.snapshot.pickupDate) + '</td></tr></tbody></table></div>' +
-        (version.reason ? '<div class="demand-dialog-note"><strong>变更说明：</strong>' + esc(version.reason) + '</div>' : ''),
-      confirmText: '关闭',
-      cancelText: '返回',
-      onSubmit: () => true
-    });
   }
 
   function receiveDemand() {
@@ -2095,9 +2059,9 @@
   }
 
   function openHistory() {
-    const body = '<p class="demand-dialog-copy">查看提交版本、版本差异和流转记录。</p>' +
+    const body = '<p class="demand-dialog-copy">查看提交版本和流转记录。</p>' +
       '<section class="demand-history-section"><div class="demand-history-toolbar"><h3>提交版本与修改单</h3><button class="btn" id="historyExportBtn" type="button">导出变更记录</button></div>' +
-      '<div class="demand-data-table-wrap"><table class="demand-data-table demand-version-table" aria-label="客户需求提交版本"><thead><tr><th>版本</th><th>提交类型</th><th>修改单号</th><th>状态</th><th>提交时间</th><th>接收/拒绝人</th><th>生效时间</th><th>操作</th></tr></thead><tbody id="versionTableBody"></tbody></table></div></section>' +
+      '<div class="demand-data-table-wrap"><table class="demand-data-table demand-version-table" aria-label="客户需求提交版本"><thead><tr><th>版本</th><th>提交类型</th><th>修改单号</th><th>状态</th><th>提交时间</th><th>接收/拒绝人</th><th>生效时间</th></tr></thead><tbody id="versionTableBody"></tbody></table></div></section>' +
       '<section class="demand-history-section"><div class="demand-history-toolbar"><h3>流转记录</h3></div><ol class="demand-timeline" id="timelineList"></ol></section>';
     openActionDialog({
       title: '历史版本',
@@ -2461,9 +2425,19 @@
     if ($('saveCreatedBtn')) $('saveCreatedBtn').addEventListener('click', () => saveCreateDraft(false, false));
     if ($('submitCreatedBtn')) $('submitCreatedBtn').addEventListener('click', () => submitCreatedDemand('submit'));
     if ($('deleteCreatedBtn')) $('deleteCreatedBtn').addEventListener('click', deleteDraftDemand);
-    if ($('receivePendingBtn')) $('receivePendingBtn').addEventListener('click', receiveDemand);
-    if ($('rejectPendingBtn')) $('rejectPendingBtn').addEventListener('click', rejectDemand);
+    if ($('receivePendingBtn')) $('receivePendingBtn').addEventListener('click', () => {
+      const pending = pendingVersion();
+      if (pending && pending.type === '版本维护') receiveVersion(pending.version);
+      else receiveDemand();
+    });
+    if ($('rejectPendingBtn')) $('rejectPendingBtn').addEventListener('click', () => {
+      const pending = pendingVersion();
+      if (pending && pending.type === '版本维护') rejectVersion(pending.version);
+      else rejectDemand();
+    });
     if ($('startCustomerOrderBtn')) $('startCustomerOrderBtn').addEventListener('click', openCreateOrder);
+    if ($('modifyBtn')) $('modifyBtn').addEventListener('click', maintainVersion);
+    if ($('historyBtn')) $('historyBtn').addEventListener('click', openHistory);
     if ($('completeDemandBtn')) $('completeDemandBtn').addEventListener('click', completeDemand);
     if ($('exportDemandBtn')) $('exportDemandBtn').addEventListener('click', exportDemand);
     if ($('moreBtn')) $('moreBtn').addEventListener('click', (event) => {
@@ -2501,7 +2475,6 @@
       }
     });
     $('createDemandForm').addEventListener('change', (event) => {
-      if (event.target.name === 'extensionScenes') updateBookingSectionVisibility();
       if (['serviceScopes', 'serviceItems', 'shippingCategories'].includes(event.target.name)) updateTransportTypeVisibility();
       if (['originPort', 'destinationPort'].includes(event.target.name)) updatePortRegions();
       if (['serviceScopes', 'serviceItems', 'shippingCategories'].includes(event.target.name)) {
@@ -2617,8 +2590,6 @@
       });
     });
 
-    if ($('maintainReceivableBtn')) $('maintainReceivableBtn').addEventListener('click', () => ui.showToast('已在原型中模拟维护执行预估应收', 'success'));
-    if ($('maintainPayableBtn')) $('maintainPayableBtn').addEventListener('click', () => ui.showToast('已在原型中模拟维护执行预估应付', 'success'));
 
     $('orderListBody').addEventListener('click', (event) => {
       const feedbackLink = event.target.closest('[data-order-feedback]');
@@ -2637,15 +2608,6 @@
       if (!logisticsButton) return;
       const order = demand.orders.find((item) => item.id === logisticsButton.dataset.viewLogistics);
       if (order) openLogisticsDrawer(order);
-    });
-    dialog.addEventListener('click', (event) => {
-      const button = event.target.closest('[data-version-action]');
-      if (!button) return;
-      const versionNo = button.dataset.version;
-      if (button.dataset.versionAction === 'compare') compareVersion(versionNo);
-      if (button.dataset.versionAction === 'receive') receiveVersion(versionNo);
-      if (button.dataset.versionAction === 'reject') rejectVersion(versionNo);
-      if (button.dataset.versionAction === 'resubmit') resubmitVersion(versionNo);
     });
     ['financeFeeDirection', 'financeFeeOrder'].forEach((id) => {
       if ($(id)) $(id).addEventListener('change', renderFinance);
