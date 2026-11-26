@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客户订单详情（PRD对齐版） - OMS原型</title>
+  <link rel="stylesheet" href="../assets/app.css">
+  <style>
+    :root {
+      --detail-blue: #2563eb;
+      --detail-blue-deep: #1d4ed8;
+      --detail-line: #dde4ee;
+      --detail-ink: #23344d;
+      --detail-muted: #5b6778;
+      --page: #e9eef5;
+      --ink: #23344d;
+      --text: #334155;
+      --muted: #5b6778;
+      --line: #dde4ee;
+      --blue: #2563eb;
+    }
+    body { min-width: 1180px; }
+    button, input, select, textarea { font: inherit; }
+    .detail-scroll { min-height: 0; flex: 1; overflow-y: auto; padding: 14px 18px 40px; background: var(--page); }
+    .page-head { position: relative; z-index: 5; display: flex; align-items: center; gap: 9px; min-height: 52px; margin-bottom: 10px; padding: 0 13px 0 17px; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.04); }
+    .page-title { display: flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 15px; font-weight: 700; white-space: nowrap; }
+    .page-title-group { min-width:0; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .page-order-number { min-height:26px; display:inline-flex; align-items:center; gap:5px; padding-left:10px; border-left:1px solid #e1e7f0; color:#8793a3; font-size:10px; white-space:nowrap; }
+    .page-order-number strong { color:#334155; font-size:11px; font-weight:600; }
+    .page-title-order-number { margin-left:2px; color:#526176; font-size:11px; font-weight:600; letter-spacing:0; }
+    .page-title-group .order-quick-statuses { margin-left:auto; }
+    .page-title-group .detail-view-tabs { height:34px !important; margin-left:8px; padding:3px !important; border:1px solid #d5e2f3 !important; border-radius:8px !important; background:#eef4fc !important; gap:3px !important; }
+    .customer-workbench .page-title-group .detail-view-tab { height:28px; padding:0 16px; border-radius:6px; color:#526176 !important; font-size:12px !important; font-weight:600 !important; }
+    .customer-workbench .page-title-group .detail-view-tab:hover { color:#2563eb !important; background:#fff !important; }
+    .customer-workbench .page-title-group .detail-view-tab.active { color:#fff !important; background:#2563eb !important; box-shadow:0 2px 5px rgba(37,99,235,.2) !important; }
+    .page-title svg { width: 16px; height: 16px; color: #64748b; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .page-head-spacer { flex: 1; }
+    .detail-btn { height: 32px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #d9dee7; border-radius: 6px; background: #fff; color: #334155; font-size: 12px; white-space: nowrap; cursor: pointer; transition: .15s ease; }
+    .detail-btn:hover { border-color: #b7c1d2; background: #fafbfc; }
+    .detail-btn.primary { color: #fff; border-color: var(--detail-blue); background: var(--detail-blue); box-shadow: 0 2px 5px rgba(47,116,255,.18); }
+    .detail-btn.primary:hover { border-color: var(--detail-blue-deep); background: var(--detail-blue-deep); }
+    .detail-btn.outline-primary { color: var(--detail-blue); border-color: #bcd4ff; background: #f8fbff; }
+    .detail-btn.outline-primary:hover { border-color: #8db7ff; background: #f1f7ff; }
+    .detail-section { margin-top: 11px; overflow: visible; border: 1px solid var(--detail-line); border-radius: 4px; background: #fff; box-shadow: 0 4px 14px rgba(15,23,42,.035); }
+    .detail-section-head { min-height: 37px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid #eef1f5; background: #fafbfc; }
+    .detail-section-title { display: inline-flex; align-items: center; gap: 8px; color: var(--detail-ink); font-size: 13px; font-weight: 700; }
+    .detail-section-title svg { width: 11px; height: 11px; color: #64748b; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .detail-section-body { padding: 17px 16px 19px; }
+    .form-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); column-gap: 22px; row-gap: 17px; }
+    .span-2 { grid-column: span 2; }
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .field { min-width: 0; }
+    .field-label { min-height: 18px; display: flex; align-items: center; gap: 5px; margin-bottom: 5px; color: var(--text); font-size: 12px; white-space: nowrap; }
+    .required { color: #c62828; font-size: 11px; }
+    .field-help { width: 14px; height: 14px; display: inline-grid; place-items: center; border-radius: 50%; color: #526176; background: #f0f2f5; font-size: 11px; font-weight: 700; cursor: help; }
+    .control { width: 100%; height: 32px; padding: 0 9px; border: 1px solid #d9e1ec; border-radius: 6px; background: #fff; color: var(--text); font-size: 12px; }
+    .control[readonly] { color: #8d96a7; background: #f5f6f8; }
+    .control::placeholder { color: #64748b; }
+    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%); background-position: calc(100% - 12px) 12px,calc(100% - 8px) 12px; background-size: 4px 4px,4px 4px; background-repeat: no-repeat; }
+    .status-pill { display: inline-flex; height: 26px; align-items: center; padding: 0 9px; border-radius: 3px; color: #7c5500; background: #fff6de; font-size: 11px; font-weight: 600; }
+    .multi-control { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #e2e5eb; border-radius: 3px; background: #fff; }
+    .mini-tag { display: inline-flex; min-height: 20px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #dbe8ff; border-radius: 3px; color: #3268c4; background: #f1f7ff; font-size: 11px; white-space: nowrap; }
+    .multi-add { height: 20px; padding: 0 5px; border: 0; border-radius: 3px; color: #5b6778; background: transparent; font-size: 11px; cursor: pointer; }
+    .multi-add:hover { color: var(--detail-blue); background: #edf5ff; }
+    .field--new { position: relative; }
+    .field--new::before { content: ""; position: absolute; inset: -8px -9px -8px -9px; z-index: 0; border: 1px dashed #a8c9ff; border-radius: 5px; background: linear-gradient(180deg,rgba(238,245,255,.72),rgba(250,252,255,.28)); pointer-events: none; }
+    .field--new > * { position: relative; z-index: 1; }
+
+    .help-dot { position: relative; }
+    .help-tip { position: absolute; left: 50%; bottom: calc(100% + 7px); z-index: 30; width: 240px; padding: 8px 9px; border: 1px solid #dfe4ec; border-radius: 4px; color: #5f697a; background: #fff; box-shadow: 0 8px 24px rgba(27,42,74,.12); font-size: 11px; line-height: 1.55; opacity: 0; visibility: hidden; transform: translate(-50%,3px); transition: .15s ease; pointer-events: none; }
+    .help-tip::after { content: ""; position: absolute; left: 50%; top: 100%; width: 7px; height: 7px; border-right: 1px solid #dfe4ec; border-bottom: 1px solid #dfe4ec; background: #fff; transform: translate(-50%,-4px) rotate(45deg); }
+    .help-dot:hover .help-tip, .help-dot:focus-within .help-tip { opacity: 1; visibility: visible; transform: translate(-50%,0); }
+    .consignment-editor { min-height: 30px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 4px 7px; border: 1px solid #cbdcfb; border-radius: 3px; background: #fff; transition: .15s ease; }
+    .consignment-editor:focus-within { border-color: #7dabff; box-shadow: 0 0 0 2px rgba(47,116,255,.1); }
+    .consignment-chips { display: flex; min-width: 0; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .consignment-chip { max-width: 100%; display: inline-flex; min-height: 21px; align-items: center; gap: 4px; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2d62ba; background: #f2f7ff; font-size: 11px; }
+    .consignment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chip-remove { width: 13px; height: 13px; flex: 0 0 13px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #86a7d7; cursor: pointer; }
+    .chip-remove:hover { color: #d84a4a; background: #ffeded; }
+    .chip-remove svg { width: 8px; height: 8px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+    .consignment-input { min-width: 76px; flex: 1; height: 21px; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 11px; outline: none; }
+    .consignment-input::placeholder { color: #64748b; }
+    .consignment-add { height: 21px; flex: 0 0 auto; padding: 0 6px; border: 1px solid #d6e6ff; border-radius: 3px; color: #2f64bc; background: #f7fbff; font-size: 11px; cursor: pointer; }
+    .consignment-add:hover { border-color: #9fc3ff; background: #eef6ff; }
+    .consignment-count { margin-left: 2px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .field-error { display: none; margin-top: 4px; color: #c62828; font-size: 11px; }
+    .field-error.show { display: block; }
+    .textarea { min-height: 58px; resize: vertical; padding-top: 7px; }
+    .transport-row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px 22px; }
+    .order-date-range { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:6px; }
+    .order-date-range .control { min-width:0; }
+    .order-date-range-separator { color:var(--muted); font-size:11px; }
+    .order-routes-section-head { flex-wrap:wrap; gap:10px; }
+    .order-route-head-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-left:auto; }
+    .service-requirement-module-list { display:grid; gap:12px; }
+    .service-requirement-card { overflow:hidden; border:1px solid #dfe6ef; border-radius:7px; background:#fff; }
+    .service-requirement-card-head { min-height:44px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 14px; border-bottom:1px solid #edf1f5; background:#f8fafc; }
+    .service-requirement-card-title { color:#1f2b3d; font-size:13px; font-weight:700; }
+    .service-requirement-card-actions { display:flex; align-items:center; gap:6px; }
+    .service-requirement-delete { width:28px; height:28px; display:grid; place-items:center; border:1px solid #d7dee8; border-radius:4px; color:#8793a3; background:#fff; cursor:pointer; }
+    .service-requirement-delete:hover { color:#c62828; border-color:#efc7c2; background:#fff6f5; }
+    .service-requirement-card-body { padding:14px; }
+    .service-requirement-block-title { margin-bottom:8px; color:#526176; font-size:12px; font-weight:600; }
+    .service-goods-table { width:100%; border-collapse:separate; border-spacing:0; }
+    .service-goods-table th { height:32px; padding:0 10px; border-top:1px solid #e8edf4; border-bottom:1px solid #e8edf4; color:#6b7789; background:#fafbfc; font-size:10px; font-weight:600; text-align:left; }
+    .service-goods-table td { padding:8px 10px; border-bottom:1px solid #edf1f5; color:#475569; font-size:11px; }
+    .service-requirement-note-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-top:14px; }
+    .service-requirement-note-field { grid-column:span 3; min-width:0; }
+    .service-requirement-note-field label { display:block; margin-bottom:5px; color:#6b7789; font-size:11px; }
+    .service-requirement-note-field textarea { width:100%; height:32px; min-height:32px; max-height:96px; resize:vertical; padding:7px 9px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; line-height:1.5; box-sizing:border-box; }
+    .service-requirement-module-empty { padding:24px; border:1px dashed #d8e0eb; border-radius:6px; color:#8b95a5; background:#fafbfc; text-align:center; font-size:12px; }
+    @media (max-width:1180px) { .service-requirement-note-field { grid-column:span 6; } }
+    .order-route-anchor-tabs { min-width:0; display:flex; align-items:center; gap:3px; overflow-x:auto; scrollbar-width:none; }
+    .order-route-anchor-tabs::-webkit-scrollbar { display:none; }
+    .order-route-anchor-tab { height:26px; flex:0 0 auto; padding:0 9px; border:1px solid transparent; border-radius:5px; color:#64748b; background:transparent; font-size:10px; white-space:nowrap; cursor:pointer; }
+    .order-route-anchor-tab:hover { color:#2563eb; background:#f4f8ff; }
+    .order-route-anchor-tab.active { color:#2563eb; border-color:#d7e7ff; background:#edf5ff; font-weight:600; }
+    .order-route-card { scroll-margin-top:52px; }
+    #orderRoutesSection.single-route-mode .order-route-anchor-tabs,
+    #orderRoutesSection.single-route-mode .order-route-toolbar { display:none !important; }
+    #orderRoutesSection.single-route-mode .order-route-card { margin-top:0; border:0; background:transparent; box-shadow:none; }
+    #orderRoutesSection.single-route-mode .order-route-card-body { padding:0; }
+    #orderRoutesSection.single-route-mode [data-route-action="link-items"] { display:none !important; }
+    #orderRoutesSection.single-route-mode .order-route-card-head { min-height:40px; background:#fff; }
+    .order-route-view-switch { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid #dbe3ee; border-radius:6px; background:#f1f5f9; }
+    .order-route-view-switch .detail-btn { height:27px; padding:0 10px; border:0; background:transparent; box-shadow:none; color:#64748b; }
+    .order-route-view-switch .detail-btn.active { color:var(--detail-blue); background:#fff; box-shadow:0 1px 3px rgba(15,23,42,.12); }
+    .order-route-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; color:var(--detail-muted); font-size:11px; }
+    .order-route-tabs { display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; padding-bottom:2px; }
+    .order-route-tab { height:32px; display:inline-flex; align-items:center; gap:7px; padding:0 12px; border:1px solid #dce3ed; border-radius:6px; background:#fff; color:#5b6778; font-size:11px; white-space:nowrap; cursor:pointer; }
+    .order-route-tab.active { color:var(--detail-blue); border-color:#bcd4ff; background:#f5f9ff; font-weight:700; }
+    .order-route-tab-dot { width:7px; height:7px; border-radius:50%; background:var(--detail-blue); }
+    .order-route-tab.multimodal .order-route-tab-dot { background:#7c3aed; }
+    .order-route-card { margin-top:12px; overflow:hidden; border:1px solid #dce3ed; border-radius:7px; background:#fff; box-shadow:0 2px 8px rgba(15,23,42,.035); }
+    .order-route-card.multimodal { border-color:#ddd0fb; }
+    .order-route-card-head { min-height:44px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 14px; border-bottom:1px solid #eef1f5; background:#f8fafc; }
+    .order-route-card.multimodal .order-route-card-head { background:#faf7ff; border-bottom-color:#efe7ff; }
+    .order-route-card-title { display:flex; min-width:0; align-items:center; gap:9px; flex-wrap:wrap; }
+    .order-route-index { display:inline-flex; height:24px; align-items:center; padding:0 8px; border-radius:4px; background:var(--detail-blue); color:#fff; font-size:11px; font-weight:700; }
+    .order-route-card.multimodal .order-route-index { background:#7c3aed; }
+    .order-route-route-copy { display:flex; align-items:baseline; flex-wrap:wrap; gap:3px 4px; color:#334155; font-size:12px; font-weight:700; }
+    .order-route-route-copy .order-route-place { min-width:0; }
+    .order-route-route-copy .order-route-place em { margin-left:4px; color:#94a3b8; font-size:10px; font-style:normal; font-weight:400; white-space:nowrap; }
+    .order-route-route-copy .order-route-arrow { color:#94a3b8; font-weight:400; }
+    .order-route-route-copy .order-route-descriptor { margin-left:5px; color:#64748b; font-weight:400; white-space:nowrap; }
+    .order-route-card-controls { display:flex; align-items:center; gap:6px; }
+    .order-route-icon-btn { width:28px; height:28px; display:inline-grid; place-items:center; border:1px solid transparent; border-radius:5px; background:transparent; color:#64748b; cursor:pointer; }
+    .order-route-icon-btn:hover { color:var(--detail-blue); border-color:#dbe8fb; background:#f5f9ff; }
+    .order-route-icon-btn.danger:hover { color:#c62828; border-color:#f0c9c4; background:#fff5f4; }
+    .order-route-card-body { padding:15px 16px 17px; }
+    .order-route-block { padding:13px 14px; border:1px solid #e5ebf3; border-radius:6px; background:#fbfcfe; }
+    .order-route-parties .order-route-grid { gap:11px 14px; }
+    .order-route-parties textarea.control { min-height:52px; padding:6px 8px; line-height:1.45; resize:vertical; }
+    .order-route-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:13px 14px; }
+    .order-route-field.row-start { grid-column-start:1; }
+    .order-route-grid.five-column { grid-template-columns:repeat(5,minmax(0,1fr)); }
+    .order-route-field { min-width:0; }
+    .order-route-field > label { display:block; min-height:17px; margin-bottom:5px; color:#64748b; font-size:11px; font-weight:500; }
+    .order-route-field > label .required { margin-left:3px; color:#c62828; }
+    .order-route-field .control { height:32px; }
+    .order-route-field textarea.control { height:58px; min-height:58px; padding-top:7px; resize:vertical; }
+    .order-route-field.span-2 { grid-column:span 2; }
+    .order-route-field.span-3 { grid-column:span 3; }
+    .order-route-field.span-4 { grid-column:span 4; }
+    .order-route-field.span-6 { grid-column:span 6; }
+    .order-route-block + .order-route-block { margin-top:13px; }
+    .order-route-block-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid #edf1f6; }
+    .order-route-block-title { display:flex; align-items:center; gap:7px; color:#334155; font-size:11px; font-weight:700; }
+    .order-route-legs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .order-route-leg { padding:10px; border:1px solid #e3d8fb; border-radius:6px; background:#fff; }
+    .order-route-leg-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; padding-bottom:7px; border-bottom:1px solid #f0eafb; color:#6d28d9; font-size:11px; font-weight:700; }
+    .order-route-leg-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .order-route-leg-grid .order-route-field:nth-child(n+3) { grid-column:span 2; }
+    .order-route-items-wrap { overflow-x:auto; border:1px solid #e2e8f0; border-radius:6px; }
+    .order-route-items { width:100%; min-width:2600px; border-collapse:collapse; table-layout:fixed; }
+    .order-route-items th { height:34px; padding:6px 7px; border-bottom:1px solid #dce3ed; background:#f1f5f9; color:#526176; font-size:10px; font-weight:700; text-align:left; }
+    .order-route-items td { padding:6px 7px; border-bottom:1px solid #eef2f7; vertical-align:middle; }
+    .order-route-items tr:last-child td { border-bottom:0; }
+    .order-route-items .control { height:29px; padding:0 6px; font-size:11px; }
+    .order-route-items .control:disabled { color:#526176; background:#f5f7fa; opacity:1; cursor:default; }
+    .order-route-containers-table { width:100%; min-width:0; border-collapse:collapse; table-layout:fixed; }
+    .order-route-containers-table th { height:34px; padding:6px 7px; border-bottom:1px solid #dce3ed; background:#f1f5f9; color:#526176; font-size:10px; font-weight:700; text-align:left; white-space:nowrap; }
+    .order-route-containers-table td { padding:6px 7px; border-bottom:1px solid #eef2f7; color:#475569; font-size:11px; vertical-align:middle; }
+    .order-route-containers-table tr:last-child td { border-bottom:0; }
+    .order-route-containers-table .control { height:29px; padding:0 6px; font-size:11px; }
+    .order-route-containers-table th:nth-child(1), .order-route-containers-table td:nth-child(1) { width:56px; text-align:center; }
+    .order-route-containers-table th:nth-child(2), .order-route-containers-table td:nth-child(2) { width:140px; }
+    .order-route-containers-table th:nth-child(3), .order-route-containers-table td:nth-child(3) { width:100px; }
+    .order-route-containers-table th:nth-child(4), .order-route-containers-table td:nth-child(4) { width:200px; }
+    .order-route-containers-table th:nth-child(6), .order-route-containers-table td:nth-child(6) { width:64px; text-align:center; }
+    .order-route-containers-table .order-route-containers-empty td { padding:16px 8px; color:#94a3b8; text-align:center; }
+    .order-route-source-ref { color:#2563eb; font-size:10px; font-weight:600; white-space:nowrap; }
+    .order-route-link-group { margin-bottom:10px; padding:10px; border:1px solid #e1e8f2; border-radius:6px; background:#fff; }
+    .order-route-link-group:last-child { margin-bottom:0; }
+    .order-route-link-group-title { margin-bottom:7px; color:#334155; font-size:11px; font-weight:700; }
+    .order-route-link-option { display:grid; grid-template-columns:20px minmax(0,1fr) 90px 70px; align-items:center; gap:8px; min-height:32px; padding:5px 7px; border-top:1px solid #eef2f7; color:#526176; font-size:11px; }
+    .order-route-link-option:first-of-type { border-top:0; }
+    .order-route-link-option input { width:14px; height:14px; margin:0; accent-color:var(--detail-blue); }
+    .order-route-items th { white-space:nowrap; }
+    .order-route-items th:nth-child(1), .order-route-items td:nth-child(1) { width:150px; }
+    .order-route-items th:nth-child(2), .order-route-items td:nth-child(2) { width:200px; }
+    .order-route-items th:nth-child(3), .order-route-items td:nth-child(3) { width:110px; }
+    .order-route-items th:nth-child(4), .order-route-items td:nth-child(4) { width:90px; }
+    .order-route-items th:nth-child(5), .order-route-items td:nth-child(5) { width:90px; }
+    .order-route-items th:nth-child(6), .order-route-items td:nth-child(6) { width:90px; }
+    .order-route-items th:nth-child(7), .order-route-items td:nth-child(7) { width:80px; }
+    .order-route-items th:nth-child(8), .order-route-items td:nth-child(8) { width:90px; }
+    .order-route-items th:nth-child(9), .order-route-items td:nth-child(9) { width:80px; }
+    .order-route-items th:nth-child(10), .order-route-items td:nth-child(10) { width:80px; }
+    .order-route-items th:nth-child(11), .order-route-items td:nth-child(11) { width:90px; }
+    .order-route-items th:nth-child(12), .order-route-items td:nth-child(12) { width:80px; }
+    .order-route-items th:nth-child(13), .order-route-items td:nth-child(13) { width:120px; }
+    .order-route-items th:nth-child(14), .order-route-items td:nth-child(14) { width:90px; }
+    .order-route-items th:nth-child(15), .order-route-items td:nth-child(15) { width:90px; }
+    .order-route-items th:nth-child(16), .order-route-items td:nth-child(16) { width:100px; }
+    .order-route-items th:nth-child(17), .order-route-items td:nth-child(17) { width:110px; }
+    .order-route-items th:nth-child(18), .order-route-items td:nth-child(18) { width:80px; }
+    .order-route-items th:nth-child(19), .order-route-items td:nth-child(19) { width:140px; }
+    .order-route-items th:nth-child(20), .order-route-items td:nth-child(20) { width:160px; }
+    .order-route-items th:nth-child(21), .order-route-items td:nth-child(21) { width:120px; }
+    .order-route-items th:nth-child(22), .order-route-items td:nth-child(22) { width:104px, text-align:center; }
+    .order-route-block-actions { display:flex; align-items:center; gap:6px; }
+    .order-route-billed { display:grid; grid-template-columns:minmax(0,1fr) 66px; gap:4px; }
+    .order-business-estimates { margin-top:14px; }
+    .order-business-fee-card { overflow:hidden; border:1px solid #e1e7f0; border-radius:7px; background:#fff; }
+    .order-business-fee-card + .order-business-fee-card { margin-top:12px; }
+    .order-business-fee-head { min-height:42px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 14px; border-bottom:1px solid #eef1f5; background:#fafbfc; }
+    .order-business-fee-title { display:flex; align-items:center; gap:7px; color:#334155; font-size:12px; font-weight:700; }
+    .order-business-fee-title::before { content:'▾'; color:#64748b; }
+    .order-business-fee-actions { display:flex; align-items:center; gap:7px; }
+    .order-business-fee-table-wrap { overflow-x:auto; }
+    .order-business-fee-table { width:100%; min-width:2020px; border-collapse:collapse; table-layout:fixed; }
+    .order-business-fee-table th { height:34px; padding:6px 7px; border-bottom:1px solid #dfe6ef; background:#f3f5f8; color:#526176; font-size:10px; font-weight:700; text-align:left; white-space:nowrap; }
+    .order-business-fee-table td { padding:6px 7px; border-bottom:1px solid #eef2f7; vertical-align:middle; }
+    .order-business-fee-table tr:last-child td { border-bottom:0; }
+    .order-business-fee-table .control { height:29px; padding:0 6px; font-size:11px; }
+    .order-business-fee-empty { height:48px; color:#94a3b8; text-align:center; font-size:11px; }
+    .order-business-fee-table th:nth-child(1), .order-business-fee-table td:nth-child(1) { width:36px; text-align:center; }
+    .order-business-fee-table th:nth-child(2), .order-business-fee-table td:nth-child(2) { width:174px; }
+    .order-business-fee-table th:nth-child(3), .order-business-fee-table td:nth-child(3) { width:120px; }
+    .order-business-fee-table th:nth-child(4), .order-business-fee-table td:nth-child(4) { width:150px; }
+    .order-business-fee-table th:nth-child(5), .order-business-fee-table td:nth-child(5) { width:78px; }
+    .order-business-fee-table th:nth-child(6), .order-business-fee-table td:nth-child(6) { width:72px; }
+    .order-business-fee-table th:nth-child(7), .order-business-fee-table td:nth-child(7) { width:105px; }
+    .order-business-fee-table th:nth-child(8), .order-business-fee-table td:nth-child(8) { width:80px; }
+    .order-business-fee-table th:nth-child(9), .order-business-fee-table td:nth-child(9) { width:88px; }
+    .order-business-fee-table th:nth-child(10), .order-business-fee-table td:nth-child(10) { width:80px; }
+    .order-business-fee-table th:nth-child(11), .order-business-fee-table td:nth-child(11) { width:90px; }
+    .order-business-fee-table th:nth-child(12), .order-business-fee-table td:nth-child(12) { width:105px; }
+    .order-business-fee-table th:nth-child(13), .order-business-fee-table td:nth-child(13) { width:76px; }
+    .order-business-fee-table th:nth-child(14), .order-business-fee-table td:nth-child(14) { width:110px; }
+    .order-business-fee-table th:nth-child(15), .order-business-fee-table td:nth-child(15) { width:130px; }
+    .order-business-fee-table th:nth-child(16), .order-business-fee-table td:nth-child(16) { width:100px; }
+    .order-business-fee-table th:nth-child(17), .order-business-fee-table td:nth-child(17) { width:100px; }
+    .order-business-fee-table th:nth-child(18), .order-business-fee-table td:nth-child(18) { width:54px; text-align:center; }
+    .order-fee-route-picker { min-width:0; }
+    .order-fee-route-trigger { width:100%; height:29px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 8px; border:1px solid #cfd8e5; border-radius:4px; color:#334155; background:#fff; font-size:11px; text-align:left; cursor:pointer; }
+    .order-fee-route-trigger:hover { border-color:#8fb3ea; background:#f8fbff; }
+    .order-fee-route-trigger[aria-expanded="true"] { border-color:#5b8fe8; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .order-fee-route-trigger > span:first-child { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .order-fee-route-chevron { flex:0 0 auto; color:#64748b; }
+    .order-fee-route-menu { position:fixed; z-index:160; width:280px; max-height:330px; overflow:auto; padding:6px; border:1px solid #dbe3ee; border-radius:7px; background:#fff; box-shadow:0 14px 36px rgba(15,23,42,.18); }
+    .order-fee-route-menu[hidden] { display:none; }
+    .order-fee-route-option { display:flex; align-items:flex-start; gap:9px; padding:8px; border-radius:5px; color:#334155; font-size:11px; cursor:pointer; }
+    .order-fee-route-option:hover { background:#f5f8fc; }
+    .order-fee-route-option input { width:14px; height:14px; margin:2px 0 0; padding:0; accent-color:#2563eb; }
+    .order-fee-route-option span { min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .order-fee-route-option strong { color:#26364a; font-size:11px; font-weight:600; }
+    .order-fee-route-option small { overflow:hidden; color:#7b8798; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+    .order-fee-route-option:has(input:disabled) { cursor:default; opacity:.72; }
+    .order-fee-route-all { background:#f8fbff; }
+    .order-fee-route-divider { height:1px; margin:4px 6px; background:#edf1f6; }
+    .order-fee-route-hint { margin:5px 6px 4px; color:#8793a3; font-size:10px; line-height:1.5; }
+    .order-fee-route-empty { padding:12px 8px; color:#94a3b8; text-align:center; font-size:11px; }
+    .order-route-empty { padding:22px; border:1px dashed #cbd5e1; border-radius:6px; color:#64748b; text-align:center; font-size:11px; }
+    .order-route-preview-backdrop { position:fixed; inset:0; z-index:130; display:grid; place-items:center; padding:24px; background:rgba(15,23,42,.45); }
+    .order-route-preview-backdrop[hidden] { display:none; }
+    .order-route-preview-dialog { width:min(900px,calc(100vw - 48px)); max-height:calc(100vh - 48px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #dce3ed; border-radius:8px; background:#fff; box-shadow:0 24px 60px rgba(15,23,42,.28); }
+    .order-route-preview-head { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 17px; border-bottom:1px solid #eef1f5; background:#fafbfc; }
+    .order-route-preview-title { color:var(--detail-ink); font-size:15px; font-weight:700; }
+    .order-route-preview-subtitle { margin-top:3px; color:#64748b; font-size:11px; }
+    .order-route-preview-body { overflow:auto; padding:16px 17px; background:#f8fafc; }
+    .order-route-preview-item { margin-bottom:10px; padding:12px 13px; border:1px solid #e1e8f2; border-radius:6px; background:#fff; }
+    .order-route-preview-item:last-child { margin-bottom:0; }
+    .order-route-preview-item-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .order-route-preview-item-title { color:#1d4ed8; font-size:12px; font-weight:700; }
+    .order-route-preview-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px 18px; color:#526176; font-size:11px; }
+    .order-route-preview-note { margin-top:7px; padding:7px 9px; border-radius:4px; background:#f5f3ff; color:#6d28d9; font-size:11px; }
+    .order-route-preview-foot { display:flex; justify-content:flex-end; gap:8px; padding:12px 17px; border-top:1px solid #eef1f5; background:#fff; }
+    .order-flow-backdrop { position:fixed; inset:0; z-index:140; display:flex; justify-content:flex-end; background:rgba(15,23,42,.28); }
+    .order-flow-backdrop[hidden] { display:none; }
+    .order-flow-drawer { position:relative; width:min(720px,calc(100vw - 180px)); height:100vh; overflow:hidden; border-left:1px solid #dbe4ef; background:#f7f9fc; box-shadow:-18px 0 48px rgba(15,23,42,.18); animation:order-flow-slide-in .22s ease-out; }
+    @keyframes order-flow-slide-in { from { transform:translateX(28px); opacity:.6; } to { transform:translateX(0); opacity:1; } }
+    .order-flow-canvas { position:absolute; inset:0; overflow:auto; background-color:#f7f9fc; background-image:linear-gradient(rgba(219,228,239,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(219,228,239,.55) 1px,transparent 1px); background-size:20px 20px; }
+    .order-flow-canvas-inner { min-width:100%; min-height:100%; display:flex; align-items:center; justify-content:center; padding:96px 72px 86px; transform-origin:center center; transition:transform .16s ease; }
+    .order-flow-cards { display:flex; flex-direction:column; align-items:center; gap:30px; }
+    .order-flow-card { position:relative; width:320px; min-height:126px; padding:16px 18px 14px; border:1px solid #dce5f0; border-left:5px solid #2f6fed; border-radius:10px; background:#fff; box-shadow:0 7px 18px rgba(28,54,91,.09); }
+    .order-flow-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+    .order-flow-card-title { display:flex; align-items:center; gap:9px; color:#15243b; font-size:16px; font-weight:700; }
+    .order-flow-mode-icon { width:26px; height:20px; display:inline-flex; align-items:center; justify-content:center; color:#2367d1; }
+    .order-flow-mode-icon svg { width:24px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .order-flow-card-status { flex:0 0 auto; color:#2563eb; font-size:14px; font-weight:700; }
+    .order-flow-card-meta { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:5px; color:#8794a7; font-size:13px; }
+    .order-flow-card-routes { display:grid; gap:6px; margin-top:13px; padding-top:11px; border-top:1px solid #edf1f5; }
+    .order-flow-route-line { min-width:0; display:flex; align-items:center; gap:9px; color:#526176; font-size:14px; }
+    .order-flow-route-copy { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .order-flow-route-dot { width:9px; height:9px; flex:0 0 9px; border-radius:50%; background:#2f6fed; }
+    .order-flow-route-dot.destination { background:#f39a3d; }
+    .order-flow-empty { width:300px; padding:24px; border:1px dashed #cbd5e1; border-radius:8px; color:#64748b; background:#fff; text-align:center; font-size:12px; }
+    .order-flow-view-chip { position:absolute; z-index:3; top:15px; left:17px; min-height:28px; display:inline-flex; align-items:center; padding:0 10px; border:1px solid #9ebdf4; border-radius:7px; color:#2563eb; background:#fff; box-shadow:0 2px 5px rgba(37,99,235,.12); font-size:12px; font-weight:600; }
+    .order-flow-toolbar { position:absolute; z-index:3; top:15px; right:54px; display:flex; align-items:center; gap:2px; padding:3px; border:1px solid #dfe6ef; border-radius:8px; background:#fff; box-shadow:0 2px 5px rgba(15,23,42,.05); }
+    .order-flow-toolbtn { min-width:28px; height:25px; padding:0 7px; border:0; border-radius:5px; color:#64748b; background:transparent; font-size:11px; cursor:pointer; }
+    .order-flow-toolbtn:hover { color:#2563eb; background:#f1f6ff; }
+    .order-flow-toolbtn.is-zoom { min-width:24px; padding:0 4px; font-size:15px; }
+    .order-flow-zoom { min-width:42px; color:#64748b; text-align:center; font-size:11px; }
+    .order-flow-tool-separator { width:1px; height:16px; margin:0 4px; background:#e5eaf1; }
+    .order-flow-close { position:absolute; z-index:4; top:15px; right:14px; width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #dfe6ef; border-radius:7px; color:#64748b; background:#fff; font-size:17px; line-height:1; cursor:pointer; }
+    .order-flow-close:hover { color:#c62828; border-color:#f0c9c4; background:#fff5f4; }
+    .order-flow-legend { position:absolute; z-index:3; left:16px; bottom:14px; display:flex; align-items:center; gap:17px; min-height:34px; padding:0 13px; border:1px solid #e1e7f0; border-radius:8px; color:#7b8798; background:rgba(255,255,255,.94); font-size:11px; box-shadow:0 3px 10px rgba(15,23,42,.06); }
+    .order-flow-legend-item { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+    .order-flow-legend-dot { width:8px; height:8px; border-radius:50%; background:#2f6fed; }
+    .order-flow-legend-dot.destination { background:#f39a3d; }
+    .order-flow-legend-line { width:12px; height:2px; border-radius:2px; background:#2f6fed; }
+    .order-flow-legend-line.pending { background:#8a96a8; }
+    .order-flow-legend-line.confirmed { background:#5bbf93; }
+    @media(max-width:760px) { .order-flow-drawer { width:100vw; } .order-flow-toolbar { right:50px; } .order-flow-legend { right:12px; left:12px; justify-content:center; } }
+    @media (max-width:1120px) { .order-route-grid, .order-route-grid.five-column { grid-template-columns:repeat(2,minmax(0,1fr)); } .order-route-field.span-3, .order-route-field.span-4, .order-route-field.span-6 { grid-column:span 2; } .order-route-legs { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    .note-card { display: flex; align-items: flex-start; gap: 10px; margin-top: 11px; padding: 11px 13px; border: 1px solid #dbe8fb; border-radius: 4px; color: #536174; background: #f7fbff; font-size: 11px; line-height: 1.65; }
+    .note-card svg { width: 15px; height: 15px; flex: 0 0 15px; margin-top: 1px; color: #4c86e8; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .note-card b { color: #2e5fa9; }
+    .prototype-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; height: 32px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid #cfe0fb; border-radius: 17px; color: #356bbd; background: #fff; box-shadow: 0 6px 18px rgba(21,55,114,.12); font-size: 11px; cursor: pointer; }
+    .prototype-toggle:hover { background: #f8fbff; }
+    .prototype-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .prototype-note { position: fixed; right: 20px; bottom: 60px; z-index: 49; width: 330px; padding: 15px 16px; border: 1px solid #dfe5ee; border-radius: 7px; background: #fff; box-shadow: 0 14px 40px rgba(20,38,75,.16); opacity: 0; visibility: hidden; transform: translateY(8px); transition: .18s ease; }
+    .prototype-note.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .prototype-note h3 { margin: 0 0 7px; color: #263247; font-size: 12px; }
+    .prototype-note p { margin: 0 0 8px; color: #687285; font-size: 11px; line-height: 1.7; }
+    .prototype-note ul { margin: 0; padding-left: 15px; color: #687285; font-size: 11px; line-height: 1.75; }
+    .prototype-note b { color: #356bbd; }
+    .toast { position: fixed; left: 50%; top: 72px; z-index: 80; padding: 8px 13px; border: 1px solid #d9e4f5; border-radius: 4px; color: #3c526e; background: #fff; box-shadow: 0 8px 24px rgba(22,45,85,.14); font-size: 11px; opacity: 0; transform: translate(-50%,-8px); transition: .18s ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
+    @media (max-width: 1120px) { body { min-width: 980px; } .page-head { padding-top:8px; padding-bottom:8px; } .form-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .span-2,.span-4,.span-6 { grid-column: span 3; } }
+    /* Embedded mode when opened inside index.html */
+    html.detail-embedded body { min-width:0; }
+    html.detail-embedded .app-shell { grid-template-columns:minmax(0,1fr); }
+    html.detail-embedded .sidebar,
+    html.detail-embedded .topbar { display:none; }
+    html.detail-embedded .workspace { height:100vh; width:100%; }
+    html.detail-embedded .detail-scroll { height:100vh; padding:12px 12px 0 8px; }
+
+    /* ===== 详情态：状态动作、利润概览与合同信息 ===== */
+    .page-head { flex-wrap:wrap; row-gap:8px; }
+    .head-primary-actions { display:flex; align-items:center; gap:8px; }
+    .edit-actions, .detail-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .detail-actions { display:flex; }
+    .document-actions { justify-content:flex-end; }
+    .document-actions .detail-btn { height:30px; padding:0 10px; font-size:11px; }
+    .detail-btn[hidden] { display:none !important; }
+    .detail-btn.danger { color:#c62828; border-color:#efc7c2; background:#fff8f7; }
+    .detail-btn.danger:hover { color:#c62828; border-color:#e7a7a0; background:#fff1ef; }
+    .status-field-value[data-status="创建"] { color:#8c6a14; border-color:#ead8a8; background:#fff9eb; }
+    .status-field-value[data-status="驳回"], .status-field-value[data-status="已取消"] { color:#c62828; border-color:#efc7c2; background:#fff1ef; }
+    .status-field-value[data-status="待审核"] { color:#8a5a00; border-color:#efd8a4; background:#fff8e8; }
+    .status-field-value[data-status="待履约"] { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
+    .status-field-value[data-status="履约中"] { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
+    .status-field-value[data-status="已完结"] { color:#475569; border-color:#cbd5e1; background:#f1f5f9; }
+    .order-status-chip { min-height:26px; display:inline-flex; align-items:center; padding:0 10px; border:1px solid #d5dee9; border-radius:13px; color:#64748b; background:#fff; font-size:11px; font-weight:600; line-height:1; white-space:nowrap; }
+    .order-status-chip:empty::before { content:'—'; color:#9aa6b6; font-weight:500; }
+    .order-status-chip[data-status="创建"] { color:#8c6a14; border-color:#ead8a8; background:#fff9eb; }
+    .order-status-chip[data-status="驳回"], .order-status-chip[data-status="已取消"], .order-status-chip[data-status="拒签"] { color:#c62828; border-color:#efc7c2; background:#fff1ef; }
+    .order-status-chip[data-status="待审核"], .order-status-chip[data-status="待确认"], .order-status-chip[data-status="待安排"] { color:#8a5a00; border-color:#efd8a4; background:#fff8e8; }
+    .order-status-chip[data-status="待履约"], .order-status-chip[data-status="待签约"], .order-status-chip[data-status="部分安排"] { color:#2563eb; border-color:#bed5ff; background:#edf5ff; }
+    .order-status-chip[data-status="履约中"], .order-status-chip[data-status="已确认"], .order-status-chip[data-status="已安排"], .order-status-chip[data-status="已生效"] { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
+    .order-status-chip[data-status="已完结"] { color:#475569; border-color:#cbd5e1; background:#f1f5f9; }
+    #orderStatusField { min-height:24px; border-radius:12px; display:inline-flex; align-items:center; }
+    .customer-workbench .detail-view-switch-row { background:#eef4fb !important; border-color:#d7e3f2 !important; box-shadow:0 4px 12px rgba(15,23,42,.06) !important; }
+    #orderViewSwitchRow .detail-view-tabs { padding:2px !important; border:1px solid #cfdff3 !important; border-radius:8px !important; background:#fff !important; gap:2px !important; }
+    #orderViewSwitchRow .detail-view-tabs .detail-view-tab { height:30px; padding:0 16px; border-radius:6px; color:#526176 !important; font-weight:600 !important; }
+    #orderViewSwitchRow .detail-view-tabs .detail-view-tab:hover { color:#2563eb !important; background:#f5f9ff !important; }
+    #orderViewSwitchRow .detail-view-tabs .detail-view-tab.active { color:#fff !important; background:#2563eb !important; box-shadow:0 2px 5px rgba(37,99,235,.22) !important; }
+    .order-module-nav { position:static; min-width:0; flex:1; width:100%; margin:0; padding:0; display:flex; align-items:center; gap:12px; overflow:hidden; border:0; background:transparent; box-shadow:none; }
+    .detail-subnav-divider { width:1px; height:20px; flex:0 0 1px; background:#d7dfe9; }
+    html.feedback-active #orderDetailForm #orderViewSwitchRow { display:flex !important; }
+    html.feedback-active #orderViewSwitchRow .order-module-links, html.feedback-active #orderViewSwitchRow .detail-subnav-divider, html.cost-active #orderViewSwitchRow .order-module-links, html.cost-active #orderViewSwitchRow .detail-subnav-divider { display:none !important; }
+    .order-module-links { min-width:0; flex:1; display:flex; align-items:center; gap:3px; overflow-x:auto; scrollbar-width:none; }
+    .order-module-links::-webkit-scrollbar { display:none; }
+    .order-quick-statuses { flex:0 0 auto; margin-left:auto; display:flex; align-items:center; justify-content:flex-end; gap:11px; }
+    .order-quick-status-item { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+    .order-quick-status-label { color:#8793a3; font-size:10px; }
+    .order-module-nav .order-status-chip { min-height: 0 !important; height: auto !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; font-size: 11px !important; font-weight: 600 !important; }
+    @media (max-width:1180px) { .order-quick-statuses { gap:8px; } }
+    .order-module-nav button { height:28px; flex:0 0 auto; padding:0 11px; border:1px solid transparent; border-radius:5px; color:#64748b; background:transparent; font-size:11px; cursor:pointer; }
+    .order-module-nav button:hover { color:#2563eb; background:#f4f8ff; }
+    .order-module-nav button.active { color:#2563eb; border-color:#d7e7ff; background:#edf5ff; font-weight:600; }
+    .collapsible-section.section-collapsed > .detail-section-body { display:none; }
+    .detail-section-title.section-toggle-title { padding:0; border:0; background:transparent; font:inherit; cursor:pointer; text-align:left; }
+    .detail-section-title.section-toggle-title svg { transition:transform .16s ease; }
+    .detail-section-title.section-toggle-title[aria-expanded="false"] svg { transform:rotate(-90deg); }
+    [id="organizationSection"], [id="basicInfoSection"], #orderRoutesSection, #costProfitSection, #profitDashboard, #contractSection, #systemInfoSection { scroll-margin-top:52px; }
+    .order-cost-profit-section { margin-top:14px; }
+    .detail-more-menu { position:fixed; z-index:170; width:176px; max-height:320px; overflow:auto; padding:5px; border:1px solid #dbe3ee; border-radius:7px; background:#fff; box-shadow:0 14px 36px rgba(15,23,42,.18); }
+    .detail-more-menu[hidden] { display:none; }
+    .detail-more-menu .detail-btn { width:100%; height:31px; justify-content:flex-start; padding:0 10px; border:0; background:transparent; font-size:11px; text-align:left; }
+    .detail-more-menu .detail-btn:hover { color:#2563eb; background:#f4f8ff; }
+    .detail-more-menu .detail-btn.danger { color:#c62828; }
+    .detail-more-empty { padding:10px; color:#94a3b8; text-align:center; font-size:11px; }
+    @media(max-width:1120px) { .actual-finance-summary { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    .order-profit-panel { margin-top:14px; overflow:hidden; border:1px solid #dfe7f1; border-radius:7px; background:#fff; }
+    .profit-strip { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); overflow:hidden; border:1px solid #e5eaf1; border-radius:4px; background:#fff; }
+    .profit-metric { min-width:0; padding:14px 16px; border-right:1px solid #eef2f7; }
+    .profit-metric:last-child { border-right:0; }
+    .profit-metric-label { color:var(--detail-muted); font-size:11px; }
+    .profit-metric-value { margin-top:5px; color:var(--detail-ink); font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+    .profit-metric-meta { margin-top:4px; color:#64748b; font-size:11px; }
+    .profit-metric.positive .profit-metric-value { color:#047857; }
+    .profit-meter { display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px dashed #e5eaf1; color:#5b6778; font-size:11px; }
+    .profit-meter-track { flex:1; height:6px; overflow:hidden; border-radius:99px; background:#e9eef5; }
+    .profit-meter-track span { display:block; width:24.1%; height:100%; border-radius:99px; background:#047857; }
+    .contract-meta-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px 16px; }
+    .contract-party-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px 16px; margin-top:16px; }
+    .contract-field { min-width:0; }
+    .contract-party-grid .contract-field.row-start { grid-column-start:1; }
+    .contract-field label { display:flex; align-items:center; gap:4px; min-height:17px; margin-bottom:5px; color:#475569; font-size:11px; font-weight:500; }
+    .contract-field label .required { font-size:11px; }
+    .contract-value { width:100%; height:32px; padding:0 9px; border:1px solid #dfe5ed; border-radius:4px; color:#334155; background:#fff; font-size:12px; font-variant-numeric:tabular-nums; }
+    .contract-value.is-summary { border-color:#e8ecf2; background:#f5f7fa; color:#526176; }
+    .contract-value:focus { outline:none; border-color:#8db7ff; box-shadow:0 0 0 2px rgba(37,99,235,.1); }
+    .contract-meta-note { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; color:#64748b; font-size:11px; }
+    .contract-meta-note strong { color:#334155; font-weight:600; }
+    /* ===== 合同信息：按签约维度拆分的分区块表单 ===== */
+    .contract-subblock { margin-top:16px; padding-top:14px; border-top:1px dashed #e7edf4; }
+    .contract-subblock-head { display:flex; align-items:center; gap:6px; margin-bottom:10px; color:#1f2937; font-size:12px; font-weight:700; }
+    .contract-subblock-head::before { content:''; width:3px; height:12px; border-radius:2px; background:#2563eb; }
+    .contract-subblock-head em { color:#94a3b8; font-size:10px; font-style:normal; font-weight:500; }
+    .contract-subblock[hidden], .contract-field[hidden] { display:none !important; }
+    .contract-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px 14px; }
+    .contract-grid + .contract-grid { margin-top:12px; }
+    select.contract-value { appearance:none; -webkit-appearance:none; padding-right:24px; cursor:pointer; background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; }
+    select.contract-value:disabled { cursor:not-allowed; }
+    .contract-value.is-readonly, .contract-value[readonly] { border-color:#e8ecf2; background:#f5f7fa; color:#526176; cursor:default; }
+    .contract-upload { display:flex; align-items:center; gap:8px; height:32px; padding:0 6px 0 9px; border:1px dashed #cfd9e6; border-radius:4px; background:#fbfcfe; }
+    .contract-upload-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#a0aab8; font-size:12px; }
+    .contract-upload-name.has-file { color:#334155; }
+    .contract-upload-btn { flex:0 0 auto; height:22px; padding:0 8px; border:1px solid #d7e3f2; border-radius:4px; background:#fff; color:#2563eb; font-size:11px; cursor:pointer; }
+    .contract-upload-btn:hover { background:#f2f7ff; }
+    .contract-upload-hint { margin-top:4px; color:#a8b2c0; font-size:10px; }
+    @media (max-width:1180px) { .contract-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    html:not(.detail-mode) .detail-only { display:none !important; }
+    html.create-mode .detail-only { display:block !important; }
+    html.create-mode .detail-view-switch-row { display:flex !important; }
+    html.create-mode #orderViewSwitchRow .detail-view-tabs,
+    html.create-mode #orderViewSwitchRow .detail-subnav-divider { display:none !important; }
+    .contract-modal-backdrop { position:fixed; inset:0; z-index:120; display:grid; place-items:center; padding:24px; background:rgba(15,23,42,.42); }
+    .contract-modal-backdrop[hidden] { display:none; }
+    .contract-modal { width:min(820px,calc(100vw - 48px)); max-height:calc(100vh - 48px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #dce3ed; border-radius:6px; background:#fff; box-shadow:0 24px 60px rgba(15,23,42,.24); }
+    .contract-modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:16px 18px; border-bottom:1px solid #eef1f5; background:#fafbfc; }
+    .contract-modal-title { color:var(--detail-ink); font-size:15px; font-weight:700; }
+    .contract-modal-subtitle { margin-top:4px; color:#64748b; font-size:11px; }
+    .contract-modal-close { width:28px; height:28px; display:grid; place-items:center; padding:0; border:1px solid #dfe4ec; border-radius:4px; color:#5b6778; background:#fff; cursor:pointer; }
+    .contract-modal-close:hover { color:#334155; border-color:#bdc7d6; background:#f8fafc; }
+    .contract-modal-body { overflow:auto; padding:18px; }
+    .contract-preview-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px 18px; padding:16px; border:1px solid #e5eaf1; border-radius:4px; background:#fbfcfe; }
+    .contract-preview-field label { display:block; margin-bottom:4px; color:#64748b; font-size:11px; }
+    .contract-preview-field strong { display:block; overflow:hidden; color:#23344d; font-size:12px; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
+    .contract-preview-parties { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:16px; }
+    .contract-preview-party { padding:14px 16px; border:1px solid #e5eaf1; border-radius:4px; }
+    .contract-preview-party h4 { margin:0 0 9px; color:#334155; font-size:12px; }
+    .contract-preview-party p { margin:4px 0; color:#5b6778; font-size:11px; line-height:1.55; }
+    .contract-preview-party p b { color:#334155; font-weight:600; }
+    .contract-modal-foot { display:flex; justify-content:flex-end; padding:12px 18px; border-top:1px solid #eef1f5; background:#fafbfc; }
+    .contract-modal-open { overflow:hidden; }
+    @media(max-width:1320px) {
+      .contract-meta-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      .contract-party-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media(max-width:880px) {
+      .profit-strip { grid-template-columns:1fr; }
+      .profit-metric { border-right:0; border-bottom:1px solid #eef2f7; }
+      .profit-metric:last-child { border-bottom:0; }
+      .contract-meta-grid, .contract-party-grid, .contract-preview-grid, .contract-preview-parties { grid-template-columns:1fr; }
+    }
+      /* ===== 线路商品行复制 / 关联商品弹窗（分组列表） ===== */
+    .order-route-row-action { height:24px; padding:0 8px; margin-right:6px; border:1px solid #cfe0f6; border-radius:4px; background:#f4f9ff; color:#1d4ed8; font-size:10px; cursor:pointer; }
+    .order-route-row-action:hover { border-color:#93c0f8; background:#e8f1ff; }
+    .order-link-picker { display:grid; gap:10px; }
+    .order-link-summary { padding:10px 12px; border:1px solid #dbeafe; border-radius:6px; background:#f4f9ff; color:#1e3a8a; font-size:12px; font-weight:600; }
+    .order-link-table-wrap { max-height:56vh; overflow:auto; border:1px solid #e3eaf3; border-radius:6px; }
+    .order-link-table { width:100%; border-collapse:collapse; background:#fff; font-size:12px; white-space:nowrap; }
+    .order-link-table th { position:sticky; top:0; z-index:2; padding:8px 10px; border-bottom:1px solid #e5ebf3; background:#f7f9fc; color:#526176; font-size:11px; font-weight:700; text-align:left; }
+    .order-link-table td { padding:8px 10px; border-bottom:1px solid #eef2f7; color:#334155; }
+    .order-link-table tr:last-child td { border-bottom:0; }
+    .order-link-group-row td { padding:8px 10px; border-top:1px solid #e5ebf3; background:#fbfdff; }
+    .order-link-group-toggle { display:flex; align-items:center; gap:8px; width:100%; border:0; background:transparent; color:#0f172a; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
+    .order-link-caret { color:#64748b; }
+    .order-link-group-count { margin-left:auto; color:#94a3b8; font-size:11px; font-weight:400; }
+    .order-link-group.collapsed .order-link-item-row { display:none; }
+    .order-link-item-row.selected td { background:#e8f1ff; }
+    .order-link-item-row.is-linked td { color:#94a3b8; }
+    .order-link-check { width:36px; text-align:center; }
+    .order-link-tag { display:inline-flex; height:18px; align-items:center; padding:0 6px; border-radius:9px; background:#f1f5f9; color:#64748b; font-size:10px; }
+    /* ===== 线路卡片只读态：白卡 + 一行四字段 ===== */
+    [data-route-readonly="true"] .order-route-card { border:1px solid #eef1f5; border-radius:12px; background:#fff; box-shadow:0 2px 8px rgba(15,23,42,.04); }
+    [data-route-readonly="true"] .order-route-card-head { padding:14px 18px; background:#fff; border-bottom:1px solid #f2f4f8; }
+    [data-route-readonly="true"] .order-route-card-body { padding:8px 18px 16px; }
+    [data-route-readonly="true"] .order-route-block { margin:0; padding:0; border:0; background:transparent; }
+    [data-route-readonly="true"] .order-route-block + .order-route-block { margin-top:14px; padding-top:12px; border-top:1px solid #f4f6f9; }
+    [data-route-readonly="true"] .order-route-block-head { padding:0 0 4px; border:0; background:transparent; }
+    [data-route-readonly="true"] .order-route-block-title { display:flex; align-items:center; gap:8px; color:#4b5a6e; font-size:12px; font-weight:700; letter-spacing:.2px; }
+    [data-route-readonly="true"] .order-route-block-title::before { content:""; width:3px; height:12px; border-radius:2px; background:#c9d7ee; }
+    [data-route-readonly="true"] .order-route-block-title span { color:#b6c2d1; font-weight:400; }
+    [data-route-readonly="true"] .order-route-transport-requirements > .order-route-block-head { display:none; }
+    [data-route-readonly="true"] .ro-goods-list + .order-route-block { margin-top:12px; padding-top:12px; border-top:1px solid #f4f6f9; }
+
+    /* 字段：一行四个，标签在左、值在右；只读态按业务场景排列 */
+    [data-route-readonly="true"] .order-route-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-flow:row; gap:0 24px; }
+    [data-route-readonly="true"] .order-route-field,
+    [data-route-readonly="true"] .order-route-field.row-start,
+    [data-route-readonly="true"] .order-route-field.span-2,
+    [data-route-readonly="true"] .order-route-field.span-3,
+    [data-route-readonly="true"] .order-route-field.span-4,
+    [data-route-readonly="true"] .order-route-field.span-6 { grid-column:auto / span 1; display:flex; align-items:baseline; gap:8px; min-width:0; padding:6px 0; }
+    [data-route-readonly="true"] .route-readonly-field > label { flex:0 0 88px; margin:0; color:#98a2b3; font-size:11px; font-weight:400; text-align:left; line-height:1.55; }
+    [data-route-readonly="true"] .route-readonly-field > :not(label):not(.route-readonly-value) { display:none !important; }
+    [data-route-readonly="true"] .route-readonly-value { flex:1 1 auto; min-width:0; color:#1f2937; font-size:13px; font-weight:500; line-height:1.55; overflow-wrap:anywhere; white-space:pre-wrap; }
+    [data-route-readonly="true"] .route-readonly-value[data-empty="true"] { color:#aab4c3; font-weight:400; }
+
+    @media(max-width:1200px) {
+      [data-route-readonly="true"] .order-route-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:0 22px; }
+    }
+    @media(max-width:920px) {
+      [data-route-readonly="true"] .order-route-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 24px; }
+    }
+
+    /* 商品明细：摘要行 + 按需横向展开全部字段 */
+    .ro-goods-list { display:grid; gap:8px; }
+    .ro-goods { display:grid; grid-template-columns:minmax(280px,32%) minmax(0,1fr) auto; align-items:stretch; min-height:64px; overflow:hidden; border:1px solid #eef1f5; border-radius:8px; background:#fff; transition:border-color .16s ease, box-shadow .16s ease; }
+    .ro-goods:hover { border-color:#dce6f2; }
+    .ro-goods.is-expanded { border-color:#cfe0fb; box-shadow:0 4px 14px rgba(37,99,235,.07); }
+    .ro-goods-main { min-width:0; display:flex; align-items:center; padding:10px 16px; border-right:1px solid #eef2f7; background:#fff; }
+    .ro-goods-title { width:100%; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:3px; overflow:hidden; white-space:nowrap; }
+    .ro-goods-name-line { width:100%; min-width:0; display:flex; align-items:baseline; gap:9px; overflow:hidden; }
+    .ro-goods-name, .ro-goods-desc, .ro-goods-contract { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ro-goods-name { flex:0 1 auto; min-width:0; color:#111827; font-size:13px; font-weight:600; line-height:1.35; }
+    .ro-goods-desc { flex:1 1 auto; min-width:0; color:#8b97a8; font-size:11px; font-weight:400; line-height:1.35; }
+    .ro-goods-contract { width:100%; color:#8b97a8; font-size:11px; font-weight:400; line-height:1.35; }
+    .ro-goods-fields { min-width:0; display:grid; grid-template-columns:repeat(4,minmax(76px,1fr)); align-items:stretch; gap:16px; overflow:hidden; padding:0 16px; scrollbar-width:thin; scrollbar-color:#cbd5e1 transparent; }
+    .ro-goods.is-expanded .ro-goods-fields { display:flex; align-items:stretch; gap:18px; overflow-x:auto; overflow-y:hidden; padding-bottom:3px; }
+    .ro-goods-fields:focus-visible { outline:2px solid #bfd5fb; outline-offset:-2px; }
+    .ro-goods.is-expanded .ro-goods-fields::-webkit-scrollbar { height:4px; }
+    .ro-goods.is-expanded .ro-goods-fields::-webkit-scrollbar-thumb { border-radius:2px; background:#cbd5e1; }
+    .ro-goods.is-expanded .ro-goods-fields::-webkit-scrollbar-track { background:transparent; }
+    .ro-goods-field { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:3px; min-width:0; padding:8px 0; white-space:nowrap; }
+    .ro-goods-field-extra { display:none; }
+    .ro-goods.is-expanded .ro-goods-field { flex:0 0 auto; min-width:72px; }
+    .ro-goods.is-expanded .ro-goods-field-extra { display:flex; }
+    .ro-goods-field span { color:#98a2b3; font-size:10px; line-height:1.2; white-space:nowrap; }
+    .ro-goods-field b { color:#1f2937; font-size:12px; font-weight:500; line-height:1.3; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .ro-goods-toggle { align-self:stretch; min-width:118px; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:0 13px; border:0; border-left:1px solid #edf1f5; color:#2563eb; background:#f8fbff; font-family:inherit; font-size:11px; font-weight:600; white-space:nowrap; cursor:pointer; transition:background .16s ease, color .16s ease; }
+    .ro-goods-toggle:hover { color:#1d4ed8; background:#eef5ff; }
+    .ro-goods-toggle:focus-visible { outline:2px solid #9fc0f8; outline-offset:-3px; }
+    .ro-goods-toggle-chevron { width:6px; height:6px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:translateY(-2px) rotate(45deg); transition:transform .18s ease; }
+    .ro-goods.is-expanded .ro-goods-toggle-chevron { transform:translateY(2px) rotate(-135deg); }
+    .ro-goods-empty { padding:20px; border:1px dashed #e2e8f0; border-radius:8px; color:#94a3b8; text-align:center; font-size:12px; }
+    @media(max-width:1180px) {
+      .ro-goods { grid-template-columns:minmax(250px,30%) minmax(0,1fr) auto; }
+      .ro-goods-fields { gap:12px; padding:0 12px; }
+      .ro-goods-toggle { min-width:106px; padding:0 10px; }
+    }
+    @media(max-width:900px) {
+      .ro-goods { grid-template-columns:minmax(0,1fr) auto; }
+      .ro-goods-main { grid-column:1 / -1; border-right:0; border-bottom:1px solid #eef2f7; }
+      .ro-goods-fields { grid-column:1; }
+      .ro-goods-toggle { grid-column:2; }
+    }
+    /* 表格：浅表头、无竖线 */
+    [data-route-readonly="true"] .order-route-items-wrap { border:1px solid #f2f4f8; border-radius:8px; }
+    [data-route-readonly="true"] .order-route-items th,
+    [data-route-readonly="true"] .order-route-containers-table th { height:36px; background:#f8fafc; border-bottom:1px solid #eef1f5; color:#8b97a8; font-size:11px; font-weight:600; }
+    [data-route-readonly="true"] .order-route-items td,
+    [data-route-readonly="true"] .order-route-containers-table td { padding:10px 8px; border-bottom:1px solid #f6f8fb; font-size:12px; }
+    [data-route-readonly="true"] .order-route-items tbody tr:last-child td { border-bottom:0; }
+
+    /* 隐藏写操作入口 */
+    [data-route-readonly="true"] [data-route-action="duplicate"],
+    [data-route-readonly="true"] [data-route-action="remove"],
+    [data-route-readonly="true"] .order-route-block-actions,
+    [data-route-readonly="true"] [data-fee-action],
+    [data-route-readonly="true"] .order-business-fee-actions { display:none !important; }
+    [data-route-readonly="true"] .order-route-items th:last-child,
+    [data-route-readonly="true"] .order-route-items td:last-child,
+    [data-route-readonly="true"] .order-route-containers-table th:last-child,
+    [data-route-readonly="true"] .order-route-containers-table td:last-child { display:none !important; }
+
+    /* 控件去控件化 */
+    [data-route-readonly="true"] input,
+    [data-route-readonly="true"] select,
+    [data-route-readonly="true"] textarea { border:0 !important; background:transparent !important; box-shadow:none !important; padding:2px 0 !important; color:#1f2937 !important; font-size:13px; font-weight:500; cursor:default; }
+    [data-route-readonly="true"] select { appearance:none; -webkit-appearance:none; background-image:none !important; }
+    [data-route-readonly="true"] select[data-empty] { color:#c3ccda !important; }
+    [data-route-readonly="true"] input::placeholder,
+    [data-route-readonly="true"] textarea::placeholder { color:#c3ccda !important; opacity:1; }
+    [data-route-readonly="true"] .order-route-field label .required { display:none; }
+    [data-route-readonly="true"] .order-route-items .control { height:auto !important; min-height:20px; }
+    [data-route-readonly="true"] [data-fee-route-toggle] { border:0 !important; background:transparent !important; padding:0 !important; color:#1f2937 !important; }
+    [data-route-readonly="true"] [data-fee-route-toggle] .order-fee-route-chevron { display:none; }
+
+    /* 数字右对齐、单位弱化 */
+    [data-route-readonly="true"] .order-route-items td:nth-child(3),
+    [data-route-readonly="true"] .order-route-items td:nth-child(4),
+    [data-route-readonly="true"] .order-route-items td:nth-child(6),
+    [data-route-readonly="true"] .order-route-items td:nth-child(8),
+    [data-route-readonly="true"] .order-route-items td:nth-child(11) { text-align:right; }
+    [data-route-readonly="true"] .order-route-items td:nth-child(3) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(4) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(6) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(8) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(11) input { text-align:right !important; font-variant-numeric:tabular-nums; }
+    [data-route-readonly="true"] .order-route-items td:nth-child(5) select,
+    [data-route-readonly="true"] .order-route-items td:nth-child(7) select,
+    [data-route-readonly="true"] .order-route-items td:nth-child(9) select,
+    [data-route-readonly="true"] .order-route-items td:nth-child(10) select { color:#9aa8bb !important; }
+
+</style>
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("no")) document.documentElement.classList.add("detail-mode");
+      else document.documentElement.classList.add("create-mode");
+      if (window.self !== window.top || params.get("embed") === "1") document.documentElement.classList.add("detail-embedded");
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/design-system.css">
+  <link rel="stylesheet" href="../assets/ui-state.css">
+  <link rel="stylesheet" href="../assets/accessibility.css">
+  <link rel="stylesheet" href="../assets/customer-order-feedback.css">
+  <link rel="stylesheet" href="../assets/customer-workbench.css">
+  <link rel="stylesheet" href="../assets/customer-demand.css">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<style>
+  .prd-aligned-prototype [data-route-action="add-route"],
+  .prd-aligned-prototype [data-route-action="duplicate"],
+  .prd-aligned-prototype [data-route-action="remove"],
+  .prd-aligned-prototype [data-route-action="toggle"],
+  .prd-aligned-prototype [data-route-action="link-items"],
+  .prd-aligned-prototype #addCustomsServiceRequirementBtn,
+  .prd-aligned-prototype #addWarehouseServiceRequirementBtn,
+  .prd-aligned-prototype [data-delete-service-requirement] { display:none !important; }
+</style>
+</head>
+<body class="customer-workbench prd-aligned-prototype">
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="p-logo" viewBox="0 0 24 24"><path d="m12 2.7 8 4.2v9.8l-8 4.6-8-4.6V6.9l8-4.2Z"/><path d="m4.4 7 7.6 4 7.6-4M12 11v9.7"/></symbol>
+    <symbol id="p-order" viewBox="0 0 24 24"><path d="M7 4.5h10a2 2 0 0 1 2 2v13H5v-13a2 2 0 0 1 2-2Z"/><path d="M9 4V2.8h6V4M8.5 9h7M8.5 13h7M8.5 17h4"/></symbol>
+    <symbol id="p-demand" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M9.5 12h5M9.5 15.5h5"/></symbol>
+    <symbol id="p-contract" viewBox="0 0 24 24"><path d="M6 3.5h12v17H6z"/><path d="M9 3.5v3h6v-3M9 11h6M9 15h3.5"/></symbol>
+    <symbol id="p-truck" viewBox="0 0 24 24"><path d="M3.5 6.5h10v10h-10zM13.5 10h3l3 3v3.5h-6z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></symbol>
+    <symbol id="p-ship" viewBox="0 0 24 24"><path d="M4 16.5h16l-2.4 3H6.4z"/><path d="M7 16.5V10h10v6.5M9.5 10V6.5h5V10M12 3v3.5M8 19.5v1M16 19.5v1"/></symbol>
+    <symbol id="p-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6M4.5 11.5v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/></symbol>
+    <symbol id="p-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 13.2v-2.4l-2-.7-.6-1.5 1-1.9-1.7-1.7-1.9 1-1.5-.6-.7-2H9.2l-.7 2-1.5.6-1.9-1-1.7 1.7 1 1.9-.6 1.5-2 .7v2.4l2 .7.6 1.5-1 1.9 1.7 1.7 1.9-1 1.5.6.7 2h2.4l.7-2 1.5-.6 1.9 1 1.7-1.7-1-1.9.6-1.5z"/></symbol>
+    <symbol id="p-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="p-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.5 6.3L4 9m2 6a7 7 0 0 0 11.5 2.7L20 15"/></symbol>
+    <symbol id="p-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6H5V6h6"/></symbol>
+    <symbol id="p-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 10.5v5M12 7.5h.01"/></symbol>
+    <symbol id="p-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M9.5 12h5M9.5 15.5h5"/></symbol>
+    <symbol id="p-check" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7"/></symbol>
+    <symbol id="p-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="p-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="p-link" viewBox="0 0 24 24"><path d="m9.2 14.8 5.6-5.6M7.5 16.5l-1.1 1.1a3.3 3.3 0 0 1-4.7-4.7l3-3a3.3 3.3 0 0 1 4.7 0M16.5 7.5l1.1-1.1a3.3 3.3 0 0 1 4.7 4.7l-3 3a3.3 3.3 0 0 1-4.7 0"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="物流控制塔导航">
+      <div class="brand-row">
+        <a class="brand" href="#" aria-label="物流控制塔首页">
+          <span class="brand-mark"><svg><use href="#p-logo"/></svg></span>
+          <span class="brand-copy"><strong>物流控制塔</strong><small>Logistics Workbench</small></span>
+        </a>
+      </div>
+      <nav class="main-nav" aria-label="业务页面">
+        <div class="nav-group-title"><span class="nav-icon"><svg><use href="#p-order"/></svg></span><span>物流订单管理</span></div>
+        <a class="nav-entry active" href="#" title="客户订单"><span class="nav-icon"><svg><use href="#p-order"/></svg></span><span class="nav-text">客户订单</span></a>
+        <a class="nav-entry" href="#" title="物流需求"><span class="nav-icon"><svg><use href="#p-demand"/></svg></span><span class="nav-text">物流需求</span></a>
+        <a class="nav-entry" href="#" title="物流委托"><span class="nav-icon"><svg><use href="#p-contract"/></svg></span><span class="nav-text">物流委托</span></a>
+        <div class="nav-separator"></div>
+        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-truck"/></svg></span><span>运输工作台</span></div>
+        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-db"/></svg></span><span>物流资源池</span></div>
+        <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-settings"/></svg></span><span>OMS配置管理</span></div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="sidebar-action" id="prototypeToggle" type="button" aria-expanded="false">原型说明</button>
+        <div class="sidebar-version">Customer Consignment No. Prototype</div>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb-wrap">
+          <div class="breadcrumb"><span>物流控制塔</span><span class="crumb-separator">/</span><strong>客户订单新增</strong></div>
+          <p>客户订单基础信息、客户单号与运输要求</p>
+        </div>
+        <div class="topbar-actions">
+          <span class="prototype-pill"><span></span>HTML 原型</span>
+          <button class="icon-button" type="button" title="刷新" aria-label="刷新"><svg><use href="#p-refresh"/></svg></button>
+          <button class="icon-button" type="button" title="在新窗口打开" aria-label="在新窗口打开"><svg><use href="#p-external"/></svg></button>
+          <span class="topbar-divider"></span>
+          <div class="user-chip"><span class="avatar">苏</span><span class="user-copy"><strong>苏丽蓉</strong><small>物流运营</small></span></div>
+        </div>
+      </header>
+
+      <main class="detail-scroll" id="orderDetailForm">
+      <h1 class="sr-only">客户订单新增</h1>
+      <h2 class="sr-only">业务表单</h2>
+      <div data-ui-form-alert hidden></div>
+        <div class="page-head">
+          <div class="page-title-group">
+            <div class="page-title">客户订单新增<span class="page-title-order-number" id="orderOverviewNumber" hidden></span><svg><use href="#p-link"/></svg></div>
+
+          </div>
+
+          <div class="page-head-spacer"></div>
+          <div class="head-primary-actions">
+            <button class="detail-btn" id="backToListBtn" type="button">返回</button>
+            <div class="detail-actions document-actions" id="detailActions">
+              <button class="detail-btn" id="saveDraftBtn" type="button">保存</button>
+              <button class="detail-btn outline-primary" id="submitOrderBtn" type="button">提交</button>
+              <button class="detail-btn outline-primary" id="submitFillLogisticsBtn" type="button">提交并填写物流需求</button>
+              <button class="detail-btn outline-primary" id="submitAutoTaskBtn" type="button">提交并自动生成任务</button>
+              <button class="detail-btn" id="attachmentBtn" type="button">附件</button>
+              <button class="detail-btn outline-primary" id="generateLogisticsDemandBtn" type="button" hidden>生成物流需求</button>
+              <button class="detail-btn outline-primary" id="submitLogisticsPlanBtn" type="button" hidden>提交物流安排</button>
+              <button class="detail-btn" id="versionMaintenanceBtn" type="button" hidden>版本维护</button>
+              <button class="detail-btn" id="historyVersionBtn" type="button">历史版本</button>
+              <button class="detail-btn" id="approvalProgressBtn" type="button">审批进度</button>
+              <button class="detail-btn primary" id="completeOrderBtn" type="button" hidden>完结</button>
+              <button class="detail-btn danger" id="deleteOrderBtn" type="button" hidden>删除订单</button>
+              <button class="detail-btn danger" id="cancelOrderBtn" type="button" hidden>取消订单</button>
+              <button class="detail-btn danger" id="deleteVersionBtn" type="button" hidden>删除版本维护</button>
+              <button class="detail-btn" id="cancelCompleteBtn" type="button" hidden>取消完结</button>
+              <button class="detail-btn primary" id="submitFlowBtn" type="button" hidden>提交并发起物流委托</button>
+              <button class="detail-btn" id="viewLogisticsPlanBtn" type="button" hidden>查看物流安排</button>
+            </div>
+            <button class="detail-btn" id="detailMoreToggle" type="button" aria-haspopup="menu" aria-expanded="false" hidden>更多</button>
+          </div>
+
+        </div>
+        <div class="detail-view-switch-row" id="orderViewSwitchRow">
+          <div class="detail-view-tabs" role="tablist" aria-label="订单详情视图">
+            <button class="detail-view-tab active" id="orderInfoTab" type="button" role="tab" aria-selected="true" aria-controls="orderInfoView" data-detail-tab="order">订单信息</button>
+            <button class="detail-view-tab" id="feedbackTab" type="button" role="tab" aria-selected="false" aria-controls="feedbackView" data-detail-tab="feedback" tabindex="-1">履约反馈</button>
+          </div>
+          <div class="detail-subnav-divider" aria-hidden="true"></div>
+
+          <nav class="order-module-nav" id="orderModuleNav" aria-label="订单模块与状态导航">
+            <div class="order-module-links">
+              <button type="button" data-module-target="organizationSection">组织信息</button>
+              <button type="button" data-module-target="basicInfoSection">基础信息</button>
+              <button type="button" data-module-target="orderRoutesSection">服务要求</button>
+              <button type="button" data-module-target="costProfitSection">预估费用</button>
+              <button type="button" data-module-target="systemInfoSection">系统信息</button>
+            </div>
+            <div class="order-quick-statuses" aria-label="订单状态摘要">
+              <span class="order-quick-status-item" title="订单状态"><span class="order-quick-status-label">订单</span><span class="order-status-chip status-field-value" id="orderStatusField" data-order-status-field data-order-status-pill data-status="创建">创建</span></span>
+              
+              <span class="order-quick-status-item" title="安排状态"><span class="order-quick-status-label">安排</span><span class="order-status-chip" id="orderArrangementStatusField" data-order-arrangement-status-field></span></span>
+            </div>
+          </nav>
+        </div>
+        <div class="detail-view" id="orderInfoView" role="tabpanel" aria-labelledby="orderInfoTab">
+
+          <section class="detail-section" id="organizationSection" data-collapsible-section aria-labelledby="org-title">
+            <div class="detail-section-head"><div class="detail-section-title" id="org-title"><svg><use href="#p-down"/></svg>组织信息</div></div>
+          <div class="detail-section-body">
+            <div class="form-grid">
+              <div class="field"><div class="field-label">业务员<span class="required">*</span></div><input class="control" autocomplete="off" value="苏丽蓉" aria-label="业务员"></div>
+              <div class="field"><div class="field-label">部门<span class="required">*</span></div><input class="control" autocomplete="off" value="物流运营部" aria-label="部门"></div>
+              <div class="field"><div class="field-label">核算组<span class="required">*</span></div><input class="control" autocomplete="off" value="华东一组" aria-label="核算组"></div>
+              <div class="field"><div class="field-label">公司<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发物流有限公司" aria-label="公司"></div>
+              <div class="field"><div class="field-label">经营单位<span class="required">*</span></div><input class="control" autocomplete="off" value="4PL 控制塔" aria-label="经营单位"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section" id="basicInfoSection" data-collapsible-section aria-labelledby="basic-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="basic-title"><svg><use href="#p-down"/></svg>基础信息</div></div>
+          <div class="detail-section-body">
+            <div class="form-grid">
+              <div class="field"><div class="field-label">客户订单编号</div><input class="control" autocomplete="off" value="CO-20261026-001" readonly aria-label="客户订单编号"></div>
+              <div class="field"><div class="field-label">客户<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发新能源物流有限公司" aria-label="客户"></div>
+              <div class="field"><div class="field-label">客户结算抬头<span class="required">*</span></div><input class="control" autocomplete="off" value="厦门建发新能源物流有限公司" aria-label="客户结算抬头"></div>
+              <div class="field"><div class="field-label">客户类型<span class="required">*</span></div><select class="control" id="customerTypeSelect" aria-label="客户类型"><option>外部客户</option><option selected>内部客户</option><option>同行客户</option></select></div>
+              <div class="field" id="innerCustomerOrgField">
+                <div class="field-label">内部客户所属经营单位<span class="required">*</span></div>
+                <select class="control" id="innerCustomerOrgSelect" aria-label="内部客户所属经营单位">
+                  <option value="">请选择</option>
+                  <option selected>厦门物资</option>
+                  <option>供应链物流科技</option>
+                  <option>物流公司</option>
+                  <option>林产品事业部</option>
+                  <option>煤炭事业三部</option>
+                  <option>粮源公司</option>
+                  <option>铝业公司</option>
+                  <option>浆纸集团</option>
+                </select>
+              </div>
+              <div class="field" id="innerCustomerDeptField">
+                <div class="field-label">内部客户所属部门</div>
+                <select class="control" id="innerCustomerDeptSelect" aria-label="内部客户所属部门">
+                  <option value="">请选择</option>
+                  <option>海运部</option>
+                  <option>物流运营部</option>
+                  <option>供应链物流综合</option>
+                  <option>数字化中心</option>
+                  <option>财务部</option>
+                </select>
+              </div>
+              <div class="field"><div class="field-label">客户联系人</div><input class="control" autocomplete="off" value="张先生" aria-label="客户联系人"></div>
+
+              <div class="field"><div class="field-label">客户联系人电话</div><input class="control" autocomplete="off" value="138 0000 0000" aria-label="客户联系人电话"></div>
+              <div class="field" id="orderContactEmailField">
+                <div class="field-label">客户联系人邮箱</div>
+                <div class="demand-email-recipient-box" id="orderEmailRecipientBox" data-seed-name="张先生" data-seed-email="contact@example.com">
+                  <div class="demand-email-recipient-chips" id="orderEmailRecipientList"></div>
+                  <button class="demand-email-recipient-trigger" id="addOrderEmailRecipientBtn" type="button" aria-expanded="false" aria-controls="orderEmailRecipientPopover">＋ 添加</button>
+                  <div class="demand-email-recipient-popover" id="orderEmailRecipientPopover" hidden>
+                    <div class="demand-email-recipient-popover-fields">
+                      <input id="orderEmailRecipientDraftName" type="text" placeholder="姓名" aria-label="邮件接收人姓名">
+                      <input id="orderEmailRecipientDraftEmail" type="email" placeholder="邮箱" aria-label="邮件接收人邮箱">
+                    </div>
+                    <div class="demand-email-recipient-popover-actions">
+                      <button class="btn" id="cancelOrderEmailRecipientBtn" type="button">取消</button>
+                      <button class="btn primary" id="confirmOrderEmailRecipientBtn" type="button">添加</button>
+                    </div>
+                  </div>
+                </div>
+                <input id="orderContactEmailData" type="hidden" aria-label="客户联系人邮箱数据">
+              </div>
+              <div class="field"><div class="field-label">业务类型<span class="required">*</span></div><select class="control" aria-label="业务类型"><option>出口</option><option>进口</option><option>内贸</option><option>转口</option></select></div>
+              <div class="field"><div class="field-label">业务日期<span class="required">*</span></div><input class="control" autocomplete="off" type="date" value="2026-10-26" aria-label="业务日期"></div>
+              <div class="field"><div class="field-label">关联物流项目</div><input class="control" autocomplete="off" value="PRJ-2026-018" aria-label="关联物流项目"></div>
+              <div class="field"><div class="field-label">贸易条款</div><select class="control" aria-label="贸易条款"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select></div>
+
+
+              <div class="field field--new" id="customerOrderNoField">
+                <div class="field-label">
+                  客户单号
+                  <span class="help-dot" tabindex="0" aria-label="客户单号说明">
+                    <span class="field-help">i</span>
+                    <span class="help-tip">客户系统中生成并下发给 4PL 的客户单号。</span>
+                  </span>
+                </div>
+                <input class="control" id="customerOrderNoInput" type="text" autocomplete="off" value="2102957467694845952" placeholder="请输入客户单号" aria-label="客户单号">
+              </div>
+              <div class="field span-2" id="orderServiceScopeField">
+                <div class="field-label">服务范围<span class="required">*</span></div>
+                <div class="demand-check-group" data-order-required-group="serviceScope">
+                  <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="运输" checked>运输</label>
+                  <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="仓储">仓储</label>
+                  <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="报关">报关</label>
+                </div>
+              </div>
+
+
+              <div class="field" id="orderSpecifiedTransportModeField">
+                <div class="field-label">是否指定运输方式<span class="required">*</span></div>
+                <select class="control" id="orderSpecifiedTransportMode" aria-label="是否指定运输方式"><option>是</option><option>否</option></select>
+              </div>
+
+              <div class="field span-6"><div class="field-label">订单备注</div><textarea class="control textarea" placeholder="请输入" aria-label="订单备注"></textarea></div>
+            </div>
+          </div>
+        </section>
+        <section class="detail-section" id="orderRoutesSection" data-collapsible-section aria-labelledby="order-routes-title">
+          <div class="detail-section-head order-routes-section-head">
+            <div class="detail-section-title" id="order-routes-title"><svg><use href="#p-truck"/></svg>运输服务要求</div>
+            <div class="order-route-anchor-tabs" id="orderRouteAnchorTabs" role="tablist" aria-label="运输服务要求快速定位"></div>
+            <div class="order-route-head-actions">
+              <button class="detail-btn outline-primary" id="orderRouteFeedbackBtn" type="button" data-route-action="feedback" hidden>履约反馈</button>
+              <button class="detail-btn outline-primary" type="button" data-route-action="add-route" data-route-type="汽运">+ 添加服务要求</button>
+            </div>
+          </div>
+          <div class="detail-section-body">
+            <div class="order-route-toolbar"><span id="orderRouteModeCopy">一单多线路：每条线路独立配置运输方式、起止节点、时间要求及关联商品。</span><span id="orderRouteCountLabel">0 条线路</span></div>
+            <div id="orderRouteCards"></div>
+            <input id="orderRoutesData" type="hidden" aria-label="运输线路数据">
+          </div>
+        </section>
+
+        <section class="detail-section" id="customsServiceRequirementSection" data-collapsible-section aria-labelledby="customs-service-requirement-title" hidden>
+          <div class="detail-section-head">
+            <div class="detail-section-title" id="customs-service-requirement-title"><svg><use href="#p-doc"/></svg>报关服务要求</div>
+            <div class="order-route-head-actions"><button class="detail-btn outline-primary" id="addCustomsServiceRequirementBtn" type="button">+ 添加服务要求</button></div>
+          </div>
+          <div class="detail-section-body">
+            <div class="service-requirement-module-list" id="customsServiceRequirementCards"></div>
+            <div class="service-requirement-module-empty" id="customsServiceRequirementEmpty" hidden>暂无报关服务要求，请添加服务要求。</div>
+          </div>
+        </section>
+
+        <section class="detail-section" id="warehouseServiceRequirementSection" data-collapsible-section aria-labelledby="warehouse-service-requirement-title" hidden>
+          <div class="detail-section-head">
+            <div class="detail-section-title" id="warehouse-service-requirement-title"><svg><use href="#p-doc"/></svg>仓储服务要求</div>
+            <div class="order-route-head-actions"><button class="detail-btn outline-primary" id="addWarehouseServiceRequirementBtn" type="button">+ 添加服务要求</button></div>
+          </div>
+          <div class="detail-section-body">
+            <div class="service-requirement-module-list" id="warehouseServiceRequirementCards"></div>
+            <div class="service-requirement-module-empty" id="warehouseServiceRequirementEmpty" hidden>暂无仓储服务要求，请添加服务要求。</div>
+          </div>
+        </section>
+
+        <template id="universalServiceGoodsTemplate">
+          <div class="order-route-block order-route-goods-block" data-service-goods-block>
+            <div class="order-route-block-head">
+              <div class="order-route-block-title">商品清单 <span data-service-goods-count>(1 项)</span></div>
+              <div class="order-route-block-actions">
+                <button class="detail-btn outline-primary" type="button" data-service-goods-action="add">+ 添加商品</button>
+              </div>
+            </div>
+            <div class="order-route-items-wrap">
+              <table class="order-route-items" aria-label="服务要求商品清单">
+                <thead><tr><th>商品分类 *</th><th>商品描述</th><th>标准数量 *</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>关联线路</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr data-service-item-row>
+                    <td><select class="control" data-service-item-field="name" aria-label="商品分类"><option selected>进口纸浆</option><option>钢材</option><option>玉米</option><option>重卡卡车</option><option>新能源整车</option></select></td>
+                    <td><input class="control" data-service-item-field="description" value="进口纸浆" placeholder="请输入商品描述" aria-label="商品描述"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="standardQty" value="1.20" aria-label="标准数量"></td>
+                    <td><input class="control" type="number" min="0" step="1" data-service-item-field="pieceCount" value="12" aria-label="件数"></td>
+                    <td><select class="control" data-service-item-field="pieceCountUnit" aria-label="件数单位"><option>箱</option><option selected>托</option><option>桶</option><option>台</option><option>件</option></select></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="grossWeight" value="1200" aria-label="毛重"></td>
+                    <td><select class="control" data-service-item-field="grossWeightUnit" aria-label="毛重单位"><option>kg</option><option selected>吨</option></select></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="volume" value="560" aria-label="体积"></td>
+                    <td><select class="control" data-service-item-field="volumeUnit" aria-label="体积单位"><option selected>m³</option><option>CBM</option></select></td>
+                    <td><select class="control" data-service-item-field="standardUnit" aria-label="标准单位"><option selected>吨</option><option>千克</option><option>立方米</option><option>件</option></select></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="pieceWeight" value="100" aria-label="单件重量"></td>
+                    <td><select class="control" data-service-item-field="pieceWeightUnit" aria-label="单件重量单位"><option>kg</option><option selected>吨</option></select></td>
+                    <td><input class="control" data-service-item-field="specDimensions" value="1200 × 1000 × 1100 mm" placeholder="长 × 宽 × 高" aria-label="规格尺寸"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="overRate" value="3" placeholder="%" aria-label="溢装率"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="underRate" value="1" placeholder="%" aria-label="短装率"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="goodsValueUnitPrice" value="3200" aria-label="货值单价"></td>
+                    <td><input class="control" type="number" data-service-item-field="goodsValueAmount" value="3840000" readonly aria-label="货值金额"></td>
+                    <td><select class="control" data-service-item-field="goodsValueCurrency" aria-label="货值币种"><option selected>CNY</option><option>USD</option><option>EUR</option></select></td>
+                    <td><span class="order-route-source-ref">—</span></td>
+                    <td><input class="control" data-service-item-field="englishName" value="Imported Pulp" placeholder="请输入商品英文名" aria-label="商品英文名"></td>
+                    <td><input class="control" data-service-item-field="tradeContractNo" value="HT-2026-010" placeholder="请输入合同号" aria-label="贸易合同号"></td>
+                    <td><select class="control" data-service-item-field="tradeContractType" aria-label="贸易合同类型"><option selected>销售合同</option><option>采购合同</option><option>框架合同</option></select></td>
+                    <td><button class="order-route-row-action" type="button" data-service-goods-action="duplicate">复制</button><button class="order-route-icon-btn danger" type="button" data-service-goods-action="remove" aria-label="删除商品">×</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </template>
+
+        <template id="customsServiceRequirementTemplate">
+          <article class="service-requirement-card" data-service-requirement-card="customs">
+            <div class="service-requirement-card-head"><div class="service-requirement-card-title" data-service-requirement-title>服务要求1 报关</div><div class="service-requirement-card-actions"><button class="service-requirement-delete" type="button" data-delete-service-requirement="customs" aria-label="删除报关服务要求">×</button></div></div>
+            <div class="service-requirement-card-body">
+              <div data-service-goods-host></div>
+              <div class="service-requirement-note-grid"><div class="service-requirement-note-field"><label>报关备注</label><textarea class="control" placeholder="请输入报关备注" aria-label="报关备注"></textarea></div></div>
+            </div>
+          </article>
+        </template>
+
+        <template id="warehouseServiceRequirementTemplate">
+          <article class="service-requirement-card" data-service-requirement-card="warehouse">
+            <div class="service-requirement-card-head"><div class="service-requirement-card-title" data-service-requirement-title>服务要求1 仓储</div><div class="service-requirement-card-actions"><button class="service-requirement-delete" type="button" data-delete-service-requirement="warehouse" aria-label="删除仓储服务要求">×</button></div></div>
+            <div class="service-requirement-card-body">
+              <div data-service-goods-host></div>
+              <div class="service-requirement-note-grid"><div class="service-requirement-note-field"><label>仓储备注</label><textarea class="control" placeholder="请输入仓储备注" aria-label="仓储备注"></textarea></div></div>
+            </div>
+          </article>
+        </template>
+
+        <section class="detail-section" id="costProfitSection" data-collapsible-section aria-labelledby="cost-profit-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="cost-profit-title"><svg><use href="#p-down"/></svg>预估费用</div></div>
+          <div class="detail-section-body">
+  <div class="order-business-estimates" id="orderBusinessEstimates"></div>
+              <div class="order-profit-panel detail-only" id="profitDashboard" data-collapsible-section aria-labelledby="profit-title">
+                <div class="detail-section-head"><div class="detail-section-title" id="profit-title"><svg><use href="#p-down"/></svg>利润仪表盘</div></div>
+                <div class="detail-section-body">
+                  <div class="profit-strip">
+                    <div class="profit-metric">
+                      <div class="profit-metric-label">预估收入</div>
+                      <div class="profit-metric-value" data-profit-field="estimatedRevenue">¥4,150,000</div>
+                      <div class="profit-metric-meta">按当前报价汇总</div>
+                    </div>
+                    <div class="profit-metric">
+                      <div class="profit-metric-label">预估成本</div>
+                      <div class="profit-metric-value" data-profit-field="estimatedCost">¥3,150,000</div>
+                      <div class="profit-metric-meta">含供应商预估成本</div>
+                    </div>
+                    <div class="profit-metric positive">
+                      <div class="profit-metric-label">预估毛利</div>
+                      <div class="profit-metric-value" data-profit-field="estimatedGross">¥1,000,000</div>
+                      <div class="profit-metric-meta">毛利率 <b data-profit-field="margin">24.10%</b></div>
+                    </div>
+                  </div>
+                  <div class="profit-meter">
+                    <span>预估毛利率</span>
+                    <div class="profit-meter-track" aria-hidden="true"><span></span></div>
+                    <strong data-profit-field="marginText">24.10%</strong>
+                  </div>
+                </div>
+                      </div>
+          </div>
+        </section>
+
+
+        <section class="detail-section detail-only" id="systemInfoSection" data-collapsible-section aria-labelledby="system-info-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="system-info-title"><svg><use href="#p-down"/></svg>系统信息</div></div>
+          <div class="detail-section-body">
+            <div class="form-grid system-info-grid">
+              <div class="field"><div class="field-label">创建人</div><input class="control" value="苏丽蓉" readonly aria-label="创建人"></div>
+              <div class="field"><div class="field-label">创建时间</div><input class="control" value="2026-10-26 09:35" readonly aria-label="创建时间"></div>
+              <div class="field"><div class="field-label">修改人</div><input class="control" value="陈一一" readonly aria-label="修改人"></div>
+              <div class="field"><div class="field-label">修改时间</div><input class="control" value="2026-11-01 14:30" readonly aria-label="修改时间"></div>
+              <div class="field"><div class="field-label">版本号</div><input class="control" value="1.0" readonly aria-label="版本号"></div>
+              <div class="field"><div class="field-label">当前版本生效时间</div><input class="control" value="2026-11-01 14:30" readonly aria-label="当前版本生效时间"></div>
+              <div class="field"><div class="field-label">来源类型</div><select class="control" disabled aria-label="来源类型"><option>手动创建</option><option selected>客户需求单</option><option>外系统接入</option></select></div>
+              <div class="field"><div class="field-label">来源单号</div><input class="control" value="SR202610280018(V1.0)" readonly aria-label="来源单号"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="note-card">
+          <svg><use href="#p-info"/></svg>
+          <div><b>原型说明：</b>客户单号位于“基础信息”服务范围下方；本期为单值文本输入框（占用一个字段宽度），不再支持多值录入。</div>
+        </div>
+        </div>
+        <section class="detail-section" id="transportRequirementSection" aria-labelledby="transport-title">
+          <div class="detail-section-head"><div class="detail-section-title" id="transport-title"><svg><use href="#p-down"/></svg>运输要求</div></div>
+          <div class="detail-section-body">
+            <div id="waterPieceCargoFields" hidden>
+              <div class="form-grid">
+                <div class="field"><div class="field-label">航运类型<span class="required">*</span></div><select class="control" id="orderShippingType" aria-label="航运类型"><option>国际航运</option><option>国内航运</option></select></div>
+                <div class="field"><div class="field-label">起运港<span class="required">*</span></div><select class="control" id="orderOriginPort" aria-label="起运港"><option value="">请选择</option><option>青岛港</option><option>上海港</option><option>宁波舟山港</option><option>天津港</option><option>深圳港</option><option>胡志明港</option><option>海防港</option><option>新加坡港</option><option>鹿特丹港</option><option>洛杉矶港</option><option>Port Hedland</option><option>舟山鼠浪湖</option><option>武汉青山码头</option></select></div>
+                <div class="field"><div class="field-label">起运港国别/省市</div><input class="control" id="orderOriginRegion" aria-label="起运港国别省市" readonly></div>
+                <div class="field"><div class="field-label">起运港联系人<span class="required">*</span></div><input class="control" id="orderOriginContact" autocomplete="off" placeholder="请选择" aria-label="起运港联系人"></div>
+                <div class="field"><div class="field-label">起运港联系方式</div><input class="control" id="orderOriginContactPhone" autocomplete="off" placeholder="请选择" aria-label="起运港联系方式"></div>
+                <div class="field"><div class="field-label">起运港码头</div><input class="control" id="orderOriginTerminal" autocomplete="off" placeholder="请选择" aria-label="起运港码头"></div>
+
+                <div class="field"><div class="field-label">目的港<span class="required">*</span></div><select class="control" id="orderDestinationPort" aria-label="目的港"><option value="">请选择</option><option>青岛港</option><option>上海港</option><option>宁波舟山港</option><option>天津港</option><option>深圳港</option><option>胡志明港</option><option>海防港</option><option>新加坡港</option><option>鹿特丹港</option><option>洛杉矶港</option><option>Port Hedland</option><option>舟山鼠浪湖</option><option>武汉青山码头</option></select></div>
+                <div class="field"><div class="field-label">目的港国别/省市</div><input class="control" id="orderDestinationRegion" aria-label="目的港国别省市" readonly></div>
+                <div class="field"><div class="field-label">目的港联系人<span class="required">*</span></div><input class="control" id="orderDestinationContact" autocomplete="off" placeholder="请选择" aria-label="目的港联系人"></div>
+                <div class="field"><div class="field-label">目的港联系方式</div><input class="control" id="orderDestinationContactPhone" autocomplete="off" placeholder="请选择" aria-label="目的港联系方式"></div>
+                <div class="field"><div class="field-label">目的港码头</div><input class="control" id="orderDestinationTerminal" autocomplete="off" placeholder="请选择" aria-label="目的港码头"></div>
+                <div></div>
+
+                <div class="field"><div class="field-label">最迟装运期</div><input class="control" id="orderLatestShipmentDate" type="date" aria-label="最迟装运期"></div>
+                <div class="field"><div class="field-label">卸货条款</div><select class="control" id="orderDischargeTerms" aria-label="卸货条款"><option value="">请选择</option><option>FO</option><option>FI</option><option>FIO</option><option>LINER TERMS</option></select></div>
+                <div class="field"><div class="field-label">是否CQD</div><select class="control" id="orderIsCqd" aria-label="是否CQD"><option value="">请选择</option><option>是</option><option>否</option></select></div>
+                <div class="field"><div class="field-label">是否直航</div><select class="control" id="orderDirectSailing" aria-label="是否直航"><option value="">请选择</option><option>是</option><option>否</option></select></div>
+                <div class="field"><div class="field-label">是否含绑</div><select class="control" id="orderContainsLashing" aria-label="是否含绑"><option value="">请选择</option><option>是</option><option>否</option></select></div>
+                <div class="field"><div class="field-label">船证要求</div><input class="control" id="orderVesselCertificate" autocomplete="off" placeholder="请输入" aria-label="船证要求"></div>
+                <div class="field"><div class="field-label">船龄要求</div><input class="control" id="orderVesselAge" autocomplete="off" placeholder="请输入" aria-label="船龄要求"></div>
+                <div class="field"><div class="field-label">佣金比例(%)</div><input class="control" id="orderCommissionRate" type="number" min="0" step="0.01" placeholder="请输入" aria-label="佣金比例"></div>
+                <div class="field span-2" id="orderLaycanField">
+                  <div class="field-label">LAYCAN</div>
+                  <div class="order-date-range">
+                    <input class="control" id="orderLaycanStart" type="date" aria-label="LAYCAN开始日期">
+                    <span class="order-date-range-separator">至</span>
+                    <input class="control" id="orderLaycanEnd" type="date" aria-label="LAYCAN结束日期">
+                  </div>
+                </div>
+                <div class="field span-2">
+                  <div class="field-label">邮件接收人</div>
+                  <div class="demand-email-recipient-box" id="orderMailRecipientBox">
+                    <div class="demand-email-recipient-chips" id="orderMailRecipientList"></div>
+                    <button class="demand-email-recipient-trigger" id="addOrderMailRecipientBtn" type="button">＋ 添加</button>
+                  </div>
+                  <input id="orderMailRecipientData" type="hidden" aria-label="邮件接收人">
+                </div>
+              </div>
+            </div>
+
+            <div id="genericTransportFields">
+              <div class="transport-row">
+                <div class="field"><div class="field-label">车辆/箱型要求</div><input class="control" autocomplete="off" placeholder="请输入" aria-label="车辆箱型要求"></div>
+                <div class="field"><div class="field-label">计划运输日期</div><input class="control" autocomplete="off" type="date" aria-label="计划运输日期"></div>
+              </div>
+            </div>
+            <div class="field" style="margin-top:16px"><div class="field-label">其他特殊要求</div><textarea class="control textarea" placeholder="请输入" aria-label="其他特殊要求"></textarea></div>
+          </div>
+        </section>
+
+        <section class="detail-view feedback-view" id="feedbackView" role="tabpanel" aria-labelledby="feedbackTab" hidden><div class="feedback-overview">
+            <div class="feedback-route-toolbar">
+              <div class="feedback-route-tabs" id="feedbackRouteTabs" role="tablist" aria-label="履约线路"></div>
+              <div class="feedback-route-actionbar">
+                <div class="feedback-route-meta">
+                  <span>发布状态 <strong id="feedbackReleaseState">待反馈</strong></span>
+                  <span>版本 <strong id="feedbackVersion">V1.2</strong></span>
+                  <span id="feedbackUpdatedAt">最后更新 2026-11-12 16:22</span>
+                </div>
+                <div class="feedback-route-actions">
+                  <div class="feedback-route-action-group">
+                    <button class="detail-btn outline-primary" id="editFeedbackBtn" type="button">修改</button>
+                    <button class="detail-btn primary" id="feedbackCustomerBtn" type="button">反馈客户</button>
+                  </div>
+                  <div class="feedback-route-action-group">
+                    <button class="detail-btn outline-primary" id="declareVesselBtn" type="button">宣船</button>
+                    <button class="detail-btn danger" id="cancelDeclarationBtn" type="button" hidden>取消宣船</button>
+                  </div>
+                  <div class="feedback-route-action-group">
+                    <button class="detail-btn outline-primary" id="startAcceptanceBtn" type="button">发起验收申请</button>
+                    <button class="detail-btn outline-primary" id="selectSupplierFeedbackBtn" type="button">选择下游供应商反馈</button>
+                  </div>
+                  <div class="feedback-route-action-group">
+                    <button class="detail-btn" id="uploadAttachmentBtn" type="button">附件</button>
+                    <button class="detail-btn" id="previewFeedbackBtn" type="button">预览客户版</button>
+                    <button class="detail-btn" id="viewFeedbackRecordsBtn" type="button">查看反馈记录</button>
+                  </div>
+                </div>
+              </div>
+            </div><div class="feedback-rail-wrap"><div class="feedback-rail" id="feedbackRail" role="tablist" aria-label="履约作业节点"></div></div>
+          </div>
+
+
+          <div class="feedback-main-grid">
+            <section class="feedback-detail" aria-labelledby="feedbackDetailTitle">
+              <div class="feedback-detail-head"><div><h2 class="feedback-detail-title" id="feedbackDetailTitle">节点详情</h2></div><span class="feedback-state" id="feedbackDetailState"></span><span class="feedback-detail-time" id="feedbackDetailTime"></span></div>
+              <div class="feedback-detail-body" id="feedbackDetailBody"></div>
+            </section>
+          </div></section>
+      </main>
+    </section>
+  </div>
+
+  <div class="feedback-node-tooltip" id="feedbackNodeTooltip" role="tooltip" hidden></div>
+
+  <div class="feedback-preview-backdrop" id="feedbackPreviewBackdrop" hidden>
+    <section class="feedback-preview" role="dialog" aria-modal="true" aria-labelledby="feedbackPreviewTitle">
+      <div class="feedback-preview-head"><div><h2 class="feedback-preview-title" id="feedbackPreviewTitle">客户版履约反馈</h2><p class="feedback-preview-subtitle" id="feedbackPreviewSubtitle"></p></div><button class="feedback-preview-close" id="feedbackPreviewClose" type="button" aria-label="关闭预览"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-preview-body" id="feedbackPreviewBody"></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackPreviewCancel" type="button">关闭</button><button class="detail-btn primary" id="feedbackPreviewPrimary" type="button">确认反馈</button></div>
+    </section>
+  </div>
+
+  <div class="feedback-edit-backdrop" id="feedbackEditBackdrop" hidden>
+    <section class="feedback-edit-panel" role="dialog" aria-modal="true" aria-labelledby="feedbackEditTitle">
+      <div class="feedback-preview-head">
+        <div><h2 class="feedback-preview-title" id="feedbackEditTitle">修改履约信息</h2><p class="feedback-preview-subtitle">可同时修改订舱确认、宣船及航次确认、到港/靠泊/装船/离港信息。</p></div>
+        <button class="feedback-preview-close" id="feedbackEditClose" type="button" aria-label="关闭修改"><svg><use href="#p-close"/></svg></button>
+      </div>
+      <div class="feedback-edit-body" id="feedbackEditBody"></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackEditCancel" type="button">取消</button><button class="detail-btn primary" id="feedbackEditSave" type="button">保存修改</button></div>
+    </section>
+  </div>
+
+  <div class="feedback-records-backdrop" id="feedbackRecordsBackdrop" hidden>
+    <section class="feedback-records-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackRecordsTitle">
+      <div class="feedback-records-dialog-head"><div><h2 class="feedback-preview-title" id="feedbackRecordsTitle">反馈记录</h2><p class="feedback-preview-subtitle">按时间倒序展示当前订单的反馈更新记录。</p></div><button class="feedback-preview-close" id="feedbackRecordsClose" type="button" aria-label="关闭反馈记录"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-records-dialog-body"><ol class="feedback-record-list" id="feedbackRecordsList"></ol></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackRecordsDone" type="button">关闭</button></div>
+    </section>
+  </div>
+  <div class="feedback-records-backdrop" id="feedbackAcceptanceBackdrop" hidden>
+    <section class="feedback-records-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackAcceptanceTitle">
+      <div class="feedback-records-dialog-head"><div><h2 class="feedback-preview-title" id="feedbackAcceptanceTitle">发起验收申请</h2><p class="feedback-preview-subtitle">请确认以下验收商品清单后发起验收申请。</p></div><button class="feedback-preview-close" id="feedbackAcceptanceClose" type="button" aria-label="关闭验收申请"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-records-dialog-body" id="feedbackAcceptanceBody"></div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackAcceptanceCancel" type="button">取消</button><button class="detail-btn primary" id="feedbackAcceptanceSubmit" type="button">确认发起</button></div>
+    </section>
+  </div>  <div class="feedback-records-backdrop" id="supplierFeedbackBackdrop" hidden>
+    <section class="supplier-feedback-dialog" role="dialog" aria-modal="true" aria-labelledby="supplierFeedbackTitle">
+      <div class="feedback-records-dialog-head"><div><h2 class="feedback-preview-title" id="supplierFeedbackTitle">选择下游供应商反馈</h2><p class="feedback-preview-subtitle">显示当前客户订单关联的物流委托单任务反馈；选中后可自动带出到对应线路。</p></div><button class="feedback-preview-close" id="supplierFeedbackClose" type="button" aria-label="关闭下游供应商反馈"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-records-dialog-body supplier-feedback-body">
+        <div class="supplier-feedback-table-wrap" id="supplierFeedbackTableWrap"></div>
+        <div class="supplier-feedback-preview" id="supplierFeedbackPreview"></div>
+      </div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="supplierFeedbackCancel" type="button">取消</button><button class="detail-btn primary" id="supplierFeedbackConfirm" type="button" disabled>带出到履约反馈</button></div>
+    </section>
+  </div>  <div class="feedback-records-backdrop" id="feedbackAttachmentBackdrop" hidden>
+    <section class="feedback-records-dialog feedback-attachment-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackAttachmentTitle">
+      <div class="feedback-records-dialog-head"><div><h2 class="feedback-preview-title" id="feedbackAttachmentTitle">上传附件</h2><p class="feedback-preview-subtitle">附件将上传到当前选中的履约节点，并同步到客户版预览。</p></div><button class="feedback-preview-close" id="feedbackAttachmentClose" type="button" aria-label="关闭附件上传"><svg><use href="#p-close"/></svg></button></div>
+      <div class="feedback-records-dialog-body feedback-attachment-body">
+        <div class="feedback-attachment-current">当前节点 <strong id="feedbackAttachmentNode">--</strong></div>
+        <label class="feedback-attachment-field" for="feedbackAttachmentType"><span>附件类型 <em>*</em></span><select id="feedbackAttachmentType"><option value="">请选择附件类型</option><option>订舱确认书</option><option>提单</option><option>报关单</option><option>验收材料</option><option>费用凭证</option><option>其他</option></select></label>
+        <label class="feedback-attachment-field feedback-attachment-file-field" for="feedbackAttachmentFile"><span>选择附件 <em>*</em></span><input id="feedbackAttachmentFile" type="file" multiple><small>支持一次选择多个文件</small></label>
+        <div class="feedback-attachment-file-list" id="feedbackAttachmentFileList"><span>尚未选择附件</span></div>
+      </div>
+      <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackAttachmentCancel" type="button">取消</button><button class="detail-btn primary" id="feedbackAttachmentConfirm" type="button" disabled>上传附件</button></div>
+    </section>
+  </div>  <aside class="prototype-note" id="prototypeNote" aria-label="原型说明">
+    <h3>为什么放在这里</h3>
+    <p>客户单号是可编辑的单值文本字段，放在“基础信息”表单栅格内比标题行右侧更符合操作习惯。</p>
+    <ul>
+      <li>与“服务范围”同行，不新增整行。</li>
+      <li>2 列宽度可容纳长数字和多个标签。</li>
+      <li>名称与说明可清楚区别于 4PL 自身的物流委托单号。</li>
+    </ul>
+  </aside>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="detail-more-menu" id="detailMoreMenu" role="menu" aria-label="更多订单操作" hidden></div>
+
+  <div class="order-fee-route-menu" id="orderFeeRouteMenu" role="dialog" aria-label="选择费用适用线路" hidden></div>
+
+  <div class="order-route-preview-backdrop" id="orderRoutePreview" hidden>
+    <section class="order-route-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="orderRoutePreviewTitle" tabindex="-1">
+      <div class="order-route-preview-head">
+        <div><div class="order-route-preview-title" id="orderRoutePreviewTitle">物流需求拆解预览</div><div class="order-route-preview-subtitle">确认后按运输线路生成对应的物流需求。</div></div>
+        <button class="feedback-preview-close" id="orderRoutePreviewClose" type="button" aria-label="关闭物流需求拆解预览"><svg><use href="#p-close"/></svg></button>
+      </div>
+      <div class="order-route-preview-body" id="orderRoutePreviewBody"></div>
+      <div class="order-route-preview-foot"><button class="detail-btn" id="orderRoutePreviewCancel" type="button">返回修改</button><button class="detail-btn primary" id="orderRoutePreviewConfirm" type="button">确认生成物流需求</button></div>
+    </section>
+  </div>
+
+  <div class="order-route-preview-backdrop" id="orderLinkedItemPicker" hidden>
+    <section class="order-route-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="orderLinkedItemPickerTitle" tabindex="-1" style="width:min(1280px,calc(100vw - 40px))">
+      <div class="order-route-preview-head">
+        <div><div class="order-route-preview-title" id="orderLinkedItemPickerTitle">关联其他线路商品</div><div class="order-route-preview-subtitle">勾选其他线路的商品行，关联后将在当前线路中引用原商品数据。</div></div>
+        <button class="feedback-preview-close" id="orderLinkedItemPickerClose" type="button" aria-label="关闭商品关联"><svg><use href="#p-close"/></svg></button>
+      </div>
+      <div class="order-route-preview-body" id="orderLinkedItemPickerBody"></div>
+      <div class="order-route-preview-foot"><button class="detail-btn" id="orderLinkedItemPickerCancel" type="button">取消</button><button class="detail-btn primary" id="orderLinkedItemPickerConfirm" type="button">确认关联</button></div>
+    </section>
+  </div>
+
+  <div class="order-flow-backdrop" id="orderRouteFlowDrawer" hidden>
+    <aside class="order-flow-drawer" role="dialog" aria-modal="true" aria-label="商品流向图">
+      <button class="order-flow-close" id="orderRouteFlowClose" type="button" aria-label="关闭商品流向图">×</button>
+      <div class="order-flow-view-chip">流向视图</div>
+      <div class="order-flow-toolbar" aria-label="流向图画布工具">
+        <button class="order-flow-toolbtn is-zoom" id="orderRouteFlowZoomOut" type="button" aria-label="缩小">−</button>
+        <span class="order-flow-zoom" id="orderRouteFlowZoom">200%</span>
+        <button class="order-flow-toolbtn is-zoom" id="orderRouteFlowZoomIn" type="button" aria-label="放大">＋</button>
+        <span class="order-flow-tool-separator"></span>
+        <button class="order-flow-toolbtn" id="orderRouteFlowFit" type="button">适应画布</button>
+        <button class="order-flow-toolbtn" id="orderRouteFlowFullscreen" type="button">全屏</button>
+      </div>
+      <div class="order-flow-canvas" id="orderRouteFlowCanvas">
+        <div class="order-flow-canvas-inner" id="orderRouteFlowCanvasInner">
+          <div class="order-flow-cards" id="orderRouteFlowCards"></div>
+        </div>
+      </div>
+      <div class="order-flow-legend" aria-label="流向图图例">
+        <span class="order-flow-legend-item"><i class="order-flow-legend-dot"></i>起运港</span>
+        <span class="order-flow-legend-item"><i class="order-flow-legend-dot destination"></i>目的港</span>
+        <span class="order-flow-legend-item"><i class="order-flow-legend-line"></i>执行中</span>
+        <span class="order-flow-legend-item"><i class="order-flow-legend-line pending"></i>待执行</span>
+        <span class="order-flow-legend-item"><i class="order-flow-legend-line confirmed"></i>已确认</span>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('maintenance') !== '1') return;
+      try {
+        const raw = sessionStorage.getItem('ct:customerOrderVersionDraft');
+        if (!raw) return;
+        const snapshot = JSON.parse(raw);
+        snapshot.fields = snapshot.fields || {};
+        snapshot.fields['运输线路数据'] = snapshot.routesData || '{}';
+        window.__restoredOrderDraft = snapshot;
+        window.__versionMaintenanceSnapshot = snapshot;
+      } catch (error) {}
+    })();
+  </script>
+  <script src="../assets/prototype-data.js?v=20261125d"></script>
+  <script>
+    (() => {
+      const backToListBtn = document.getElementById('backToListBtn');
+      if (backToListBtn) {
+        backToListBtn.addEventListener('click', () => {
+          const params = new URLSearchParams(window.location.search);
+          const from = params.get('from') || '';
+          const cameFromList = from === 'customer-order-list' || document.referrer.includes('customer-order-list-prd-aligned-prototype.html');
+          const cameFromTracking = from === 'customer-order-tracking' || document.referrer.includes('customer-order-tracking.html');
+          if ((cameFromList || cameFromTracking) && window.history.length > 1) {
+            window.history.back();
+            return;
+          }
+          const embedded = window.self !== window.top || params.get('embed') === '1';
+          const target = cameFromTracking ? 'customer-order-tracking.html' : 'customer-order-list-prd-aligned-prototype.html';
+          window.location.href = target + (embedded ? '?embed=1' : '');
+        });
+      }
+      document.querySelectorAll('[data-toast]').forEach((button) => {
+        button.addEventListener('click', () => showToast(button.dataset.toast));
+      });
+      const prototypeToggle = document.getElementById('prototypeToggle');
+      const prototypeNote = document.getElementById('prototypeNote');
+      prototypeToggle.addEventListener('click', () => {
+        const open = prototypeNote.classList.toggle('open');
+        prototypeToggle.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          prototypeNote.classList.remove('open');
+          prototypeToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+  </script>
+  <script src="../assets/ui-state.js"></script>
+  <script src="../assets/customer-order-detail.js"></script>
+  <script src="../assets/customer-order-feedback.js"></script>
+  <script>
+    (() => {
+      const scope = document.getElementById('orderDetailForm');
+      if (!scope || !window.UIState) return;
+      const dirty = UIState.watchDirty(scope, document.getElementById('detailDirtyIndicator'));
+
+      scope.querySelectorAll('.field').forEach((field) => {
+        if (!field.querySelector('.required')) return;
+        const control = field.querySelector('input:not([type="hidden"]), select, textarea');
+        if (control && control.type !== 'checkbox' && !control.disabled && !control.readOnly) control.required = true;
+      });
+
+      scope.querySelectorAll('input, select, textarea').forEach((control) => {
+        control.addEventListener('blur', () => {
+          if (control.disabled || control.readOnly) return;
+          if (control.required && !control.value.trim()) {
+            UIState.setFieldState(control, 'invalid', (control.tagName === 'SELECT' ? '请选择' : '请填写') + (control.getAttribute('aria-label') || '此项'));
+          } else if (control.getAttribute('aria-invalid') === 'true') {
+            UIState.clearFieldState(control);
+          }
+        });
+        control.addEventListener('input', () => {
+          if (control.getAttribute('aria-invalid') === 'true' && control.value.trim()) UIState.clearFieldState(control);
+        });
+      });
+
+      const orderActionSequences = {
+        draft: ['saveDraftBtn', 'submitOrderBtn', 'submitFillLogisticsBtn', 'submitAutoTaskBtn', 'deleteOrderBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        review: ['attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        pendingConfirm: ['versionMaintenanceBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        confirmedFulfillment: ['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
+        fulfillment: ['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
+        completed: ['cancelCompleteBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        cancelled: ['attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn']
+      };
+      const secondaryActionIds = new Set(['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn']);
+      const moreMenuHost = document.getElementById('detailMoreMenu');
+      const moreToggle = document.getElementById('detailMoreToggle');
+      const closeDetailMoreMenu = () => {
+        if (!moreMenuHost || !moreToggle) return;
+        moreMenuHost.hidden = true;
+        moreToggle.setAttribute('aria-expanded', 'false');
+      };
+      const syncOrderDocumentActions = () => {
+        const bar = document.getElementById('detailActions');
+        if (!bar || !moreMenuHost || !moreToggle) return;
+        const status = document.getElementById('orderStatusField')?.textContent.trim() || '';
+        let sequence;
+        if (status === '创建' || status === '驳回') sequence = orderActionSequences.draft;
+        else if (status === '待审核') sequence = orderActionSequences.review;
+        else if (status === '待履约') sequence = orderActionSequences.confirmedFulfillment;
+        else if (status === '履约中') sequence = orderActionSequences.fulfillment.slice();
+        else if (status === '已完结') sequence = orderActionSequences.completed;
+        else if (status === '已取消') sequence = orderActionSequences.cancelled;
+        else sequence = orderActionSequences.review;
+        const arrangementStatus = document.getElementById('orderArrangementStatusField')?.textContent.trim() || '';
+        if (status === '待履约' && arrangementStatus === '待安排') {
+          const logisticsGenerationActions = ['generateLogisticsDemandBtn', 'submitLogisticsPlanBtn'];
+          sequence = sequence.concat(logisticsGenerationActions);
+        }
+        const versionControlEl = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '版本号');
+        const currentVersionValue = (versionControlEl?.value || '1.0').trim();
+        if ((status === '创建' || status === '驳回') && currentVersionValue !== '1.0') sequence = sequence.concat(['deleteVersionBtn']);
+        if (currentVersionValue !== '1.0') sequence = sequence.filter((id) => !['submitFillLogisticsBtn', 'submitAutoTaskBtn'].includes(id));
+        // 【查看物流安排】与列表页「更多 → 查看物流安排」一致：待履约（已确认）/ 履约中 / 已完结 / 已取消显示（完结后仍可回看），且始终排在按钮区最后
+        const canViewArrangement = status === '待履约' || status === '履约中' || status === '已完结' || status === '已取消';
+        sequence = sequence.filter((id) => id !== 'viewLogisticsPlanBtn');
+        if (canViewArrangement) sequence = sequence.concat(['viewLogisticsPlanBtn']);
+        window.__visibleOrderActionIds = sequence.slice();
+        document.querySelectorAll('#detailActions .detail-btn, #detailMoreMenu .detail-btn').forEach((button) => { button.hidden = true; });
+        const primarySequence = sequence.filter((id) => !secondaryActionIds.has(id));
+        const secondarySequence = sequence.filter((id) => secondaryActionIds.has(id));
+        primarySequence.forEach((id) => {
+          const button = document.getElementById(id);
+          if (!button) return;
+          button.hidden = false;
+          bar.appendChild(button);
+        });
+        secondarySequence.forEach((id) => {
+          const button = document.getElementById(id);
+          if (!button) return;
+          button.hidden = false;
+          moreMenuHost.appendChild(button);
+        });
+        moreToggle.hidden = secondarySequence.length === 0;
+        if (secondarySequence.length === 0) closeDetailMoreMenu();
+      };
+      moreToggle.addEventListener('click', () => {
+        const open = moreMenuHost.hidden;
+        if (!open) { closeDetailMoreMenu(); return; }
+        const rect = moreToggle.getBoundingClientRect();
+        moreMenuHost.hidden = false;
+        moreToggle.setAttribute('aria-expanded', 'true');
+        moreMenuHost.style.left = Math.max(10, Math.min(rect.right - 176, window.innerWidth - 186)) + 'px';
+        moreMenuHost.style.top = Math.min(rect.bottom + 6, window.innerHeight - moreMenuHost.offsetHeight - 10) + 'px';
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('#detailMoreToggle, #detailMoreMenu')) closeDetailMoreMenu();
+      });
+      moreMenuHost.addEventListener('click', (event) => {
+        if (event.target.closest('.detail-btn')) closeDetailMoreMenu();
+      });
+      window.addEventListener('resize', closeDetailMoreMenu);
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDetailMoreMenu(); });
+      const defaultCollapsedSections = new Set(['contractSection', 'systemInfoSection']);
+      document.querySelectorAll('[data-collapsible-section]').forEach((section) => {
+        const title = section.querySelector('.detail-section-title');
+        if (!title) return;
+        section.classList.add('collapsible-section');
+        title.classList.add('section-toggle-title');
+        title.setAttribute('role', 'button');
+        title.setAttribute('tabindex', '0');
+        const setCollapsed = (collapsed) => {
+          section.classList.toggle('section-collapsed', collapsed);
+          title.setAttribute('aria-expanded', String(!collapsed));
+          const icon = title.querySelector('svg');
+          if (icon) icon.setAttribute('aria-hidden', 'true');
+        };
+        setCollapsed(defaultCollapsedSections.has(section.id));
+        const toggle = () => setCollapsed(!section.classList.contains('section-collapsed'));
+        title.addEventListener('click', toggle);
+        title.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); }
+        });
+      });
+
+      const moduleNav = document.getElementById('orderModuleNav');
+      const moduleButtons = moduleNav ? Array.from(moduleNav.querySelectorAll('[data-module-target]')) : [];
+      const moduleSections = moduleButtons.map((button) => document.getElementById(button.dataset.moduleTarget)).filter(Boolean);
+      const expandSection = (section) => {
+        if (!section) return;
+        section.classList.remove('section-collapsed');
+        const title = section.querySelector('.detail-section-title');
+        if (title) title.setAttribute('aria-expanded', 'true');
+      };
+      const setActiveModule = (id) => {
+        moduleButtons.forEach((button) => button.classList.toggle('active', button.dataset.moduleTarget === id));
+      };
+      moduleButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = document.getElementById(button.dataset.moduleTarget);
+          if (!target) return;
+          expandSection(target);
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setActiveModule(target.id);
+        });
+      });
+      const detailScroll = document.querySelector('.detail-scroll');
+      let moduleNavFrame = null;
+      const updateActiveModule = () => {
+        moduleNavFrame = null;
+        if (!moduleSections.length) return;
+        const threshold = 72;
+        let active = moduleSections[0];
+        moduleSections.forEach((section) => {
+          if (section.getBoundingClientRect().top <= threshold) active = section;
+        });
+        setActiveModule(active.id);
+      };
+      detailScroll?.addEventListener('scroll', () => {
+        if (!moduleNavFrame) moduleNavFrame = window.requestAnimationFrame(updateActiveModule);
+      }, { passive: true });
+      updateActiveModule();
+
+      window.syncOrderDocumentActions = syncOrderDocumentActions;
+      syncOrderDocumentActions();
+
+      const simulate = (button, validate, successMessage, onSuccess) => {
+        if (button.disabled) return;
+        const requiredPermission = validate ? 'customerOrders.submit' : 'customerOrders.edit';
+        if (window.PrototypeAccess && !window.PrototypeAccess.can(requiredPermission)) {
+          UIState.showFormAlert(scope, 'error', '当前角色没有执行此操作的权限。');
+          return;
+        }
+        const injectedFailure = window.PrototypeRuntime && window.PrototypeRuntime.consumeFailure(validate ? 'orderSubmit' : 'orderSave');
+        if (injectedFailure === 'timeout') {
+          UIState.showFormAlert(scope, 'error', '请求超时，当前草稿已保留。请稍后重试。');
+          return;
+        }
+        if (!navigator.onLine) {
+          UIState.showFormAlert(scope, 'error', '网络连接已断开，当前草稿已保留。恢复网络后请重新提交。');
+          return;
+        }
+        window.__orderSubmitAttempts = (window.__orderSubmitAttempts || 0) + 1;
+        UIState.clearFormAlert(scope);
+        if (validate) {
+          const referenceCheck = window.OrderRoutes?.validateSubmitReferences?.();
+          if (referenceCheck && referenceCheck.valid === false) return;
+          if (typeof window.validateAdditionalServiceRequirementModules === 'function' && !window.validateAdditionalServiceRequirementModules()) return;
+          const hasServiceScope = Boolean(scope.querySelector('input[name="orderServiceScope"]:checked'));
+          if (!hasServiceScope) {
+            UIState.showFormAlert(scope, 'error', '请至少选择一项服务范围。');
+            return;
+          }
+          const specifiedTransportMode = document.getElementById('orderSpecifiedTransportMode')?.value !== '否';
+          if (specifiedTransportMode) {
+            const routeTypes = Array.from(document.querySelectorAll('[data-route-field="type"]'));
+            const routeCategories = Array.from(document.querySelectorAll('[data-route-field="shipmentCategory"]'));
+            if (routeTypes.some((select) => !select.value) || routeCategories.some((select) => !select.value)) {
+              UIState.showFormAlert(scope, 'error', '请为每条运输线路选择运输类型和装运类别。');
+              return;
+            }
+          }
+          const result = UIState.validateRequired(scope);
+          if (!result.valid) {
+            UIState.showFormAlert(scope, 'error', `请先修正 ${result.invalidCount} 个必填字段，再提交订单。`);
+            return;
+          }
+        }
+        UIState.setButtonLoading(button, true, '处理中');
+        UIState.setFormDisabled(scope, true);
+        window.setTimeout(() => {
+          UIState.setFormDisabled(scope, false);
+          UIState.setButtonLoading(button, false);
+          if (onSuccess) onSuccess();
+          UIState.showFormAlert(scope, 'success', successMessage);
+          dirty.markClean();
+        }, 700);
+      };
+
+      const markOrderPendingConfirmation = () => {
+        if (window.OrderDetailPage?.submitOrder) {
+          window.OrderDetailPage.submitOrder();
+          return;
+        }
+        const statusField = document.getElementById('orderStatusField');
+        if (statusField) {
+          statusField.textContent = '待履约';
+          statusField.dataset.status = '待履约';
+        }
+        const arrangementField = document.querySelector('[data-order-arrangement-status-field]');
+        if (arrangementField) { arrangementField.textContent = ''; arrangementField.dataset.status = ''; }
+        syncOrderDocumentActions();
+      };
+
+      document.getElementById('saveDraftBtn').addEventListener('click', (event) => {
+        simulate(event.currentTarget, false, '草稿已保存。');
+      });
+      document.getElementById('submitOrderBtn').addEventListener('click', (event) => {
+        simulate(event.currentTarget, true, '客户订单已提交，后续可继续安排物流。', markOrderPendingConfirmation);
+      });
+      const submitFlowBtn = document.getElementById('submitFlowBtn');
+      const syncDraftFlowAction = () => {
+        const status = document.querySelector('[data-order-status-pill], .status-pill')?.textContent.trim() || '';
+        submitFlowBtn.hidden = true;
+      };
+      syncDraftFlowAction();
+      submitFlowBtn.addEventListener('click', (event) => {
+        simulate(event.currentTarget, true, '客户订单已提交，已发起物流委托。', markOrderPendingConfirmation);
+      });
+      [['submitFillLogisticsBtn', '客户订单已提交，请继续填写物流需求。'], ['submitAutoTaskBtn', '客户订单已提交，任务已自动提交。']].forEach(([id, message]) => {
+        document.getElementById(id)?.addEventListener('click', (event) => {
+          simulate(event.currentTarget, true, message, markOrderPendingConfirmation);
+        });
+      });
+      const showDocumentActionMessage = (id, message) => {
+        document.getElementById(id)?.addEventListener('click', () => UIState.showFormAlert(scope, 'success', message));
+      };
+      showDocumentActionMessage('attachmentBtn', '订单附件功能已打开。');
+      showDocumentActionMessage('approvalProgressBtn', '审批进度已打开。');
+      const incrementOrderVersion = (value) => {
+        const raw = String(value || '1.0').replace(/^V/i, '').trim();
+        const major = Number(raw.split('.')[0]) || 1;
+        return (major + 1).toFixed(1);
+      };
+      const versionHistoryKey = () => 'ct:customerOrderVersionHistory:' + (document.body.dataset.orderNo || '');
+      const readVersionHistory = () => {
+        try {
+          const raw = sessionStorage.getItem(versionHistoryKey());
+          if (raw) {
+            const rows = JSON.parse(raw);
+            if (Array.isArray(rows) && rows.length) return rows;
+          }
+        } catch (error) { /* ignore */ }
+        const valueOf = (label) => Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === label)?.value || '';
+        return [{
+          version: valueOf('版本号') || '1.0',
+          status: document.getElementById('orderStatusField')?.textContent.trim() || '创建',
+          creator: valueOf('创建人') || '李琪',
+          createdAt: valueOf('创建时间') || '',
+          effectiveAt: valueOf('当前版本生效时间') || ''
+        }];
+      };
+      const writeVersionHistory = (rows) => {
+        try { sessionStorage.setItem(versionHistoryKey(), JSON.stringify(rows)); } catch (error) { /* ignore */ }
+      };
+      const launchVersionMaintenance = () => {
+        const currentStatus = document.getElementById('orderStatusField')?.textContent.trim() || '';
+        if (['创建', '驳回'].includes(currentStatus) && !window.UIState.validateRequired(scope).valid) {
+          window.UIState.showFormAlert(scope, 'error', '请先修正必填字段，再发起版本维护。');
+          return;
+        }
+        const referenceCheck = window.OrderRoutes?.validateReferences?.();
+        if (referenceCheck && referenceCheck.valid === false) {
+          window.UIState.showFormAlert(scope, 'error', referenceCheck.message || '商品被下游单据引用，请先处理引用关系。');
+          return;
+        }
+        const pendingDraft = (() => { try { return sessionStorage.getItem('ct:customerOrderVersionDraft'); } catch (error) { return null; } })();
+        if (pendingDraft && new URLSearchParams(window.location.search).get('maintenance') !== '1') {
+          window.UIState.showFormAlert(scope, 'error', '该订单已有待提交的修改单，请先提交或删除后再发起版本维护。');
+          return;
+        }
+        const fields = {};
+        scope.querySelectorAll('input, select, textarea').forEach((control) => {
+          const label = control.getAttribute('aria-label');
+          if (!label || control.type === 'file' || control.type === 'checkbox') return;
+          if (control.type === 'radio' && !control.checked) return;
+          fields[label] = control.value;
+        });
+        const consignmentInput = document.getElementById('customerOrderNoInput');
+        const consignmentValue = consignmentInput ? consignmentInput.value.trim() : '';
+        const consignments = consignmentValue ? [consignmentValue] : [];
+        const selectedValues = (name) => Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map((input) => input.value);
+        const emailRecipients = Array.from(document.querySelectorAll('#orderEmailRecipientList [data-order-email-recipient]')).map((chip) => ({
+          name: chip.dataset.recipientName || '',
+          email: chip.dataset.recipientEmail || ''
+        }));
+        const currentVersion = fields['版本号'] || '1.0';
+        const nextVersion = incrementOrderVersion(currentVersion);
+        const historyRows = readVersionHistory();
+        historyRows.push({
+          version: nextVersion,
+          status: '创建',
+          creator: fields['创建人'] || '李琪',
+          createdAt: new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-'),
+          effectiveAt: '—'
+        });
+        writeVersionHistory(historyRows);
+        const sourceNo = document.body.dataset.orderNo || document.getElementById('orderOverviewNumber')?.textContent.replace(/[()]/g, '').trim() || '';
+        const snapshot = {
+          fields,
+          consignments,
+          serviceScope: selectedValues('orderServiceScope'),
+          transportType: selectedValues('orderTransportType'),
+          shippingCategory: selectedValues('orderShippingCategory'),
+          emailRecipients,
+          routesData: document.getElementById('orderRoutesData')?.value || '{}',
+          version: nextVersion,
+          sourceNo,
+          createdAt: Date.now()
+        };
+        try { sessionStorage.setItem('ct:customerOrderVersionDraft', JSON.stringify(snapshot)); } catch (error) {
+          UIState.showFormAlert(scope, 'error', '版本维护单暂存失败，请重试。');
+          return;
+        }
+        const url = new URL('customer-order-detail-prd-aligned-prototype.html', window.location.href);
+        url.search = '';
+        url.searchParams.set('no', document.body.dataset.orderNo || sourceNo);
+        url.searchParams.set('mode', 'create');
+        url.searchParams.set('maintenance', '1');
+        url.searchParams.set('version', nextVersion);
+        url.searchParams.set('sourceNo', sourceNo);
+        url.searchParams.set('from', 'customer-order-version');
+        if (window.self !== window.top || new URLSearchParams(window.location.search).get('embed') === '1') url.searchParams.set('embed', '1');
+        window.location.href = url.href;
+      };
+      document.getElementById('versionMaintenanceBtn')?.addEventListener('click', launchVersionMaintenance);
+      showDocumentActionMessage('viewLogisticsPlanBtn', '已打开该客户订单的物流委托列表。');
+      showDocumentActionMessage('generateLogisticsDemandBtn', '物流需求生成任务已发起。');
+      showDocumentActionMessage('submitLogisticsPlanBtn', '物流安排已提交。');
+      document.getElementById('completeOrderBtn')?.addEventListener('click', () => {
+        if (window.OrderDetailPage?.completeOrder) {
+          window.OrderDetailPage.completeOrder();
+          return;
+        }
+        const statusField = document.getElementById('orderStatusField');
+        if (statusField) { statusField.textContent = '已完结'; statusField.dataset.status = '已完结'; }
+        syncOrderDocumentActions();
+        UIState.showFormAlert(scope, 'success', '客户订单已完结。');
+      });
+      document.getElementById('cancelCompleteBtn')?.addEventListener('click', () => {
+        if (window.OrderDetailPage?.cancelComplete) {
+          window.OrderDetailPage.cancelComplete();
+          return;
+        }
+        const statusField = document.getElementById('orderStatusField');
+        if (statusField) { statusField.textContent = '履约中'; statusField.dataset.status = '履约中'; }
+        syncOrderDocumentActions();
+        UIState.showFormAlert(scope, 'success', '已取消完结。');
+      });
+      document.getElementById('deleteOrderBtn')?.addEventListener('click', () => {
+        if (!window.confirm('删除后订单不可恢复，确定删除该客户订单吗？')) return;
+        UIState.showFormAlert(scope, 'success', '客户订单已删除，即将返回列表。');
+        window.setTimeout(() => { window.location.href = 'customer-order-list-prd-aligned-prototype.html'; }, 900);
+      });
+      document.getElementById('cancelOrderBtn')?.addEventListener('click', () => {
+        if (window.OrderDetailPage) return;
+        const currentStatus = document.getElementById('orderStatusField')?.textContent.trim();
+        if (!['待履约', '履约中'].includes(currentStatus)) {
+          UIState.showFormAlert(scope, 'error', '当前客户订单状态不允许取消');
+          return;
+        }
+        if (!window.confirm('取消后该客户订单将停止后续签署与履约，确定取消吗？')) return;
+        const statusField = document.getElementById('orderStatusField');
+        if (statusField) { statusField.textContent = '已取消'; statusField.dataset.status = '已取消'; }
+        syncOrderDocumentActions();
+        UIState.showFormAlert(scope, 'success', '客户订单已取消。');
+      });
+
+      const orderRecord = window.OrderDetailPage?.record || null;
+      const restoredDraft = window.__restoredOrderDraft || {};
+      const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+      const pageParams = new URLSearchParams(window.location.search);
+      const versionMaintenanceMode = pageParams.get('maintenance') === '1';
+      if (versionMaintenanceMode) {
+        const restoredFields = restoredDraft.fields || {};
+        scope.querySelectorAll('input, select, textarea').forEach((control) => {
+          const label = control.getAttribute('aria-label');
+          if (!label || control.type === 'checkbox' || control.type === 'radio' || !(label in restoredFields)) return;
+          const value = restoredFields[label];
+          if (control.tagName === 'SELECT') {
+            const option = Array.from(control.options).find((item) => item.value === String(value) || item.textContent.trim() === String(value));
+            if (option) control.value = option.value;
+          } else {
+            control.value = value;
+          }
+        });
+        const version = pageParams.get('version') || restoredDraft.version || '2.0';
+        const versionControl = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '版本号');
+        if (versionControl) versionControl.value = version;
+        const modifyStatusField = document.getElementById('orderStatusField');
+        if (modifyStatusField) { modifyStatusField.textContent = '创建'; modifyStatusField.dataset.status = '创建'; }
+        const modifyArrangeField = document.querySelector('[data-order-arrangement-status-field]');
+        if (modifyArrangeField) { modifyArrangeField.textContent = ''; modifyArrangeField.dataset.status = ''; }
+        window.syncOrderDocumentActions?.();
+        window.syncContractFieldRules?.();
+        const sourceNo = pageParams.get('sourceNo') || restoredDraft.sourceNo || '';
+        const titleNode = document.querySelector('.page-title');
+        if (titleNode) {
+          const titleText = Array.from(titleNode.childNodes).find((node) => node.nodeType === Node.TEXT_NODE && node.nodeValue.trim());
+          if (titleText) titleText.nodeValue = '客户订单修改单 ';
+          else titleNode.insertBefore(document.createTextNode('客户订单修改单 '), titleNode.firstChild);
+        }
+        const overviewNumber = document.getElementById('orderOverviewNumber');
+        if (overviewNumber) { overviewNumber.textContent = '(' + (sourceNo ? sourceNo + ' ' : '') + version + ')'; overviewNumber.hidden = false; }
+        const breadcrumb = document.querySelector('.breadcrumb strong');
+        if (breadcrumb) breadcrumb.textContent = '客户订单修改单';
+        const srTitle = document.querySelector('h1.sr-only');
+        if (srTitle) srTitle.textContent = '客户订单修改单';
+        document.title = '客户订单修改单 ' + (sourceNo ? sourceNo + ' ' : '') + version + ' - OMS原型';
+        const consignmentInput = document.getElementById('customerOrderNoInput');
+        if (consignmentInput && Array.isArray(restoredDraft.consignments)) {
+          consignmentInput.value = restoredDraft.consignments.filter(Boolean)[0] || '';
+        }
+      }
+
+      const emailBox = document.getElementById('orderEmailRecipientBox');
+      const emailList = document.getElementById('orderEmailRecipientList');
+      const emailPopover = document.getElementById('orderEmailRecipientPopover');
+      const emailData = document.getElementById('orderContactEmailData');
+      const addEmailBtn = document.getElementById('addOrderEmailRecipientBtn');
+      const draftEmailName = document.getElementById('orderEmailRecipientDraftName');
+      const draftEmailAddress = document.getElementById('orderEmailRecipientDraftEmail');
+      let orderEmailRecipients = [];
+      if (Array.isArray(restoredDraft.emailRecipients)) {
+        orderEmailRecipients = restoredDraft.emailRecipients.filter((item) => item && (item.name || item.email));
+      } else if (Array.isArray(orderRecord?.contactEmails)) {
+        orderEmailRecipients = orderRecord.contactEmails.filter((item) => item && (item.name || item.email));
+      } else if (orderRecord?.email) {
+        orderEmailRecipients = [{ name: orderRecord.contact || '客户联系人', email: orderRecord.email }];
+      } else if (emailBox?.dataset.seedEmail) {
+        orderEmailRecipients = [{ name: emailBox.dataset.seedName || '客户联系人', email: emailBox.dataset.seedEmail }];
+      }
+
+      const emailRecipientMarkup = (recipient, index) =>
+        '<span class="demand-email-recipient-chip" data-order-email-recipient data-recipient-name="' + escapeHtml(recipient.name) + '" data-recipient-email="' + escapeHtml(recipient.email) + '">' +
+          '<span class="demand-email-recipient-chip-copy"><strong>' + escapeHtml(recipient.name || '未填写姓名') + '</strong><span>&lt;' + escapeHtml(recipient.email || '未填写邮箱') + '&gt;</span></span>' +
+          '<button type="button" data-remove-order-email-recipient="' + index + '" aria-label="删除邮件接收人">×</button>' +
+        '</span>';
+
+      const renderOrderEmailRecipients = () => {
+        if (!emailList) return;
+        emailList.innerHTML = orderEmailRecipients.map(emailRecipientMarkup).join('');
+        if (emailData) emailData.value = JSON.stringify(orderEmailRecipients);
+      };
+      const setOrderEmailPopoverOpen = (open) => {
+        if (!emailPopover) return;
+        emailPopover.hidden = !open;
+        addEmailBtn?.setAttribute('aria-expanded', String(open));
+        if (open) draftEmailName?.focus();
+      };
+
+      renderOrderEmailRecipients();
+      addEmailBtn?.addEventListener('click', () => setOrderEmailPopoverOpen(emailPopover.hidden));
+      document.getElementById('confirmOrderEmailRecipientBtn')?.addEventListener('click', () => {
+        const name = draftEmailName.value.trim();
+        const email = draftEmailAddress.value.trim();
+        if (!name || !email) {
+          UIState.showFormAlert(scope, 'error', '请填写邮件接收人姓名和邮箱。');
+          (!name ? draftEmailName : draftEmailAddress).focus();
+          return;
+        }
+        if (orderEmailRecipients.some((recipient) => recipient.email.toLowerCase() === email.toLowerCase())) {
+          UIState.showFormAlert(scope, 'error', '该邮箱已添加，请勿重复添加。');
+          draftEmailAddress.focus();
+          return;
+        }
+        orderEmailRecipients.push({ name, email });
+        renderOrderEmailRecipients();
+        emailData?.dispatchEvent(new Event('change', { bubbles: true }));
+        setOrderEmailPopoverOpen(false);
+        addEmailBtn?.focus();
+      });
+      document.getElementById('cancelOrderEmailRecipientBtn')?.addEventListener('click', () => {
+        draftEmailName.value = '';
+        draftEmailAddress.value = '';
+        setOrderEmailPopoverOpen(false);
+        addEmailBtn?.focus();
+      });
+      emailList?.addEventListener('click', (event) => {
+        const remove = event.target.closest('[data-remove-order-email-recipient]');
+        if (!remove) return;
+        orderEmailRecipients.splice(Number(remove.dataset.removeOrderEmailRecipient), 1);
+        renderOrderEmailRecipients();
+        emailData?.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('#orderContactEmailField') && !emailPopover?.hidden) setOrderEmailPopoverOpen(false);
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !emailPopover?.hidden) {
+          setOrderEmailPopoverOpen(false);
+          addEmailBtn?.focus();
+        }
+      });
+
+      const serviceCheckboxes = Array.from(document.querySelectorAll('input[name="orderServiceScope"]'));
+      const transportCheckboxes = Array.from(document.querySelectorAll('input[name="orderTransportType"]'));
+      const shippingCheckboxes = Array.from(document.querySelectorAll('input[name="orderShippingCategory"]'));
+      const normalizeServiceScope = (value) => value === '报关清关' ? '报关' : value;
+      const normalizeShippingCategory = (value) => {
+        if (String(value || '').includes('件杂')) return '件杂';
+        if (String(value || '').includes('集装箱')) return '集装箱';
+        if (String(value || '').includes('散货')) return '散货';
+        return value;
+      };
+      const setOrderCheckboxes = (checkboxes, values) => {
+        const selected = new Set((Array.isArray(values) ? values : [values]).filter(Boolean).map(String));
+        checkboxes.forEach((checkbox) => { checkbox.checked = selected.has(checkbox.value); });
+      };
+      const updateOrderMultiSelectSummary = (name) => {
+        const widget = document.querySelector('[data-multi-select-name="' + name + '"]');
+        if (!widget) return;
+        const valueNode = widget.querySelector('[data-multi-select-value]');
+        const values = Array.from(widget.querySelectorAll('input[type="checkbox"]:checked')).map((input) => input.value);
+        valueNode.textContent = values.length ? values.join('、') : (valueNode.dataset.placeholder || '请选择');
+        widget.classList.toggle('has-value', values.length > 0);
+      };
+      const syncOrderTransportVisibility = () => {
+        const hasTransport = serviceCheckboxes.some((checkbox) => checkbox.value === '运输' && checkbox.checked);
+        const specifiedMode = document.getElementById('orderSpecifiedTransportMode');
+        const hasSpecifiedMode = specifiedMode?.value !== '否';
+        const routeWaterPiece = Boolean(window.orderRouteHasWaterPiece);
+        const hasWaterTransport = hasTransport && hasSpecifiedMode && (routeWaterPiece || transportCheckboxes.some((checkbox) => checkbox.value === '水运' && checkbox.checked));
+        const hasPieceCargo = hasWaterTransport && (routeWaterPiece || shippingCheckboxes.some((checkbox) => checkbox.value === '件杂' && checkbox.checked));
+        document.getElementById('orderSpecifiedTransportModeField').hidden = true; // 本期不做，字段隐藏，取值固定为“是”
+        document.getElementById('orderRoutesSection').hidden = !hasTransport;
+        if (specifiedMode) specifiedMode.required = false; // 字段本期隐藏，不参与必填校验
+        const transportTypeField = document.getElementById('orderTransportTypeField');
+        const shippingCategoryField = document.getElementById('orderShippingCategoryField');
+        if (transportTypeField) transportTypeField.hidden = !hasTransport || !hasSpecifiedMode;
+        if (shippingCategoryField) shippingCategoryField.hidden = !hasTransport || !hasSpecifiedMode;
+        document.getElementById('transportRequirementSection').hidden = !hasTransport || !hasSpecifiedMode || !Boolean(window.orderRouteNeedsSupplementalTransport);
+        document.getElementById('waterPieceCargoFields').hidden = !hasPieceCargo;
+        document.getElementById('genericTransportFields').hidden = hasPieceCargo;
+        ['orderShippingType', 'orderOriginPort', 'orderOriginContact', 'orderDestinationPort', 'orderDestinationContact'].forEach((id) => {
+          const control = document.getElementById(id);
+          if (control) control.required = hasPieceCargo;
+        });
+      };
+      window.syncOrderTransportVisibility = syncOrderTransportVisibility;
+
+      const initialScopes = restoredDraft.serviceScope || orderRecord?.serviceScope || serviceCheckboxes.filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.value);
+      const initialTransportTypes = restoredDraft.transportType || orderRecord?.transportType || transportCheckboxes.filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.value);
+      const initialShippingCategories = restoredDraft.shippingCategory || orderRecord?.loadType || shippingCheckboxes.filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.value);
+      setOrderCheckboxes(serviceCheckboxes, initialScopes.map(normalizeServiceScope));
+      setOrderCheckboxes(transportCheckboxes, Array.isArray(initialTransportTypes) ? initialTransportTypes : [initialTransportTypes]);
+      setOrderCheckboxes(shippingCheckboxes, (Array.isArray(initialShippingCategories) ? initialShippingCategories : [initialShippingCategories]).map(normalizeShippingCategory));
+
+      const portRegions = {
+        '青岛港': '中国 / 山东省 / 青岛市', '上海港': '中国 / 上海市', '宁波舟山港': '中国 / 浙江省 / 宁波市',
+        '天津港': '中国 / 天津市', '深圳港': '中国 / 广东省 / 深圳市', '胡志明港': '越南 / 胡志明市',
+        '海防港': '越南 / 海防市', '新加坡港': '新加坡', '鹿特丹港': '荷兰 / 南荷兰省 / 鹿特丹市',
+        '洛杉矶港': '美国 / 加利福尼亚州 / 洛杉矶市', 'Port Hedland': '澳大利亚 / 西澳大利亚州',
+        '舟山鼠浪湖': '中国 / 浙江省 / 舟山市', '武汉青山码头': '中国 / 湖北省 / 武汉市'
+      };
+      const hasRestoredField = (label) => Object.prototype.hasOwnProperty.call(restoredDraft.fields || {}, label);
+      const ensureSelectOption = (select, value) => {
+        if (!select || !value || Array.from(select.options).some((option) => option.value === value)) return;
+        select.add(new Option(value, value));
+      };
+      const setWaterField = (id, value) => {
+        const control = document.getElementById(id);
+        if (!control || value == null || value === '') return;
+        const label = control.getAttribute('aria-label');
+        if (hasRestoredField(label)) return;
+        if (control.tagName === 'SELECT') ensureSelectOption(control, String(value));
+        control.value = String(value);
+      };
+      const updatePortRegions = () => {
+        const origin = document.getElementById('orderOriginPort');
+        const destination = document.getElementById('orderDestinationPort');
+        document.getElementById('orderOriginRegion').value = portRegions[origin.value] || '';
+        document.getElementById('orderDestinationRegion').value = portRegions[destination.value] || '';
+      };
+
+      [['orderOriginPort', orderRecord?.origin], ['orderDestinationPort', orderRecord?.destination], ['orderOriginContact', orderRecord?.sales || orderRecord?.contact], ['orderOriginContactPhone', orderRecord?.phone], ['orderLatestShipmentDate', orderRecord?.businessDate]].forEach(([id, value]) => setWaterField(id, value));
+      setWaterField('orderShippingType', restoredDraft.fields?.['航运类型'] || '国际航运');
+      updatePortRegions();
+
+      const mailRecipientData = document.getElementById('orderMailRecipientData');
+      const mailRecipientList = document.getElementById('orderMailRecipientList');
+      const initialMailRecipients = String(restoredDraft.fields?.['邮件接收人'] || mailRecipientData.value || orderRecord?.contact || orderRecord?.sales || '').split(/[、,，]/).map((item) => item.trim()).filter(Boolean);
+      let orderMailRecipients = Array.from(new Set(initialMailRecipients));
+      const renderOrderMailRecipients = () => {
+        mailRecipientList.innerHTML = orderMailRecipients.map((name, index) =>
+          '<span class="demand-email-recipient-chip" data-order-mail-recipient><span class="demand-email-recipient-chip-copy"><strong>' + escapeHtml(name) + '</strong></span><button type="button" data-remove-order-mail-recipient="' + index + '" aria-label="删除邮件接收人">×</button></span>'
+        ).join('');
+        mailRecipientData.value = orderMailRecipients.join('、');
+      };
+      const addOrderMailRecipient = () => {
+        const name = window.prompt('请输入邮件接收人姓名');
+        if (!name || !name.trim() || orderMailRecipients.includes(name.trim())) return;
+        orderMailRecipients.push(name.trim());
+        renderOrderMailRecipients();
+        mailRecipientData.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      renderOrderMailRecipients();
+      document.getElementById('addOrderMailRecipientBtn')?.addEventListener('click', addOrderMailRecipient);
+      mailRecipientList?.addEventListener('click', (event) => {
+        const remove = event.target.closest('[data-remove-order-mail-recipient]');
+        if (!remove) return;
+        orderMailRecipients.splice(Number(remove.dataset.removeOrderMailRecipient), 1);
+        renderOrderMailRecipients();
+        mailRecipientData.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+
+      updateOrderMultiSelectSummary('orderTransportType');
+      updateOrderMultiSelectSummary('orderShippingCategory');
+      syncOrderTransportVisibility();
+      document.getElementById('orderOriginPort').addEventListener('change', updatePortRegions);
+      document.getElementById('orderDestinationPort').addEventListener('change', updatePortRegions);
+      document.getElementById('orderSpecifiedTransportMode').addEventListener('change', syncOrderTransportVisibility);
+      serviceCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', syncOrderTransportVisibility));
+      transportCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderTransportType'); syncOrderTransportVisibility(); }));
+      shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
+    })();
+  </script>
+  <script src="../assets/customer-order-routes.js?v=20261125f"></script>
+  <script>
+    (() => {
+      const form = document.getElementById('orderDetailForm');
+      const statusField = document.getElementById('orderStatusField');
+      if (!form || !statusField || !window.UIState) return;
+      const universalServiceGoodsTemplate = document.getElementById('universalServiceGoodsTemplate');
+      const configs = [
+        { type: '报关', scope: '报关', section: document.getElementById('customsServiceRequirementSection'), host: document.getElementById('customsServiceRequirementCards'), empty: document.getElementById('customsServiceRequirementEmpty'), add: document.getElementById('addCustomsServiceRequirementBtn'), template: document.getElementById('customsServiceRequirementTemplate') },
+        { type: '仓储', scope: '仓储', section: document.getElementById('warehouseServiceRequirementSection'), host: document.getElementById('warehouseServiceRequirementCards'), empty: document.getElementById('warehouseServiceRequirementEmpty'), add: document.getElementById('addWarehouseServiceRequirementBtn'), template: document.getElementById('warehouseServiceRequirementTemplate') }
+      ].filter((config) => config.section && config.host && config.add && config.template);
+      const scopeInput = (value) => form.querySelector('input[name="orderServiceScope"][value="' + value + '"]');
+      const editable = () => ['创建', '驳回'].includes(statusField.textContent.trim()) && form.dataset.sourceRestricted !== 'true';
+      const renumber = (config) => {
+        const cards = Array.from(config.host.querySelectorAll('[data-service-requirement-card]'));
+        const canEdit = editable();
+        cards.forEach((card, index) => {
+          const title = card.querySelector('[data-service-requirement-title]');
+          if (title) title.textContent = '服务要求' + (index + 1) + ' ' + config.type;
+          const head = card.querySelector('.service-requirement-card-head');
+          if (head) head.hidden = canEdit && cards.length === 1;
+        });
+        config.empty.hidden = cards.length > 0;
+      };
+      const syncState = () => {
+        const canEdit = editable();
+        configs.forEach((config) => {
+          const selected = Boolean(scopeInput(config.scope)?.checked);
+          config.section.hidden = !selected;
+          config.add.hidden = !canEdit;
+          config.host.querySelectorAll('[data-delete-service-requirement]').forEach((button) => { button.hidden = !canEdit; });
+          config.host.querySelectorAll('textarea').forEach((textarea) => { textarea.readOnly = !canEdit; });
+          renumber(config);
+        });
+      };
+      const updateGoodsCount = (card) => {
+        const count = card.querySelectorAll('[data-service-item-row]').length;
+        const label = card.querySelector('[data-service-goods-count]');
+        if (label) label.textContent = '(' + count + ' 项)';
+      };
+      const resetGoodsRow = (row) => {
+        row.querySelectorAll('input').forEach((input) => {
+          if (input.readOnly) return;
+          input.value = '';
+        });
+        row.querySelectorAll('select').forEach((select) => { select.selectedIndex = 0; });
+      };
+      const addGoodsRow = (card, afterRow) => {
+        const tbody = card.querySelector('[data-service-goods-host] .order-route-items tbody');
+        if (!tbody) return;
+        const templateRow = universalServiceGoodsTemplate?.content.querySelector('[data-service-item-row]');
+        const sourceRow = afterRow || tbody.querySelector('[data-service-item-row]') || templateRow;
+        const row = sourceRow?.cloneNode(true);
+        if (!row) return;
+        if (afterRow) {
+          afterRow.after(row);
+        } else {
+          resetGoodsRow(row);
+          tbody.appendChild(row);
+        }
+        updateGoodsCount(card);
+      };
+      const addCard = (config) => {
+        config.host.appendChild(config.template.content.cloneNode(true));
+        const card = config.host.lastElementChild;
+        const goodsHost = card?.querySelector('[data-service-goods-host]');
+        if (goodsHost && universalServiceGoodsTemplate) {
+          goodsHost.appendChild(universalServiceGoodsTemplate.content.cloneNode(true));
+          updateGoodsCount(card);
+        }
+        syncState();
+      };
+      configs.forEach((config) => {
+        if (!config.host.querySelector('[data-service-requirement-card]')) addCard(config);
+        config.add.addEventListener('click', () => addCard(config));
+        config.host.addEventListener('click', (event) => {
+          const goodsAction = event.target.closest('[data-service-goods-action]');
+          if (goodsAction) {
+            const card = goodsAction.closest('[data-service-requirement-card]');
+            const action = goodsAction.dataset.serviceGoodsAction;
+            if (action === 'add') addGoodsRow(card, null);
+            if (action === 'duplicate') addGoodsRow(card, goodsAction.closest('[data-service-item-row]'));
+            if (action === 'remove') {
+              goodsAction.closest('[data-service-item-row]')?.remove();
+              updateGoodsCount(card);
+            }
+            return;
+          }
+          const remove = event.target.closest('[data-delete-service-requirement]');
+          if (!remove) return;
+          remove.closest('[data-service-requirement-card]')?.remove();
+          renumber(config);
+        });
+        scopeInput(config.scope)?.addEventListener('change', () => {
+          const selected = Boolean(scopeInput(config.scope)?.checked);
+          if (selected && !config.host.querySelector('[data-service-requirement-card]')) addCard(config);
+          syncState();
+        });
+      });
+      window.validateAdditionalServiceRequirementModules = () => {
+        const checks = [{ name: '运输', host: document.getElementById('orderRouteCards'), selector: '[data-route-card]' }].concat(configs.map((config) => ({ name: config.type, host: config.host, selector: '[data-service-requirement-card]' })));
+        const missing = checks.find((item) => scopeInput(item.name)?.checked && (!item.host || !item.host.querySelector(item.selector)));
+        if (missing) {
+          UIState.showFormAlert(form, 'error', '请至少添加一条' + missing.name + '服务要求后再提交。');
+          return false;
+        }
+        return true;
+      };
+      new MutationObserver(syncState).observe(statusField, { childList: true, characterData: true, subtree: true });
+      new MutationObserver(syncState).observe(form, { attributes: true, attributeFilter: ['data-source-restricted'] });
+      syncState();
+    })();
+  </script>
+  <script>
+    (function () {
+      const typeSelect = document.getElementById('customerTypeSelect');
+      const orgField = document.getElementById('innerCustomerOrgField');
+      const deptField = document.getElementById('innerCustomerDeptField');
+      const orgSelect = document.getElementById('innerCustomerOrgSelect');
+      const deptSelect = document.getElementById('innerCustomerDeptSelect');
+      if (!typeSelect || !orgField || !deptField || !orgSelect || !deptSelect) return;
+      const sync = () => {
+        const isInternal = typeSelect.value === '内部客户';
+        orgField.hidden = !isInternal;
+        deptField.hidden = !isInternal;
+        orgSelect.disabled = !isInternal;
+        deptSelect.disabled = !isInternal;
+        orgSelect.required = isInternal;
+        deptSelect.required = false;
+        if (!isInternal) {
+          window.UIState?.clearFieldState?.(orgSelect);
+          window.UIState?.clearFieldState?.(deptSelect);
+        }
+      };
+      typeSelect.addEventListener('change', sync);
+      window.addEventListener('load', sync);
+      sync();
+    })();
+  </script>
+
+  <div class="contract-modal-backdrop" id="orderVersionHistoryDialog" hidden>
+    <section class="contract-modal" role="dialog" aria-modal="true" aria-labelledby="orderVersionHistoryTitle" tabindex="-1">
+      <div class="contract-modal-head">
+        <div>
+          <div class="contract-modal-title" id="orderVersionHistoryTitle">客户订单历史版本</div>
+          <div class="contract-modal-subtitle">按版本号倒序排列，当前版本置顶</div>
+        </div>
+        <button class="contract-modal-close" id="orderVersionHistoryClose" type="button" title="关闭历史版本" aria-label="关闭历史版本">✕</button>
+      </div>
+      <div class="contract-modal-body">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:#f7f9fc;color:#4a5568">
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">版本号</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">订单状态</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">创建人</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">创建时间</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">生效时间</th>
+              <th style="padding:8px 10px;text-align:left;border-bottom:1px solid #e5ebf3">操作</th>
+            </tr>
+          </thead>
+          <tbody id="orderVersionHistoryBody"></tbody>
+        </table>
+      </div>
+      <div class="contract-modal-foot" style="display:flex;justify-content:flex-end;padding:12px 18px;border-top:1px solid #eef1f5">
+        <button class="detail-btn" id="orderVersionHistoryDone" type="button">关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      const scope = document.getElementById('orderDetailForm');
+      if (!scope) return;
+      const key = () => 'ct:customerOrderVersionHistory:' + (document.body.dataset.orderNo || '');
+      const fieldValue = (label) => Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === label)?.value || '';
+      const readRows = () => {
+        try {
+          const raw = sessionStorage.getItem(key());
+          if (raw) {
+            const rows = JSON.parse(raw);
+            if (Array.isArray(rows) && rows.length) return rows;
+          }
+        } catch (error) { /* ignore */ }
+        return [{
+          version: fieldValue('版本号') || '1.0',
+          status: document.getElementById('orderStatusField')?.textContent.trim() || '创建',
+          creator: fieldValue('创建人') || '李琪',
+          createdAt: fieldValue('创建时间') || '',
+          effectiveAt: fieldValue('当前版本生效时间') || ''
+        }];
+      };
+      const writeRows = (rows) => { try { sessionStorage.setItem(key(), JSON.stringify(rows)); } catch (error) { /* ignore */ } };
+
+      const dialog = document.getElementById('orderVersionHistoryDialog');
+      const body = document.getElementById('orderVersionHistoryBody');
+      const close = () => { if (dialog) dialog.hidden = true; };
+      const renderRows = () => {
+        if (!body) return;
+        const rows = readRows().slice().sort((a, b) => Number(b.version) - Number(a.version));
+        const current = (fieldValue('版本号') || '1.0').trim();
+        body.innerHTML = rows.map((row) => {
+          const isCurrent = String(row.version) === current;
+          return '<tr>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + row.version + (isCurrent ? ' <span style="color:#1f6feb">（当前版本）</span>' : '') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.status || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.creator || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.createdAt || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7">' + (row.effectiveAt || '—') + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f3f7"><button class="detail-btn" type="button" data-version-view="' + row.version + '">查看</button></td>' +
+            '</tr>';
+        }).join('') || '<tr><td colspan="6" style="padding:12px;color:#8a94a6">暂无历史版本</td></tr>';
+      };
+      const open = () => { renderRows(); if (dialog) dialog.hidden = false; };
+      document.getElementById('historyVersionBtn')?.addEventListener('click', open);
+      document.getElementById('orderVersionHistoryClose')?.addEventListener('click', close);
+      document.getElementById('orderVersionHistoryDone')?.addEventListener('click', close);
+      dialog?.addEventListener('click', (event) => { if (event.target === dialog) close(); });
+      body?.addEventListener('click', (event) => {
+        const trigger = event.target.closest('[data-version-view]');
+        if (!trigger) return;
+        close();
+        window.UIState?.showFormAlert(scope, 'info', '已只读打开版本 ' + trigger.dataset.version + ' 的客户订单详情。');
+      });
+
+      document.getElementById('deleteVersionBtn')?.addEventListener('click', () => {
+        const version = (fieldValue('版本号') || '1.0').trim();
+        if (version === '1.0') {
+          window.UIState?.showFormAlert(scope, 'error', '当前客户订单不支持撤销版本维护！');
+          window.setTimeout(() => window.location.reload(), 900);
+          return;
+        }
+        if (!window.confirm('是否确认撤销版本维护？')) return;
+        const status = document.getElementById('orderStatusField')?.textContent.trim();
+        if (!['创建', '驳回'].includes(status)) {
+          window.UIState?.showFormAlert(scope, 'error', '当前客户订单委托状态不支持撤销版本维护，请刷新页面后重试');
+          return;
+        }
+        let routes = { routes: [] };
+        try { routes = JSON.parse(document.getElementById('orderRoutesData')?.value || '{}'); } catch (error) { /* ignore */ }
+        const overArranged = (routes.routes || []).some((route) => (route.items || []).some((item) => Number(item.arrangedQty || 0) > Number(item.standardQty ?? item.count ?? 0)));
+        if (overArranged) {
+          window.UIState?.showFormAlert(scope, 'error', '客户订单商品超量安排，无法删除版本维护');
+          return;
+        }
+        const rows = readRows();
+        rows.pop();
+        writeRows(rows);
+        try { sessionStorage.removeItem('ct:customerOrderVersionDraft'); } catch (error) { /* ignore */ }
+        window.UIState?.showFormAlert(scope, 'success', '已撤销版本维护，正在打开历史最新版本。');
+        window.setTimeout(() => {
+          const url = new URL('customer-order-detail-prd-aligned-prototype.html', window.location.href);
+          url.search = '';
+          url.searchParams.set('no', document.body.dataset.orderNo || '');
+          window.location.href = url.href;
+        }, 900);
+      });
+    })();
+  </script>
+  <script src="../assets/prototype-access.js"></script>
+
+  <style>
+    /* 非创建/驳回状态：订单信息区域全局只读 */
+    body[data-order-readonly="true"] #orderInfoView input:not([type="hidden"]),
+    body[data-order-readonly="true"] #orderInfoView select,
+    body[data-order-readonly="true"] #orderInfoView textarea {
+      pointer-events:none !important;
+      cursor:default !important;
+      background:#f7f9fc !important;
+      color:#526176 !important;
+      opacity:1 !important;
+    }
+    body[data-order-readonly="true"] #orderInfoView select {
+      appearance:none !important;
+      -webkit-appearance:none !important;
+      background-image:none !important;
+    }
+    body[data-order-readonly="true"] #orderInfoView textarea { resize:none !important; }
+    body[data-order-readonly="true"] #orderInfoView .multi-control,
+    body[data-order-readonly="true"] #orderInfoView .demand-email-recipient-box { background:#f7f9fc; }
+    body[data-order-readonly="true"] #orderInfoView .demand-email-recipient-trigger,
+    body[data-order-readonly="true"] #orderInfoView .demand-email-recipient-chip button,
+    body[data-order-readonly="true"] #orderInfoView .contract-upload-btn,
+    body[data-order-readonly="true"] #orderInfoView .multi-add,
+    body[data-order-readonly="true"] #orderInfoView .chip-remove,
+    body[data-order-readonly="true"] #orderInfoView [data-fee-action],
+    body[data-order-readonly="true"] #orderInfoView [data-service-goods-action],
+    body[data-order-readonly="true"] #orderInfoView .order-business-fee-actions,
+    body[data-order-readonly="true"] #orderInfoView .order-route-block-actions,
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-route"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="duplicate"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-item"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="link-items"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="duplicate-item"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-item"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-container"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-container"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-leg"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-leg"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-product"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-product"] {
+      display:none !important;
+    }
+    /* 来源类型≠手动创建：仅部分字段可编辑 */
+    [data-source-restricted="true"] input.control:read-only,
+    [data-source-restricted="true"] textarea.control:read-only,
+    [data-source-restricted="true"] select.control:disabled { background:#f7f9fc; color:#64748b; border-color:#eef1f5; }
+    [data-source-restricted="true"] .order-route-icon-btn,
+    [data-source-restricted="true"] [data-route-action="add-route"],
+    [data-source-restricted="true"] [data-route-action="add-item"],
+    [data-source-restricted="true"] [data-route-action="duplicate"],
+    [data-source-restricted="true"] [data-route-action="remove"] { display:none !important; }
+  </style>
+  <script>
+    (() => {
+      const ALLOWED_LABELS = ['业务员', '部门', '核算组', '公司', '经营单位', '业务类型'];
+      const form = document.getElementById('orderDetailForm');
+      if (!form) return;
+      const pageParams = new URLSearchParams(window.location.search);
+      if (pageParams.get('mode') === 'create' && pageParams.get('sourceType') === 'manual' && !pageParams.get('no')) {
+        const sourceTypeControl = form.querySelector('select[aria-label="来源类型"]');
+        if (sourceTypeControl) sourceTypeControl.value = '手动创建';
+      }
+      const isAllowed = (label) => ALLOWED_LABELS.some((key) => label.indexOf(key) >= 0);
+      const syncSourceTypeRules = () => {
+        const status = document.getElementById('orderStatusField')?.textContent.trim() || '';
+        const editableStatus = status === '创建' || status === '驳回';
+        const source = form.querySelector('select[aria-label="来源类型"]')?.value || '';
+        const restricted = editableStatus && source !== '手动创建';
+        form.dataset.sourceRestricted = restricted ? 'true' : 'false';
+        const deleteButton = document.getElementById('deleteOrderBtn');
+        if (deleteButton) deleteButton.hidden = !(editableStatus && source === '手动创建');
+        form.querySelectorAll('input, select, textarea').forEach((control) => {
+          const label = control.getAttribute('aria-label') || '';
+          if (['checkbox', 'radio', 'hidden', 'file'].includes(control.type)) {
+            if (restricted) { control.dataset.srcLocked = '1'; control.disabled = true; }
+            else if (control.dataset.srcLocked) { control.disabled = false; delete control.dataset.srcLocked; }
+            return;
+          }
+          if (restricted && !isAllowed(label)) {
+            if (!control.dataset.srcLocked) {
+              control.dataset.srcLocked = '1';
+              control.dataset.srcWasDisabled = control.disabled ? '1' : '0';
+            }
+            if (control.tagName === 'SELECT') control.disabled = true; else control.readOnly = true;
+          } else if (control.dataset.srcLocked) {
+            if (control.tagName === 'SELECT' && control.dataset.srcWasDisabled === '0') control.disabled = false;
+            control.readOnly = false;
+            delete control.dataset.srcLocked;
+            delete control.dataset.srcWasDisabled;
+          }
+        });
+      };
+      window.__syncSourceTypeRules = syncSourceTypeRules;
+      window.addEventListener('load', () => {
+        syncSourceTypeRules();
+        const statusField = document.getElementById('orderStatusField');
+        if (statusField) {
+          new MutationObserver(syncSourceTypeRules).observe(statusField, { childList: true, characterData: true, subtree: true });
+        }
+      });
+    })();
+  </script>
+<script>
+  (() => {
+    const expandAll = () => {
+      const button = Array.from(document.querySelectorAll('[data-route-action="toggle"]')).find((item) => item.getAttribute('aria-label') === '展开服务要求');
+      if (button) { button.click(); window.setTimeout(expandAll, 20); }
+    };
+    window.addEventListener('load', () => window.setTimeout(expandAll, 20));
+  })();
+</script>
+</body>
+</html>

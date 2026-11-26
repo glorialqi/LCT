@@ -93,6 +93,24 @@
     .order-date-range-separator { color:var(--muted); font-size:11px; }
     .order-routes-section-head { flex-wrap:wrap; gap:10px; }
     .order-route-head-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-left:auto; }
+    .service-requirement-module-list { display:grid; gap:12px; }
+    .service-requirement-card { overflow:hidden; border:1px solid #dfe6ef; border-radius:7px; background:#fff; }
+    .service-requirement-card-head { min-height:44px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 14px; border-bottom:1px solid #edf1f5; background:#f8fafc; }
+    .service-requirement-card-title { color:#1f2b3d; font-size:13px; font-weight:700; }
+    .service-requirement-card-actions { display:flex; align-items:center; gap:6px; }
+    .service-requirement-delete { width:28px; height:28px; display:grid; place-items:center; border:1px solid #d7dee8; border-radius:4px; color:#8793a3; background:#fff; cursor:pointer; }
+    .service-requirement-delete:hover { color:#c62828; border-color:#efc7c2; background:#fff6f5; }
+    .service-requirement-card-body { padding:14px; }
+    .service-requirement-block-title { margin-bottom:8px; color:#526176; font-size:12px; font-weight:600; }
+    .service-goods-table { width:100%; border-collapse:separate; border-spacing:0; }
+    .service-goods-table th { height:32px; padding:0 10px; border-top:1px solid #e8edf4; border-bottom:1px solid #e8edf4; color:#6b7789; background:#fafbfc; font-size:10px; font-weight:600; text-align:left; }
+    .service-goods-table td { padding:8px 10px; border-bottom:1px solid #edf1f5; color:#475569; font-size:11px; }
+    .service-requirement-note-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; margin-top:14px; }
+    .service-requirement-note-field { grid-column:span 3; min-width:0; }
+    .service-requirement-note-field label { display:block; margin-bottom:5px; color:#6b7789; font-size:11px; }
+    .service-requirement-note-field textarea { width:100%; height:32px; min-height:32px; max-height:96px; resize:vertical; padding:7px 9px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; line-height:1.5; box-sizing:border-box; }
+    .service-requirement-module-empty { padding:24px; border:1px dashed #d8e0eb; border-radius:6px; color:#8b95a5; background:#fafbfc; text-align:center; font-size:12px; }
+    @media (max-width:1180px) { .service-requirement-note-field { grid-column:span 6; } }
     .order-route-anchor-tabs { min-width:0; display:flex; align-items:center; gap:3px; overflow-x:auto; scrollbar-width:none; }
     .order-route-anchor-tabs::-webkit-scrollbar { display:none; }
     .order-route-anchor-tab { height:26px; flex:0 0 auto; padding:0 9px; border:1px solid transparent; border-radius:5px; color:#64748b; background:transparent; font-size:10px; white-space:nowrap; cursor:pointer; }
@@ -100,14 +118,10 @@
     .order-route-anchor-tab.active { color:#2563eb; border-color:#d7e7ff; background:#edf5ff; font-weight:600; }
     .order-route-card { scroll-margin-top:52px; }
     #orderRoutesSection.single-route-mode .order-route-anchor-tabs,
-    #orderRoutesSection.single-route-mode .order-route-toolbar,
-    #orderRoutesSection.single-route-mode .order-route-card-head { display:none !important; }
+    #orderRoutesSection.single-route-mode .order-route-toolbar { display:none !important; }
     #orderRoutesSection.single-route-mode .order-route-card { margin-top:0; border:0; background:transparent; box-shadow:none; }
     #orderRoutesSection.single-route-mode .order-route-card-body { padding:0; }
     #orderRoutesSection.single-route-mode [data-route-action="link-items"] { display:none !important; }
-    #orderRoutesSection.single-route-mode .order-route-index,
-    #orderRoutesSection.single-route-mode [data-route-action="duplicate"],
-    #orderRoutesSection.single-route-mode [data-route-action="remove"] { display:none; }
     #orderRoutesSection.single-route-mode .order-route-card-head { min-height:40px; background:#fff; }
     .order-route-view-switch { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid #dbe3ee; border-radius:6px; background:#f1f5f9; }
     .order-route-view-switch .detail-btn { height:27px; padding:0 10px; border:0; background:transparent; box-shadow:none; color:#64748b; }
@@ -125,8 +139,11 @@
     .order-route-card-title { display:flex; min-width:0; align-items:center; gap:9px; flex-wrap:wrap; }
     .order-route-index { display:inline-flex; height:24px; align-items:center; padding:0 8px; border-radius:4px; background:var(--detail-blue); color:#fff; font-size:11px; font-weight:700; }
     .order-route-card.multimodal .order-route-index { background:#7c3aed; }
-    .order-route-route-copy { color:#334155; font-size:12px; font-weight:700; }
-    .order-route-route-copy span { margin-left:6px; color:#64748b; font-weight:400; }
+    .order-route-route-copy { display:flex; align-items:baseline; flex-wrap:wrap; gap:3px 4px; color:#334155; font-size:12px; font-weight:700; }
+    .order-route-route-copy .order-route-place { min-width:0; }
+    .order-route-route-copy .order-route-place em { margin-left:4px; color:#94a3b8; font-size:10px; font-style:normal; font-weight:400; white-space:nowrap; }
+    .order-route-route-copy .order-route-arrow { color:#94a3b8; font-weight:400; }
+    .order-route-route-copy .order-route-descriptor { margin-left:5px; color:#64748b; font-weight:400; white-space:nowrap; }
     .order-route-card-controls { display:flex; align-items:center; gap:6px; }
     .order-route-icon-btn { width:28px; height:28px; display:inline-grid; place-items:center; border:1px solid transparent; border-radius:5px; background:transparent; color:#64748b; cursor:pointer; }
     .order-route-icon-btn:hover { color:var(--detail-blue); border-color:#dbe8fb; background:#f5f9ff; }
@@ -181,30 +198,28 @@
     .order-route-link-option:first-of-type { border-top:0; }
     .order-route-link-option input { width:14px; height:14px; margin:0; accent-color:var(--detail-blue); }
     .order-route-items th { white-space:nowrap; }
-    .order-route-items th:nth-child(1), .order-route-items td:nth-child(1) { width:58px; text-align:center; }
-    .order-route-items th:nth-child(2), .order-route-items td:nth-child(2) { width:150px; }
+    .order-route-items th:nth-child(1), .order-route-items td:nth-child(1) { width:150px; }
+    .order-route-items th:nth-child(2), .order-route-items td:nth-child(2) { width:200px; }
     .order-route-items th:nth-child(3), .order-route-items td:nth-child(3) { width:110px; }
-    .order-route-items th:nth-child(4), .order-route-items td:nth-child(4) { width:180px; }
-    .order-route-items th:nth-child(5), .order-route-items td:nth-child(5) { width:180px; }
+    .order-route-items th:nth-child(4), .order-route-items td:nth-child(4) { width:90px; }
+    .order-route-items th:nth-child(5), .order-route-items td:nth-child(5) { width:90px; }
     .order-route-items th:nth-child(6), .order-route-items td:nth-child(6) { width:90px; }
     .order-route-items th:nth-child(7), .order-route-items td:nth-child(7) { width:80px; }
-    .order-route-items th:nth-child(8), .order-route-items td:nth-child(8) { width:80px; }
-    .order-route-items th:nth-child(9), .order-route-items td:nth-child(9) { width:90px; }
-    .order-route-items th:nth-child(10), .order-route-items td:nth-child(10) { width:90px; }
+    .order-route-items th:nth-child(8), .order-route-items td:nth-child(8) { width:90px; }
+    .order-route-items th:nth-child(9), .order-route-items td:nth-child(9) { width:80px; }
+    .order-route-items th:nth-child(10), .order-route-items td:nth-child(10) { width:80px; }
     .order-route-items th:nth-child(11), .order-route-items td:nth-child(11) { width:90px; }
-    .order-route-items th:nth-child(12), .order-route-items td:nth-child(12) { width:90px; }
-    .order-route-items th:nth-child(13), .order-route-items td:nth-child(13) { width:80px; }
+    .order-route-items th:nth-child(12), .order-route-items td:nth-child(12) { width:80px; }
+    .order-route-items th:nth-child(13), .order-route-items td:nth-child(13) { width:120px; }
     .order-route-items th:nth-child(14), .order-route-items td:nth-child(14) { width:90px; }
-    .order-route-items th:nth-child(15), .order-route-items td:nth-child(15) { width:100px; }
-    .order-route-items th:nth-child(16), .order-route-items td:nth-child(16) { width:130px; }
-    .order-route-items th:nth-child(17), .order-route-items td:nth-child(17) { width:80px; }
+    .order-route-items th:nth-child(15), .order-route-items td:nth-child(15) { width:90px; }
+    .order-route-items th:nth-child(16), .order-route-items td:nth-child(16) { width:100px; }
+    .order-route-items th:nth-child(17), .order-route-items td:nth-child(17) { width:110px; }
     .order-route-items th:nth-child(18), .order-route-items td:nth-child(18) { width:80px; }
-    .order-route-items th:nth-child(19), .order-route-items td:nth-child(19) { width:100px; }
-    .order-route-items th:nth-child(20), .order-route-items td:nth-child(20) { width:110px; }
-    .order-route-items th:nth-child(21), .order-route-items td:nth-child(21) { width:80px; }
-    .order-route-items th:nth-child(22), .order-route-items td:nth-child(22) { width:145px; }
-    .order-route-items th:nth-child(23), .order-route-items td:nth-child(23) { width:150px; }
-    .order-route-items th:nth-child(24), .order-route-items td:nth-child(24) { width:60px; text-align:center; }
+    .order-route-items th:nth-child(19), .order-route-items td:nth-child(19) { width:140px; }
+    .order-route-items th:nth-child(20), .order-route-items td:nth-child(20) { width:160px; }
+    .order-route-items th:nth-child(21), .order-route-items td:nth-child(21) { width:120px; }
+    .order-route-items th:nth-child(22), .order-route-items td:nth-child(22) { width:104px, text-align:center; }
     .order-route-block-actions { display:flex; align-items:center; gap:6px; }
     .order-route-billed { display:grid; grid-template-columns:minmax(0,1fr) 66px; gap:4px; }
     .order-business-estimates { margin-top:14px; }
@@ -484,6 +499,128 @@
     .order-link-item-row.is-linked td { color:#94a3b8; }
     .order-link-check { width:36px; text-align:center; }
     .order-link-tag { display:inline-flex; height:18px; align-items:center; padding:0 6px; border-radius:9px; background:#f1f5f9; color:#64748b; font-size:10px; }
+    /* ===== 线路卡片只读态：白卡 + 一行四字段 ===== */
+    [data-route-readonly="true"] .order-route-card { border:1px solid #eef1f5; border-radius:12px; background:#fff; box-shadow:0 2px 8px rgba(15,23,42,.04); }
+    [data-route-readonly="true"] .order-route-card-head { padding:14px 18px; background:#fff; border-bottom:1px solid #f2f4f8; }
+    [data-route-readonly="true"] .order-route-card-body { padding:8px 18px 16px; }
+    [data-route-readonly="true"] .order-route-block { margin:0; padding:0; border:0; background:transparent; }
+    [data-route-readonly="true"] .order-route-block + .order-route-block { margin-top:14px; padding-top:12px; border-top:1px solid #f4f6f9; }
+    [data-route-readonly="true"] .order-route-block-head { padding:0 0 4px; border:0; background:transparent; }
+    [data-route-readonly="true"] .order-route-block-title { display:flex; align-items:center; gap:8px; color:#4b5a6e; font-size:12px; font-weight:700; letter-spacing:.2px; }
+    [data-route-readonly="true"] .order-route-block-title::before { content:""; width:3px; height:12px; border-radius:2px; background:#c9d7ee; }
+    [data-route-readonly="true"] .order-route-block-title span { color:#b6c2d1; font-weight:400; }
+    [data-route-readonly="true"] .order-route-transport-requirements > .order-route-block-head { display:none; }
+    [data-route-readonly="true"] .ro-goods-list + .order-route-block { margin-top:12px; padding-top:12px; border-top:1px solid #f4f6f9; }
+
+    /* 字段：一行四个，标签在左、值在右；只读态按业务场景排列 */
+    [data-route-readonly="true"] .order-route-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-flow:row; gap:0 24px; }
+    [data-route-readonly="true"] .order-route-field,
+    [data-route-readonly="true"] .order-route-field.row-start,
+    [data-route-readonly="true"] .order-route-field.span-2,
+    [data-route-readonly="true"] .order-route-field.span-3,
+    [data-route-readonly="true"] .order-route-field.span-4,
+    [data-route-readonly="true"] .order-route-field.span-6 { grid-column:auto / span 1; display:flex; align-items:baseline; gap:8px; min-width:0; padding:6px 0; }
+    [data-route-readonly="true"] .route-readonly-field > label { flex:0 0 88px; margin:0; color:#98a2b3; font-size:11px; font-weight:400; text-align:left; line-height:1.55; }
+    [data-route-readonly="true"] .route-readonly-field > :not(label):not(.route-readonly-value) { display:none !important; }
+    [data-route-readonly="true"] .route-readonly-value { flex:1 1 auto; min-width:0; color:#1f2937; font-size:13px; font-weight:500; line-height:1.55; overflow-wrap:anywhere; white-space:pre-wrap; }
+    [data-route-readonly="true"] .route-readonly-value[data-empty="true"] { color:#aab4c3; font-weight:400; }
+
+    @media(max-width:1200px) {
+      [data-route-readonly="true"] .order-route-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:0 22px; }
+    }
+    @media(max-width:920px) {
+      [data-route-readonly="true"] .order-route-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 24px; }
+    }
+
+    /* 商品明细：摘要行 + 按需横向展开全部字段 */
+    .ro-goods-list { display:grid; gap:8px; }
+    .ro-goods { display:grid; grid-template-columns:minmax(280px,32%) minmax(0,1fr) auto; align-items:stretch; min-height:64px; overflow:hidden; border:1px solid #eef1f5; border-radius:8px; background:#fff; transition:border-color .16s ease, box-shadow .16s ease; }
+    .ro-goods:hover { border-color:#dce6f2; }
+    .ro-goods.is-expanded { border-color:#cfe0fb; box-shadow:0 4px 14px rgba(37,99,235,.07); }
+    .ro-goods-main { min-width:0; display:flex; align-items:center; padding:10px 16px; border-right:1px solid #eef2f7; background:#fff; }
+    .ro-goods-title { width:100%; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:3px; overflow:hidden; white-space:nowrap; }
+    .ro-goods-name-line { width:100%; min-width:0; display:flex; align-items:baseline; gap:9px; overflow:hidden; }
+    .ro-goods-name, .ro-goods-desc, .ro-goods-contract { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ro-goods-name { flex:0 1 auto; min-width:0; color:#111827; font-size:13px; font-weight:600; line-height:1.35; }
+    .ro-goods-desc { flex:1 1 auto; min-width:0; color:#8b97a8; font-size:11px; font-weight:400; line-height:1.35; }
+    .ro-goods-contract { width:100%; color:#8b97a8; font-size:11px; font-weight:400; line-height:1.35; }
+    .ro-goods-fields { min-width:0; display:grid; grid-template-columns:repeat(4,minmax(76px,1fr)); align-items:stretch; gap:16px; overflow:hidden; padding:0 16px; scrollbar-width:thin; scrollbar-color:#cbd5e1 transparent; }
+    .ro-goods.is-expanded .ro-goods-fields { display:flex; align-items:stretch; gap:18px; overflow-x:auto; overflow-y:hidden; padding-bottom:3px; }
+    .ro-goods-fields:focus-visible { outline:2px solid #bfd5fb; outline-offset:-2px; }
+    .ro-goods.is-expanded .ro-goods-fields::-webkit-scrollbar { height:4px; }
+    .ro-goods.is-expanded .ro-goods-fields::-webkit-scrollbar-thumb { border-radius:2px; background:#cbd5e1; }
+    .ro-goods.is-expanded .ro-goods-fields::-webkit-scrollbar-track { background:transparent; }
+    .ro-goods-field { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:3px; min-width:0; padding:8px 0; white-space:nowrap; }
+    .ro-goods-field-extra { display:none; }
+    .ro-goods.is-expanded .ro-goods-field { flex:0 0 auto; min-width:72px; }
+    .ro-goods.is-expanded .ro-goods-field-extra { display:flex; }
+    .ro-goods-field span { color:#98a2b3; font-size:10px; line-height:1.2; white-space:nowrap; }
+    .ro-goods-field b { color:#1f2937; font-size:12px; font-weight:500; line-height:1.3; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .ro-goods-toggle { align-self:stretch; min-width:118px; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:0 13px; border:0; border-left:1px solid #edf1f5; color:#2563eb; background:#f8fbff; font-family:inherit; font-size:11px; font-weight:600; white-space:nowrap; cursor:pointer; transition:background .16s ease, color .16s ease; }
+    .ro-goods-toggle:hover { color:#1d4ed8; background:#eef5ff; }
+    .ro-goods-toggle:focus-visible { outline:2px solid #9fc0f8; outline-offset:-3px; }
+    .ro-goods-toggle-chevron { width:6px; height:6px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:translateY(-2px) rotate(45deg); transition:transform .18s ease; }
+    .ro-goods.is-expanded .ro-goods-toggle-chevron { transform:translateY(2px) rotate(-135deg); }
+    .ro-goods-empty { padding:20px; border:1px dashed #e2e8f0; border-radius:8px; color:#94a3b8; text-align:center; font-size:12px; }
+    @media(max-width:1180px) {
+      .ro-goods { grid-template-columns:minmax(250px,30%) minmax(0,1fr) auto; }
+      .ro-goods-fields { gap:12px; padding:0 12px; }
+      .ro-goods-toggle { min-width:106px; padding:0 10px; }
+    }
+    @media(max-width:900px) {
+      .ro-goods { grid-template-columns:minmax(0,1fr) auto; }
+      .ro-goods-main { grid-column:1 / -1; border-right:0; border-bottom:1px solid #eef2f7; }
+      .ro-goods-fields { grid-column:1; }
+      .ro-goods-toggle { grid-column:2; }
+    }
+    /* 表格：浅表头、无竖线 */
+    [data-route-readonly="true"] .order-route-items-wrap { border:1px solid #f2f4f8; border-radius:8px; }
+    [data-route-readonly="true"] .order-route-items th,
+    [data-route-readonly="true"] .order-route-containers-table th { height:36px; background:#f8fafc; border-bottom:1px solid #eef1f5; color:#8b97a8; font-size:11px; font-weight:600; }
+    [data-route-readonly="true"] .order-route-items td,
+    [data-route-readonly="true"] .order-route-containers-table td { padding:10px 8px; border-bottom:1px solid #f6f8fb; font-size:12px; }
+    [data-route-readonly="true"] .order-route-items tbody tr:last-child td { border-bottom:0; }
+
+    /* 隐藏写操作入口 */
+    [data-route-readonly="true"] [data-route-action="duplicate"],
+    [data-route-readonly="true"] [data-route-action="remove"],
+    [data-route-readonly="true"] .order-route-block-actions,
+    [data-route-readonly="true"] [data-fee-action],
+    [data-route-readonly="true"] .order-business-fee-actions { display:none !important; }
+    [data-route-readonly="true"] .order-route-items th:last-child,
+    [data-route-readonly="true"] .order-route-items td:last-child,
+    [data-route-readonly="true"] .order-route-containers-table th:last-child,
+    [data-route-readonly="true"] .order-route-containers-table td:last-child { display:none !important; }
+
+    /* 控件去控件化 */
+    [data-route-readonly="true"] input,
+    [data-route-readonly="true"] select,
+    [data-route-readonly="true"] textarea { border:0 !important; background:transparent !important; box-shadow:none !important; padding:2px 0 !important; color:#1f2937 !important; font-size:13px; font-weight:500; cursor:default; }
+    [data-route-readonly="true"] select { appearance:none; -webkit-appearance:none; background-image:none !important; }
+    [data-route-readonly="true"] select[data-empty] { color:#c3ccda !important; }
+    [data-route-readonly="true"] input::placeholder,
+    [data-route-readonly="true"] textarea::placeholder { color:#c3ccda !important; opacity:1; }
+    [data-route-readonly="true"] .order-route-field label .required { display:none; }
+    [data-route-readonly="true"] .order-route-items .control { height:auto !important; min-height:20px; }
+    [data-route-readonly="true"] [data-fee-route-toggle] { border:0 !important; background:transparent !important; padding:0 !important; color:#1f2937 !important; }
+    [data-route-readonly="true"] [data-fee-route-toggle] .order-fee-route-chevron { display:none; }
+
+    /* 数字右对齐、单位弱化 */
+    [data-route-readonly="true"] .order-route-items td:nth-child(3),
+    [data-route-readonly="true"] .order-route-items td:nth-child(4),
+    [data-route-readonly="true"] .order-route-items td:nth-child(6),
+    [data-route-readonly="true"] .order-route-items td:nth-child(8),
+    [data-route-readonly="true"] .order-route-items td:nth-child(11) { text-align:right; }
+    [data-route-readonly="true"] .order-route-items td:nth-child(3) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(4) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(6) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(8) input,
+    [data-route-readonly="true"] .order-route-items td:nth-child(11) input { text-align:right !important; font-variant-numeric:tabular-nums; }
+    [data-route-readonly="true"] .order-route-items td:nth-child(5) select,
+    [data-route-readonly="true"] .order-route-items td:nth-child(7) select,
+    [data-route-readonly="true"] .order-route-items td:nth-child(9) select,
+    [data-route-readonly="true"] .order-route-items td:nth-child(10) select { color:#9aa8bb !important; }
+
 </style>
   <script>
     (() => {
@@ -579,7 +716,6 @@
               <button class="detail-btn outline-primary" id="submitOrderBtn" type="button">提交</button>
               <button class="detail-btn outline-primary" id="submitFillLogisticsBtn" type="button">提交并填写物流需求</button>
               <button class="detail-btn outline-primary" id="submitAutoTaskBtn" type="button">提交并自动生成任务</button>
-              <button class="detail-btn primary" id="confirmOrderBtn" type="button" hidden>确认</button>
               <button class="detail-btn outline-primary" id="viewContractBtn" type="button">查看合同</button>
               <button class="detail-btn" id="attachmentBtn" type="button">附件</button>
               <button class="detail-btn outline-primary" id="generateLogisticsDemandBtn" type="button" hidden>生成物流需求</button>
@@ -588,6 +724,7 @@
               <button class="detail-btn" id="historyVersionBtn" type="button">历史版本</button>
               <button class="detail-btn" id="approvalProgressBtn" type="button">审批进度</button>
               <button class="detail-btn primary" id="completeOrderBtn" type="button" hidden>完结</button>
+              <button class="detail-btn danger" id="deleteOrderBtn" type="button" hidden>删除订单</button>
               <button class="detail-btn danger" id="cancelOrderBtn" type="button" hidden>取消订单</button>
               <button class="detail-btn danger" id="deleteVersionBtn" type="button" hidden>删除版本维护</button>
               <button class="detail-btn" id="cancelCompleteBtn" type="button" hidden>取消完结</button>
@@ -612,14 +749,14 @@
             <div class="order-module-links">
               <button type="button" data-module-target="organizationSection">组织信息</button>
               <button type="button" data-module-target="basicInfoSection">基础信息</button>
-              <button type="button" data-module-target="orderRoutesSection">线路与商品</button>
+              <button type="button" data-module-target="orderRoutesSection">服务要求</button>
               <button type="button" data-module-target="costProfitSection">预估费用</button>
               <button type="button" data-module-target="contractSection">合同信息</button>
               <button type="button" data-module-target="systemInfoSection">系统信息</button>
             </div>
             <div class="order-quick-statuses" aria-label="订单状态摘要">
               <span class="order-quick-status-item" title="订单状态"><span class="order-quick-status-label">订单</span><span class="order-status-chip status-field-value" id="orderStatusField" data-order-status-field data-order-status-pill data-status="创建">创建</span></span>
-              <span class="order-quick-status-item" title="订单确认状态"><span class="order-quick-status-label">确认</span><span class="order-status-chip" id="orderConfirmationStatusField" data-order-confirmation-status-field></span></span>
+              
               <span class="order-quick-status-item" title="安排状态"><span class="order-quick-status-label">安排</span><span class="order-status-chip" id="orderArrangementStatusField" data-order-arrangement-status-field></span></span>
               <span class="order-quick-status-item" title="合同状态"><span class="order-quick-status-label">合同</span><span class="order-status-chip" id="orderContractOverviewStatus"></span></span>
             </div>
@@ -700,33 +837,22 @@
               <div class="field"><div class="field-label">贸易条款</div><select class="control" aria-label="贸易条款"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select></div>
 
 
-              <div class="field field--new span-2" id="customerOrderNoField">
+              <div class="field field--new" id="customerOrderNoField">
                 <div class="field-label">
                   客户单号
                   <span class="help-dot" tabindex="0" aria-label="客户单号说明">
                     <span class="field-help">i</span>
-                    <span class="help-tip">客户系统中生成并下发给 4PL 的客户单号。可填写多个，常见情况为 1 个。</span>
+                    <span class="help-tip">客户系统中生成并下发给 4PL 的客户单号。</span>
                   </span>
-                  <span class="consignment-count" id="consignmentCount">1 个</span>
                 </div>
-                <div class="consignment-editor" id="consignmentEditor">
-                  <div class="consignment-chips" id="consignmentChips">
-                    <span class="consignment-chip" data-value="2102957467694845952">
-                      <span>2102957467694845952</span>
-                      <button class="chip-remove" type="button" title="删除" aria-label="删除该客户单号"><svg><use href="#p-close"/></svg></button>
-                    </span>
-                  </div>
-                  <input class="consignment-input" id="consignmentInput" type="text" placeholder="输入后回车添加" aria-label="输入客户单号">
-                  <button class="consignment-add" id="consignmentAdd" type="button">+ 添加</button>
-                </div>
-                <div class="field-error" id="consignmentError">该客户单号已存在，请勿重复添加。</div>
+                <input class="control" id="customerOrderNoInput" type="text" autocomplete="off" value="2102957467694845952" placeholder="请输入客户单号" aria-label="客户单号">
               </div>
               <div class="field span-2" id="orderServiceScopeField">
                 <div class="field-label">服务范围<span class="required">*</span></div>
                 <div class="demand-check-group" data-order-required-group="serviceScope">
                   <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="运输" checked>运输</label>
-                  <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="仓储" checked>仓储</label>
-                  <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="报关" checked>报关</label>
+                  <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="仓储">仓储</label>
+                  <label class="demand-check-option"><input type="checkbox" name="orderServiceScope" value="报关">报关</label>
                 </div>
               </div>
 
@@ -742,12 +868,11 @@
         </section>
         <section class="detail-section" id="orderRoutesSection" data-collapsible-section aria-labelledby="order-routes-title">
           <div class="detail-section-head order-routes-section-head">
-            <div class="detail-section-title" id="order-routes-title"><svg><use href="#p-truck"/></svg>运输线路与商品明细</div>
-            <div class="order-route-anchor-tabs" id="orderRouteAnchorTabs" role="tablist" aria-label="运输线路快速定位"></div>
+            <div class="detail-section-title" id="order-routes-title"><svg><use href="#p-truck"/></svg>运输服务要求</div>
+            <div class="order-route-anchor-tabs" id="orderRouteAnchorTabs" role="tablist" aria-label="运输服务要求快速定位"></div>
             <div class="order-route-head-actions">
-              <button class="detail-btn outline-primary" id="orderRouteFlowBtn" type="button" data-route-action="view-flow" hidden>查看商品流向图</button>
               <button class="detail-btn outline-primary" id="orderRouteFeedbackBtn" type="button" data-route-action="feedback" hidden>履约反馈</button>
-              <button class="detail-btn outline-primary" type="button" data-route-action="add-route" data-route-type="汽运">+ 添加线路</button>
+              <button class="detail-btn outline-primary" type="button" data-route-action="add-route" data-route-type="汽运">+ 添加服务要求</button>
             </div>
           </div>
           <div class="detail-section-body">
@@ -756,6 +881,91 @@
             <input id="orderRoutesData" type="hidden" aria-label="运输线路数据">
           </div>
         </section>
+
+        <section class="detail-section" id="customsServiceRequirementSection" data-collapsible-section aria-labelledby="customs-service-requirement-title" hidden>
+          <div class="detail-section-head">
+            <div class="detail-section-title" id="customs-service-requirement-title"><svg><use href="#p-doc"/></svg>报关服务要求</div>
+            <div class="order-route-head-actions"><button class="detail-btn outline-primary" id="addCustomsServiceRequirementBtn" type="button">+ 添加服务要求</button></div>
+          </div>
+          <div class="detail-section-body">
+            <div class="service-requirement-module-list" id="customsServiceRequirementCards"></div>
+            <div class="service-requirement-module-empty" id="customsServiceRequirementEmpty" hidden>暂无报关服务要求，请添加服务要求。</div>
+          </div>
+        </section>
+
+        <section class="detail-section" id="warehouseServiceRequirementSection" data-collapsible-section aria-labelledby="warehouse-service-requirement-title" hidden>
+          <div class="detail-section-head">
+            <div class="detail-section-title" id="warehouse-service-requirement-title"><svg><use href="#p-doc"/></svg>仓储服务要求</div>
+            <div class="order-route-head-actions"><button class="detail-btn outline-primary" id="addWarehouseServiceRequirementBtn" type="button">+ 添加服务要求</button></div>
+          </div>
+          <div class="detail-section-body">
+            <div class="service-requirement-module-list" id="warehouseServiceRequirementCards"></div>
+            <div class="service-requirement-module-empty" id="warehouseServiceRequirementEmpty" hidden>暂无仓储服务要求，请添加服务要求。</div>
+          </div>
+        </section>
+
+        <template id="universalServiceGoodsTemplate">
+          <div class="order-route-block order-route-goods-block" data-service-goods-block>
+            <div class="order-route-block-head">
+              <div class="order-route-block-title">商品清单 <span data-service-goods-count>(1 项)</span></div>
+              <div class="order-route-block-actions">
+                <button class="detail-btn outline-primary" type="button" data-service-goods-action="add">+ 添加商品</button>
+              </div>
+            </div>
+            <div class="order-route-items-wrap">
+              <table class="order-route-items" aria-label="服务要求商品清单">
+                <thead><tr><th>商品分类 *</th><th>商品描述</th><th>标准数量 *</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>关联线路</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr data-service-item-row>
+                    <td><select class="control" data-service-item-field="name" aria-label="商品分类"><option selected>进口纸浆</option><option>钢材</option><option>玉米</option><option>重卡卡车</option><option>新能源整车</option></select></td>
+                    <td><input class="control" data-service-item-field="description" value="进口纸浆" placeholder="请输入商品描述" aria-label="商品描述"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="standardQty" value="1.20" aria-label="标准数量"></td>
+                    <td><input class="control" type="number" min="0" step="1" data-service-item-field="pieceCount" value="12" aria-label="件数"></td>
+                    <td><select class="control" data-service-item-field="pieceCountUnit" aria-label="件数单位"><option>箱</option><option selected>托</option><option>桶</option><option>台</option><option>件</option></select></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="grossWeight" value="1200" aria-label="毛重"></td>
+                    <td><select class="control" data-service-item-field="grossWeightUnit" aria-label="毛重单位"><option>kg</option><option selected>吨</option></select></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="volume" value="560" aria-label="体积"></td>
+                    <td><select class="control" data-service-item-field="volumeUnit" aria-label="体积单位"><option selected>m³</option><option>CBM</option></select></td>
+                    <td><select class="control" data-service-item-field="standardUnit" aria-label="标准单位"><option selected>吨</option><option>千克</option><option>立方米</option><option>件</option></select></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="pieceWeight" value="100" aria-label="单件重量"></td>
+                    <td><select class="control" data-service-item-field="pieceWeightUnit" aria-label="单件重量单位"><option>kg</option><option selected>吨</option></select></td>
+                    <td><input class="control" data-service-item-field="specDimensions" value="1200 × 1000 × 1100 mm" placeholder="长 × 宽 × 高" aria-label="规格尺寸"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="overRate" value="3" placeholder="%" aria-label="溢装率"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="underRate" value="1" placeholder="%" aria-label="短装率"></td>
+                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="goodsValueUnitPrice" value="3200" aria-label="货值单价"></td>
+                    <td><input class="control" type="number" data-service-item-field="goodsValueAmount" value="3840000" readonly aria-label="货值金额"></td>
+                    <td><select class="control" data-service-item-field="goodsValueCurrency" aria-label="货值币种"><option selected>CNY</option><option>USD</option><option>EUR</option></select></td>
+                    <td><span class="order-route-source-ref">—</span></td>
+                    <td><input class="control" data-service-item-field="englishName" value="Imported Pulp" placeholder="请输入商品英文名" aria-label="商品英文名"></td>
+                    <td><input class="control" data-service-item-field="tradeContractNo" value="HT-2026-010" placeholder="请输入合同号" aria-label="贸易合同号"></td>
+                    <td><select class="control" data-service-item-field="tradeContractType" aria-label="贸易合同类型"><option selected>销售合同</option><option>采购合同</option><option>框架合同</option></select></td>
+                    <td><button class="order-route-row-action" type="button" data-service-goods-action="duplicate">复制</button><button class="order-route-icon-btn danger" type="button" data-service-goods-action="remove" aria-label="删除商品">×</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </template>
+
+        <template id="customsServiceRequirementTemplate">
+          <article class="service-requirement-card" data-service-requirement-card="customs">
+            <div class="service-requirement-card-head"><div class="service-requirement-card-title" data-service-requirement-title>服务要求1 报关</div><div class="service-requirement-card-actions"><button class="service-requirement-delete" type="button" data-delete-service-requirement="customs" aria-label="删除报关服务要求">×</button></div></div>
+            <div class="service-requirement-card-body">
+              <div data-service-goods-host></div>
+              <div class="service-requirement-note-grid"><div class="service-requirement-note-field"><label>报关备注</label><textarea class="control" placeholder="请输入报关备注" aria-label="报关备注"></textarea></div></div>
+            </div>
+          </article>
+        </template>
+
+        <template id="warehouseServiceRequirementTemplate">
+          <article class="service-requirement-card" data-service-requirement-card="warehouse">
+            <div class="service-requirement-card-head"><div class="service-requirement-card-title" data-service-requirement-title>服务要求1 仓储</div><div class="service-requirement-card-actions"><button class="service-requirement-delete" type="button" data-delete-service-requirement="warehouse" aria-label="删除仓储服务要求">×</button></div></div>
+            <div class="service-requirement-card-body">
+              <div data-service-goods-host></div>
+              <div class="service-requirement-note-grid"><div class="service-requirement-note-field"><label>仓储备注</label><textarea class="control" placeholder="请输入仓储备注" aria-label="仓储备注"></textarea></div></div>
+            </div>
+          </article>
+        </template>
 
         <section class="detail-section" id="costProfitSection" data-collapsible-section aria-labelledby="cost-profit-title">
           <div class="detail-section-head"><div class="detail-section-title" id="cost-profit-title"><svg><use href="#p-down"/></svg>预估费用</div></div>
@@ -906,9 +1116,10 @@
               <div class="field"><div class="field-label">修改时间</div><input class="control" value="2026-11-01 14:30" readonly aria-label="修改时间"></div>
               <div class="field"><div class="field-label">版本号</div><input class="control" value="1.0" readonly aria-label="版本号"></div>
               <div class="field"><div class="field-label">当前版本生效时间</div><input class="control" value="2026-11-01 14:30" readonly aria-label="当前版本生效时间"></div>
-              <div class="field"><div class="field-label">来源系统</div><select class="control" disabled aria-label="来源系统"><option selected>4PL控制塔</option><option>SSP</option></select></div>
               <div class="field"><div class="field-label">来源类型</div><select class="control" disabled aria-label="来源类型"><option>手动创建</option><option selected>客户需求单</option><option>外系统接入</option></select></div>
-              <div class="field"><div class="field-label">来源单号</div><input class="control" value="SR202610280018" readonly aria-label="来源单号"></div>
+              <div class="field"><div class="field-label">来源单号</div><input class="control" value="SR202610280018(V1.0)" readonly aria-label="来源单号"></div>
+              <div class="field"><div class="field-label">版本来源类型</div><select class="control" disabled aria-label="版本来源类型"><option selected>新建</option><option>复制</option><option>手动版本维护</option><option>客户需求单版本变更</option><option>外系统版本同步</option></select></div>
+              <div class="field"><div class="field-label">版本来源单号</div><input class="control" value="SR202610280018(V1.0)" readonly aria-label="版本来源单号"></div>
               <div class="field"><div class="field-label">确认人</div><input class="control" value="" readonly aria-label="确认人"></div>
               <div class="field"><div class="field-label">确认时间</div><input class="control" value="" readonly aria-label="确认时间"></div>
             </div>
@@ -917,7 +1128,7 @@
 
         <div class="note-card">
           <svg><use href="#p-info"/></svg>
-          <div><b>原型说明：</b>客户单号位于“基础信息”服务范围下方；采用标准表单控件，不额外增加页面高度。支持回车录入多个单号、删除标签和重复校验。</div>
+          <div><b>原型说明：</b>客户单号位于“基础信息”服务范围下方；本期为单值文本输入框（占用一个字段宽度），不再支持多值录入。</div>
         </div>
         </div>
         <section class="detail-section" id="transportRequirementSection" aria-labelledby="transport-title">
@@ -1075,7 +1286,7 @@
     </section>
   </div>  <aside class="prototype-note" id="prototypeNote" aria-label="原型说明">
     <h3>为什么放在这里</h3>
-    <p>客户单号是可编辑、可多值的业务字段，放在“基础信息”表单栅格内比标题行右侧更符合操作习惯。</p>
+    <p>客户单号是可编辑的单值文本字段，放在“基础信息”表单栅格内比标题行右侧更符合操作习惯。</p>
     <ul>
       <li>与“服务范围”同行，不新增整行。</li>
       <li>2 列宽度可容纳长数字和多个标签。</li>
@@ -1189,74 +1400,9 @@
       } catch (error) {}
     })();
   </script>
-  <script src="../assets/prototype-data.js"></script>
+  <script src="../assets/prototype-data.js?v=20261125d"></script>
   <script>
     (() => {
-      const chips = document.getElementById('consignmentChips');
-      const editor = document.getElementById('consignmentEditor');
-      const input = document.getElementById('consignmentInput');
-      const addButton = document.getElementById('consignmentAdd');
-      const count = document.getElementById('consignmentCount');
-      const error = document.getElementById('consignmentError');
-      const toast = document.getElementById('toast');
-      let toastTimer;
-
-      const showToast = (message) => {
-        clearTimeout(toastTimer);
-        toast.textContent = message;
-        toast.classList.add('show');
-        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
-      };
-      const getValues = () => Array.from(chips.querySelectorAll('.consignment-chip')).map((chip) => chip.dataset.value);
-      const updateCount = () => {
-        count.textContent = getValues().length + ' 个';
-        error.classList.remove('show');
-      };
-      const createChip = (value) => {
-        const chip = document.createElement('span');
-        chip.className = 'consignment-chip';
-        chip.dataset.value = value;
-        const text = document.createElement('span');
-        text.textContent = value;
-        const remove = document.createElement('button');
-        remove.type = 'button';
-        remove.className = 'chip-remove';
-        remove.title = '删除';
-        remove.setAttribute('aria-label', '删除该客户单号');
-        remove.innerHTML = '<svg><use href="#p-close"/></svg>';
-        chip.append(text, remove);
-        chips.appendChild(chip);
-      };
-      const addValue = () => {
-        const value = input.value.trim();
-        if (!value) { input.focus(); return; }
-        if (getValues().includes(value)) {
-          error.classList.add('show');
-          input.select();
-          return;
-        }
-        createChip(value);
-        input.value = '';
-        input.focus();
-        updateCount();
-        showToast('已添加客户单号');
-      };
-
-      chips.addEventListener('click', (event) => {
-        const remove = event.target.closest('.chip-remove');
-        if (!remove) return;
-        remove.closest('.consignment-chip').remove();
-        updateCount();
-        showToast('已删除客户单号');
-      });
-      addButton.addEventListener('click', addValue);
-      input.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') { event.preventDefault(); addValue(); }
-        if (event.key === 'Escape') input.blur();
-      });
-      editor.addEventListener('click', (event) => {
-        if (event.target === editor || event.target === chips) input.focus();
-      });
       const backToListBtn = document.getElementById('backToListBtn');
       if (backToListBtn) {
         backToListBtn.addEventListener('click', () => {
@@ -1321,9 +1467,9 @@
       });
 
       const orderActionSequences = {
-        draft: ['saveDraftBtn', 'submitOrderBtn', 'submitFillLogisticsBtn', 'submitAutoTaskBtn', 'viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        draft: ['saveDraftBtn', 'submitOrderBtn', 'submitFillLogisticsBtn', 'submitAutoTaskBtn', 'deleteOrderBtn', 'viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
         review: ['viewContractBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
-        pendingConfirm: ['confirmOrderBtn', 'versionMaintenanceBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
+        pendingConfirm: ['versionMaintenanceBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
         confirmedFulfillment: ['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
         fulfillment: ['attachmentBtn', 'versionMaintenanceBtn', 'historyVersionBtn', 'approvalProgressBtn', 'completeOrderBtn', 'cancelOrderBtn'],
         completed: ['cancelCompleteBtn', 'attachmentBtn', 'historyVersionBtn', 'approvalProgressBtn'],
@@ -1341,22 +1487,16 @@
         const bar = document.getElementById('detailActions');
         if (!bar || !moreMenuHost || !moreToggle) return;
         const status = document.getElementById('orderStatusField')?.textContent.trim() || '';
-        const confirmation = document.querySelector('[data-order-confirmation-status-field]')?.textContent.trim() || '';
         let sequence;
         if (status === '创建' || status === '驳回') sequence = orderActionSequences.draft;
         else if (status === '待审核') sequence = orderActionSequences.review;
-        else if (status === '待履约' && confirmation === '待确认') sequence = orderActionSequences.pendingConfirm;
-        else if (status === '待履约' && confirmation === '已确认') sequence = orderActionSequences.confirmedFulfillment;
-        else if (status === '待履约') sequence = orderActionSequences.pendingConfirm.filter((id) => id !== 'confirmOrderBtn');
-        else if (status === '履约中') {
-          sequence = orderActionSequences.fulfillment.slice();
-          if (!confirmation || confirmation === '待确认') sequence.unshift('confirmOrderBtn');
-        }
+        else if (status === '待履约') sequence = orderActionSequences.confirmedFulfillment;
+        else if (status === '履约中') sequence = orderActionSequences.fulfillment.slice();
         else if (status === '已完结') sequence = orderActionSequences.completed;
         else if (status === '已取消') sequence = orderActionSequences.cancelled;
         else sequence = orderActionSequences.review;
         const arrangementStatus = document.getElementById('orderArrangementStatusField')?.textContent.trim() || '';
-        if (status === '待履约' && confirmation === '已确认' && arrangementStatus === '待安排') {
+        if (status === '待履约' && arrangementStatus === '待安排') {
           const logisticsGenerationActions = ['generateLogisticsDemandBtn', 'submitLogisticsPlanBtn'];
           sequence = sequence.concat(logisticsGenerationActions);
         }
@@ -1373,8 +1513,8 @@
         const currentVersionValue = (versionControlEl?.value || '1.0').trim();
         if ((status === '创建' || status === '驳回') && currentVersionValue !== '1.0') sequence = sequence.concat(['deleteVersionBtn']);
         if (currentVersionValue !== '1.0') sequence = sequence.filter((id) => !['submitFillLogisticsBtn', 'submitAutoTaskBtn'].includes(id));
-        // 【查看物流安排】与列表页「更多 → 查看物流安排」一致：待履约（已确认）/ 履约中显示，且始终排在按钮区最后
-        const canViewArrangement = (status === '待履约' && confirmation === '已确认') || status === '履约中';
+        // 【查看物流安排】与列表页「更多 → 查看物流安排」一致：待履约（已确认）/ 履约中 / 已完结 / 已取消显示（完结后仍可回看），且始终排在按钮区最后
+        const canViewArrangement = status === '待履约' || status === '履约中' || status === '已完结' || status === '已取消';
         sequence = sequence.filter((id) => id !== 'viewLogisticsPlanBtn');
         if (canViewArrangement) sequence = sequence.concat(['viewLogisticsPlanBtn']);
         window.__visibleOrderActionIds = sequence.slice();
@@ -1497,6 +1637,7 @@
         if (validate) {
           const referenceCheck = window.OrderRoutes?.validateSubmitReferences?.();
           if (referenceCheck && referenceCheck.valid === false) return;
+          if (typeof window.validateAdditionalServiceRequirementModules === 'function' && !window.validateAdditionalServiceRequirementModules()) return;
           const hasServiceScope = Boolean(scope.querySelector('input[name="orderServiceScope"]:checked'));
           if (!hasServiceScope) {
             UIState.showFormAlert(scope, 'error', '请至少选择一项服务范围。');
@@ -1538,8 +1679,6 @@
           statusField.textContent = '待履约';
           statusField.dataset.status = '待履约';
         }
-        const confirmationField = document.querySelector('[data-order-confirmation-status-field]');
-        if (confirmationField) { confirmationField.textContent = '待确认'; confirmationField.dataset.status = '待确认'; }
         const arrangementField = document.querySelector('[data-order-arrangement-status-field]');
         if (arrangementField) { arrangementField.textContent = ''; arrangementField.dataset.status = ''; }
         syncOrderDocumentActions();
@@ -1619,7 +1758,9 @@
           if (control.type === 'radio' && !control.checked) return;
           fields[label] = control.value;
         });
-        const consignments = Array.from(document.querySelectorAll('#consignmentChips .consignment-chip')).map((chip) => chip.dataset.value).filter(Boolean);
+        const consignmentInput = document.getElementById('customerOrderNoInput');
+        const consignmentValue = consignmentInput ? consignmentInput.value.trim() : '';
+        const consignments = consignmentValue ? [consignmentValue] : [];
         const selectedValues = (name) => Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map((input) => input.value);
         const emailRecipients = Array.from(document.querySelectorAll('#orderEmailRecipientList [data-order-email-recipient]')).map((chip) => ({
           name: chip.dataset.recipientName || '',
@@ -1688,6 +1829,11 @@
         syncOrderDocumentActions();
         UIState.showFormAlert(scope, 'success', '已取消完结。');
       });
+      document.getElementById('deleteOrderBtn')?.addEventListener('click', () => {
+        if (!window.confirm('删除后订单不可恢复，确定删除该客户订单吗？')) return;
+        UIState.showFormAlert(scope, 'success', '客户订单已删除，即将返回列表。');
+        window.setTimeout(() => { window.location.href = 'customer-order-list-prototype.html'; }, 900);
+      });
       document.getElementById('cancelOrderBtn')?.addEventListener('click', () => {
         if (window.OrderDetailPage) return;
         const currentStatus = document.getElementById('orderStatusField')?.textContent.trim();
@@ -1700,18 +1846,6 @@
         if (statusField) { statusField.textContent = '已取消'; statusField.dataset.status = '已取消'; }
         syncOrderDocumentActions();
         UIState.showFormAlert(scope, 'success', '客户订单已取消。');
-      });
-      document.getElementById('confirmOrderBtn').addEventListener('click', () => {
-        if (window.OrderDetailPage?.confirmOrder) {
-          window.OrderDetailPage.confirmOrder();
-          return;
-        }
-        const confirmationField = document.querySelector('[data-order-confirmation-status-field]');
-        if (confirmationField) { confirmationField.textContent = '已确认'; confirmationField.dataset.status = '已确认'; }
-        const arrangementField = document.querySelector('[data-order-arrangement-status-field]');
-        if (arrangementField && !arrangementField.textContent.trim()) { arrangementField.textContent = '待安排'; arrangementField.dataset.status = '待安排'; }
-        syncOrderDocumentActions();
-        UIState.showFormAlert(scope, 'success', '客户订单已确认。');
       });
 
       const orderRecord = window.OrderDetailPage?.record || null;
@@ -1732,20 +1866,20 @@
             control.value = value;
           }
         });
-        const version = pageParams.get('version') || restoredDraft.version || 'V1.1';
+        const version = pageParams.get('version') || restoredDraft.version || '2.0';
         const versionControl = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '版本号');
         if (versionControl) versionControl.value = version;
         const modifyStatusField = document.getElementById('orderStatusField');
         if (modifyStatusField) { modifyStatusField.textContent = '创建'; modifyStatusField.dataset.status = '创建'; }
-        const modifyConfirmField = document.querySelector('[data-order-confirmation-status-field]');
-        if (modifyConfirmField) { modifyConfirmField.textContent = ''; modifyConfirmField.dataset.status = ''; }
         const modifyArrangeField = document.querySelector('[data-order-arrangement-status-field]');
         if (modifyArrangeField) { modifyArrangeField.textContent = ''; modifyArrangeField.dataset.status = ''; }
         window.syncOrderDocumentActions?.();
         window.syncContractFieldRules?.();
         const sourceNo = pageParams.get('sourceNo') || restoredDraft.sourceNo || '';
-        const sourceControl = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '来源单号');
-        if (sourceControl) sourceControl.value = sourceNo;
+        const versionSourceType = Array.from(scope.querySelectorAll('select')).find((control) => control.getAttribute('aria-label') === '版本来源类型');
+        if (versionSourceType) versionSourceType.value = '手动版本维护';
+        const versionSourceNo = Array.from(scope.querySelectorAll('input')).find((control) => control.getAttribute('aria-label') === '版本来源单号');
+        if (versionSourceNo) versionSourceNo.value = sourceNo + '(' + version + ')';
         const titleNode = document.querySelector('.page-title');
         if (titleNode) {
           const titleText = Array.from(titleNode.childNodes).find((node) => node.nodeType === Node.TEXT_NODE && node.nodeValue.trim());
@@ -1759,11 +1893,9 @@
         const srTitle = document.querySelector('h1.sr-only');
         if (srTitle) srTitle.textContent = '客户订单修改单';
         document.title = '客户订单修改单 ' + (sourceNo ? sourceNo + ' ' : '') + version + ' - OMS原型';
-        const chipHost = document.getElementById('consignmentChips');
-        if (chipHost && Array.isArray(restoredDraft.consignments)) {
-          chipHost.innerHTML = restoredDraft.consignments.map((value) => '<span class="consignment-chip" data-value="' + escapeHtml(value) + '"><span title="' + escapeHtml(value) + '">' + escapeHtml(value) + '</span><button class="chip-remove" type="button" aria-label="删除客户单号 ' + escapeHtml(value) + '">×</button></span>').join('');
-          const chipCount = document.getElementById('consignmentCount');
-          if (chipCount) chipCount.textContent = restoredDraft.consignments.length + ' 个';
+        const consignmentInput = document.getElementById('customerOrderNoInput');
+        if (consignmentInput && Array.isArray(restoredDraft.consignments)) {
+          consignmentInput.value = restoredDraft.consignments.filter(Boolean)[0] || '';
         }
       }
 
@@ -1969,7 +2101,119 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261118c"></script>
+  <script src="../assets/customer-order-routes.js?v=20261125f"></script>
+  <script>
+    (() => {
+      const form = document.getElementById('orderDetailForm');
+      const statusField = document.getElementById('orderStatusField');
+      if (!form || !statusField || !window.UIState) return;
+      const universalServiceGoodsTemplate = document.getElementById('universalServiceGoodsTemplate');
+      const configs = [
+        { type: '报关', scope: '报关', section: document.getElementById('customsServiceRequirementSection'), host: document.getElementById('customsServiceRequirementCards'), empty: document.getElementById('customsServiceRequirementEmpty'), add: document.getElementById('addCustomsServiceRequirementBtn'), template: document.getElementById('customsServiceRequirementTemplate') },
+        { type: '仓储', scope: '仓储', section: document.getElementById('warehouseServiceRequirementSection'), host: document.getElementById('warehouseServiceRequirementCards'), empty: document.getElementById('warehouseServiceRequirementEmpty'), add: document.getElementById('addWarehouseServiceRequirementBtn'), template: document.getElementById('warehouseServiceRequirementTemplate') }
+      ].filter((config) => config.section && config.host && config.add && config.template);
+      const scopeInput = (value) => form.querySelector('input[name="orderServiceScope"][value="' + value + '"]');
+      const editable = () => ['创建', '驳回'].includes(statusField.textContent.trim()) && form.dataset.sourceRestricted !== 'true';
+      const renumber = (config) => {
+        const cards = Array.from(config.host.querySelectorAll('[data-service-requirement-card]'));
+        const canEdit = editable();
+        cards.forEach((card, index) => {
+          const title = card.querySelector('[data-service-requirement-title]');
+          if (title) title.textContent = '服务要求' + (index + 1) + ' ' + config.type;
+          const head = card.querySelector('.service-requirement-card-head');
+          if (head) head.hidden = canEdit && cards.length === 1;
+        });
+        config.empty.hidden = cards.length > 0;
+      };
+      const syncState = () => {
+        const canEdit = editable();
+        configs.forEach((config) => {
+          const selected = Boolean(scopeInput(config.scope)?.checked);
+          config.section.hidden = !selected;
+          config.add.hidden = !canEdit;
+          config.host.querySelectorAll('[data-delete-service-requirement]').forEach((button) => { button.hidden = !canEdit; });
+          config.host.querySelectorAll('textarea').forEach((textarea) => { textarea.readOnly = !canEdit; });
+          renumber(config);
+        });
+      };
+      const updateGoodsCount = (card) => {
+        const count = card.querySelectorAll('[data-service-item-row]').length;
+        const label = card.querySelector('[data-service-goods-count]');
+        if (label) label.textContent = '(' + count + ' 项)';
+      };
+      const resetGoodsRow = (row) => {
+        row.querySelectorAll('input').forEach((input) => {
+          if (input.readOnly) return;
+          input.value = '';
+        });
+        row.querySelectorAll('select').forEach((select) => { select.selectedIndex = 0; });
+      };
+      const addGoodsRow = (card, afterRow) => {
+        const tbody = card.querySelector('[data-service-goods-host] .order-route-items tbody');
+        if (!tbody) return;
+        const templateRow = universalServiceGoodsTemplate?.content.querySelector('[data-service-item-row]');
+        const sourceRow = afterRow || tbody.querySelector('[data-service-item-row]') || templateRow;
+        const row = sourceRow?.cloneNode(true);
+        if (!row) return;
+        if (afterRow) {
+          afterRow.after(row);
+        } else {
+          resetGoodsRow(row);
+          tbody.appendChild(row);
+        }
+        updateGoodsCount(card);
+      };
+      const addCard = (config) => {
+        config.host.appendChild(config.template.content.cloneNode(true));
+        const card = config.host.lastElementChild;
+        const goodsHost = card?.querySelector('[data-service-goods-host]');
+        if (goodsHost && universalServiceGoodsTemplate) {
+          goodsHost.appendChild(universalServiceGoodsTemplate.content.cloneNode(true));
+          updateGoodsCount(card);
+        }
+        syncState();
+      };
+      configs.forEach((config) => {
+        if (!config.host.querySelector('[data-service-requirement-card]')) addCard(config);
+        config.add.addEventListener('click', () => addCard(config));
+        config.host.addEventListener('click', (event) => {
+          const goodsAction = event.target.closest('[data-service-goods-action]');
+          if (goodsAction) {
+            const card = goodsAction.closest('[data-service-requirement-card]');
+            const action = goodsAction.dataset.serviceGoodsAction;
+            if (action === 'add') addGoodsRow(card, null);
+            if (action === 'duplicate') addGoodsRow(card, goodsAction.closest('[data-service-item-row]'));
+            if (action === 'remove') {
+              goodsAction.closest('[data-service-item-row]')?.remove();
+              updateGoodsCount(card);
+            }
+            return;
+          }
+          const remove = event.target.closest('[data-delete-service-requirement]');
+          if (!remove) return;
+          remove.closest('[data-service-requirement-card]')?.remove();
+          renumber(config);
+        });
+        scopeInput(config.scope)?.addEventListener('change', () => {
+          const selected = Boolean(scopeInput(config.scope)?.checked);
+          if (selected && !config.host.querySelector('[data-service-requirement-card]')) addCard(config);
+          syncState();
+        });
+      });
+      window.validateAdditionalServiceRequirementModules = () => {
+        const checks = [{ name: '运输', host: document.getElementById('orderRouteCards'), selector: '[data-route-card]' }].concat(configs.map((config) => ({ name: config.type, host: config.host, selector: '[data-service-requirement-card]' })));
+        const missing = checks.find((item) => scopeInput(item.name)?.checked && (!item.host || !item.host.querySelector(item.selector)));
+        if (missing) {
+          UIState.showFormAlert(form, 'error', '请至少添加一条' + missing.name + '服务要求后再提交。');
+          return false;
+        }
+        return true;
+      };
+      new MutationObserver(syncState).observe(statusField, { childList: true, characterData: true, subtree: true });
+      new MutationObserver(syncState).observe(form, { attributes: true, attributeFilter: ['data-source-restricted'] });
+      syncState();
+    })();
+  </script>
   <script>
     (function () {
       const typeSelect = document.getElementById('customerTypeSelect');
@@ -2118,5 +2362,109 @@
     })();
   </script>
   <script src="../assets/prototype-access.js"></script>
+
+  <style>
+    /* 非创建/驳回状态：订单信息区域全局只读 */
+    body[data-order-readonly="true"] #orderInfoView input:not([type="hidden"]),
+    body[data-order-readonly="true"] #orderInfoView select,
+    body[data-order-readonly="true"] #orderInfoView textarea {
+      pointer-events:none !important;
+      cursor:default !important;
+      background:#f7f9fc !important;
+      color:#526176 !important;
+      opacity:1 !important;
+    }
+    body[data-order-readonly="true"] #orderInfoView select {
+      appearance:none !important;
+      -webkit-appearance:none !important;
+      background-image:none !important;
+    }
+    body[data-order-readonly="true"] #orderInfoView textarea { resize:none !important; }
+    body[data-order-readonly="true"] #orderInfoView .multi-control,
+    body[data-order-readonly="true"] #orderInfoView .demand-email-recipient-box { background:#f7f9fc; }
+    body[data-order-readonly="true"] #orderInfoView .demand-email-recipient-trigger,
+    body[data-order-readonly="true"] #orderInfoView .demand-email-recipient-chip button,
+    body[data-order-readonly="true"] #orderInfoView .contract-upload-btn,
+    body[data-order-readonly="true"] #orderInfoView .multi-add,
+    body[data-order-readonly="true"] #orderInfoView .chip-remove,
+    body[data-order-readonly="true"] #orderInfoView [data-fee-action],
+    body[data-order-readonly="true"] #orderInfoView [data-service-goods-action],
+    body[data-order-readonly="true"] #orderInfoView .order-business-fee-actions,
+    body[data-order-readonly="true"] #orderInfoView .order-route-block-actions,
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-route"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="duplicate"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-item"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="link-items"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="duplicate-item"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-item"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-container"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-container"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-leg"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-leg"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="add-product"],
+    body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-product"] {
+      display:none !important;
+    }
+    /* 来源类型≠手动创建：仅部分字段可编辑 */
+    [data-source-restricted="true"] input.control:read-only,
+    [data-source-restricted="true"] textarea.control:read-only,
+    [data-source-restricted="true"] select.control:disabled { background:#f7f9fc; color:#64748b; border-color:#eef1f5; }
+    [data-source-restricted="true"] .order-route-icon-btn,
+    [data-source-restricted="true"] [data-route-action="add-route"],
+    [data-source-restricted="true"] [data-route-action="add-item"],
+    [data-source-restricted="true"] [data-route-action="duplicate"],
+    [data-source-restricted="true"] [data-route-action="remove"] { display:none !important; }
+  </style>
+  <script>
+    (() => {
+      const ALLOWED_LABELS = ['业务员', '部门', '核算组', '公司', '经营单位', '业务类型'];
+      const form = document.getElementById('orderDetailForm');
+      if (!form) return;
+      const pageParams = new URLSearchParams(window.location.search);
+      if (pageParams.get('mode') === 'create' && pageParams.get('sourceType') === 'manual' && !pageParams.get('no')) {
+        const sourceTypeControl = form.querySelector('select[aria-label="来源类型"]');
+        if (sourceTypeControl) sourceTypeControl.value = '手动创建';
+      }
+      const isAllowed = (label) => ALLOWED_LABELS.some((key) => label.indexOf(key) >= 0);
+      const syncSourceTypeRules = () => {
+        const status = document.getElementById('orderStatusField')?.textContent.trim() || '';
+        const editableStatus = status === '创建' || status === '驳回';
+        const source = form.querySelector('select[aria-label="来源类型"]')?.value || '';
+        const restricted = editableStatus && source !== '手动创建';
+        form.dataset.sourceRestricted = restricted ? 'true' : 'false';
+        const deleteButton = document.getElementById('deleteOrderBtn');
+        if (deleteButton) deleteButton.hidden = !(editableStatus && source === '手动创建');
+        form.querySelectorAll('input, select, textarea').forEach((control) => {
+          const label = control.getAttribute('aria-label') || '';
+          if (['checkbox', 'radio', 'hidden', 'file'].includes(control.type)) {
+            if (restricted) { control.dataset.srcLocked = '1'; control.disabled = true; }
+            else if (control.dataset.srcLocked) { control.disabled = false; delete control.dataset.srcLocked; }
+            return;
+          }
+          if (restricted && !isAllowed(label)) {
+            if (!control.dataset.srcLocked) {
+              control.dataset.srcLocked = '1';
+              control.dataset.srcWasDisabled = control.disabled ? '1' : '0';
+            }
+            if (control.tagName === 'SELECT') control.disabled = true; else control.readOnly = true;
+          } else if (control.dataset.srcLocked) {
+            if (control.tagName === 'SELECT' && control.dataset.srcWasDisabled === '0') control.disabled = false;
+            control.readOnly = false;
+            delete control.dataset.srcLocked;
+            delete control.dataset.srcWasDisabled;
+          }
+        });
+      };
+      window.__syncSourceTypeRules = syncSourceTypeRules;
+      window.addEventListener('load', () => {
+        syncSourceTypeRules();
+        const statusField = document.getElementById('orderStatusField');
+        if (statusField) {
+          new MutationObserver(syncSourceTypeRules).observe(statusField, { childList: true, characterData: true, subtree: true });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

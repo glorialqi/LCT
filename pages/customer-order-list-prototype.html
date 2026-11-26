@@ -178,7 +178,9 @@
     .route-path { overflow:hidden; color:#334155; text-overflow:ellipsis; white-space:nowrap; }
     .route-mode { color:#8b96a7; font-size:10px; }
     .route-line { overflow:hidden; color:#334155; text-overflow:ellipsis; white-space:nowrap; }
-    .route-line b { margin-right:2px; color:#2563eb; font-weight:600; }
+    .route-line b { margin-right:6px; color:#2563eb; font-weight:600; }
+    .route-line-content { color:#334155; }
+    .route-item { margin-right:10px; color:#64748b; }
     .route-more { color:#2563eb; font-size:11px; }
     .creator-info-cell small { color:#8b96a7; font-size:10px; }
     .confirm-status, .contract-status { display:inline-flex; min-height:22px; align-items:center; padding:0 7px; border:1px solid #d7dee8; border-radius:10px; color:#526176; background:#f8fafc; font-size:11px; white-space:nowrap; }
@@ -187,6 +189,8 @@
     .row-actions { display:flex; align-items:center; gap:4px; }
     .row-action-link { height:26px; display:inline-flex; align-items:center; padding:0 7px; border:1px solid #cfe0ff; border-radius:4px; color:#2563eb; background:#f8fbff; font-size:11px; text-decoration:none; white-space:nowrap; }
     .row-action-link:hover { background:#edf5ff; }
+    /* 本期删除「确认状态」：列与筛选项一并隐藏 */
+    .col-confirm { display:none !important; }
     .row-more-trigger[aria-expanded="true"] { color:#2563eb; border-color:#bcd4ff; background:#f8fbff; }
     .row-more-source[hidden] { display:none; }
     .row-action-menu { position:fixed; z-index:220; min-width:126px; padding:4px; border:1px solid #dce3ed; border-radius:6px; background:#fff; box-shadow:0 12px 28px rgba(15,23,42,.18); }
@@ -209,7 +213,11 @@
     .merge-route-card:last-child { margin-bottom:0; }
     .merge-route-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:12px 14px; border-bottom:1px solid #e8edf4; background:#f8fafc; }
     .merge-route-title-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
-    .merge-route-index { display:inline-flex; align-items:center; height:22px; padding:0 8px; border:1px solid #bfd5fa; border-radius:5px; color:#2563eb; background:#edf5ff; font-size:11px; font-weight:700; }
+    .merge-service-type-tag { display:inline-flex; align-items:center; height:22px; padding:0 8px; border:1px solid; border-radius:5px; font-size:10px; font-weight:700; }
+    .merge-service-type-tag.transport { color:#1d4ed8; border-color:#bfd5fa; background:#edf5ff; }
+    .merge-service-type-tag.customs { color:#a16207; border-color:#f0d7a1; background:#fff8e8; }
+    .merge-service-type-tag.warehouse { color:#047857; border-color:#b7dfd0; background:#ecfdf5; }
+    .merge-route-index { display:inline-flex; align-items:center; height:22px; padding:0 8px; border:1px solid #d7dee8; border-radius:5px; color:#526176; background:#f8fafc; font-size:11px; font-weight:700; }
     .merge-route-order { color:#253044; font-size:13px; font-weight:700; }
     .merge-route-customer { color:#7b8798; font-size:12px; }
     .merge-route-count { flex:0 0 auto; margin-top:2px; color:#64748b; font-size:11px; }
@@ -260,7 +268,7 @@
     .arrangement-link-btn:hover { background:#eaf2ff; }
     .arrangement-route-table { border:1px solid #e2e8f1; border-radius:6px; overflow:hidden; }
     .arrangement-route-table.is-hidden { display:none; }
-    .arr-task-head, .arr-task-row { display:grid; grid-template-columns:58px 56px minmax(180px,1.6fr) 74px 74px 82px 178px 186px 80px; align-items:center; gap:10px; padding:8px 12px; }
+    .arr-task-head, .arr-task-row { display:grid; grid-template-columns:58px 96px minmax(220px,1.8fr) 82px 178px 186px 80px; align-items:center; gap:10px; padding:8px 12px; }
     .arr-task-group { color:#2563eb; font-size:11px; }
     .arr-task-head { color:#6b7789; background:#f7f9fc; font-size:11px; }
     .arr-task-row { border-top:1px solid #eef1f5; color:#334155; font-size:12px; }
@@ -510,9 +518,9 @@
                 <div class="query-field"><label for="queryCustomerType">客户类型</label><select id="queryCustomerType"><option value="">请选择</option><option>内部客户</option><option>外部客户</option><option>同行客户</option></select></div>
                 <div class="query-field"><label for="queryConsignmentNo">客户单号</label><input id="queryConsignmentNo" type="text" placeholder="请输入"></div>
                 <div class="query-field"><label for="queryBusinessType">业务类型</label><select id="queryBusinessType"><option value="">请选择</option><option>出口</option><option>进口</option><option>转口</option><option>内贸</option><option>境外内贸</option></select></div>
-                <div class="query-field"><label for="queryServiceScope">服务范围</label><select id="queryServiceScope"><option value="">请选择</option><option>运输</option></select></div>
+                <div class="query-field"><label for="queryServiceScope">服务范围</label><select id="queryServiceScope"><option value="">请选择</option><option>运输</option><option>报关</option><option>仓储</option></select></div>
                 <div class="query-field advanced-field"><label for="queryArrangeStatus">安排状态</label><select id="queryArrangeStatus"><option value="">请选择</option><option>待安排</option><option>部分安排</option><option>已安排</option></select></div>
-                <div class="query-field advanced-field"><label for="queryConfirmStatus">确认状态</label><select id="queryConfirmStatus"><option value="">请选择</option><option>待确认</option><option>已确认</option></select></div>
+                <!-- 确认状态筛选项本期删除 -->
                 <div class="query-field advanced-field"><label for="queryContractStatus">合同状态</label><select id="queryContractStatus"><option value="">请选择</option><option>待签约</option><option>签约中</option><option>已生效</option></select></div>
                 <div class="query-field advanced-field"><label for="queryTransportType">运输类型</label><select id="queryTransportType"><option value="">请选择</option><option>汽运</option><option>水运</option><option>空运</option></select></div>
                 <div class="query-field advanced-field"><label for="queryShippingType">航运类型</label><select id="queryShippingType"><option value="">请选择</option><option>内贸水运</option><option>国际航运</option></select></div>
@@ -530,14 +538,14 @@
 
           <section class="table-card ui-table-state-host" id="orderTableHost" aria-label="客户订单列表">
             <div class="status-tabs" role="tablist" aria-label="订单状态">
-              <button class="status-tab active" type="button" data-status="all">全部(10)</button>
+              <button class="status-tab active" type="button" data-status="all">全部(14)</button>
               <button class="status-tab" type="button" data-status="created">创建(1)</button>
               <button class="status-tab" type="button" data-status="audit">待审核(1)</button>
               <button class="status-tab" type="button" data-status="rejected">驳回(1)</button>
               <button class="status-tab" type="button" data-status="pending">待履约(3)</button>
               <button class="status-tab" type="button" data-status="running">履约中(4)</button>
-              <button class="status-tab" type="button" data-status="completed">已完结(0)</button>
-              <button class="status-tab" type="button" data-status="voided">已取消(0)</button>
+              <button class="status-tab" type="button" data-status="completed">已完结(2)</button>
+              <button class="status-tab" type="button" data-status="voided">已取消(2)</button>
               <div class="status-spacer"></div>
               <div class="bulk-actions">
                 <button class="btn soft-primary action-requires-selection" id="mergeSplitOrdersBtn" type="button" disabled>合并/拆分订单</button>
@@ -563,7 +571,7 @@
                     <th class="col-qty num">订单总数量<span class="sort">↕</span></th>
                     <th class="col-progress">履约进度<span class="sort">↕</span></th>
                     <th class="col-arrange">安排进度<span class="sort">↕</span></th>
-                    <th class="col-route">线路<span class="sort">↕</span></th>
+                    <th class="col-route">服务要求<span class="sort">↕</span></th>
                     <th class="col-short">业务类型<span class="sort">↕</span></th>
                     <th class="col-scope">服务范围<span class="sort">↕</span></th>
                     <th class="col-contract">合同状态<span class="sort">↕</span></th>
@@ -579,21 +587,25 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="order-row" data-arrange-status="已安排" data-status="running" data-order="CO-20260904-BREAKBULK" data-customer-type="外部客户" data-project="XM2026-0018" data-consignment="" data-order-status="履约中" data-confirmation-status="已确认" data-contract-status="已生效" data-origin="青岛港件杂货码头" data-destination="东非蒙巴萨港" data-transport-type="水运" data-load-type="件杂货" data-scheduled="300 台" data-unscheduled="0 台" data-creator="庄巧玲" data-created-at="2026-10-28 09:20" data-modified-by="庄巧玲" data-modified-at="2026-11-01 14:30"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 CO-20260904-BREAKBULK"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list">CO-20260904-BREAKBULK</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">中国重汽集团</td><td class="col-consignment customer-consignment-cell"><span class="empty-dash">--</span></td><td class="col-product">重卡卡车</td><td class="col-qty num">300 台</td><td class="col-progress" title="已履约 / 总计">300 台 / 300 台</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港件杂货码头 → 东非蒙巴萨港</span><span class="route-mode">水运 · 件杂货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发亚投新能源物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-28 09:20</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-11-01 14:30</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 CO-20260904-BREAKBULK 的合同">查看合同</button><button type="button" data-toast="完结客户订单 CO-20260904-BREAKBULK">完结</button><button type="button" data-toast="作废客户订单 CO-20260904-BREAKBULK">作废</button></div></div></td></tr>                  <tr class="order-row" data-arrange-status="已安排" data-status="running" data-order="FCO202610270010" data-customer-type="外部客户" data-project="" data-consignment="2102957467694845952" data-order-status="履约中" data-confirmation-status="已确认" data-contract-status="已生效" data-origin="上官栗子四果汤(文化宫店)" data-destination="厦门港" data-transport-type="水运" data-load-type="散货" data-scheduled="10 吨" data-unscheduled="0 吨" data-creator="苏丽蓉" data-created-at="2026-10-27 09:42" data-modified-by="苏丽蓉" data-modified-at="2026-10-27 09:42"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270010"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list">FCO202610270010</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛绿洲园花生食品有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102957467694845952">2102957467694845952</span></td><td class="col-product">玉米</td><td class="col-qty num">10 吨</td><td class="col-progress" title="已履约 / 总计">10 吨 / 10 吨</td><td class="col-route"><div class="route-cell"><span class="route-path">上官栗子四果汤(文化宫店) → 厦门港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-27 09:42</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-27 09:42</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270010 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270010">完结</button><button type="button" data-toast="作废客户订单 FCO202610270010">作废</button></div></div></td></tr>
-                  <tr class="order-row" data-arrange-status="已安排" data-status="running" data-order="FCO202610270009" data-customer-type="外部客户" data-project="" data-consignment="2102960421436968960" data-order-status="履约中" data-confirmation-status="已确认" data-contract-status="已生效" data-origin="上官栗子四果汤(文化宫店)" data-destination="厦门港" data-transport-type="水运" data-load-type="散货" data-scheduled="10 吨" data-unscheduled="0 吨" data-creator="苏丽蓉" data-created-at="2026-10-27 09:35" data-modified-by="苏丽蓉" data-modified-at="2026-10-27 09:35"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270009"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list">FCO202610270009</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛绿洲园花生食品有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102960421436968960">2102960421436968960</span></td><td class="col-product">玉米</td><td class="col-qty num">10 吨</td><td class="col-progress" title="已履约 / 总计">10 吨 / 10 吨</td><td class="col-route"><div class="route-cell"><span class="route-path">上官栗子四果汤(文化宫店) → 厦门港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-27 09:35</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-27 09:35</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270009 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270009">完结</button><button type="button" data-toast="作废客户订单 FCO202610270009">作废</button></div></div></td></tr>
-                  <tr class="order-row" data-arrange-status="未安排" data-status="pending" data-order="FCO202610270008" data-customer-type="外部客户" data-project="XM2026-0018" data-consignment="2102960975970095104 2102960975970095105" data-order-status="待安排" data-confirmation-status="待确认" data-contract-status="" data-origin="青岛港" data-destination="上海港" data-transport-type="水运" data-load-type="件杂货" data-scheduled="0 台" data-unscheduled="300 台" data-creator="庄巧玲" data-created-at="2026-10-26 16:18" data-modified-by="庄巧玲" data-modified-at="2026-10-26 17:02"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270008"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270008&from=customer-order-list">FCO202610270008</a></td><td class="col-status"><span class="status-pill pending">待安排</span></td><td class="col-confirm"><span class="confirm-status pending">待确认</span></td><td class="col-customer">中国重汽集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102960975970095104, 2102960975970095105">2102960975970095104, 2102960975970095105</span></td><td class="col-product">重卡卡车</td><td class="col-qty num">300 台</td><td class="col-progress" title="已履约 / 总计">0 台 / 300 台</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 上海港</span><span class="route-mode">水运 · 件杂货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-26 16:18</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-10-26 17:02</td><td class="col-action"><div class="row-actions"><button class="row-action" type="button" data-confirm-order="FCO202610270008">确认</button><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270008&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a></div></td></tr>
-                  <tr class="order-row" data-arrange-status="未安排" data-status="created" data-order="FCO202610270007" data-customer-type="外部客户" data-project="" data-consignment="2104489744589164545" data-order-status="创建" data-confirmation-status="" data-contract-status="" data-origin="Port Hedland" data-destination="舟山鼠浪湖" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="8.50 万吨" data-creator="刘婷" data-created-at="2026-10-26 14:26" data-modified-by="刘婷" data-modified-at="2026-10-26 14:26"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270007"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270007&from=customer-order-list">FCO202610270007</a></td><td class="col-status"><span class="status-pill created">创建</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">中国宝武钢铁集团有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2104489744589164545">2104489744589164545</span></td><td class="col-product">PB粉矿</td><td class="col-qty num">8.50 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 8.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">Port Hedland → 舟山鼠浪湖</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">进口</td><td class="col-scope">报关清关</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">刘婷</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">单证客服部</td><td class="col-created"><div class="creator-info-cell"><span>刘婷</span><small>2026-10-26 14:26</small></div></td><td class="col-person">刘婷</td><td class="col-time">2026-10-26 14:26</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="打开 FCO202610270007 的版本维护">版本维护</button></div></div></td></tr>
-                  <tr class="order-row" data-arrange-status="未安排" data-status="audit" data-order="FCO202610270006" data-customer-type="外部客户" data-project="XM2026-0009" data-consignment="CT-2026-1027-01" data-order-status="待审核" data-confirmation-status="" data-contract-status="" data-origin="宁波梅山港" data-destination="比利时安特卫普" data-transport-type="水运" data-load-type="集装箱" data-scheduled="0 台" data-unscheduled="450 台" data-creator="苏丽蓉" data-created-at="2026-10-25 11:20" data-modified-by="苏丽蓉" data-modified-at="2026-10-25 11:20"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270006"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270006&from=customer-order-list">FCO202610270006</a></td><td class="col-status"><span class="status-pill created">待审核</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">浙江吉利控股集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="CT-2026-1027-01">CT-2026-1027-01</span></td><td class="col-product">新能源整车</td><td class="col-qty num">450 台</td><td class="col-progress" title="已履约 / 总计">0 台 / 450 台</td><td class="col-route"><div class="route-cell"><span class="route-path">宁波梅山港 → 比利时安特卫普</span><span class="route-mode">水运 · 集装箱</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-25 11:20</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-25 11:20</td><td class="col-action"><div class="row-actions"></div></td></tr>
-                  <tr class="order-row" data-arrange-status="未安排" data-status="rejected" data-order="FCO202610270005" data-customer-type="同行客户" data-project="" data-consignment="" data-order-status="驳回" data-confirmation-status="" data-contract-status="" data-origin="厦门港" data-destination="胡志明港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="1.20 万吨" data-creator="庄巧玲" data-created-at="2026-10-24 10:08" data-modified-by="庄巧玲" data-modified-at="2026-10-24 10:08"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270005"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270005&from=customer-order-list">FCO202610270005</a></td><td class="col-status"><span class="status-pill rejected">驳回</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">厦门象屿股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="empty-dash">--</span></td><td class="col-product">钢材</td><td class="col-qty num">1.20 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 1.20 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">厦门港 → 胡志明港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-24 10:08</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-10-24 10:08</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="打开 FCO202610270005 的版本维护">版本维护</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="已安排" data-status="completed" data-order="FCO202610250012" data-customer-type="外部客户" data-project="XM2026-0018" data-consignment="2102960111223344556" data-order-status="已完结" data-contract-status="已生效" data-origin="青岛港件杂货码头" data-destination="东非蒙巴萨港" data-transport-type="水运" data-load-type="件杂货" data-scheduled="200 台" data-unscheduled="0 台" data-creator="庄巧玲" data-created-at="2026-10-25 09:10" data-modified-by="庄巧玲" data-modified-at="2026-11-23 17:20"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610250012"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610250012&from=customer-order-list">FCO202610250012</a></td><td class="col-status"><span class="status-pill completed">已完结</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">中国重汽集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102960111223344556">2102960111223344556</span></td><td class="col-product">重卡卡车</td><td class="col-qty num">200 台</td><td class="col-progress" title="已履约 / 总计">200 台 / 200 台</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港件杂货码头 → 东非蒙巴萨港</span><span class="route-mode">水运 · 件杂货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发亚投新能源物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-25 09:10</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-11-23 17:20</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610250012&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610250012 的合同">查看合同</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="已安排" data-status="completed" data-order="FCO202610210008" data-customer-type="外部客户" data-project="" data-consignment="2102944777811200334" data-order-status="已完结" data-contract-status="已生效" data-origin="Port Hedland" data-destination="舟山鼠浪湖" data-transport-type="水运" data-load-type="散货" data-scheduled="8.50 万吨" data-unscheduled="0 万吨" data-creator="刘婷" data-created-at="2026-10-21 08:36" data-modified-by="刘婷" data-modified-at="2026-11-22 10:05"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610210008"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610210008&from=customer-order-list">FCO202610210008</a></td><td class="col-status"><span class="status-pill completed">已完结</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">中国宝武钢铁集团有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102944777811200334">2102944777811200334</span></td><td class="col-product">PB粉矿</td><td class="col-qty num">8.50 万吨</td><td class="col-progress" title="已履约 / 总计">8.50 万吨 / 8.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">Port Hedland → 舟山鼠浪湖</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">进口</td><td class="col-scope">报关清关</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">刘婷</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">单证客服部</td><td class="col-created"><div class="creator-info-cell"><span>刘婷</span><small>2026-10-21 08:36</small></div></td><td class="col-person">刘婷</td><td class="col-time">2026-11-22 10:05</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610210008&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610210008 的合同">查看合同</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="voided" data-order="FCO202610200006" data-customer-type="外部客户" data-project="XM2026-0009" data-consignment="CT-2026-1021-02" data-order-status="已取消" data-contract-status="已生效" data-origin="宁波梅山港" data-destination="比利时安特卫普" data-transport-type="水运" data-load-type="集装箱" data-scheduled="0 台" data-unscheduled="120 台" data-creator="苏丽蓉" data-created-at="2026-10-20 14:02" data-modified-by="苏丽蓉" data-modified-at="2026-11-21 15:40"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610200006"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610200006&from=customer-order-list">FCO202610200006</a></td><td class="col-status"><span class="status-pill voided">已取消</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">浙江吉利控股集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="CT-2026-1021-02">CT-2026-1021-02</span></td><td class="col-product">新能源整车</td><td class="col-qty num">120 台</td><td class="col-progress" title="已履约 / 总计">0 台 / 120 台</td><td class="col-route"><div class="route-cell"><span class="route-path">宁波梅山港 → 比利时安特卫普</span><span class="route-mode">水运 · 集装箱</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-20 14:02</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-11-21 15:40</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610200006 的合同">查看合同</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="voided" data-order="FCO202610180002" data-customer-type="同行客户" data-project="" data-consignment="" data-order-status="已取消" data-contract-status="" data-origin="厦门港" data-destination="胡志明港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="0.90 万吨" data-creator="庄巧玲" data-created-at="2026-10-18 09:48" data-modified-by="庄巧玲" data-modified-at="2026-11-20 11:12"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610180002"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610180002&from=customer-order-list">FCO202610180002</a></td><td class="col-status"><span class="status-pill voided">已取消</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">厦门象屿股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="empty-dash">--</span></td><td class="col-product">钢材</td><td class="col-qty num">0.90 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 0.90 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">厦门港 → 胡志明港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-18 09:48</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-11-20 11:12</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610180002 的合同">查看合同</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="已安排" data-status="running" data-order="CO-20260904-BREAKBULK" data-customer-type="外部客户" data-project="XM2026-0018" data-consignment="" data-order-status="履约中" data-contract-status="已生效" data-origin="青岛港件杂货码头" data-destination="东非蒙巴萨港" data-transport-type="水运" data-load-type="件杂货" data-scheduled="300 台" data-unscheduled="0 台" data-creator="庄巧玲" data-created-at="2026-10-28 09:20" data-modified-by="庄巧玲" data-modified-at="2026-11-01 14:30"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 CO-20260904-BREAKBULK"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list">CO-20260904-BREAKBULK</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">中国重汽集团</td><td class="col-consignment customer-consignment-cell"><span class="empty-dash">--</span></td><td class="col-product">重卡卡车</td><td class="col-qty num">300 台</td><td class="col-progress" title="已履约 / 总计">300 台 / 300 台</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港件杂货码头 → 东非蒙巴萨港</span><span class="route-mode">水运 · 件杂货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发亚投新能源物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-28 09:20</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-11-01 14:30</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=CO-20260904-BREAKBULK&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 CO-20260904-BREAKBULK 的合同">查看合同</button><button type="button" data-toast="完结客户订单 CO-20260904-BREAKBULK">完结</button><button type="button" data-toast="作废客户订单 CO-20260904-BREAKBULK">作废</button></div></div></td></tr>                  <tr class="order-row" data-arrange-status="已安排" data-status="running" data-order="FCO202610270010" data-customer-type="外部客户" data-project="" data-consignment="2102957467694845952" data-order-status="履约中" data-contract-status="已生效" data-origin="上官栗子四果汤(文化宫店)" data-destination="厦门港" data-transport-type="水运" data-load-type="散货" data-scheduled="10 吨" data-unscheduled="0 吨" data-creator="苏丽蓉" data-created-at="2026-10-27 09:42" data-modified-by="苏丽蓉" data-modified-at="2026-10-27 09:42"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270010"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list">FCO202610270010</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛绿洲园花生食品有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102957467694845952">2102957467694845952</span></td><td class="col-product">玉米</td><td class="col-qty num">10 吨</td><td class="col-progress" title="已履约 / 总计">10 吨 / 10 吨</td><td class="col-route"><div class="route-cell"><span class="route-path">上官栗子四果汤(文化宫店) → 厦门港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-27 09:42</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-27 09:42</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270010&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270010 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270010">完结</button><button type="button" data-toast="作废客户订单 FCO202610270010">作废</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="已安排" data-status="running" data-order="FCO202610270009" data-customer-type="外部客户" data-project="" data-consignment="2102960421436968960" data-order-status="履约中" data-contract-status="已生效" data-origin="上官栗子四果汤(文化宫店)" data-destination="厦门港" data-transport-type="水运" data-load-type="散货" data-scheduled="10 吨" data-unscheduled="0 吨" data-creator="苏丽蓉" data-created-at="2026-10-27 09:35" data-modified-by="苏丽蓉" data-modified-at="2026-10-27 09:35"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270009"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list">FCO202610270009</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛绿洲园花生食品有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102960421436968960">2102960421436968960</span></td><td class="col-product">玉米</td><td class="col-qty num">10 吨</td><td class="col-progress" title="已履约 / 总计">10 吨 / 10 吨</td><td class="col-route"><div class="route-cell"><span class="route-path">上官栗子四果汤(文化宫店) → 厦门港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">仓储</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-27 09:35</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-27 09:35</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270009&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270009 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270009">完结</button><button type="button" data-toast="作废客户订单 FCO202610270009">作废</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="pending" data-order="FCO202610270008" data-customer-type="外部客户" data-project="XM2026-0018" data-consignment="2102960975970095104 2102960975970095105" data-order-status="待安排" data-contract-status="" data-origin="青岛港" data-destination="上海港" data-transport-type="水运" data-load-type="件杂货" data-scheduled="0 台" data-unscheduled="300 台" data-creator="庄巧玲" data-created-at="2026-10-26 16:18" data-modified-by="庄巧玲" data-modified-at="2026-10-26 17:02"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270008"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270008&scenario=single-transport&from=customer-order-list">FCO202610270008</a></td><td class="col-status"><span class="status-pill pending">待安排</span></td><td class="col-confirm"><span class="confirm-status pending">待确认</span></td><td class="col-customer">中国重汽集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2102960975970095104, 2102960975970095105">2102960975970095104, 2102960975970095105</span></td><td class="col-product">重卡卡车</td><td class="col-qty num">300 台</td><td class="col-progress" title="已履约 / 总计">0 台 / 300 台</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 上海港</span><span class="route-mode">水运 · 件杂货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-26 16:18</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-10-26 17:02</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270008&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="created" data-order="FCO202610270007" data-customer-type="外部客户" data-project="" data-consignment="2104489744589164545" data-order-status="创建" data-contract-status="" data-origin="Port Hedland" data-destination="舟山鼠浪湖" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="8.50 万吨" data-creator="刘婷" data-created-at="2026-10-26 14:26" data-modified-by="刘婷" data-modified-at="2026-10-26 14:26"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270007"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270007&from=customer-order-list">FCO202610270007</a></td><td class="col-status"><span class="status-pill created">创建</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">中国宝武钢铁集团有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2104489744589164545">2104489744589164545</span></td><td class="col-product">PB粉矿</td><td class="col-qty num">8.50 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 8.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">Port Hedland → 舟山鼠浪湖</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">进口</td><td class="col-scope">报关清关</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">刘婷</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">单证客服部</td><td class="col-created"><div class="creator-info-cell"><span>刘婷</span><small>2026-10-26 14:26</small></div></td><td class="col-person">刘婷</td><td class="col-time">2026-10-26 14:26</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="打开 FCO202610270007 的版本维护">版本维护</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="audit" data-order="FCO202610270006" data-customer-type="外部客户" data-project="XM2026-0009" data-consignment="CT-2026-1027-01" data-order-status="待审核" data-contract-status="" data-origin="宁波梅山港" data-destination="比利时安特卫普" data-transport-type="水运" data-load-type="集装箱" data-scheduled="0 台" data-unscheduled="450 台" data-creator="苏丽蓉" data-created-at="2026-10-25 11:20" data-modified-by="苏丽蓉" data-modified-at="2026-10-25 11:20"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270006"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270006&from=customer-order-list">FCO202610270006</a></td><td class="col-status"><span class="status-pill created">待审核</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">浙江吉利控股集团</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="CT-2026-1027-01">CT-2026-1027-01</span></td><td class="col-product">新能源整车</td><td class="col-qty num">450 台</td><td class="col-progress" title="已履约 / 总计">0 台 / 450 台</td><td class="col-route"><div class="route-cell"><span class="route-path">宁波梅山港 → 比利时安特卫普</span><span class="route-mode">水运 · 集装箱</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-25 11:20</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-25 11:20</td><td class="col-action"><div class="row-actions"></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="rejected" data-order="FCO202610270005" data-source-type="客户需求单" data-customer-type="同行客户" data-project="" data-consignment="" data-order-status="驳回" data-contract-status="" data-origin="厦门港" data-destination="胡志明港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="1.20 万吨" data-creator="庄巧玲" data-created-at="2026-10-24 10:08" data-modified-by="庄巧玲" data-modified-at="2026-10-24 10:08"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270005"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270005&from=customer-order-list">FCO202610270005</a></td><td class="col-status"><span class="status-pill rejected">驳回</span></td><td class="col-confirm"><span class="empty-dash">--</span></td><td class="col-customer">厦门象屿股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="empty-dash">--</span></td><td class="col-product">钢材</td><td class="col-qty num">1.20 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 1.20 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">厦门港 → 胡志明港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">出口</td><td class="col-scope">运输</td><td class="col-contract"><span class="empty-dash">--</span></td><td class="col-person">庄巧玲</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">件杂部</td><td class="col-created"><div class="creator-info-cell"><span>庄巧玲</span><small>2026-10-24 10:08</small></div></td><td class="col-person">庄巧玲</td><td class="col-time">2026-10-24 10:08</td><td class="col-action"><div class="row-actions"><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="打开 FCO202610270005 的版本维护">版本维护</button></div></div></td></tr>
 
-                  <tr class="order-row" data-arrange-status="未安排" data-status="pending" data-order="FCO202610270004" data-customer-type="内部客户" data-project="XM2026-0021" data-consignment="2103654897215401984" data-order-status="待安排" data-confirmation-status="待确认" data-contract-status="待签约" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="1.20 万吨" data-creator="梁露" data-created-at="2026-10-23 10:18" data-modified-by="梁露" data-modified-at="2026-10-23 10:18"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270004"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list">FCO202610270004</a></td><td class="col-status"><span class="status-pill pending">待安排</span></td><td class="col-confirm"><span class="confirm-status pending">待确认</span></td><td class="col-customer">山东港口国际贸易集团有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103654897215401984">2103654897215401984</span></td><td class="col-product">进口纸浆</td><td class="col-qty num">1.20 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 1.20 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">进口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">待签约</span></td><td class="col-person">梁露</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>梁露</span><small>2026-10-23 10:18</small></div></td><td class="col-person">梁露</td><td class="col-time">2026-10-23 10:18</td><td class="col-action"><div class="row-actions"><button class="row-action" type="button" data-confirm-order="FCO202610270004">确认</button><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270004 的合同">查看合同</button></div></div></td></tr>
-                  <tr class="order-row" data-arrange-status="未安排" data-status="pending" data-order="FCO202610270003" data-customer-type="内部客户" data-project="" data-consignment="2103652106571845520" data-order-status="待安排" data-confirmation-status="已确认" data-contract-status="签约中" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="2.50 万吨" data-creator="苏丽蓉" data-created-at="2026-10-22 15:46" data-modified-by="苏丽蓉" data-modified-at="2026-10-22 16:20"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270003"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list">FCO202610270003</a></td><td class="col-status"><span class="status-pill pending">待安排</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛港国际股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103652106571845520">2103652106571845520</span></td><td class="col-product">铁矿石</td><td class="col-qty num">2.50 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 2.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">内贸</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">签约中</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-22 15:46</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-22 16:20</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270003 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270003">完结</button><button type="button" data-toast="作废客户订单 FCO202610270003">作废</button></div></div></td></tr>
-                  <tr class="order-row" data-arrange-status="部分安排" data-status="running" data-order="FCO202610270002" data-customer-type="内部客户" data-project="" data-consignment="2103652106571845527" data-order-status="履约中" data-confirmation-status="已确认" data-contract-status="已生效" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0.80 万吨" data-unscheduled="1.70 万吨" data-creator="苏丽蓉" data-created-at="2026-10-22 15:52" data-modified-by="苏丽蓉" data-modified-at="2026-10-22 16:35"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270002"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270002&from=customer-order-list">FCO202610270002</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛港国际股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103652106571845527">2103652106571845527</span></td><td class="col-product">铁矿石</td><td class="col-qty num">2.50 万吨</td><td class="col-progress" title="已履约 / 总计">0.80 万吨 / 2.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">内贸</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-22 15:52</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-22 16:35</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270002&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270002 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270002">完结</button><button type="button" data-toast="作废客户订单 FCO202610270002">作废</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="pending" data-order="FCO202610270004" data-customer-type="内部客户" data-project="XM2026-0021" data-consignment="2103654897215401984" data-order-status="待安排" data-contract-status="待签约" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="1.20 万吨" data-creator="梁露" data-created-at="2026-10-23 10:18" data-modified-by="梁露" data-modified-at="2026-10-23 10:18"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270004"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list">FCO202610270004</a></td><td class="col-status"><span class="status-pill pending">待安排</span></td><td class="col-confirm"><span class="confirm-status pending">待确认</span></td><td class="col-customer">山东港口国际贸易集团有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103654897215401984">2103654897215401984</span></td><td class="col-product">进口纸浆</td><td class="col-qty num">1.20 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 1.20 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">进口</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">待签约</span></td><td class="col-person">梁露</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>梁露</span><small>2026-10-23 10:18</small></div></td><td class="col-person">梁露</td><td class="col-time">2026-10-23 10:18</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270004&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270004 的合同">查看合同</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="未安排" data-status="pending" data-order="FCO202610270003" data-customer-type="内部客户" data-project="" data-consignment="2103652106571845520" data-order-status="待安排" data-contract-status="签约中" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0 万吨" data-unscheduled="2.50 万吨" data-creator="苏丽蓉" data-created-at="2026-10-22 15:46" data-modified-by="苏丽蓉" data-modified-at="2026-10-22 16:20"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270003"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list">FCO202610270003</a></td><td class="col-status"><span class="status-pill pending">待安排</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛港国际股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103652106571845520">2103652106571845520</span></td><td class="col-product">铁矿石</td><td class="col-qty num">2.50 万吨</td><td class="col-progress" title="已履约 / 总计">0 万吨 / 2.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">内贸</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">签约中</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-22 15:46</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-22 16:20</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270003&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270003 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270003">完结</button><button type="button" data-toast="作废客户订单 FCO202610270003">作废</button></div></div></td></tr>
+                  <tr class="order-row" data-arrange-status="部分安排" data-status="running" data-order="FCO202610270002" data-customer-type="内部客户" data-project="" data-consignment="2103652106571845527" data-order-status="履约中" data-contract-status="已生效" data-origin="青岛港" data-destination="日照港" data-transport-type="水运" data-load-type="散货" data-scheduled="0.80 万吨" data-unscheduled="1.70 万吨" data-creator="苏丽蓉" data-created-at="2026-10-22 15:52" data-modified-by="苏丽蓉" data-modified-at="2026-10-22 16:35"><td class="col-check sticky-select"><input type="checkbox" class="row-check" aria-label="选择 FCO202610270002"></td><td class="sticky-order"><a class="order-link" href="customer-order-detail-prototype.html?no=FCO202610270002&from=customer-order-list">FCO202610270002</a></td><td class="col-status"><span class="status-pill running">履约中</span></td><td class="col-confirm"><span class="confirm-status confirmed">已确认</span></td><td class="col-customer">青岛港国际股份有限公司</td><td class="col-consignment customer-consignment-cell"><span class="ref-no" title="2103652106571845527">2103652106571845527</span></td><td class="col-product">铁矿石</td><td class="col-qty num">2.50 万吨</td><td class="col-progress" title="已履约 / 总计">0.80 万吨 / 2.50 万吨</td><td class="col-route"><div class="route-cell"><span class="route-path">青岛港 → 日照港</span><span class="route-mode">水运 · 散货</span></div></td><td class="col-short">内贸</td><td class="col-scope">运输</td><td class="col-contract"><span class="contract-status">已生效</span></td><td class="col-person">苏丽蓉</td><td class="col-company">厦门建发物流有限公司</td><td class="col-department">物流运营部</td><td class="col-created"><div class="creator-info-cell"><span>苏丽蓉</span><small>2026-10-22 15:52</small></div></td><td class="col-person">苏丽蓉</td><td class="col-time">2026-10-22 16:35</td><td class="col-action"><div class="row-actions"><a class="row-action row-action-link" href="customer-order-detail-prototype.html?no=FCO202610270002&from=customer-order-list&view=feedback" data-order-detail-link>履约跟踪</a><button class="row-action row-more-trigger" type="button" data-row-more>更多</button><div class="row-more-source" hidden><button type="button" data-toast="查看 FCO202610270002 的合同">查看合同</button><button type="button" data-toast="完结客户订单 FCO202610270002">完结</button><button type="button" data-toast="作废客户订单 FCO202610270002">作废</button></div></div></td></tr>
                 </tbody>
               </table>
                 <div id="queryEmptyState" class="query-empty" hidden role="status" aria-live="polite">未找到匹配的客户订单，请调整查询条件后重试。</div>
               </div>
-              <div class="pager"><span id="resultCount" aria-live="polite">共 10 条</span><button disabled>上一页</button><button class="active">1</button><button disabled>下一页</button><select aria-label="每页条数"><option>20 条/页</option><option>50 条/页</option></select></div>
+              <div class="pager"><span id="resultCount" aria-live="polite">共 14 条</span><button disabled>上一页</button><button class="active">1</button><button disabled>下一页</button><select aria-label="每页条数"><option>20 条/页</option><option>50 条/页</option></select></div>
           </section>
         </div>
       </main>
@@ -622,7 +634,7 @@
         </section>
                 <section class="arrangement-section">
           <div class="arrangement-section-head">
-            <div class="arrangement-section-title">任务清单</div>
+            <div class="arrangement-section-title">服务要求清单</div>
             <div class="arrangement-routes-actions">
               <button class="arrangement-link-btn" id="arrangementAddTask" type="button">+ 添加任务</button>
             </div>
@@ -646,19 +658,19 @@
       <header class="merge-drawer-head">
         <div class="merge-drawer-title-wrap">
           <span class="merge-drawer-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4.5 7v10L12 21l7.5-4V7z"/><path d="m4.8 7.2 7.2 4 7.2-4M12 11.2V21"/></svg></span>
-          <div><h2 class="merge-drawer-title" id="mergeDrawerTitle">已选线路（<span id="mergeSelectedCount">0</span>）</h2></div>
+          <div><h2 class="merge-drawer-title" id="mergeDrawerTitle">已选服务要求（<span id="mergeSelectedCount">0</span>）</h2></div>
         </div>
         <button class="merge-drawer-close" id="mergeDrawerClose" type="button" aria-label="关闭合并拆分">×</button>
       </header>
       <div class="merge-drawer-body" id="mergeDrawerBody"></div>
       <footer class="merge-drawer-foot">
-        <div class="merge-summary"><span class="merge-summary-stats" id="mergeSummaryStats">客户 0 · 订单 0 · 线路 0 · 商品 0</span><span class="merge-total">总数量<strong id="mergeTotalQuantity">0</strong></span></div>
+        <div class="merge-summary"><span class="merge-summary-stats" id="mergeSummaryStats">客户 0 · 订单 0 · 服务要求 0 · 商品 0</span><span class="merge-total">总数量<strong id="mergeTotalQuantity">0</strong></span></div>
         <button class="btn primary merge-fill-btn" id="mergeFillLogisticsBtn" type="button" disabled>填写物流需求</button>
       </footer>
     </aside>
   </div>
 
-  <script src="../assets/prototype-data.js"></script>
+  <script src="../assets/prototype-data.js?v=20261125d"></script>
   <script>
     (() => {
       const queryBody = document.getElementById('queryBody');
@@ -667,7 +679,68 @@
       const resetQueryBtn = document.getElementById('resetQueryBtn');
       const submitQueryBtn = document.getElementById('submitQueryBtn');
       const tbody = document.querySelector('.order-table tbody');
+      const ensureNonTransportPendingRows = () => {
+        const source = tbody.querySelector('tr[data-order="FCO202610270008"]');
+        if (!source) return;
+        const examples = [
+          { order: 'FCO202611250001', customer: '青岛绿洲园花生食品有限公司', product: '进口纸浆', qty: '1.20 万吨', scope: '报关清关', consignment: '210611250001', sales: '苏丽蓉', company: '厦门建发物流有限公司', department: '物流运营部', business: '进口' },
+          { order: 'FCO202611250002', customer: '中国重汽集团', product: '重卡卡车', qty: '300 台', scope: '仓储', consignment: '210611250002', sales: '庄巧玲', company: '厦门建发亚投新能源物流有限公司', department: '件杂部', business: '出口' }
+        ];
+        examples.forEach((item) => {
+          if (tbody.querySelector('tr[data-order="' + item.order + '"]')) return;
+          const row = source.cloneNode(true);
+          row.dataset.order = item.order;
+          row.dataset.status = 'pending';
+          row.dataset.orderStatus = '待履约';
+          row.dataset.confirmationStatus = '已确认';
+          row.dataset.contractStatus = '已生效';
+          row.dataset.arrangeStatus = '待安排';
+          row.dataset.transportType = '';
+          row.dataset.loadType = '';
+          row.dataset.origin = '--';
+          row.dataset.destination = '--';
+          row.dataset.scheduled = '0';
+          row.dataset.unscheduled = item.qty;
+          row.dataset.sourceType = '客户需求单';
+          const setText = (selector, value) => { const cell = row.querySelector(selector); if (cell) cell.textContent = value; };
+          const link = row.querySelector('.order-link');
+          if (link) { link.textContent = item.order; link.href = 'customer-order-detail-prototype.html?no=' + item.order + '&from=customer-order-list'; }
+          const check = row.querySelector('.row-check'); if (check) check.setAttribute('aria-label', '选择 ' + item.order);
+          const status = row.querySelector('.col-status'); if (status) status.innerHTML = '<span class="status-pill pending">待履约</span>';
+          const confirm = row.querySelector('.col-confirm'); if (confirm) confirm.innerHTML = '<span class="confirm-status confirmed">已确认</span>';
+          setText('.col-customer', item.customer);
+          const consignment = row.querySelector('.col-consignment'); if (consignment) consignment.innerHTML = '<span class="ref-no" title="' + item.consignment + '">' + item.consignment + '</span>';
+          setText('.col-product', item.product);
+          setText('.col-qty', item.qty);
+          setText('.col-progress', '0 / ' + item.qty);
+          const route = row.querySelector('.col-route'); if (route) route.innerHTML = '<div class="route-cell"></div>';
+          setText('.col-short', item.business);
+          setText('.col-scope', item.scope);
+          const contract = row.querySelector('.col-contract'); if (contract) contract.innerHTML = '<span class="contract-status">已生效</span>';
+          const personCells = row.querySelectorAll('.col-person'); if (personCells[0]) personCells[0].textContent = item.sales;
+          setText('.col-company', item.company);
+          setText('.col-department', item.department);
+          const created = row.querySelector('.col-created'); if (created) created.innerHTML = '<div class="creator-info-cell"><span>' + item.sales + '</span><small>2026-11-25 10:00</small></div>';
+          if (personCells[1]) personCells[1].textContent = item.sales;
+          setText('.col-time', '2026-11-25 10:00');
+          row.querySelector('[data-fill-demand]')?.remove();
+          row.querySelector('[data-open-arrangement]')?.remove();
+          tbody.appendChild(row);
+        });
+      };
+      ensureNonTransportPendingRows();
       const rows = Array.from(tbody.querySelectorAll('tr[data-order]'));
+      const syncStatusTabCounts = () => {
+        const labels = { all: '全部', created: '创建', audit: '待审核', rejected: '驳回', pending: '待履约', running: '履约中', completed: '已完结', voided: '已取消' };
+        document.querySelectorAll('.status-tab').forEach((tab) => {
+          const key = tab.dataset.status;
+          const count = key === 'all' ? rows.length : rows.filter((row) => row.dataset.status === key).length;
+          tab.textContent = labels[key] + '(' + count + ')';
+        });
+        const result = document.getElementById('resultCount');
+        if (result) result.textContent = '共 ' + rows.length + ' 条';
+      };
+      syncStatusTabCounts();
       const resultCount = document.getElementById('resultCount');
       const tableHost = document.getElementById('orderTableHost');
       const emptyState = document.getElementById('queryEmptyState');
@@ -730,16 +803,20 @@
         }];
         return products.map((product, index) => {
           const quantity = parseQuantityText(product.quantityText || rowQuantity.number + ' ' + rowQuantity.unit);
+          const rawScope = row.querySelector('.col-scope')?.innerText.trim() || '运输';
+          const scopes = rawScope.split(/[、,，\s]+/).map((scope) => scope === '报关清关' ? '报关' : scope).filter(Boolean);
+          const serviceType = scopes.includes('运输') ? '运输' : (scopes[0] || '运输');
           return {
-            id: row.dataset.order + '::route-1::item-' + (index + 1),
-            routeId: row.dataset.order + '::route-1',
+            id: row.dataset.order + '::' + serviceType + '::item-' + (index + 1),
+            routeId: row.dataset.order + '::' + serviceType,
             routeIndex: 1,
+            serviceType,
             itemLine: product.itemLine || '商品行 #' + (index + 1),
             orderNo: row.dataset.order,
             customer: row.cells[4]?.innerText.trim() || '--',
             product: product.product || row.cells[6]?.innerText.trim() || '--',
-            route: (row.dataset.origin || '起运地') + ' → ' + (row.dataset.destination || '目的地'),
-            routeMode: (row.dataset.transportType || '--') + ' · ' + (row.dataset.loadType || '--'),
+            route: serviceType === '运输' ? (row.dataset.origin || '起运地') + ' → ' + (row.dataset.destination || '目的地') : '',
+            routeMode: serviceType === '运输' ? (row.dataset.transportType || '--') + ' · ' + (row.dataset.loadType || '--') : '',
             availableValue: quantity.number,
             availableText: product.quantityText || row.dataset.unscheduled || '0 ' + quantity.unit,
             unit: quantity.unit,
@@ -756,6 +833,7 @@
             routeMap.set(item.routeId, {
               id: item.routeId,
               routeIndex: item.routeIndex,
+              serviceType: item.serviceType,
               orderNo: item.orderNo,
               customer: item.customer,
               route: item.route,
@@ -774,7 +852,7 @@
         const customers = new Set(items.map((item) => item.customer));
         const orders = new Set(items.map((item) => item.orderNo));
         mergeSelectedCount.textContent = String(routes.length);
-        mergeSummaryStats.textContent = '客户 ' + customers.size + ' · 订单 ' + orders.size + ' · 线路 ' + routes.length + ' · 商品 ' + items.length;
+        mergeSummaryStats.textContent = '客户 ' + customers.size + ' · 订单 ' + orders.size + ' · 服务要求 ' + routes.length + ' · 商品 ' + items.length;
         const totalsByUnit = new Map();
         items.forEach((item) => {
           if (!Number.isFinite(item.quantity) || item.quantity < 0 || item.quantity > item.availableValue) return;
@@ -811,8 +889,12 @@
               '<td><button class="merge-item-delete" type="button" data-merge-remove="' + escapeMergeText(item.id) + '" aria-label="移除商品"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg></button></td>' +
             '</tr>';
           }).join('');
+          const serviceTypeClass = route.serviceType === '运输' ? 'transport' : route.serviceType === '报关' ? 'customs' : 'warehouse';
+          const routeMeta = route.serviceType === '运输'
+            ? '<div class="merge-route-meta"><span class="merge-route-path">' + escapeMergeText(route.route) + '</span><span class="merge-route-mode">' + escapeMergeText(route.routeMode) + '</span></div>'
+            : '';
           return '<section class="merge-route-card" data-merge-route="' + escapeMergeText(route.id) + '">' +
-            '<div class="merge-route-head"><div><div class="merge-route-title-row"><span class="merge-route-index">线路 #' + route.routeIndex + '</span><span class="merge-route-order">' + escapeMergeText(route.orderNo) + '</span><span class="merge-route-customer">' + escapeMergeText(route.customer) + '</span></div><div class="merge-route-meta"><span class="merge-route-path">' + escapeMergeText(route.route) + '</span><span class="merge-route-mode">' + escapeMergeText(route.routeMode) + '</span></div></div><span class="merge-route-count">' + route.items.length + ' 个商品</span></div>' +
+            '<div class="merge-route-head"><div><div class="merge-route-title-row"><span class="merge-service-type-tag ' + serviceTypeClass + '">' + escapeMergeText(route.serviceType) + '</span><span class="merge-route-index">服务编号 ' + route.routeIndex + '</span><span class="merge-route-order">' + escapeMergeText(route.orderNo) + '</span><span class="merge-route-customer">' + escapeMergeText(route.customer) + '</span></div>' + routeMeta + '</div><span class="merge-route-count">' + route.items.length + ' 个商品</span></div>' +
             '<div class="merge-product-table-wrap"><table class="merge-product-table"><colgroup><col style="width:34%"><col style="width:18%"><col style="width:18%"><col style="width:24%"><col style="width:6%"></colgroup><thead><tr><th>商品清单</th><th>本次提交数量</th><th>未提交数量</th><th>关联商品</th><th>操作</th></tr></thead><tbody>' + productRows + '</tbody></table></div>' +
           '</section>';
         }).join('');
@@ -856,7 +938,7 @@
         return '指定';
       };
       const arrangementTaskTableMarkup = () => {
-        const head = '<div class="arr-task-head"><span>任务</span><span>线路</span><span>起运地 → 目的地</span><span>运输类型</span><span>装运类别</span><span>数量</span><span>物流委托类型</span><span>物流供应商</span><span>归属委托</span></div>';
+        const head = '<div class="arr-task-head"><span>任务</span><span>服务要求</span><span>服务要求内容</span><span>数量</span><span>物流委托类型</span><span>物流供应商</span><span>归属委托</span></div>';
         const rows = arrangementState.tasks.map((task, index) => {
           const supplierOptions = '<option value="">请选择供应商</option>' + ARRANGEMENT_SUPPLIERS.map((item) => arrangementSupplierOption(item, task.supplier)).join('');
           const entrustOptions = ARRANGEMENT_ENTRUST_TYPES.map((item) => arrangementEntrustOption(item, task.entrustType)).join('');
@@ -866,14 +948,14 @@
           const loadCell = task.manual
             ? '<select data-arr-task-load="' + arrangementEsc(task.id) + '">' + arrangementOptions(arrangementLoadTypes, task.loadType, '请选择') + '</select>'
             : '<span class="arr-task-text">' + arrangementEsc(task.loadType) + '</span>';
-          const routeCell = task.manual ? '<span class="arr-task-muted">未关联线路</span>' : '<span class="arr-task-route">' + arrangementEsc(task.label) + '</span>';
-          const pathCell = task.manual ? '<span class="arr-task-muted">--</span>' : arrangementEsc(task.origin + ' → ' + task.destination);
+          const routeCell = task.manual ? '<span class="arr-task-muted">未关联服务要求</span>' : '<span class="arr-task-route">' + arrangementEsc(String(task.label || '').replace(/^线路/, '服务要求')) + '</span>';
+          const pathCell = task.manual
+            ? '<span class="arr-task-muted">--</span>'
+            : '<span class="arr-task-text">' + arrangementEsc(task.origin + ' → ' + task.destination) + '（' + arrangementEsc(task.type || '') + (task.loadType ? ' · ' + arrangementEsc(task.loadType) : '') + '）</span>';
           return '<div class="arr-task-row' + (task.supplier ? '' : ' is-empty') + '" data-arr-task-row="' + arrangementEsc(task.id) + '">' +
             '<span class="arr-task-no">任务' + (index + 1) + '</span>' +
             '<span>' + routeCell + '</span>' +
             '<span class="arr-task-path">' + pathCell + '</span>' +
-            '<span>' + typeCell + '</span>' +
-            '<span>' + loadCell + '</span>' +
             '<span class="arr-task-qty">' + arrangementEsc(task.qtyText || '--') + '</span>' +
             '<span class="arr-task-supplier"><select data-arr-task-entrust="' + arrangementEsc(task.id) + '">' + entrustOptions + '</select></span>' +
             '<span class="arr-task-supplier"><select data-arr-task-supplier="' + arrangementEsc(task.id) + '">' + supplierOptions + '</select></span>' +
@@ -984,7 +1066,7 @@
             id: 'K' + (++arrangementState.sequence),
             manual: false,
             routeId: 'R' + (index + 1),
-            label: '线路' + route.no,
+            label: '服务要求' + route.no,
             origin: route.from,
             destination: route.to,
             type: route.type,
@@ -1060,24 +1142,26 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
           if (!actions) return;
           const status = row.dataset.status;
           const inFulfil = inFulfilStatus(status);
-          const confirmed = row.dataset.confirmationStatus === '已确认';
           const arrangeOpen = ['待安排', '部分安排'].includes(row.dataset.arrangeStatus || '');
-          const needConfirm = inFulfil && !confirmed;
-          const needDemand = inFulfil && confirmed && arrangeOpen;
-          const needArrange = needDemand;
+          const needDemand = inFulfil && arrangeOpen;
+          const serviceScopes = (row.querySelector('.col-scope')?.innerText.trim() || '').split(/[、,，\s]+/).filter(Boolean);
+          const supportsArrangement = serviceScopes.includes('运输');
+          const needArrange = needDemand && supportsArrangement;
+          const sourceType = row.dataset.sourceType || '手动创建';
+          const canDelete = (status === 'created' || status === 'rejected') && sourceType === '手动创建';
           const anchor = actions.querySelector('.row-more-trigger');
 
-          // 「确认」：订单状态=待履约、履约中 且 确认状态=待确认
-          let confirmBtn = actions.querySelector('[data-confirm-order]');
-          if (needConfirm && !confirmBtn) {
-            confirmBtn = document.createElement('button');
-            confirmBtn.type = 'button';
-            confirmBtn.className = 'row-action';
-            confirmBtn.dataset.confirmOrder = row.dataset.order;
-            confirmBtn.textContent = '确认';
-            actions.insertBefore(confirmBtn, actions.firstElementChild);
-          } else if (!needConfirm && confirmBtn) {
-            confirmBtn.remove();
+          // 「删除」：仅 创建/驳回 且 来源类型=手动创建
+          let deleteBtn = actions.querySelector('[data-delete-order]');
+          if (canDelete && !deleteBtn) {
+            deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'row-action danger-text';
+            deleteBtn.dataset.deleteOrder = row.dataset.order;
+            deleteBtn.textContent = '删除';
+            actions.insertBefore(deleteBtn, actions.firstElementChild);
+          } else if (!canDelete && deleteBtn) {
+            deleteBtn.remove();
           }
 
           let demandBtn = actions.querySelector('[data-fill-demand]');
@@ -1121,7 +1205,9 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
           }
           if (menu) {
             const items = [];
-            if (inFulfil) items.push(['查看物流安排', '打开 ' + row.dataset.order + ' 的物流安排']);
+            // 已生成委托即可回看：待履约/履约中之外，已完结、已取消也保留「查看物流安排」
+            const canViewArrange = inFulfil || status === 'completed' || status === 'voided';
+            if (canViewArrange) items.push(['查看物流安排', '打开 ' + row.dataset.order + ' 的物流委托列表']);
             if (inFulfil) items.push(['版本维护', '打开 ' + row.dataset.order + ' 的版本维护']);
             items.push(['查看合同', '查看 ' + row.dataset.order + ' 的合同']);
             menu.innerHTML = items.map((item) => '<button type="button" data-toast="' + item[1] + '">' + item[0] + '</button>').join('');
@@ -1148,7 +1234,7 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
       // 批量按钮除勾选外，还需按所选订单的状态校验可用性
       const bulkRules = {
         '取消订单': (row) => ['待履约', '履约中'].includes(row.dataset.orderStatus),
-        '完结订单': (row) => ['待履约', '履约中'].includes(row.dataset.orderStatus) && row.dataset.confirmationStatus === '已确认',
+        '完结订单': (row) => ['待履约', '履约中'].includes(row.dataset.orderStatus),
         '取消完结': (row) => row.dataset.orderStatus === '已完结',
         '复制订单': () => true,
         '合并/拆分订单': () => true
@@ -1173,7 +1259,6 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
       const applyFilters = () => {
         const statusFilterMap = [
           ['queryArrangeStatus', 'arrangeStatus'],
-          ['queryConfirmStatus', 'confirmationStatus'],
           ['queryContractStatus', 'contractStatus']
         ];
         const statusSelections = statusFilterMap
@@ -1212,7 +1297,6 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
         return {
           no: row.dataset.order || cells[1] || '',
           status: row.dataset.orderStatus || cells[2] || '',
-          confirmationStatus: row.dataset.confirmationStatus || '',
           contractStatus: row.dataset.contractStatus || '',
           customer: row.querySelector('.col-customer')?.innerText.trim() || '',
           goods: row.querySelector('.col-product')?.innerText.trim() || '',
@@ -1431,16 +1515,16 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
 
       /* ===== 本轮变更点：状态与安排口径、新增列、行操作校验 ===== */
       const SOURCE_MAP = {
-        'CO-20260904-BREAKBULK': ['客户委托', 'CT-2026-0904-01'],
-        'FCO202610270010': ['客户委托', '2102957467694845952'],
-        'FCO202610270009': ['客户委托', '2102960421436968960'],
-        'FCO202610270008': ['客户委托', '2102960975970095104'],
-        'FCO202610270007': ['手工新增', '--'],
-        'FCO202610270006': ['销售订单', 'SO2026102001'],
-        'FCO202610270005': ['手工新增', '--'],
-        'FCO202610270004': ['客户委托', '2103654897215401984'],
-        'FCO202610270003': ['客户委托', '2103652106571845520'],
-        'FCO202610270002': ['客户委托', '2103886023354216448']
+        'CO-20260904-BREAKBULK': ['外系统接入', 'CT-2026-0904-01'],
+        'FCO202610270010': ['外系统接入', '2102957467694845952'],
+        'FCO202610270009': ['外系统接入', '2102960421436968960'],
+        'FCO202610270008': ['外系统接入', '2102960975970095104'],
+        'FCO202610270007': ['手动创建', '--'],
+        'FCO202610270006': ['外系统接入', 'SO2026102001'],
+        'FCO202610270005': ['客户需求单', 'SR202610280018(V1.0)'],
+        'FCO202610270004': ['外系统接入', '2103654897215401984'],
+        'FCO202610270003': ['外系统接入', '2103652106571845520'],
+        'FCO202610270002': ['外系统接入', '2103886023354216448']
       };
       const PRODUCT_COUNT = { 'CO-20260904-BREAKBULK': 2, 'FCO202610270010': 3, 'FCO202610270002': 2 };
 
@@ -1453,15 +1537,11 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
             if (pill) pill.textContent = '待履约';
           }
           if (row.dataset.arrangeStatus === '未安排') row.dataset.arrangeStatus = '待安排';
-          if (!row.dataset.confirmationStatus) {
-            row.dataset.confirmationStatus = '待确认';
-            const cell = row.querySelector('.col-confirm');
-            if (cell) cell.innerHTML = '<span class="confirm-status pending">待确认</span>';
-          }
+          // 确认状态本期删除，不再初始化
         });
       };
 
-      // 2) 线路：每条线路一行，「线路编号 起运地 → 目的地（运输类型 · 装运类别）」；超 2 条折叠
+      // 2) 服务要求：按服务项生成「服务要求编号 + 服务内容」；超 2 条折叠
       const ROUTE_MAP = {
         'CO-20260904-BREAKBULK': [
           { no: 1, from: '青岛港件杂货码头', to: '东非蒙巴萨港', type: '水运', load: '件杂货' },
@@ -1478,28 +1558,46 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
         ]
       };
       const MAX_ROUTE_LINES = 2;
-      const routeLabel = (route) => route.no + '|' + route.from + ' → ' + route.to + '（' + route.type + ' · ' + route.load + '）';
+      const normalizeServiceScope = (value) => {
+        const normalized = String(value || '').trim();
+        return normalized === '报关清关' ? '报关' : normalized;
+      };
+      const serviceScopesFor = (row) => {
+        const raw = row.querySelector('.col-scope')?.innerText.trim() || '';
+        return raw.split(/[、,，\s]+/).map(normalizeServiceScope).filter(Boolean);
+      };
+      const transportRequirementsFor = (row) => {
+        const routes = ROUTE_MAP[row.dataset.order] || [{
+          from: row.dataset.origin || '起运地',
+          to: row.dataset.destination || '目的地',
+          type: row.dataset.transportType || '--',
+          load: row.dataset.loadType || '--'
+        }];
+        return routes.map((route) => ({ service: '运输', ...route }));
+      };
+      const serviceRequirementsFor = (row) => {
+        const scopes = serviceScopesFor(row);
+        const requirements = [];
+        scopes.forEach((scope) => {
+          if (scope === '运输') requirements.push(...transportRequirementsFor(row));
+          else if (scope === '报关' || scope === '仓储') requirements.push({ service: scope });
+        });
+        return requirements.map((requirement, index) => ({ ...requirement, no: index + 1 }));
+      };
+      const requirementContent = (requirement) => requirement.service === '运输'
+        ? requirement.from + ' → ' + requirement.to + '（' + requirement.type + ' ' + requirement.load + '）'
+        : requirement.service;
       const augmentRouteCells = () => {
         rows.forEach((row) => {
           const cell = row.querySelector('.col-route');
           if (!cell) return;
-          const list = ROUTE_MAP[row.dataset.order] || [{
-            no: 1,
-            from: row.dataset.origin || '起运地',
-            to: row.dataset.destination || '目的地',
-            type: row.dataset.transportType || '--',
-            load: row.dataset.loadType || '--'
-          }];
+          const list = serviceRequirementsFor(row);
           const shown = list.slice(0, MAX_ROUTE_LINES);
           const rest = list.length - shown.length;
-          cell.innerHTML = '<div class="route-cell">' + shown.map((route) => {
-            const parts = routeLabel(route).split('|');
-            return '<span class="route-line"><b>线路' + parts[0] + '</b>' + parts[1] + '</span>';
-          }).join('') + (rest > 0 ? '<span class="route-more">+' + rest + ' 条线路</span>' : '') + '</div>';
-          cell.title = list.map((route) => {
-            const parts = routeLabel(route).split('|');
-            return '线路' + parts[0] + ' ' + parts[1];
-          }).join('\n');
+          cell.innerHTML = '<div class="route-cell">' + shown.map((requirement) => {
+            return '<span class="route-line"><b>服务要求' + requirement.no + '</b> <span class="route-line-content">' + requirementContent(requirement) + '</span></span>';
+          }).join('') + (rest > 0 ? '<span class="route-more">+' + rest + ' 条服务要求</span>' : '') + '</div>';
+          cell.title = list.map((requirement) => '服务要求' + requirement.no + ' ' + requirementContent(requirement)).join('\n');
         });
       };
 
@@ -1546,7 +1644,8 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
           arrangeCell.textContent = scheduled + ' / ' + total;
           progressCell.after(arrangeCell);
 
-          const source = SOURCE_MAP[row.dataset.order] || ['手工新增', '--'];
+          const source = SOURCE_MAP[row.dataset.order] || ['手动创建', '--'];
+          row.dataset.sourceType = source[0];
           const actionCell = row.querySelector('.col-action');
           const typeCell = document.createElement('td');
           typeCell.className = 'col-source';
@@ -1558,30 +1657,6 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
         });
       };
 
-      // 4) 「确认」：先校验状态、确认状态与超量安排，再更新确认状态
-      const handleConfirmOrder = (orderNo) => {
-        const row = rows.find((item) => item.dataset.order === orderNo);
-        if (!row) return;
-        if (!['待履约', '履约中'].includes(row.dataset.orderStatus)) {
-          showToast('当前客户订单状态不允许确认，请刷新页面');
-          return;
-        }
-        if (row.dataset.confirmationStatus !== '待确认') {
-          showToast('当前客户订单确认状态不允许确认，请刷新页面');
-          return;
-        }
-        const total = parseQuantityText(row.querySelector('.col-qty')?.innerText || '').number;
-        const scheduled = parseQuantityText(row.dataset.scheduled || '').number;
-        if (scheduled > total) {
-          showToast('客户订单商品超量安排，请检查下游单据');
-          return;
-        }
-        row.dataset.confirmationStatus = '已确认';
-        const cell = row.querySelector('.col-confirm');
-        if (cell) cell.innerHTML = '<span class="confirm-status confirmed">已确认</span>';
-        syncRowActions();
-        showToast('已确认客户订单 ' + orderNo);
-      };
 
       normalizeStatusLabels();
       augmentProductNames();
@@ -1590,34 +1665,6 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
       syncRowActions();
 
       document.addEventListener('click', (event) => {
-        const confirmBtn = event.target.closest('[data-confirm-order]');
-        if (confirmBtn) { handleConfirmOrder(confirmBtn.dataset.confirmOrder); return; }
-        const menuToast = event.target.closest('#rowActionMenu [data-toast]');
-        if (menuToast) { showToast(menuToast.dataset.toast); closeRowActionMenu(); }
-      });
-      document.getElementById('columnSettingBtn')?.addEventListener('click', () => {
-        showToast('打开「列」显示配置：新增列默认勾选，历史列配置按字段名映射');
-      });
-      document.getElementById('exportOrdersBtn')?.addEventListener('click', () => {
-        showToast('按当前查询条件与可见列导出，导出表头随字段变更');
-      });
-      document.getElementById('arrangementDialogClose')?.addEventListener('click', closeArrangementDialog);
-      document.getElementById('arrangementCancelBtn')?.addEventListener('click', closeArrangementDialog);
-      arrangementDialog?.addEventListener('click', (event) => { if (event.target === arrangementDialog) closeArrangementDialog(); });
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && arrangementDialog && !arrangementDialog.hidden) closeArrangementDialog();
-      });
-                        const arrangementFindGroup = (id) => arrangementState.groups.find((item) => item.id === id);
-      arrangementTaskTable?.addEventListener('change', (event) => {
-        const supplierSelect = event.target.closest('[data-arr-task-supplier]');
-        if (supplierSelect) {
-          const task = arrangementState.tasks.find((item) => item.id === supplierSelect.dataset.arrTaskSupplier);
-          if (!task) return;
-          task.supplier = supplierSelect.value;
-          arrangementRebuildGroups();
-          renderArrangement();
-          return;
-        }
         const entrustSelect = event.target.closest('[data-arr-task-entrust]');
         if (entrustSelect) {
           const task = arrangementState.tasks.find((item) => item.id === entrustSelect.dataset.arrTaskEntrust);
@@ -1665,7 +1712,7 @@ const closeArrangementDialog = () => { arrangementDialog.hidden = true; };
 
 document.getElementById('newOrderBtn')?.addEventListener('click', () => {
         captureListState();
-        window.location.href = 'customer-order-detail-prototype.html?mode=create&from=customer-order-list';
+        window.location.href = 'customer-order-detail-prototype.html?mode=create&sourceType=manual&from=customer-order-list';
       });
 
       document.querySelectorAll('[data-toast]').forEach((button) => {

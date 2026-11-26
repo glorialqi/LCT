@@ -476,6 +476,7 @@ body{background:var(--page);color:var(--text);font-family:var(--font)}
 .customer-goods-table tr.selected-goods-row td:first-child{border-left:3px solid #1677ff}
 .goods-cell-value{display:inline-flex;align-items:center;min-height:32px;padding:0 9px;border-radius:4px;background:#f5f6f8;color:#596270;max-width:145px;overflow:hidden;text-overflow:ellipsis}
 .goods-unit{display:inline-block;margin-left:4px;color:#737c89;font-size:12px}
+.goods-service-requirement{display:grid;gap:2px;max-width:280px;color:#475569;font-size:10px;line-height:16px}.goods-service-requirement>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:1360px){.customer-goods-layout{grid-template-columns:410px minmax(0,1fr)}.related-order-card{min-height:190px}.order-tag{padding:0 7px}.related-meta-grid{gap:8px 14px}}
 
 /* 执行侧预估应收 / 应付：合并对账、开票与收付款信息 */
@@ -1822,6 +1823,39 @@ function renderDocumentsView(isExec){
   </div>`;
 }
 document.addEventListener('click',e=>{const t=e.target.closest('[data-doc-type]');if(t){state.docFilter=t.dataset.docType;render();}});
+const goodsServiceRequirementMap={
+  'demand-route-1':[
+    {no:'FW202611180001',serviceType:'运输',origin:'漳州',destination:'厦门',transportType:'水运',loadType:'集装箱',detail:'ETD 2026-11-20；ETA 2026-11-21；服务条款 CY-CY；是否直航：否'},
+    {no:'FW202611180004',serviceType:'报关',detail:'报关服务；厦门报关行；报关资料已接收'},
+    {no:'FW202611180007',serviceType:'仓储',detail:'仓储服务；厦门仓；预计入库 2026-11-21'}
+  ],
+  'demand-route-2':[
+    {no:'FW202611180002',serviceType:'运输',origin:'泉州',destination:'厦门',transportType:'水运',loadType:'集装箱',detail:'ETD 2026-11-20；ETA 2026-11-21；服务条款 CY-CY；是否直航：否'},
+    {no:'FW202611180005',serviceType:'报关',detail:'报关服务；厦门报关行；随附客户报关资料'},
+    {no:'FW202611180008',serviceType:'仓储',detail:'仓储服务；厦门仓；与线路1货物合并入库'}
+  ],
+  'demand-route-3':[
+    {no:'FW202611180003',serviceType:'运输',origin:'厦门',destination:'天津',transportType:'水运',loadType:'集装箱',detail:'ETD 2026-11-23；ETA 2026-11-27；服务条款 CY-CY；是否直航：否'},
+    {no:'FW202611180006',serviceType:'报关',detail:'报关服务；天津报关行；干线到港后办理'},
+    {no:'FW202611180009',serviceType:'仓储',detail:'仓储服务；天津仓；到港后暂存'}
+  ]
+};
+function goodsServiceRequirementsFor(route){
+  const key=route&&route.id;
+  if(goodsServiceRequirementMap[key])return goodsServiceRequirementMap[key];
+  return [{no:'FW202611180001',serviceType:'运输',origin:route?.origin||'—',destination:route?.destination||'—',transportType:route?.transportType||route?.mode||'水运',loadType:route?.loadType||'集装箱',detail:route?.detail||`ETD ${route?.etd||'—'}；ETA ${route?.eta||'—'}；服务条款 ${route?.originTerm||'—'}-${route?.destinationTerm||'—'}`}];
+}
+function goodsServiceRequirementDisplay(item){
+  if(item.serviceType==='运输')return `${item.no} ${item.origin} → ${item.destination}（${item.transportType} ${item.loadType}）`;
+  return `${item.no} ${item.serviceType}`;
+}
+function goodsServiceRequirementTooltip(items){
+  return `客户订单服务要求 → 运输要求信息：${items.map(item=>item.serviceType==='运输'?`${item.no} 运输要求：${item.origin} → ${item.destination}（${item.transportType} ${item.loadType}）；${item.detail}`:`${item.no} ${item.serviceType}：${item.detail}`).join('；')}`;
+}
+function goodsServiceRequirementCell(route){
+  const items=goodsServiceRequirementsFor(route);
+  return `<div class="goods-service-requirement" title="${esc(goodsServiceRequirementTooltip(items))}">${items.map(item=>`<span title="${esc(goodsServiceRequirementTooltip([item]))}">${esc(goodsServiceRequirementDisplay(item))}</span>`).join('')}</div>`;
+}
 function customerCard(isExec){
   const d=isExec?{order:'FCO202610200037',company:'青岛绿洲园花生食品有限公司',date:'2026-10-20',contact:'清清',email:'',sales:'黄瑞钰',agent:'',remark:'自动化订单备注',goods:{no:'FCO202610200037',customer:'青岛绿洲园花生食品有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}}:{order:'FCO202610160032',company:'成都柠檬时光科技有限公司',date:'2026-10-16',contact:'11',email:'',sales:'林美燕',agent:'菊风公司传媒有限公司b590c',remark:'自动化订单备注',goods:{no:'FCO202610160032',customer:'成都柠檬时光科技有限公司',name:'玉米',unit1:'吨',unit2:'立方米',unit3:'吨'}};
   const transport=isExec?'水运 集装箱':`${createForm.transportType||'运输'} ${createForm.loadType||''}`.trim();
@@ -1829,7 +1863,7 @@ function customerCard(isExec){
   const meta=(l,v)=>`<div class="related-meta"><span class="related-meta-label">${l}</span><span class="related-meta-value" title="${esc(v||'')}">${v||'—'}</span></div>`;
   return `<section class="cube-card customer-goods-card"><div class="cube-head"><button class="collapse-btn" data-collapse aria-label="收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button><div class="title">客户及商品明细</div></div><div class="cube-body"><div class="customer-goods-layout">
     <section class="related-orders-panel"><div class="related-orders-head">查看关联客户订单 <b>（1）</b></div><div class="related-order-card"><div class="related-order-top"><span class="related-order-no">${d.order}</span><span class="external-client">（外部客户）</span><div class="related-order-tags">${tags}</div></div><div class="related-company-row"><div class="related-company">${d.company}</div><div class="related-meta"><span class="related-meta-label">委托方组织：</span><span class="related-meta-value" title="${esc(d.principalOrg)}">${d.principalOrg||'—'}</span></div></div><div class="related-meta-grid">${meta('客户单号：',d.customerNo)}${meta('结算抬头：',d.settlementHeader)}${meta('业务日期：',d.date)}${meta('联系人：',d.contact)}${meta('联系人邮箱：',d.email)}${meta('业务员：',d.sales)}${meta('代理：',d.agent)}${meta('备注：',d.remark)}</div></div></section>
-    <section class="goods-panel"><div class="goods-panel-head">商品明细列表</div><div class="goods-table-scroll"><table class="mini-table customer-goods-table"><thead><tr><th style="width:170px">客户订单编号</th><th style="width:180px">客户</th><th style="width:150px">商品中文名</th><th style="width:150px">商品描述</th><th style="width:120px">件数/单位</th><th style="width:120px">毛重/单位</th><th style="width:130px">体积/单位</th><th style="width:130px">标准数量/单位</th><th style="width:110px">单件重量</th><th style="width:120px">规格尺寸</th><th style="width:120px">货物单价（元）</th><th style="width:110px">线路/行号</th><th style="width:130px">关联线路/行号</th><th style="width:180px">贸易合同号（类型）</th><th style="width:80px">操作</th></tr></thead><tbody><tr class="selected-goods-row"><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td>—</td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit1}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit2}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit3}</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">线路1 / 1</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">${isExec?'HT202610200037':'HT202610160032'}</span></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></section>
+    <section class="goods-panel"><div class="goods-panel-head">商品明细列表</div><div class="goods-table-scroll"><table class="mini-table customer-goods-table"><thead><tr><th style="width:170px">客户订单编号</th><th style="width:180px">客户</th><th style="width:150px">商品中文名</th><th style="width:150px">商品描述</th><th style="width:120px">件数/单位</th><th style="width:120px">毛重/单位</th><th style="width:130px">体积/单位</th><th style="width:130px">标准数量/单位</th><th style="width:110px">单件重量</th><th style="width:120px">规格尺寸</th><th style="width:120px">货物单价（元）</th><th style="width:280px">服务要求</th><th style="width:180px">贸易合同号（类型）</th><th style="width:80px">操作</th></tr></thead><tbody><tr class="selected-goods-row"><td>${d.goods.no}</td><td>${d.goods.customer}</td><td>${d.goods.name}</td><td>—</td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit1}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit2}</span></td><td><span class="goods-cell-value">—</span><span class="goods-unit">${d.goods.unit3}</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td><span class="goods-cell-value">—</span></td><td>${goodsServiceRequirementCell({id:'single-route',origin:'漳州',destination:'天津',transportType:'水运',loadType:'集装箱',detail:'ETD 2026-11-20；ETA 2026-11-27；服务条款 CY-CY；是否直航：否'})}</td><td><span class="goods-cell-value">${isExec?'HT202610200037':'HT202610160032'}</span></td><td>${isExec?'':'<button class="btn link" style="color:var(--danger)">删除</button>'}</td></tr></tbody></table></div></section>
   </div></div></section>`;
 }
 const docNames={

@@ -77,18 +77,22 @@
                   </select>
                 </div>
                 <div class="query-field">
-                  <label for="queryServiceReq">来源服务要求号</label>
-                  <input id="queryServiceReq" type="text" placeholder="请输入服务要求号" autocomplete="off">
+                  <label for="querySourceSystem">来源系统</label>
+                  <select id="querySourceSystem"><option value="">请选择</option><option>股份控制塔</option><option>其他系统</option></select>
                 </div>
                 <div class="query-field">
-                  <label for="queryVersion">当前版本</label>
-                  <select id="queryVersion"><option value="">请选择</option><option>V1</option><option>V2</option><option>V3</option><option>V4</option></select>
+                  <label for="querySourceType">来源类型</label>
+                  <select id="querySourceType"><option value="">请选择</option><option>原始需求</option><option>客户需求单</option></select>
+                </div>
+                <div class="query-field">
+                  <label for="querySourceNo">来源单号</label>
+                  <input id="querySourceNo" type="text" placeholder="请输入来源单号" autocomplete="off">
                 </div>
                 <div class="query-field">
                   <label for="queryProgress">订单生成进度</label>
                   <select id="queryProgress"><option value="">请选择</option><option value="none">未生成</option><option value="partial">部分生成</option><option value="complete">已全部生成</option><option value="over">已全部生成 · 超额</option></select>
                 </div>
-                <div class="query-field">
+                <div class="query-field extended-filter" hidden>
                   <label for="queryContact">客户联系人</label>
                   <input id="queryContact" type="text" placeholder="请输入联系人" autocomplete="off">
                 </div>
@@ -103,10 +107,6 @@
                 <div class="query-field extended-filter" hidden>
                   <label for="queryTransportType">运输类型</label>
                   <select id="queryTransportType"><option value="">请选择</option><option>水运</option><option>汽运</option><option>铁运</option></select>
-                </div>
-                <div class="query-field extended-filter" hidden>
-                  <label for="querySourceSystem">来源系统</label>
-                  <select id="querySourceSystem"><option value="">请选择</option><option>SSP</option><option>物流控制塔</option></select>
                 </div>
                 <div class="query-field extended-filter" hidden>
                   <label for="queryCreatedFrom">创建日期（开始）</label>
@@ -124,10 +124,9 @@
             <div class="demand-list-tabs-row">
               <div class="status-tabs" role="tablist" aria-label="客户需求状态">
                 <button class="status-tab active" type="button" data-status="all" role="tab" aria-selected="true">全部(0)</button>
-                <button class="status-tab" type="button" data-status="created" role="tab" aria-selected="false">创建(0)</button>
                 <button class="status-tab" type="button" data-status="pending" role="tab" aria-selected="false">待接收(0)</button>
                 <button class="status-tab" type="button" data-status="received" role="tab" aria-selected="false">执行中(0)</button>
-                <button class="status-tab" type="button" data-status="rejected" role="tab" aria-selected="false">已驳回(0)</button>
+                <button class="status-tab" type="button" data-status="rejected" role="tab" aria-selected="false">已拒绝(0)</button>
                 <button class="status-tab" type="button" data-status="completed" role="tab" aria-selected="false">已完成(0)</button>
               </div>
               <button class="demand-command-btn demand-list-add-btn" id="addDemandBtn" type="button">
@@ -139,15 +138,15 @@
               <table class="demand-table demand-list-table" aria-label="客户需求列表">
                 <thead>
                   <tr>
-                    <th class="sticky-check"><input id="selectAll" type="checkbox" aria-label="选择当前页全部客户需求"></th>
                     <th class="sticky-no">客户需求单号</th>
                     <th>需求状态</th>
                     <th>订单生成进度</th>
-                    <th>当前版本</th>
                     <th>客户</th>
-                    <th>来源服务要求号</th>
+                    <th>我方公司</th>
+                    <th>来源系统</th>
+                    <th>来源类型</th>
+                    <th>来源单号</th>
                     <th class="num">需求行数</th>
-                    <th class="num">超额行数</th>
                     <th class="num">客户订单数</th>
                     <th>客户联系人</th>
                     <th>接收时间</th>

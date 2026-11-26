@@ -62,14 +62,14 @@
           <div class="demand-page-identity">
             <div class="demand-title-line">
               <h1 id="demandPageTitle">客户需求单 <span id="headerDemandNo">XQ202610280031</span></h1>
-              <span class="version-chip" id="headerCurrentVersion">当前有效 V3</span>
-              <span class="ui-dirty-indicator" id="demandDirtyIndicator" hidden>未保存</span>
             </div>
             <div class="demand-meta-line">
               <span id="headerStatusBadge" class="status done">已接收</span>
               <span>订单生成进度 <strong id="headerProgress">部分生成</strong></span>
               <span>客户 <strong id="headerCustomerValue">青岛绿洲园花生食品有限公司</strong></span>
-              <span>来源单号 <strong id="headerServiceReqValue">SR202610280018</strong></span>
+              <span>来源系统 <strong id="headerSourceSystemValue">股份控制塔</strong></span>
+              <span>来源类型 <strong id="headerSourceTypeValue">原始需求</strong></span>
+              <span>来源单号 <strong id="headerSourceNoValue">LSR202610280018</strong></span>
             </div>
           </div>
           <div class="demand-head-actions" id="demandHeadActions">
@@ -77,17 +77,12 @@
             <button class="btn" id="saveCreatedBtn" type="button" hidden>保存</button>
             <button class="btn outline-primary" id="submitCreatedBtn" type="button" hidden>提交</button>
             <button class="btn danger" id="deleteCreatedBtn" type="button" hidden>删除</button>
-            <button class="btn danger" id="rejectPendingBtn" type="button" hidden>驳回</button>
+            <button class="btn danger" id="rejectPendingBtn" type="button" hidden>拒绝</button>
             <button class="btn primary" id="receivePendingBtn" type="button" hidden>接收</button>
-            <button class="btn outline-primary" id="modifyBtn" type="button" hidden>版本维护</button>
             <button class="btn primary" id="startCustomerOrderBtn" type="button" hidden>发起客户订单</button>
-            <button class="btn outline-primary" id="cancelCompleteBtn" type="button" hidden>取消完结</button>
-            <button class="btn danger" id="voidDemandBtn" type="button" hidden>作废</button>
-            <button class="btn" id="historyBtn" type="button">历史版本</button>
-            <div class="demand-menu-wrap">
+            <div class="demand-menu-wrap" id="moreActionWrap" hidden>
               <button class="btn" id="moreBtn" type="button" aria-haspopup="menu" aria-expanded="false">更多</button>
               <div class="demand-menu" id="moreMenu" role="menu" hidden>
-                <button type="button" role="menuitem" id="compareVersionMenuBtn">查看版本对比</button>
                 <button type="button" role="menuitem" id="exportDemandBtn">导出需求信息</button>
                 <button type="button" role="menuitem" class="is-danger" id="completeDemandBtn">完结</button>
               </div>
@@ -263,33 +258,6 @@
               </div>
             </section>
 
-            <section class="demand-section" id="createQuoteSection" aria-labelledby="createQuoteTitle">
-              <div class="demand-section-head">
-                <h2 class="demand-section-title" id="createQuoteTitle"><svg><use href="#p-money"/></svg>需求报价与目标成本</h2>
-              </div>
-              <div class="demand-section-body">
-                <div class="demand-quote-split">
-                  <section class="demand-quote-panel" aria-labelledby="createReceivableQuoteTitle">
-                    <div class="demand-quote-panel-head"><h3 id="createReceivableQuoteTitle">预估应收</h3><button class="btn" id="addReceivableQuoteBtn" type="button">添加应收行</button></div>
-                    <div class="demand-data-table-wrap">
-                      <table class="demand-data-table demand-quote-form-table demand-quote-subtable" aria-label="预估应收">
-                        <thead><tr><th>费用科目<span class="required">*</span></th><th>税率（%）</th><th>报价单价（含税）</th><th>币种</th><th>预计数量</th><th>单位</th><th>报价金额</th><th>汇率</th><th>本位币金额</th><th>操作</th></tr></thead>
-                        <tbody id="createReceivableQuoteBody" data-quote-direction="应收"></tbody>
-                      </table>
-                    </div>
-                  </section>
-                  <section class="demand-quote-panel" aria-labelledby="createPayableQuoteTitle">
-                    <div class="demand-quote-panel-head"><h3 id="createPayableQuoteTitle">预估应付</h3><button class="btn" id="addPayableQuoteBtn" type="button">添加应付行</button></div>
-                    <div class="demand-data-table-wrap">
-                      <table class="demand-data-table demand-quote-form-table demand-quote-subtable" aria-label="预估应付">
-                        <thead><tr><th>费用科目<span class="required">*</span></th><th>税率（%）</th><th>报价单价（含税）</th><th>币种</th><th>预计数量</th><th>单位</th><th>报价金额</th><th>汇率</th><th>本位币金额</th><th>操作</th></tr></thead>
-                        <tbody id="createPayableQuoteBody" data-quote-direction="应付"></tbody>
-                      </table>
-                    </div>
-                  </section>
-                </div>
-              </div>
-            </section>
           </form>
 
           <section class="demand-section" id="staticDemandInfoSection" aria-labelledby="basicInfoTitle">
@@ -297,13 +265,13 @@
             <div class="demand-section-body">
               <div class="demand-readonly-grid demand-customer-info-grid">
                 <div class="demand-field"><div class="demand-field-label">客户</div><div class="demand-readonly-value is-strong" id="staticCustomerValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">我方公司</div><div class="demand-readonly-value is-strong" id="staticOurCompanyValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">客户类型</div><div class="demand-readonly-value" id="staticCustomerTypeValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">客户联系人</div><div class="demand-readonly-value" id="staticContactValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">客户联系人电话</div><div class="demand-readonly-value" id="staticPhoneValue"></div></div>
                 <div class="demand-field span-2"><div class="demand-field-label">邮件接收人 + 邮箱</div><div class="demand-readonly-value demand-email-recipient-list" id="staticEmailValue"></div></div>
                 <div class="demand-field is-grid-row-start"><div class="demand-field-label">业务类型</div><div class="demand-readonly-value" id="staticBizTypeValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">业务日期</div><div class="demand-readonly-value" id="staticBusinessDateValue"></div></div>
-                <div class="demand-field"><div class="demand-field-label">贸易条款</div><div class="demand-readonly-value" id="staticTradeTermsValue"></div></div>
                                 <div class="demand-field"><div class="demand-field-label">服务范围</div><div class="demand-readonly-value" id="staticServiceScopeValue"></div></div>
                 <div class="demand-field" id="staticTransportTypeField"><div class="demand-field-label">运输类型</div><div class="demand-readonly-value" id="staticServiceItemsValue"></div></div>
                 <div class="demand-field" id="staticShippingCategoriesField"><div class="demand-field-label">装运类别</div><div class="demand-readonly-value" id="staticShippingCategoriesValue"></div></div>
@@ -314,6 +282,23 @@
             </div>
           </section>
 
+
+          <section class="demand-section" id="receiveOrgSection" aria-labelledby="receiveOrgTitle">
+            <div class="demand-section-head">
+              <h2 class="demand-section-title" id="receiveOrgTitle"><svg><use href="#p-demand"/></svg>4PL组织信息</h2>
+              <span class="demand-muted" id="receiveOrgHint">接收时录入</span>
+            </div>
+            <div class="demand-section-body">
+              <div class="demand-readonly-grid">
+                <div class="demand-field"><div class="demand-field-label">业务员</div><div class="demand-readonly-value" id="receiveOrgSalespersonValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">业务员部门</div><div class="demand-readonly-value" id="receiveOrgDepartmentValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">经营单位</div><div class="demand-readonly-value" id="receiveOrgBusinessUnitValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">核算组</div><div class="demand-readonly-value" id="receiveOrgAccountingGroupValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">业务员公司</div><div class="demand-readonly-value" id="receiveOrgCompanyValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">作业组织</div><div class="demand-readonly-value" id="receiveOrgOperationOrgValue"></div></div>
+              </div>
+            </div>
+          </section>
           <section class="demand-section" id="staticProductDetailSection" aria-labelledby="lineTitle">
             <div class="demand-section-head"><h2 class="demand-section-title" id="lineTitle"><svg><use href="#p-package"/></svg>商品明细</h2><span class="demand-muted">数量按需求行核销</span></div>
             <div class="demand-section-body">
@@ -355,37 +340,35 @@
             </div>
           </section>
 
-          <section class="demand-section" id="staticQuoteSection" aria-labelledby="quoteTitle">
-            <div class="demand-section-head">
-              <h2 class="demand-section-title" id="quoteTitle"><svg><use href="#p-money"/></svg>需求报价与目标成本</h2>
-              <span class="status pending">价格基线，不作为结算依据</span>
-            </div>
+
+          <section class="demand-section" id="staticContractSection" aria-labelledby="contractConventionTitle">
+            <div class="demand-section-head"><h2 class="demand-section-title" id="contractConventionTitle"><svg><use href="#p-contract"/></svg>合同约定</h2><span class="demand-muted">来源直连，只读</span></div>
             <div class="demand-section-body">
-              <div class="demand-metric-grid demand-metric-grid--4" id="quoteMetrics"></div>
-              <div class="demand-table-toolbar"><span class="demand-muted">报价随需求版本冻结；订单合同价独立维护。</span></div>
-              <div class="demand-quote-split">
-                <section class="demand-quote-panel" aria-labelledby="receivableQuoteTitle">
-                  <div class="demand-quote-panel-head"><h3 id="receivableQuoteTitle">预估应收</h3><span class="demand-muted" id="quoteReceivableCount">0 行</span></div>
-                  <div class="demand-data-table-wrap">
-                    <table class="demand-data-table demand-quote-table demand-quote-subtable" aria-label="预估应收">
-                      <thead><tr><th>费用科目</th><th class="num">税率（%）</th><th class="num">报价单价（含税）</th><th>币种</th><th class="num">预计数量</th><th>单位</th><th class="num">报价金额</th><th class="num">汇率</th><th class="num">本位币金额</th></tr></thead>
-                      <tbody id="quoteReceivableBody"></tbody>
-                    </table>
-                  </div>
-                </section>
-                <section class="demand-quote-panel" aria-labelledby="payableQuoteTitle">
-                  <div class="demand-quote-panel-head"><h3 id="payableQuoteTitle">预估应付</h3><span class="demand-muted" id="quotePayableCount">0 行</span></div>
-                  <div class="demand-data-table-wrap">
-                    <table class="demand-data-table demand-quote-table demand-quote-subtable" aria-label="预估应付">
-                      <thead><tr><th>费用科目</th><th class="num">税率（%）</th><th class="num">报价单价（含税）</th><th>币种</th><th class="num">预计数量</th><th>单位</th><th class="num">报价金额</th><th class="num">汇率</th><th class="num">本位币金额</th></tr></thead>
-                      <tbody id="quotePayableBody"></tbody>
-                    </table>
-                  </div>
-                </section>
+              <div class="demand-readonly-grid">
+                <div class="demand-field"><div class="demand-field-label">签约方式</div><div class="demand-readonly-value" id="staticSigningMethodValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">合同正文类型</div><div class="demand-readonly-value" id="staticContractBodyTypeValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">是否自动正本回收</div><div class="demand-readonly-value" id="staticAutoOriginalRecoveryValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">贸易方式</div><div class="demand-readonly-value" id="staticTradeModeValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">贸易条款</div><div class="demand-readonly-value" id="staticTradeTermsValue"></div></div>
               </div>
             </div>
           </section>
 
+          <section class="demand-section" id="staticInsuranceSection" aria-labelledby="insuranceConventionTitle">
+            <div class="demand-section-head"><h2 class="demand-section-title" id="insuranceConventionTitle"><svg><use href="#p-contract"/></svg>保险约定</h2><span class="demand-muted">来源直连，只读</span></div>
+            <div class="demand-section-body">
+              <div class="demand-readonly-grid">
+                <div class="demand-field"><div class="demand-field-label">是否免保险</div><div class="demand-readonly-value" id="staticInsuranceExemptValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">投保方</div><div class="demand-readonly-value" id="staticPolicyholderValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">投保方式</div><div class="demand-readonly-value" id="staticInsuranceMethodValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">保险公司</div><div class="demand-readonly-value" id="staticInsuranceCompanyValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">是否免赔</div><div class="demand-readonly-value" id="staticDeductibleValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">主险种类型</div><div class="demand-readonly-value" id="staticMainRiskValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">附加险类型</div><div class="demand-readonly-value" id="staticAdditionalRiskValue"></div></div>
+                <div class="demand-field" hidden><div class="demand-field-label">是否变更目的港投保</div><div class="demand-readonly-value" id="staticChangeDestinationInsuranceValue"></div></div>
+              </div>
+            </div>
+          </section>
           <section class="demand-section" id="systemInfoSection" aria-labelledby="systemInfoTitle">
             <div class="demand-section-head"><h2 class="demand-section-title" id="systemInfoTitle"><svg><use href="#p-link"/></svg>系统信息</h2></div>
             <div class="demand-section-body">
@@ -394,16 +377,16 @@
                 <div class="demand-field"><div class="demand-field-label">创建时间</div><div class="demand-readonly-value" id="systemCreatedAt"></div></div>
                 <div class="demand-field"><div class="demand-field-label">修改人</div><div class="demand-readonly-value" id="systemUpdatedBy"></div></div>
                 <div class="demand-field"><div class="demand-field-label">修改时间</div><div class="demand-readonly-value" id="systemUpdatedAt"></div></div>
-                <div class="demand-field"><div class="demand-field-label">版本号</div><div class="demand-readonly-value is-strong" id="systemVersion"></div></div>
-                <div class="demand-field"><div class="demand-field-label">当前版本生效时间</div><div class="demand-readonly-value" id="systemEffectiveAt"></div></div>
+                <div class="demand-field" hidden><div class="demand-field-label">版本号</div><div class="demand-readonly-value is-strong" id="systemVersion"></div></div>
+                <div class="demand-field" hidden><div class="demand-field-label">当前版本生效时间</div><div class="demand-readonly-value" id="systemEffectiveAt"></div></div>
               </div>
               <div class="demand-readonly-grid" id="sourceMetaGrid">
-                <div class="demand-field"><div class="demand-field-label">来源类型</div><div class="demand-readonly-value" id="sourceTypeValue">服务要求转入</div></div>
-                <div class="demand-field"><div class="demand-field-label">来源系统</div><div class="demand-readonly-value" id="sourceSystemValue">物流控制塔</div></div>
-                <div class="demand-field"><div class="demand-field-label">来源单号</div><div class="demand-readonly-value is-strong" id="sourceNumberValue">SR202610280018(V2)</div></div>
+                <div class="demand-field"><div class="demand-field-label">来源系统</div><div class="demand-readonly-value is-strong" id="sourceSystemValue">股份控制塔</div></div>
+                <div class="demand-field"><div class="demand-field-label">来源类型</div><div class="demand-readonly-value" id="sourceTypeValue">原始需求</div></div>
+                <div class="demand-field"><div class="demand-field-label">来源单号</div><div class="demand-readonly-value is-strong" id="sourceNumberValue">LSR202610280018</div></div>
                 <div class="demand-field"><div class="demand-field-label" id="sourceHandlerLabel">接收人</div><div class="demand-readonly-value" id="overviewHandledBy">苏丽蓉</div></div>
                 <div class="demand-field"><div class="demand-field-label" id="sourceHandledAtLabel">接收时间</div><div class="demand-readonly-value" id="overviewHandledAt">2026-10-28 09:32</div></div>
-                <div class="demand-field"><div class="demand-field-label">驳回记录</div><div class="demand-readonly-value demand-readonly-value--singleline" id="rejectionRecord" title="V1 于 2026-10-27 16:08 被驳回：客户联系人信息不完整。">V1 于 2026-10-27 16:08 被驳回：客户联系人信息不完整。</div></div>
+                <div class="demand-field"><div class="demand-field-label">拒绝记录</div><div class="demand-readonly-value demand-readonly-value--singleline" id="rejectionRecord">暂无拒绝记录</div></div>
               </div>
               <div class="demand-readonly-grid" id="sourceAttachmentGrid">
                 <div class="demand-field span-6 demand-source-attachments"><div class="demand-field-label">来源附件</div><div class="demand-readonly-value"><div class="demand-attachment-list" id="sourceAttachmentList"></div></div></div>
@@ -444,57 +427,44 @@
         </div>
 
         <div id="financePanel" class="demand-tab-panel" role="tabpanel" aria-labelledby="financeTab" hidden>
-          <div class="finance-global-query" role="search" aria-label="费用与结算全局查询条件">
-            <span class="finance-global-query-label">全局查询</span>
-            <div class="demand-filter-strip">
-              <label for="financeFeeDirection">费用方向</label>
-              <select id="financeFeeDirection"><option value="">全部</option><option>应收</option><option>应付</option></select>
-              <label for="financeFeeOrder">客户订单</label>
-              <select id="financeFeeOrder"><option value="">全部订单</option></select>
-              <span class="demand-muted" id="financeGlobalCount">业务预估 0 行 · 执行侧 0 行</span>
+          <section class="finance-reference-section" aria-labelledby="executionReceivableTitle">
+            <div class="finance-reference-head">
+              <h2 id="executionReceivableTitle"><span class="finance-reference-dot" aria-hidden="true"></span>执行预估应收</h2>
+              <button class="btn outline-primary finance-maintain-btn" id="maintainReceivableBtn" type="button">维护执行预估应收</button>
             </div>
-          </div>          <section class="demand-section" aria-labelledby="financeSummaryTitle">
-            <div class="demand-section-head"><h2 class="demand-section-title" id="financeSummaryTitle"><svg><use href="#p-money"/></svg>费用总览</h2><span class="demand-muted">不同口径分别汇总，不直接相加</span></div>
-            <div class="demand-section-body">
-              <div class="finance-summary-blocks" id="financeSummaryMetrics"></div>
+            <div class="finance-reference-table-wrap ui-table-state-host" id="executionReceivableTableHost">
+              <table class="finance-reference-table" aria-label="执行预估应收">
+                <thead><tr><th>费用科目</th><th>结算对象</th><th class="num">税率（%）</th><th>PP/CC</th><th class="num">计费单价</th><th>计费币种</th><th class="num">计费数量</th><th>计费单位</th><th>柜型</th><th class="num">原币金额</th><th class="num">汇率</th><th class="num">本位币金额</th><th>备注</th><th>客户</th><th>客户订单号</th><th>对账单号</th><th class="num">待结算金额</th><th>开票状态</th><th>收款状态</th><th>操作</th></tr></thead>
+                <tbody id="executionReceivableBody"></tbody>
+              </table>
             </div>
           </section>
 
-          <section class="demand-section" aria-labelledby="orderBusinessTitle">
-            <div class="demand-section-head"><h2 class="demand-section-title" id="orderBusinessTitle"><svg><use href="#p-order"/></svg>业务预估费用</h2><span class="status running">订单合同口径</span></div>
-            <div class="demand-section-body">
-              <div class="demand-table-toolbar">
-                <span class="demand-muted">按客户订单费用行展开</span>
-                <span class="demand-muted" id="businessFeeCount">共 0 行</span>
-                <span class="demand-result-hint">表格可横向滚动</span>
-              </div>
-              <div class="demand-data-table-wrap ui-table-state-host" id="orderBusinessTableHost">
-                <table class="demand-data-table demand-business-fee-table" aria-label="当前客户需求关联客户订单的业务预估应收应付明细">
-                  <thead><tr><th>客户订单 / 合同</th><th>费用方向</th><th>费用科目</th><th>结算对象</th><th class="num">税率</th><th>PP/CC</th><th class="num">计费单价</th><th class="num">计费数量</th><th>单位</th><th>币种</th><th class="num">原币金额</th><th class="num">汇率</th><th class="num">本位币金额</th><th>柜型</th><th>发票类型</th><th>实报实销</th><th>备注</th></tr></thead>
-                  <tbody id="orderBusinessSummaryBody"></tbody>
-                </table>
-              </div>
+          <section class="finance-reference-section" aria-labelledby="executionPayableTitle">
+            <div class="finance-reference-head">
+              <h2 id="executionPayableTitle"><span class="finance-reference-dot" aria-hidden="true"></span>执行预估应付</h2>
+              <button class="btn outline-primary finance-maintain-btn" id="maintainPayableBtn" type="button">维护执行预估应付</button>
+            </div>
+            <div class="finance-reference-table-wrap ui-table-state-host" id="executionPayableTableHost">
+              <table class="finance-reference-table" aria-label="执行预估应付">
+                <thead><tr><th>费用科目</th><th>结算对象</th><th class="num">税率（%）</th><th>PP/CC</th><th class="num">计费单价</th><th>计费币种</th><th class="num">计费数量</th><th>计费单位</th><th>柜型</th><th class="num">原币金额</th><th class="num">汇率</th><th class="num">本位币金额</th><th>备注</th><th>客户</th><th>客户订单号</th><th>对账单号</th><th class="num">待结算金额</th><th>开票状态</th><th>付款状态</th><th>操作</th></tr></thead>
+                <tbody id="executionPayableBody"></tbody>
+              </table>
             </div>
           </section>
 
-          <section class="demand-section" aria-labelledby="executionFeeTitle">
-            <div class="demand-section-head"><h2 class="demand-section-title" id="executionFeeTitle"><svg><use href="#p-money"/></svg>执行侧预估费用</h2><span class="demand-muted">按最小来源单据保留追溯</span></div>
-            <div class="demand-section-body">
-              <div class="demand-table-toolbar">
-                <span class="demand-muted">按最小来源单据保留追溯</span>
-                <span class="demand-muted" id="executionFeeCount">共 0 行</span>
-              </div>
-              <div class="demand-data-table-wrap ui-table-state-host" id="executionFeeTableHost">
-                <table class="demand-data-table demand-execution-fee-table" aria-label="执行侧预估费用">
-                  <thead><tr><th>客户订单 / 物流需求</th><th>方向</th><th>费用科目</th><th>结算对象</th><th>计费信息</th><th>币种</th><th>金额信息</th><th>佣金信息</th><th>对账信息</th><th>开票信息</th><th>收付款信息</th><th>状态</th></tr></thead>
-                  <tbody id="executionFeeBody"></tbody>
-                </table>
-              </div>
+          <section class="finance-reference-section finance-profit-section" aria-labelledby="profitSummaryTitle">
+            <div class="finance-reference-head">
+              <h2 id="profitSummaryTitle"><span class="finance-reference-dot" aria-hidden="true"></span>利润统计</h2>
+            </div>
+            <div class="finance-reference-table-wrap" id="profitSummaryTableHost">
+              <table class="finance-reference-table finance-profit-table" aria-label="利润统计">
+                <thead><tr><th>币种</th><th class="num">执行预估应收</th><th class="num">执行预估应付</th><th class="num">执行利润</th></tr></thead>
+                <tbody id="profitSummaryBody"></tbody>
+              </table>
             </div>
           </section>
-
         </div>
-
       </main>
     </section>
   </div>

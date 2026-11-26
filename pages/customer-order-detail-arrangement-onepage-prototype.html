@@ -1571,8 +1571,8 @@
         const currentVersionValue = (versionControlEl?.value || '1.0').trim();
         if ((status === '创建' || status === '驳回') && currentVersionValue !== '1.0') sequence = sequence.concat(['deleteVersionBtn']);
         if (currentVersionValue !== '1.0') sequence = sequence.filter((id) => !['submitFillLogisticsBtn', 'submitAutoTaskBtn'].includes(id));
-        // 【查看物流安排】与列表页「更多 → 查看物流安排」一致：待履约（已确认）/ 履约中显示，且始终排在按钮区最后
-        const canViewArrangement = (status === '待履约' && confirmation === '已确认') || status === '履约中';
+        // 【查看物流安排】与列表页「更多 → 查看物流安排」一致：待履约（已确认）/ 履约中 / 已完结 / 已取消显示（完结后仍可回看），且始终排在按钮区最后
+        const canViewArrangement = (status === '待履约' && confirmation === '已确认') || status === '履约中' || status === '已完结' || status === '已取消';
         sequence = sequence.filter((id) => id !== 'viewLogisticsPlanBtn');
         if (canViewArrangement) sequence = sequence.concat(['viewLogisticsPlanBtn']);
         window.__visibleOrderActionIds = sequence.slice();

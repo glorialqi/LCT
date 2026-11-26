@@ -3283,13 +3283,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
             <span>业务员</span>
             <input type="text" id="manualSalesmanFilter" list="manualSalesmanOptions" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); filterManualList(); }" placeholder="请选择" />
           </label>
-          <label class="manual-filter-field">
-            <span>是否内部客商</span>
-            <select id="manualInternalCustomerFilter" onchange="filterManualList()">
-              <option value="是" selected>是</option>
-              <option value="否">否</option>
-            </select>
-          </label>
           <button onclick="filterManualList()" class="manual-filter-action bg-sky-500 text-white rounded hover:bg-sky-600 transition flex items-center justify-center gap-1 font-medium">
             <i data-lucide="search" class="w-3.5 h-3.5"></i> 筛选
           </button>
@@ -8217,7 +8210,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       const controlledOrderFilter = (document.getElementById('manualControlledOrderFilter')?.value || '').trim();
       const companyFilter = (document.getElementById('manualCompanyFilter')?.value || '').trim().toLowerCase();
       const salesmanFilter = (document.getElementById('manualSalesmanFilter')?.value || '').trim().toLowerCase();
-      const internalCustomerFilter = document.getElementById('manualInternalCustomerFilter')?.value || '是';
       const filteredPool = state.controlTowerPool.filter(ct => {
         const projectText = getManualPoolProjects(ct).join(',');
         if (projectNoFilter && !projectText.toLowerCase().includes(projectNoFilter)) return false;
@@ -8229,7 +8221,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
         if (controlledOrderFilter && String(ct.controlledOrder || '') !== controlledOrderFilter) return false;
         if (companyFilter && !String(ct.companyTitle || '').toLowerCase().includes(companyFilter)) return false;
         if (salesmanFilter && !String(ct.salesman || '').toLowerCase().includes(salesmanFilter)) return false;
-        if (internalCustomerFilter && String(ct.isInternalCustomer || '是') !== internalCustomerFilter) return false;
         return true;
       });
 
@@ -8326,8 +8317,6 @@ html.ct-embedded .ct-main{top:0!important;left:0!important;padding:12px 12px 0!i
       });
       const controlledOrder = document.getElementById('manualControlledOrderFilter');
       if (controlledOrder) controlledOrder.value = '';
-      const internalCustomer = document.getElementById('manualInternalCustomerFilter');
-      if (internalCustomer) internalCustomer.value = '是';
       if (showMessage && document.getElementById('manualModal') && !document.getElementById('manualModal').classList.contains('hidden')) {
         renderManualTable();
         showToast('已重置手动拉入查询条件', 'info');
