@@ -19,7 +19,7 @@
   const $ = (id) => document.getElementById(id);
 
   const statusLabels = {
-    created: '草稿',
+    created: '创建',
     pending: '待接收',
     received: '执行中',
     rejected: '已拒绝',
@@ -33,7 +33,7 @@
     completed: 'done'
   };
   const versionStatus = {
-    created: { label: '草稿', tone: 'created' },
+    created: { label: '创建', tone: 'created' },
     pending: { label: '待接收', tone: 'pending' },
     received: { label: '已接收', tone: 'done' },
     rejected: { label: '已拒绝', tone: 'rejected' }
@@ -1394,7 +1394,7 @@
       control.setAttribute('aria-readonly', String(locked));
     });
     const hint = $('createOrgHint');
-    if (hint) hint.textContent = locked ? '版本维护草稿：继承当前有效版本，不可编辑' : '新增时选填';
+    if (hint) hint.textContent = locked ? '版本维护：继承当前有效版本，不可编辑' : '新增时选填';
   }
 
   function renderCreateFormValues() {
@@ -1774,7 +1774,7 @@
     renderSystemInfo();
     if (!silent) {
       if (dirtyState) dirtyState.markClean();
-      ui.showToast('客户需求已保存，当前仍为草稿状态', 'success');
+      ui.showToast('客户需求已保存，当前仍为创建状态', 'success');
     }
     return true;
   }
@@ -1957,8 +1957,8 @@
     if (!version || version.status !== 'pending') return ui.showToast('该版本已处理，不能重复拒绝', 'error');
     const returnsToDraft = version.type === '版本维护' && effectiveVersions().length > 0;
     const copy = returnsToDraft
-      ? '拒绝后，该新版本回到草稿状态，可修改后重新提交；原有效版本历史仍保留。'
-      : '拒绝后需求进入草稿状态，可修改后重新提交。';
+      ? '拒绝后，该新版本回到创建状态，可修改后重新提交；原有效版本历史仍保留。'
+      : '拒绝后需求进入创建状态，可修改后重新提交。';
     openActionDialog({
       title: '拒绝此版本',
       body: '<p class="demand-dialog-copy">' + copy + '</p>' +
@@ -1983,14 +1983,14 @@
           demand.currentVersion = version.version;
           demand.pickupDate = version.snapshot.pickupDate;
           demand.lines.forEach((line) => { line.required = Number(version.snapshot.quantities[line.id] || line.required); });
-          demand.timeline.push({ time: nowText(), title: version.version + ' 已拒绝', text: '苏丽蓉拒绝：' + version.rejectionReason + '；新版本回到草稿状态。' });
+          demand.timeline.push({ time: nowText(), title: version.version + ' 已拒绝', text: '苏丽蓉拒绝：' + version.rejectionReason + '；新版本回到创建状态。' });
         } else {
           demand.status = effectiveVersions().length ? 'received' : 'created';
           demand.timeline.push({ time: nowText(), title: version.version + ' 已拒绝', text: '苏丽蓉拒绝：' + version.rejectionReason });
         }
         UIState.setButtonLoading(submitBtn, false);
         renderAll();
-        ui.showToast(returnsToDraft ? '版本已拒绝，已回到草稿状态' : '版本已拒绝', 'success');
+        ui.showToast(returnsToDraft ? '版本已拒绝，已回到创建状态' : '版本已拒绝', 'success');
       }
     });
   }
@@ -2028,7 +2028,7 @@
     const lineOptions = demand.lines.map((line) => '<option value="' + esc(line.id) + '">需求行 ' + line.no + ' · ' + esc(line.name) + '</option>').join('');
     openActionDialog({
       title: '版本维护',
-      body: '<p class="demand-dialog-copy">基于当前有效版本生成新版本。提交后进入待接收状态，接收后新版本生效；拒绝后新版本回到草稿，可修改后重新提交。</p>' +
+      body: '<p class="demand-dialog-copy">基于当前有效版本生成新版本。提交后进入待接收状态，接收后新版本生效；拒绝后新版本回到创建状态，可修改后重新提交。</p>' +
         '<div class="demand-dialog-grid">' +
         '<div class="demand-dialog-field field"><label for="modifyLine">需求行<span class="required">*</span></label><select id="modifyLine" name="line">' + lineOptions + '</select><div class="ui-field-message"></div></div>' +
         '<div class="demand-dialog-field field"><label for="modifyQty">变更后数量<span class="required">*</span></label><input id="modifyQty" name="qty" type="number" min="0" step="0.01" required><div class="ui-field-message"></div></div>' +
@@ -2131,7 +2131,7 @@
     if (demand.status !== 'created') return;
     openActionDialog({
       title: '删除客户需求',
-      body: '<p class="demand-dialog-copy">删除后当前草稿及未提交内容将不可恢复。已提交或已产生关联单据的需求不能删除。</p><div class="demand-dialog-note is-error">该操作不可撤销。</div>',
+      body: '<p class="demand-dialog-copy">删除后当前创建状态需求及未提交内容将不可恢复。已提交或已产生关联单据的需求不能删除。</p><div class="demand-dialog-note is-error">该操作不可撤销。</div>',
       confirmText: '确认删除',
       confirmClass: 'danger',
       onSubmit: async ({ submitBtn }) => {
@@ -2238,7 +2238,7 @@
       reason: '基于当前有效版本发起版本维护',
       snapshot
     }];
-    draft.timeline = [{ time: nowText(), title: '版本维护草稿已创建', text: '基于客户需求 ' + demand.no + ' 当前有效版本生成版本维护草稿。' }];
+    draft.timeline = [{ time: nowText(), title: '版本维护单已创建', text: '基于客户需求 ' + demand.no + ' 当前有效版本生成版本维护创建状态单。' }];
     sessionStorage.setItem('customer-demand-version-maintenance-draft', JSON.stringify(draft));
     const query = new URLSearchParams({ status: 'created', mode: 'version-maintenance', no: nextNo, from: 'customer-demand-detail-v3-prototype.html' });
     if (ui.embedded) query.set('embed', '1');
