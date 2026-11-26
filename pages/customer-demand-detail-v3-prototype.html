@@ -134,7 +134,6 @@
             <section class="demand-section" id="createDemandFormSection" aria-labelledby="createFormTitle">
               <div class="demand-section-head">
                 <h2 class="demand-section-title" id="createFormTitle"><svg><use href="#p-demand"/></svg>客户需求信息</h2>
-                <div class="demand-inline-actions"><span class="demand-muted">必填字段标记 *；修改后自动标记未保存</span><button class="btn soft-primary" id="resetCreateBtn" type="button">重置表单</button></div>
               </div>
               <div class="demand-section-body">
                 <div class="demand-form-grid demand-customer-info-grid">
@@ -142,7 +141,7 @@
                   <div class="demand-form-field field"><label for="createCustomerType">客户类型<span class="required">*</span></label><select id="createCustomerType" name="customerType" required><option value="">请选择客户类型</option><option>内部客户</option><option>外部客户</option><option>同行客户</option></select><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createContact">客户联系人<span class="required">*</span></label><input id="createContact" name="contact" type="text" required><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createPhone">客户联系人电话</label><input id="createPhone" name="phone" type="text"><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field span-2 field" id="contactEmailRecipientsField">
+                  <div class="demand-form-field span-3 field" id="contactEmailRecipientsField">
                     <label for="emailRecipientDraftName">邮件接收人 + 邮箱</label>
                     <div class="demand-email-recipient-box" id="createEmailRecipientBox">
                       <div class="demand-email-recipient-chips" id="createEmailRecipientList"></div>
@@ -163,7 +162,7 @@
                   <div class="demand-form-field field is-grid-row-start" id="createBizTypeField"><label for="createBizType">业务类型<span class="required">*</span></label><select id="createBizType" name="bizType" required><option>出口</option><option>进口</option><option>内贸</option></select><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createBusinessDate">业务日期<span class="required">*</span></label><input id="createBusinessDate" name="businessDate" type="date" required><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createTradeTerms">贸易条款</label><select id="createTradeTerms" name="tradeTerms"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select><div class="ui-field-message"></div></div>
-                                    <div class="demand-form-field field">
+                                    <div class="demand-form-field span-2 field">
                     <label>服务范围<span class="required">*</span></label>
                     <div class="demand-check-group" data-required-group="serviceScopes">
                       <label class="demand-check-option"><input type="checkbox" name="serviceScopes" value="运输">运输</label>
@@ -214,8 +213,6 @@
                   <div class="demand-form-field field"><label for="createBusinessUnit">经营单位</label><input id="createBusinessUnit" name="businessUnit" type="text" placeholder="随部门带出" readonly aria-readonly="true"><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createAccountingGroup">核算组</label><select id="createAccountingGroup" name="accountingGroup"><option value="">请选择核算组</option><option>供应链物流综合核算组</option><option>物流运营核算组</option></select><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createSalesmanCompany">业务员公司</label><select id="createSalesmanCompany" name="salesmanCompany"><option value="">请选择业务员公司</option><option>厦门建发物流有限公司</option><option>建发物流（上海）有限公司</option></select><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createOperationOrg">作业组织</label><select id="createOperationOrg" name="operationOrg"><option value="">请选择作业组织</option><option>4PL物流运营中心</option><option>华东物流运营中心</option></select><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field field"><label for="createOperationPerson">作业组织人员</label><select id="createOperationPerson" name="operationPerson"><option value="">请选择作业组织人员</option><option>黄瑞钰</option><option>陈洁</option><option>李杰</option></select><div class="ui-field-message"></div></div>
                 </div>
               </div>
             </section>
@@ -304,8 +301,6 @@
                 <div class="demand-field"><div class="demand-field-label">经营单位</div><div class="demand-readonly-value" id="receiveOrgBusinessUnitValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">核算组</div><div class="demand-readonly-value" id="receiveOrgAccountingGroupValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">业务员公司</div><div class="demand-readonly-value" id="receiveOrgCompanyValue"></div></div>
-                <div class="demand-field"><div class="demand-field-label">作业组织</div><div class="demand-readonly-value" id="receiveOrgOperationOrgValue"></div></div>
-                <div class="demand-field"><div class="demand-field-label">作业组织人员</div><div class="demand-readonly-value" id="receiveOrgOperationPersonValue"></div></div>
               </div>
             </div>
           </section>

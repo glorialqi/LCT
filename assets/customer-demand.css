@@ -1755,10 +1755,13 @@ html.demand-embedded .demand-content {
 .demand-email-recipient-box {
   position: relative;
   display: flex;
+  height: 38px;
   min-height: 38px;
-  flex-wrap: wrap;
+  max-height: 38px;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 5px;
+  overflow: hidden;
   padding: 4px 6px;
   border: 1px solid #d9e1ec;
   border-radius: var(--ui-radius-md);
@@ -1773,8 +1776,12 @@ html.demand-embedded .demand-content {
 .demand-email-recipient-chips {
   display: flex;
   min-width: 0;
-  flex-wrap: wrap;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
   gap: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
 }
 
 .demand-email-recipient-chip {

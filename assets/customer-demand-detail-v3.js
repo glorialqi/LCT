@@ -453,8 +453,6 @@
       businessUnit: '供应链物流科技',
       accountingGroup: '供应链物流综合核算组',
       salesmanCompany: '厦门建发物流有限公司',
-      operationOrg: '4PL物流运营中心',
-      operationPerson: '黄瑞钰'
     },
     contract: {
       signingMethod: 'E建签签约',
@@ -845,8 +843,6 @@
     setText('receiveOrgBusinessUnitValue', receivedOrg.businessUnit);
     setText('receiveOrgAccountingGroupValue', receivedOrg.accountingGroup);
     setText('receiveOrgCompanyValue', receivedOrg.salesmanCompany);
-    setText('receiveOrgOperationOrgValue', receivedOrg.operationOrg);
-    setText('receiveOrgOperationPersonValue', receivedOrg.operationPerson);
     setText('receiveOrgHint', demand.status === 'pending' ? '接收时录入' : '已由接收人录入');
     const contract = demand.contract || {};
     setText('staticSigningMethodValue', contract.signingMethod);
@@ -1387,7 +1383,7 @@
 
   function applyCreateOrgState() {
     const locked = versionMaintenanceMode;
-    ['createSalesperson', 'createSalesDepartment', 'createBusinessUnit', 'createAccountingGroup', 'createSalesmanCompany', 'createOperationOrg', 'createOperationPerson'].forEach((id) => {
+    ['createSalesperson', 'createSalesDepartment', 'createBusinessUnit', 'createAccountingGroup', 'createSalesmanCompany'].forEach((id) => {
       const control = $(id);
       if (!control) return;
       control.disabled = locked;
@@ -1418,9 +1414,7 @@
       createSalesDepartment: org.department,
       createBusinessUnit: org.businessUnit,
       createAccountingGroup: org.accountingGroup,
-      createSalesmanCompany: org.salesmanCompany,
-      createOperationOrg: org.operationOrg,
-      createOperationPerson: org.operationPerson
+      createSalesmanCompany: org.salesmanCompany
     };
     Object.entries(orgValues).forEach(([id, value]) => { if ($(id)) $(id).value = value || ''; });
     applyCreateOrgState();
@@ -1639,9 +1633,7 @@
       department: form.elements.salesDepartment.value.trim(),
       businessUnit: form.elements.businessUnit.value.trim(),
       accountingGroup: form.elements.accountingGroup.value.trim(),
-      salesmanCompany: form.elements.salesmanCompany.value.trim(),
-      operationOrg: form.elements.operationOrg.value.trim(),
-      operationPerson: form.elements.operationPerson.value.trim()
+      salesmanCompany: form.elements.salesmanCompany.value.trim()
     };
     demand.customerType = form.elements.customerType.value;
     demand.contactName = form.elements.contact.value.trim();
@@ -1801,18 +1793,6 @@
     }
   }
 
-  function resetCreateForm() {
-    const form = $('createDemandForm');
-    if (!form) return;
-    form.reset();
-    form.querySelectorAll('input, select, textarea').forEach((control) => UIState.clearFieldState(control));
-    UIState.clearFormAlert(form);
-    renderCreateFormValues();
-    if (dirtyState) dirtyState.markClean();
-    ui.showToast('表单已重置', 'success');
-    $('createCustomer').focus();
-  }
-
   function openActionDialog(options) {
     dialog.className = 'demand-dialog' + (options.dialogClass ? ' ' + options.dialogClass : '');
     const cancelButton = options.showCancel === false ? '' :
@@ -1853,9 +1833,7 @@
         '<div class="demand-dialog-field field"><label for="receiveAccountingGroup">核算组<span class="required">*</span></label><select id="receiveAccountingGroup" name="accountingGroup" required>' + option('供应链物流综合核算组') + option('物流运营核算组') + '</select><div class="ui-field-message"></div></div>' +
         '<div class="demand-dialog-field field"><label for="receiveSalesmanCompany">业务员公司<span class="required">*</span></label><select id="receiveSalesmanCompany" name="salesmanCompany" required>' + option('厦门建发物流有限公司') + option('建发物流（上海）有限公司') + '</select><div class="ui-field-message"></div></div>' +
         '<div class="demand-dialog-field field"><label for="receiveOurCompany">我方公司<span class="required">*</span></label><select id="receiveOurCompany" name="ourCompany" required>' + option(demand.ourCompany || '厦门建发物流有限公司') + option('建发物流（上海）有限公司') + '</select><div class="ui-field-message"></div></div>' +
-        '<div class="demand-dialog-field field"><label for="receiveOperationOrg">作业组织</label><select id="receiveOperationOrg" name="operationOrg">' + option(org.operationOrg || '4PL物流运营中心') + option('华东物流运营中心') + '</select></div>' +
-        '<div class="demand-dialog-field field"><label for="receiveOperationPerson">作业组织人员</label><select id="receiveOperationPerson" name="operationPerson">' + option(org.operationPerson || '黄瑞钰') + option('陈洁') + option('李杰') + '</select></div>' +
-        '</div>',
+                '</div>',
       confirmText: '确认接收',
       onSubmit: async ({ form, submitBtn }) => {
         const requiredNames = ['salesperson', 'department', 'accountingGroup', 'salesmanCompany', 'ourCompany'];
@@ -1875,9 +1853,7 @@
           department: form.elements.department.value,
           businessUnit: form.elements.businessUnit.value,
           accountingGroup: form.elements.accountingGroup.value,
-          salesmanCompany: form.elements.salesmanCompany.value,
-          operationOrg: form.elements.operationOrg.value,
-          operationPerson: form.elements.operationPerson.value
+          salesmanCompany: form.elements.salesmanCompany.value
         };
         demand.ourCompany = form.elements.ourCompany.value;
         demand.status = 'received';
@@ -2505,7 +2481,6 @@
 
   function bindEvents() {
     bindTabs();
-    if ($('resetCreateBtn')) $('resetCreateBtn').addEventListener('click', resetCreateForm);
     if ($('saveCreatedBtn')) $('saveCreatedBtn').addEventListener('click', () => saveCreateDraft(false, false));
     if ($('submitCreatedBtn')) $('submitCreatedBtn').addEventListener('click', () => submitCreatedDemand('submit'));
     if ($('deleteCreatedBtn')) $('deleteCreatedBtn').addEventListener('click', deleteDraftDemand);
