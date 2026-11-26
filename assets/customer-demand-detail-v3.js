@@ -3,6 +3,7 @@
 
   const ui = window.DemandUI;
   const params = new URLSearchParams(window.location.search);
+  const versionMaintenanceMode = params.get('mode') === 'version-maintenance';
   const demandNo = params.get('no') || 'XQ202610280031';
   const creatorNames = ['鲤鱼旗', '陈一一', '丁阳', '赵五'];
   const demandLastDigit = Number(demandNo.slice(-1));
@@ -452,7 +453,8 @@
       businessUnit: '供应链物流科技',
       accountingGroup: '供应链物流综合核算组',
       salesmanCompany: '厦门建发物流有限公司',
-      operationOrg: '4PL物流运营中心'
+      operationOrg: '4PL物流运营中心',
+      operationPerson: '黄瑞钰'
     },
     contract: {
       signingMethod: 'E建签签约',
@@ -576,6 +578,8 @@
     if (requestedStatus === 'created') {
       demand.status = 'created';
       demand.currentVersion = 'V1';
+      demand.receiveOrg = {};
+      demand.ourCompany = '';
       demand.source = {
         type: '手工创建',
         system: '4PL控制塔',
@@ -701,6 +705,16 @@
   }
 
   applyStatusVariant();
+
+  if (versionMaintenanceMode) {
+    try {
+      const storedDraft = sessionStorage.getItem('customer-demand-version-maintenance-draft');
+      if (storedDraft) Object.assign(demand, JSON.parse(storedDraft));
+      demand.status = 'created';
+    } catch (error) {
+      console.warn('Unable to restore version maintenance draft', error);
+    }
+  }
 
   function currentVersion() {
     return demand.versions.find((version) => version.version === demand.currentVersion) || null;
@@ -832,6 +846,7 @@
     setText('receiveOrgAccountingGroupValue', receivedOrg.accountingGroup);
     setText('receiveOrgCompanyValue', receivedOrg.salesmanCompany);
     setText('receiveOrgOperationOrgValue', receivedOrg.operationOrg);
+    setText('receiveOrgOperationPersonValue', receivedOrg.operationPerson);
     setText('receiveOrgHint', demand.status === 'pending' ? '接收时录入' : '已由接收人录入');
     const contract = demand.contract || {};
     setText('staticSigningMethodValue', contract.signingMethod);
@@ -1331,6 +1346,7 @@
     const isCreated = demand.status === 'created';
     $('createDemandForm').hidden = !isCreated;
     $('staticDemandInfoSection').hidden = isCreated;
+    if ($('receiveOrgSection')) $('receiveOrgSection').hidden = isCreated;
     if ($('staticProductDetailSection')) $('staticProductDetailSection').hidden = isCreated;
     if ($('staticQuoteSection')) $('staticQuoteSection').hidden = isCreated;
     if (isCreated) {
@@ -1369,6 +1385,18 @@
     return normalizedContactEmailRecipients().filter((recipient) => recipient.name || recipient.email);
   }
 
+  function applyCreateOrgState() {
+    const locked = versionMaintenanceMode;
+    ['createSalesperson', 'createSalesDepartment', 'createBusinessUnit', 'createAccountingGroup', 'createSalesmanCompany', 'createOperationOrg', 'createOperationPerson'].forEach((id) => {
+      const control = $(id);
+      if (!control) return;
+      control.disabled = locked;
+      control.setAttribute('aria-readonly', String(locked));
+    });
+    const hint = $('createOrgHint');
+    if (hint) hint.textContent = locked ? '版本维护草稿：继承当前有效版本，不可编辑' : '新增时选填';
+  }
+
   function renderCreateFormValues() {
     const form = $('createDemandForm');
     if (!form) return;
@@ -1384,6 +1412,18 @@
       createCustomerRemark: demand.customerRemark
     };
     Object.entries(values).forEach(([id, value]) => { if ($(id)) $(id).value = value || ''; });
+    const org = demand.receiveOrg || {};
+    const orgValues = {
+      createSalesperson: org.salesperson,
+      createSalesDepartment: org.department,
+      createBusinessUnit: org.businessUnit,
+      createAccountingGroup: org.accountingGroup,
+      createSalesmanCompany: org.salesmanCompany,
+      createOperationOrg: org.operationOrg,
+      createOperationPerson: org.operationPerson
+    };
+    Object.entries(orgValues).forEach(([id, value]) => { if ($(id)) $(id).value = value || ''; });
+    applyCreateOrgState();
     renderContactEmailRecipients(normalizedContactEmailRecipients());
     setCheckboxValues('serviceScopes', demand.serviceScopes);
     setCheckboxValues('serviceItems', demand.serviceItems);
@@ -1594,6 +1634,15 @@
     const form = $('createDemandForm');
     if (!form) return false;
     demand.customer = form.elements.customer.value.trim();
+    demand.receiveOrg = {
+      salesperson: form.elements.salesperson.value.trim(),
+      department: form.elements.salesDepartment.value.trim(),
+      businessUnit: form.elements.businessUnit.value.trim(),
+      accountingGroup: form.elements.accountingGroup.value.trim(),
+      salesmanCompany: form.elements.salesmanCompany.value.trim(),
+      operationOrg: form.elements.operationOrg.value.trim(),
+      operationPerson: form.elements.operationPerson.value.trim()
+    };
     demand.customerType = form.elements.customerType.value;
     demand.contactName = form.elements.contact.value.trim();
     demand.contactPhone = form.elements.phone.value.trim();
@@ -1804,7 +1853,8 @@
         '<div class="demand-dialog-field field"><label for="receiveAccountingGroup">核算组<span class="required">*</span></label><select id="receiveAccountingGroup" name="accountingGroup" required>' + option('供应链物流综合核算组') + option('物流运营核算组') + '</select><div class="ui-field-message"></div></div>' +
         '<div class="demand-dialog-field field"><label for="receiveSalesmanCompany">业务员公司<span class="required">*</span></label><select id="receiveSalesmanCompany" name="salesmanCompany" required>' + option('厦门建发物流有限公司') + option('建发物流（上海）有限公司') + '</select><div class="ui-field-message"></div></div>' +
         '<div class="demand-dialog-field field"><label for="receiveOurCompany">我方公司<span class="required">*</span></label><select id="receiveOurCompany" name="ourCompany" required>' + option(demand.ourCompany || '厦门建发物流有限公司') + option('建发物流（上海）有限公司') + '</select><div class="ui-field-message"></div></div>' +
-        '<div class="demand-dialog-field field span-2"><label for="receiveOperationOrg">作业组织</label><select id="receiveOperationOrg" name="operationOrg">' + option(org.operationOrg || '4PL物流运营中心') + option('华东物流运营中心') + '</select></div>' +
+        '<div class="demand-dialog-field field"><label for="receiveOperationOrg">作业组织</label><select id="receiveOperationOrg" name="operationOrg">' + option(org.operationOrg || '4PL物流运营中心') + option('华东物流运营中心') + '</select></div>' +
+        '<div class="demand-dialog-field field"><label for="receiveOperationPerson">作业组织人员</label><select id="receiveOperationPerson" name="operationPerson">' + option(org.operationPerson || '黄瑞钰') + option('陈洁') + option('李杰') + '</select></div>' +
         '</div>',
       confirmText: '确认接收',
       onSubmit: async ({ form, submitBtn }) => {
@@ -1826,7 +1876,8 @@
           businessUnit: form.elements.businessUnit.value,
           accountingGroup: form.elements.accountingGroup.value,
           salesmanCompany: form.elements.salesmanCompany.value,
-          operationOrg: form.elements.operationOrg.value
+          operationOrg: form.elements.operationOrg.value,
+          operationPerson: form.elements.operationPerson.value
         };
         demand.ourCompany = form.elements.ourCompany.value;
         demand.status = 'received';
@@ -2149,16 +2200,49 @@
   }
 
   function maintainVersion() {
-    if (demand.status === 'received') {
-      openModification();
+    if (demand.status !== 'received') {
+      ui.showToast(statusLabels[demand.status] + '状态不能进行版本维护', 'error');
       return;
     }
-    if (demand.status === 'rejected') {
-      const rejected = demand.versions.filter((version) => version.status === 'rejected').slice(-1)[0];
-      if (rejected) resubmitVersion(rejected.version);
+    if (pendingVersion()) {
+      ui.showToast('已有待接收版本，请先处理', 'error');
       return;
     }
-    ui.showToast(statusLabels[demand.status] + '状态不能进行版本维护', 'error');
+    const sourceVersion = currentVersion();
+    const snapshot = sourceVersion
+      ? JSON.parse(JSON.stringify(sourceVersion.snapshot))
+      : { quantities: Object.fromEntries(demand.lines.map((line) => [line.id, line.required])), pickupDate: demand.pickupDate };
+    const draft = JSON.parse(JSON.stringify(demand));
+    const now = new Date();
+    const pad = (value) => String(value).padStart(2, '0');
+    const day = '' + now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
+    const nextNo = 'XQ' + day + String(Math.floor(Math.random() * 9000) + 1000);
+    draft.no = nextNo;
+    draft.status = 'created';
+    draft.parentDemandNo = demand.no;
+    draft.versionMaintenanceSourceVersion = demand.currentVersion;
+    draft.orders = [];
+    draft.executionFees = [];
+    draft.reconciliations = [];
+    draft.invoices = [];
+    draft.payments = [];
+    draft.currentVersion = 'V1';
+    draft.versions = [{
+      version: 'V1',
+      type: '版本维护',
+      changeNo: '--',
+      status: 'created',
+      submittedAt: nowText(),
+      handledBy: '--',
+      effectiveAt: '--',
+      reason: '基于当前有效版本发起版本维护',
+      snapshot
+    }];
+    draft.timeline = [{ time: nowText(), title: '版本维护草稿已创建', text: '基于客户需求 ' + demand.no + ' 当前有效版本生成版本维护草稿。' }];
+    sessionStorage.setItem('customer-demand-version-maintenance-draft', JSON.stringify(draft));
+    const query = new URLSearchParams({ status: 'created', mode: 'version-maintenance', no: nextNo, from: 'customer-demand-detail-v3-prototype.html' });
+    if (ui.embedded) query.set('embed', '1');
+    window.location.href = 'customer-demand-detail-v3-prototype.html?' + query.toString();
   }
 
   function delegationSetupMarkup() {

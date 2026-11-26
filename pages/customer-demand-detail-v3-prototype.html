@@ -202,6 +202,24 @@
               </div>
             </section>
 
+            <section class="demand-section" id="createOrgSection" aria-labelledby="createOrgTitle">
+              <div class="demand-section-head">
+                <h2 class="demand-section-title" id="createOrgTitle"><svg><use href="#p-demand"/></svg>4PL组织信息</h2>
+                <span class="demand-muted" id="createOrgHint">新增时选填</span>
+              </div>
+              <div class="demand-section-body">
+                <div class="demand-form-grid">
+                  <div class="demand-form-field field"><label for="createSalesperson">业务员</label><select id="createSalesperson" name="salesperson"><option value="">请选择业务员</option><option>苏丽蓉</option><option>陈一一</option><option>丁阳</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createSalesDepartment">业务员部门</label><select id="createSalesDepartment" name="salesDepartment"><option value="">请选择业务员部门</option><option>供应链物流综合部</option><option>物流运营部</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createBusinessUnit">经营单位</label><input id="createBusinessUnit" name="businessUnit" type="text" placeholder="随部门带出" readonly aria-readonly="true"><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createAccountingGroup">核算组</label><select id="createAccountingGroup" name="accountingGroup"><option value="">请选择核算组</option><option>供应链物流综合核算组</option><option>物流运营核算组</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createSalesmanCompany">业务员公司</label><select id="createSalesmanCompany" name="salesmanCompany"><option value="">请选择业务员公司</option><option>厦门建发物流有限公司</option><option>建发物流（上海）有限公司</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createOperationOrg">作业组织</label><select id="createOperationOrg" name="operationOrg"><option value="">请选择作业组织</option><option>4PL物流运营中心</option><option>华东物流运营中心</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createOperationPerson">作业组织人员</label><select id="createOperationPerson" name="operationPerson"><option value="">请选择作业组织人员</option><option>黄瑞钰</option><option>陈洁</option><option>李杰</option></select><div class="ui-field-message"></div></div>
+                </div>
+              </div>
+            </section>
+
             <section class="demand-section" id="createProductDetailSection" aria-labelledby="createProductDetailTitle">
               <div class="demand-section-head">
                 <h2 class="demand-section-title" id="createProductDetailTitle"><svg><use href="#p-package"/></svg>商品明细</h2>
@@ -287,6 +305,7 @@
                 <div class="demand-field"><div class="demand-field-label">核算组</div><div class="demand-readonly-value" id="receiveOrgAccountingGroupValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">业务员公司</div><div class="demand-readonly-value" id="receiveOrgCompanyValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">作业组织</div><div class="demand-readonly-value" id="receiveOrgOperationOrgValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">作业组织人员</div><div class="demand-readonly-value" id="receiveOrgOperationPersonValue"></div></div>
               </div>
             </div>
           </section>
