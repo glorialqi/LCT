@@ -22,6 +22,25 @@
   const linkPickerClose = document.getElementById('orderLinkedItemPickerClose');
   const linkPickerCancel = document.getElementById('orderLinkedItemPickerCancel');
   const linkPickerConfirm = document.getElementById('orderLinkedItemPickerConfirm');
+  const orderProductsHost = document.getElementById('orderProductsHost');
+  const orderProductPicker = document.getElementById('orderProductPicker');
+  const orderProductPickerBody = document.getElementById('orderProductPickerBody');
+  const orderProductPickerClose = document.getElementById('orderProductPickerClose');
+  const orderProductPickerCancel = document.getElementById('orderProductPickerCancel');
+  const orderProductPickerConfirm = document.getElementById('orderProductPickerConfirm');
+  const serviceProductEditor = document.getElementById('serviceProductEditor');
+  const serviceProductEditorName = document.getElementById('serviceProductEditorName');
+  const serviceProductEditorLimit = document.getElementById('serviceProductEditorLimit');
+  const serviceProductEditorStandardQty = document.getElementById('serviceProductEditorStandardQty');
+  const serviceProductEditorStandardUnit = document.getElementById('serviceProductEditorStandardUnit');
+  const serviceProductEditorPieceQty = document.getElementById('serviceProductEditorPieceQty');
+  const serviceProductEditorPieceUnit = document.getElementById('serviceProductEditorPieceUnit');
+  const serviceProductEditorGrossQty = document.getElementById('serviceProductEditorGrossQty');
+  const serviceProductEditorGrossUnit = document.getElementById('serviceProductEditorGrossUnit');
+  const serviceProductEditorValidation = document.getElementById('serviceProductEditorValidation');
+  const serviceProductEditorClose = document.getElementById('serviceProductEditorClose');
+  const serviceProductEditorCancel = document.getElementById('serviceProductEditorCancel');
+  const serviceProductEditorSave = document.getElementById('serviceProductEditorSave');
   const flowDrawer = document.getElementById('orderRouteFlowDrawer');
   const flowCards = document.getElementById('orderRouteFlowCards');
   const flowCanvas = document.getElementById('orderRouteFlowCanvas');
@@ -34,6 +53,8 @@
   const flowClose = document.getElementById('orderRouteFlowClose');
   const pageScope = document.getElementById('orderDetailForm');
   let linkPickerRouteId = null;
+  let orderProductPickerContext = null;
+  let serviceProductEditorContext = null;
   let feeRouteMenuContext = null;
   let flowZoomPercent = 200;
   let activeRouteAnchorIndex = 0;
@@ -246,7 +267,7 @@
       origin: '江苏省/苏州市/工业园区海关监管库', originDetail: '苏州市工业园区胜浦路123号', originContact: '陈调度', originContactPhone: '13588889999',
       destination: '四川省/成都市/青白江铁路港', destinationDetail: '成都市青白江区货运大道2号库', destinationContact: '赵仓管', destinationContactPhone: '13611112222',
       expectDispatch: '2026-09-23 08:00', latestArrival: '2026-09-28 12:00',
-      specialNotes: '水运干线运输，需全程跟踪到港及提货节点。', mailRecipients: ['叶李滨'],
+      specialNotes: '水运干线运输，需全程跟踪到港及提货节点。', mailRecipients: [{ name: '叶李滨', email: 'yeli@example.com' }],
       legs: [],
       parties: {
         shipperName: '成都国际铁路港储能中心',
@@ -367,7 +388,7 @@
           originContact: '陈调度', originContactPhone: '13588889999', destinationContact: '赵仓管', destinationContactPhone: '13611112222',
           latestShipmentDate: '2026-12-05', dischargeTerms: 'FIO', isCqd: '否', directSailing: '是', containsLashing: '是',
           vesselCertificate: '船级社证书', vesselAge: '不超过15年', commissionRate: 2, bookingManager: '王经理',
-          laycanStart: '2026-12-01', laycanEnd: '2026-12-03', mailRecipients: ['叶李滨', '陈一一'],
+          laycanStart: '2026-12-01', laycanEnd: '2026-12-03', mailRecipients: [{ name: '叶李滨', email: 'yeli@example.com' }, { name: '陈一一', email: 'chenyiyi@example.com' }],
           specialNotes: '水运干线运输，需全程跟踪到港及提货节点。',
           parties: {
             shipperName: '上海国际物流有限公司', consigneeName: 'Vietnam Energy Co., Ltd.', notifyName: 'Vietnam Energy Co., Ltd.',
@@ -543,6 +564,13 @@
     'R2:201': { qty: 2, demandNo: 'FLR202611160018' }
   } : {};
 
+  function normalizeMailRecipient(recipient) {
+    if (!recipient) return null;
+    if (typeof recipient === 'string') return { name: '', email: recipient.trim() };
+    if (typeof recipient === 'object') return { name: String(recipient.name || '').trim(), email: String(recipient.email || '').trim() };
+    return null;
+  }
+
   function normalizeItem(item) {
     return {
       ...item,
@@ -605,10 +633,43 @@
     return nextState;
   }
 
+  function orderProductKey(item) {
+    return [item.name || '', item.tradeContractNo || '', item.description || ''].join('::').toLowerCase();
+  }
+
+  function ensureOrderProducts(nextState) {
+    const routes = Array.isArray(nextState.routes) ? nextState.routes : [];
+    const products = [];
+    const seen = new Set();
+    const appendProduct = (item, sourceId) => {
+      if (!item || item.linkedRouteId || item.linkedItemId) return;
+      const key = orderProductKey(item);
+      if (seen.has(key)) return;
+      const normalized = normalizeItem(item);
+      const sampleContracts = { '新能源汽车动力电池模组': 'HT-2026-001', '精密电子元器件 A3': 'HT-2026-002', '智能储能柜整机': 'HT-2026-003' };
+      if (!normalized.tradeContractNo && sampleContracts[normalized.name]) normalized.tradeContractNo = sampleContracts[normalized.name];
+      normalized.sourceProductId = sourceId || item.sourceProductId || item.id || 'P' + (products.length + 1);
+      seen.add(key);
+      products.push(normalized);
+    };
+    (Array.isArray(nextState.orderProducts) ? nextState.orderProducts : []).forEach((item) => appendProduct(item, item.sourceProductId || item.id));
+    routes.forEach((route) => (route.items || []).forEach((item) => appendProduct(item, item.sourceProductId || item.id)));
+    nextState.orderProducts = products;
+    routes.forEach((route) => {
+      (route.items || []).forEach((item) => {
+        if (item.linkedRouteId || item.sourceProductId) return;
+        const match = products.find((product) => product.id === item.id || orderProductKey(product) === orderProductKey(item));
+        if (match) item.sourceProductId = match.sourceProductId;
+      });
+    });
+    return nextState;
+  }
+
   function normalizeState(nextState) {
     nextState.routes = (nextState.routes || []).map((route) => ({ ...route, items: (route.items || []).map(normalizeItem) }));
     nextState.estimatedReceivables = Array.isArray(nextState.estimatedReceivables) ? nextState.estimatedReceivables : [];
     nextState.estimatedPayables = Array.isArray(nextState.estimatedPayables) ? nextState.estimatedPayables : [];
+    nextState = ensureOrderProducts(nextState);
     return ensureHierarchyState(nextState);
   }
 
@@ -641,7 +702,7 @@
               etd: route.etd || '',
               eta: route.eta || '',
               operationRequirements: Array.isArray(route.operationRequirements) ? route.operationRequirements : [],
-              mailRecipients: Array.isArray(route.mailRecipients) ? route.mailRecipients : [],
+              mailRecipients: (Array.isArray(route.mailRecipients) ? route.mailRecipients : []).map(normalizeMailRecipient).filter((recipient) => recipient && (recipient.name || recipient.email)),
               packingMethod: route.packingMethod || '整箱运输(FCL)',
               bookingMethod: route.bookingMethod || '船公司箱(COC)',
               solicitationMethod: route.solicitationMethod || '',
@@ -1006,7 +1067,8 @@
     const routeId = escapeHtml(route.id);
     const routeIndex = routeDisplayIndex(route);
     const portSelect = (fieldName, selected) => '<select class="control" data-route-field="' + fieldName + '" data-route-id="' + routeId + '" aria-label="线路' + routeIndex + fieldName + '"><option value="">请选择</option>' + selectOptions(portOptions, selected) + '</select>';
-    const mailChips = (route.mailRecipients || []).map((name, index) => '<span class="demand-email-recipient-chip"><span class="demand-email-recipient-chip-copy"><strong>' + escapeHtml(name) + '</strong></span><button type="button" data-route-action="remove-route-mail" data-route-id="' + routeId + '" data-mail-index="' + index + '" aria-label="删除邮件接收人">×</button></span>').join('');
+    const mailRecipients = (route.mailRecipients || []).map(normalizeMailRecipient).filter((recipient) => recipient && (recipient.name || recipient.email));
+    const mailChips = mailRecipients.map((recipient, index) => '<span class="demand-email-recipient-chip"><span class="demand-email-recipient-chip-copy"><strong>' + escapeHtml(recipient.name || '未填写姓名') + '</strong><span>&lt;' + escapeHtml(recipient.email || '未填写邮箱') + '&gt;</span></span><button type="button" data-route-action="remove-route-mail" data-route-id="' + routeId + '" data-mail-index="' + index + '" aria-label="删除邮件接收人邮箱">×</button></span>').join('');
     return '<div class="order-route-card-body">' +
       itemsMarkup(route) +
       '<div class="order-route-block order-route-transport-requirements"><div class="order-route-block-head"><div class="order-route-block-title">运输要求</div></div><div class="order-route-grid">' +
@@ -1033,7 +1095,7 @@
         field('佣金比例(%)', '<input class="control" type="number" min="0" step="0.01" data-route-field="commissionRate" data-route-id="' + routeId + '" value="' + escapeHtml(route.commissionRate) + '" placeholder="请输入" aria-label="线路' + routeIndex + '佣金比例">') +
         field('订舱经理', '<input class="control" data-route-field="bookingManager" data-route-id="' + routeId + '" value="' + escapeHtml(route.bookingManager) + '" placeholder="请输入" aria-label="线路' + routeIndex + '订舱经理">') +
         field('LAYCAN', '<div class="order-date-range"><input class="control" type="date" data-route-field="laycanStart" data-route-id="' + routeId + '" value="' + escapeHtml(route.laycanStart) + '" aria-label="线路' + routeIndex + 'LAYCAN开始日期"><span class="order-date-range-separator">至</span><input class="control" type="date" data-route-field="laycanEnd" data-route-id="' + routeId + '" value="' + escapeHtml(route.laycanEnd) + '" aria-label="线路' + routeIndex + 'LAYCAN结束日期"></div>', 'span-2') +
-        field('邮件接收人', '<div class="demand-email-recipient-box"><div class="demand-email-recipient-chips">' + mailChips + '</div><button class="demand-email-recipient-trigger" type="button" data-route-action="add-route-mail" data-route-id="' + routeId + '">＋ 添加</button></div>', 'row-start') +
+        field('邮件接收人+邮箱', '<div class="demand-email-recipient-box route-mail-recipient-box" data-route-mail-box><div class="demand-email-recipient-chips">' + mailChips + '</div><button class="demand-email-recipient-trigger" type="button" data-route-action="toggle-route-mail" data-route-id="' + routeId + '" aria-expanded="false">＋ 添加</button><div class="demand-email-recipient-popover route-mail-recipient-popover" data-route-mail-popover hidden><div class="demand-email-recipient-popover-fields"><input type="text" data-route-mail-name placeholder="姓名" aria-label="邮件接收人姓名"><input type="email" data-route-mail-email placeholder="邮箱" aria-label="邮件接收人邮箱"></div><div class="demand-email-recipient-popover-actions"><button class="btn" type="button" data-route-action="cancel-route-mail" data-route-id="' + routeId + '">取消</button><button class="btn primary" type="button" data-route-action="confirm-route-mail" data-route-id="' + routeId + '">确定</button></div></div></div>', 'row-start') +
         field('其他特殊要求', '<textarea class="control" data-route-field="specialNotes" data-route-id="' + routeId + '" placeholder="请输入" aria-label="线路' + routeIndex + '其他特殊要求">' + escapeHtml(route.specialNotes) + '</textarea>') +
       '</div></div>' +
       partiesMarkup(route) +
@@ -1140,50 +1202,129 @@
     return '<div class="ro-goods-list">' + cards + '</div>';
   }
 
-  function itemsMarkup(route) {
-    if (orderRouteReadonly()) return readonlyItemsMarkup(route);
-    const routeId = escapeHtml(route.id);
-    const contractTypes = ['销售合同', '采购合同', '框架合同'];
-    const standardUnits = ['吨', '千克', '立方米', '件'];
-    const countUnits = ['箱', '托', '桶', '台', '件'];
-    const weightUnits = ['kg', '吨'];
-    const volumeUnits = ['m³', 'CBM'];
-    const currencies = ['CNY', 'USD', 'EUR'];
-    const rows = route.items.map((rowItem, itemIndex) => {
-      const linked = Boolean(rowItem.linkedRouteId && rowItem.linkedItemId);
-      const sourceItem = resolveLinkedItem(rowItem);
-      const item = linked && sourceItem
-        ? { ...sourceItem, standardQty: rowItem.linkedQty ?? sourceItem.standardQty, count: rowItem.linkedQty ?? sourceItem.count }
-        : (sourceItem || rowItem);
-      const lockedFields = ['name', 'tradeContractNo', 'tradeContractType', 'standardUnit', 'pieceCountUnit', 'grossWeightUnit', 'volumeUnit'];
-      const lock = (field) => (linked && lockedFields.includes(field)) ? ' disabled' : '';
-      return '<tr>' +
-        '<td><select class="control" data-item-field="name" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="商品分类"' + lock('name') + '>' + selectOptions(commodityCatalog.map((entry) => entry.name), item.name) + '</select></td>' +
-        '<td><input class="control" data-item-field="description" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.description) + '" placeholder="请输入商品描述" aria-label="商品描述"' + lock('description') + '></td>' +
-        '<td><input class="control" type="number" min="0" step="0.01" data-item-field="standardQty" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.standardQty) + '" aria-label="标准数量"' + lock('standardQty') + '></td>' +
-        '<td><input class="control" type="number" min="0" step="1" data-item-field="pieceCount" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.pieceCount) + '" aria-label="件数"' + lock('pieceCount') + '></td>' +
-        '<td><select class="control" data-item-field="pieceCountUnit" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="件数单位"' + lock('pieceCountUnit') + '>' + selectOptions(countUnits, item.pieceCountUnit) + '</select></td>' +
-        '<td><input class="control" type="number" min="0" step="0.01" data-item-field="grossWeight" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.grossWeight) + '" aria-label="毛重"' + lock('grossWeight') + '></td>' +
-        '<td><select class="control" data-item-field="grossWeightUnit" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="毛重单位"' + lock('grossWeightUnit') + '>' + selectOptions(weightUnits, item.grossWeightUnit) + '</select></td>' +
-        '<td><input class="control" type="number" min="0" step="0.01" data-item-field="volume" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.volume) + '" aria-label="体积"' + lock('volume') + '></td>' +
-        '<td><select class="control" data-item-field="volumeUnit" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="体积单位"' + lock('volumeUnit') + '>' + selectOptions(volumeUnits, item.volumeUnit) + '</select></td>' +
-        '<td><select class="control" data-item-field="standardUnit" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="标准单位"' + lock('standardUnit') + '>' + selectOptions(standardUnits, item.standardUnit) + '</select></td>' +
-        '<td><input class="control" type="number" min="0" step="0.01" data-item-field="pieceWeight" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.pieceWeight) + '" aria-label="单件重量"' + lock('pieceWeight') + '></td>' +
-        '<td><select class="control" data-item-field="pieceWeightUnit" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="单件重量单位"' + lock('pieceWeightUnit') + '>' + selectOptions(weightUnits, item.pieceWeightUnit) + '</select></td>' +
-        '<td><input class="control" data-item-field="specDimensions" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.specDimensions) + '" placeholder="长 × 宽 × 高" aria-label="规格尺寸"' + lock('specDimensions') + '></td>' +
-        '<td><input class="control" type="number" min="0" step="0.01" data-item-field="overRate" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.overRate) + '" placeholder="%" aria-label="溢装率"' + lock('overRate') + '></td>' +
-        '<td><input class="control" type="number" min="0" step="0.01" data-item-field="underRate" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.underRate) + '" placeholder="%" aria-label="短装率"' + lock('underRate') + '></td>' +
-        '<td><input class="control" type="number" min="0" step="0.01" data-item-field="goodsValueUnitPrice" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.goodsValueUnitPrice) + '" aria-label="货值单价"' + lock('goodsValueUnitPrice') + '></td>' +
-        '<td><input class="control" type="number" data-item-field="goodsValueAmount" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.goodsValueAmount) + '" readonly aria-label="货值金额"' + lock('goodsValueAmount') + '></td>' +
-        '<td><select class="control" data-item-field="goodsValueCurrency" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="货值币种"' + lock('goodsValueCurrency') + '>' + selectOptions(currencies, item.goodsValueCurrency) + '</select></td>' +
-        '<td><input class="control" data-item-field="englishName" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.englishName) + '" placeholder="请输入商品英文名" aria-label="商品英文名"' + lock('englishName') + '></td>' +
-        '<td><input class="control" data-item-field="tradeContractNo" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" value="' + escapeHtml(item.tradeContractNo) + '" placeholder="请输入合同号" aria-label="贸易合同号"' + lock('tradeContractNo') + '></td>' +
-        '<td><select class="control" data-item-field="tradeContractType" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="贸易合同类型"' + lock('tradeContractType') + '>' + selectOptions(contractTypes, item.tradeContractType) + '</select></td>' +
-        '<td>' + (orderItemsCopyEnabled() ? '<button class="order-route-row-action" type="button" data-route-action="duplicate-item" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '">复制</button>' : '') + '<button class="order-route-icon-btn danger" type="button" data-route-action="remove-item" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(rowItem.id) + '" aria-label="删除商品">×</button></td></tr>';
+  function orderProductFieldValue(item, key) {
+    const value = item[key];
+    return value === '' || value === null || value === undefined ? '' : value;
+  }
+
+  function orderProductFieldMarkup(item, key, label, type, readonly) {
+    const value = escapeHtml(orderProductFieldValue(item, key));
+    return '<input class="control" type="' + (type || 'text') + '" min="0" step="0.01" data-order-product-field="' + key + '" data-product-id="' + escapeHtml(item.sourceProductId || item.id) + '" value="' + value + '" aria-label="' + escapeHtml(label) + '"' + (readonly ? ' readonly' : '') + '>';
+  }
+
+  function orderProductSelectMarkup(item, key, label, options, readonly) {
+    return '<select class="control" data-order-product-field="' + key + '" data-product-id="' + escapeHtml(item.sourceProductId || item.id) + '" aria-label="' + escapeHtml(label) + '"' + (readonly ? ' disabled' : '') + '>' + selectOptions(options, item[key]) + '</select>';
+  }
+
+  function orderProductServiceRefs(productId) {
+    const refs = [];
+    state.routes.forEach((route, index) => {
+      if ((route.items || []).some((item) => orderProductId(item) === productId || orderProductKey(item) === orderProductKey(findOrderProduct(productId) || {}))) {
+        refs.push('运输服务要求' + (index + 1));
+      }
+    });
+    document.querySelectorAll('[data-service-requirement-card]').forEach((card, index) => {
+      try {
+        const ids = JSON.parse(card.dataset.serviceProductIds || '[]');
+        if (ids.includes(productId)) refs.push((card.dataset.serviceRequirementType || '附加') + '服务要求' + (index + 1));
+      } catch (error) { /* ignore stale selection data */ }
+    });
+    return refs.length ? refs.join('、') : '—';
+  }
+
+  function orderProductsTableMarkup() {
+    const readonly = orderRouteReadonly();
+    const editable = !readonly && orderItemsCopyEnabled();
+    const field = (item, key, label, type) => orderProductFieldMarkup(item, key, label, type, readonly);
+    const select = (item, key, label, options) => orderProductSelectMarkup(item, key, label, options, readonly);
+    const rows = state.orderProducts.map((item) => {
+      const productId = item.sourceProductId || item.id;
+      return '<tr data-order-product-row="' + escapeHtml(productId) + '">' +
+        '<td>' + select(item, 'name', '商品分类', commodityCatalog.map((entry) => entry.name)) + '</td>' +
+        '<td>' + field(item, 'description', '商品描述') + '</td>' +
+        '<td class="num">' + field(item, 'standardQty', '标准数量', 'number') + '</td>' +
+        '<td class="num">' + field(item, 'pieceCount', '件数', 'number') + '</td>' +
+        '<td>' + select(item, 'pieceCountUnit', '件数单位', unitOptions) + '</td>' +
+        '<td class="num">' + field(item, 'grossWeight', '毛重', 'number') + '</td>' +
+        '<td>' + select(item, 'grossWeightUnit', '毛重单位', ['kg', '吨']) + '</td>' +
+        '<td class="num">' + field(item, 'volume', '体积', 'number') + '</td>' +
+        '<td>' + select(item, 'volumeUnit', '体积单位', ['m³', 'CBM']) + '</td>' +
+        '<td>' + select(item, 'standardUnit', '标准单位', ['吨', '千克', '立方米', '件', '箱', '托', '桶', '台']) + '</td>' +
+        '<td class="num">' + field(item, 'pieceWeight', '单件重量', 'number') + '</td>' +
+        '<td>' + select(item, 'pieceWeightUnit', '单件重量单位', ['kg', '吨']) + '</td>' +
+        '<td>' + field(item, 'specDimensions', '规格尺寸') + '</td>' +
+        '<td class="num">' + field(item, 'overRate', '溢装率', 'number') + '</td>' +
+        '<td class="num">' + field(item, 'underRate', '短装率', 'number') + '</td>' +
+        '<td class="num">' + field(item, 'goodsValueUnitPrice', '货值单价', 'number') + '</td>' +
+        '<td class="num">' + field(item, 'goodsValueAmount', '货值金额', 'number') + '</td>' +
+        '<td>' + select(item, 'goodsValueCurrency', '货值币种', ['CNY', 'USD', 'EUR']) + '</td>' +
+        '<td>' + field(item, 'englishName', '商品英文名') + '</td>' +
+        '<td>' + field(item, 'tradeContractNo', '贸易合同号') + '</td>' +
+        '<td>' + select(item, 'tradeContractType', '贸易合同类型', ['销售合同', '采购合同', '框架合同']) + '</td>' +
+        '<td><div class="order-product-row-actions">' + (editable ? '<button class="order-route-row-action" type="button" data-order-product-action="duplicate" data-product-id="' + escapeHtml(productId) + '">复制</button>' : '') + (editable ? '<button class="order-route-icon-btn danger" type="button" data-order-product-action="remove" data-product-id="' + escapeHtml(productId) + '" aria-label="删除商品">×</button>' : '') + '</div></td>' +
+      '</tr>';
     }).join('');
-    return '<div class="order-route-block"><div class="order-route-block-head"><div class="order-route-block-title">服务要求商品清单 <span>(' + route.items.length + ' 项)</span></div><div class="order-route-block-actions"><button class="detail-btn outline-primary" type="button" data-route-action="add-item" data-route-id="' + routeId + '">+ 添加商品</button></div></div>' +
-      '<div class="order-route-items-wrap"><table class="order-route-items" aria-label="服务要求商品清单"><thead><tr><th>商品分类 *</th><th>商品描述</th><th>标准数量 *</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' +
-      rows + '</tbody></table></div></div>';
+    return '<div class="order-product-table-wrap"><div class="order-product-table-note"><span>订单商品是服务要求的唯一商品来源，共 <b data-order-product-count>' + state.orderProducts.length + '</b> 项</span><span>' + (readonly ? '当前为只读状态，字段不可编辑' : '字段与商品明细保持一致，服务要求仅引用商品') + '</span></div>' +
+      '<div class="order-route-items-wrap"><table class="order-route-items order-product-table' + (readonly ? ' is-readonly' : '') + '" aria-label="客户订单商品明细" aria-readonly="' + readonly + '"><thead><tr><th>商品分类 *</th><th>商品描述</th><th class="num">标准数量 *</th><th class="num">件数</th><th>件数单位</th><th class="num">毛重</th><th>毛重单位</th><th class="num">体积</th><th>体积单位</th><th>标准单位</th><th class="num">单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th class="num">溢装率（%）</th><th class="num">短装率（%）</th><th class="num">货值单价</th><th class="num">货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' + (rows || '<tr class="order-product-empty"><td colspan="22">暂无商品，请先添加客户订单商品。</td></tr>') + '</tbody></table></div></div>';
+  }
+
+  function renderOrderProductsSection() {
+    if (!orderProductsHost) return;
+    orderProductsHost.innerHTML = orderProductsTableMarkup();
+    const addButton = document.querySelector('[data-order-product-action="add"]');
+    if (addButton) addButton.hidden = orderRouteReadonly();
+  }
+
+  function productHoverText(product, selected) {
+    const qty = (value, unit) => number(value) + (unit ? ' ' + unit : '');
+    return [
+      '商品分类：' + (product.name || '—'),
+      '商品描述：' + (product.description || '—'),
+      '标准数量：' + qty(selected.standardQty, selected.standardUnit),
+      '件数：' + qty(selected.pieceCount, selected.pieceCountUnit),
+      '体积：' + qty(selected.volume, selected.volumeUnit),
+      '毛重：' + qty(selected.grossWeight, selected.grossWeightUnit),
+      '贸易合同号：' + (product.tradeContractNo || '—'),
+      '贸易合同类型：' + (product.tradeContractType || '—')
+    ].join('\n');
+  }
+
+  function serviceInlineInputMarkup(options) {
+    const { value, max, field, routeId, itemId, productId, editable } = options;
+    return '<input class="control service-product-inline-input" type="number" min="0" step="0.01" value="' + escapeHtml(number(value)) + '" max="' + escapeHtml(number(max)) + '" data-service-inline-field="' + field + '" data-editor-target="route" data-route-id="' + escapeHtml(routeId) + '" data-item-id="' + escapeHtml(itemId) + '" data-product-id="' + escapeHtml(productId) + '" data-service-inline-max="' + escapeHtml(number(max)) + '" aria-label="' + escapeHtml(field) + '"' + (editable ? '' : ' readonly') + '>';
+  }
+
+  function itemsMarkup(route) {
+    const editable = !orderRouteReadonly();
+    const routeId = escapeHtml(route.id);
+    const rows = (route.items || []).map((item) => {
+      const product = state.orderProducts.find((entry) => (entry.sourceProductId || entry.id) === (item.sourceProductId || item.id)) || item;
+      const productId = product.sourceProductId || product.id;
+      const selection = {
+        standardQty: item.standardQty ?? product.standardQty,
+        standardUnit: item.standardUnit || product.standardUnit || product.unit,
+        pieceCount: item.pieceCount ?? product.pieceCount,
+        pieceCountUnit: item.pieceCountUnit || product.pieceCountUnit || product.unit,
+        volume: item.volume ?? product.volume,
+        volumeUnit: item.volumeUnit || product.volumeUnit || 'm³',
+        grossWeight: item.grossWeight ?? product.grossWeight,
+        grossWeightUnit: item.grossWeightUnit || product.grossWeightUnit || '吨'
+      };
+      const hoverText = productHoverText(product, selection);
+      return '<tr class="service-product-list-row" data-service-product-row="' + escapeHtml(productId) + '">' +
+        '<td><div class="service-product-list-main" title="' + escapeHtml(hoverText) + '"><strong>' + escapeHtml(product.name || '未命名商品') + '</strong><small>' + escapeHtml(product.description || '—') + (product.tradeContractNo ? ' · ' + escapeHtml(product.tradeContractNo) : '') + '</small></div></td>' +
+        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.standardQty, max: product.standardQty ?? product.count, field: 'standardQty', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.standardUnit || '') + '</span></div></td>' +
+        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.pieceCount, max: product.pieceCount ?? product.count, field: 'pieceCount', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.pieceCountUnit || '') + '</span></div></td>' +
+        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.volume, max: product.volume, field: 'volume', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.volumeUnit || '') + '</span></div></td>' +
+        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.grossWeight, max: product.grossWeight ?? product.weight, field: 'grossWeight', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.grossWeightUnit || '') + '</span></div></td>' +
+        '<td>' + (editable ? '<button class="service-product-chip-remove" type="button" data-route-action="remove-item" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(item.id) + '" aria-label="移除商品">×</button>' : '') + '</td>' +
+      '</tr>';
+    }).join('');
+    return '<div class="order-route-block order-service-products-block" data-service-products data-route-id="' + routeId + '">' +
+      '<div class="order-service-products-head"><div class="order-service-products-label">关联订单商品 <span>(' + (route.items || []).length + ')</span></div>' +
+      (editable ? '<button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="route" data-route-id="' + routeId + '">选择商品</button>' : '') + '</div>' +
+      '<div class="service-product-list-wrap"><table class="service-product-list-table"><thead><tr><th>商品</th><th>标准数量</th><th>件数</th><th>体积</th><th>毛重</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>' +
+    '</div>';
   }
 
   function partiesMarkup(route) {
@@ -1400,6 +1541,7 @@
   }
 
   function renderHierarchy() {
+    renderOrderProductsSection();
     countLabel.textContent = state.routes.length + ' 条线路';
     if (modeCopy) modeCopy.textContent = '三级物流安排：线路定义整体起止地，商品定义货量，物流安排定义具体运输段、方式和运输要求。';
     section.classList.add('hierarchy-mode');
@@ -1441,6 +1583,7 @@
 
   function render() {
     closeFeeRouteMenu();
+    renderOrderProductsSection();
     if (hierarchyMode) { renderHierarchy(); return; }
     const singleRouteMode = state.routes.length === 1;
     section.classList.toggle('single-route-mode', singleRouteMode);
@@ -1491,12 +1634,14 @@
 
   const readonlyControlProps = ['border', 'background', 'box-shadow', 'height', 'padding', 'color', 'font-size', 'border-radius', 'appearance', 'background-image', 'line-height', 'resize'];
   function applyReadonlyControlStyle(el) {
+    const isTextarea = el.tagName === 'TEXTAREA';
     const props = {
-      border: '0', background: 'transparent', 'box-shadow': 'none', height: 'auto',
-      padding: '2px 0', color: '#0f172a', 'font-size': '13px', 'border-radius': '0', 'line-height': '1.5'
+      border: '1px solid #e2e7ef', background: '#f4f6f8', 'box-shadow': 'none',
+      height: isTextarea ? '58px' : '32px', padding: isTextarea ? '7px 9px' : '0 9px',
+      color: '#64748b', 'font-size': '12px', 'font-weight': '400', 'border-radius': '5px', 'line-height': '1.5',
+      resize: isTextarea ? 'vertical' : 'none'
     };
-    if (el.tagName === 'SELECT') { props.appearance = 'none'; props['background-image'] = 'none'; }
-    if (el.tagName === 'TEXTAREA') props.resize = 'none';
+    if (el.tagName === 'SELECT') { props.appearance = 'auto'; props['background-image'] = 'none'; }
     Object.keys(props).forEach((key) => el.style.setProperty(key, props[key], 'important'));
   }
   function clearReadonlyControlStyle(el) {
@@ -1504,16 +1649,8 @@
   }
 
   // 只读态隐藏与卡片头重复的结构字段（运输类型/装运类别/起运地/目的地/港口/国别省市），其余字段空值显示「—」
-  const readonlySuppressedRouteFields = new Set([
-    'type',
-    'shipmentCategory',
-    'origin',
-    'destination',
-    'originPort',
-    'destinationPort',
-    'originRegion',
-    'destinationRegion'
-  ]);
+  const readonlySuppressedRouteFields = new Set([]);
+
 
   function routeReadonlyFieldValue(fieldEl) {
     const recipientBox = fieldEl.querySelector('.demand-email-recipient-box');
@@ -1584,7 +1721,7 @@
     if (routeControl) return routeControl.dataset.routeField || '';
     const partyControl = fieldEl.querySelector('[data-party-field]');
     if (partyControl) return partyControl.dataset.partyField || '';
-    if (fieldEl.querySelector('[data-route-action="add-route-mail"]')) return 'mailRecipients';
+    if (fieldEl.querySelector('[data-route-action="toggle-route-mail"]')) return 'mailRecipients';
     return '';
   }
 
@@ -1647,16 +1784,7 @@
       clearRouteReadonlyField(fieldEl);
       const control = fieldEl.querySelector('[data-route-field], input, select, textarea');
       const fieldName = control?.dataset.routeField || '';
-      if (readonlySuppressedRouteFields.has(fieldName)) {
-        fieldEl.style.display = 'none';
-        return;
-      }
-      fieldEl.classList.add('route-readonly-field');
-      const output = document.createElement('span');
-      output.className = 'route-readonly-value';
-      output.textContent = routeReadonlyFieldValue(fieldEl);
-      output.dataset.empty = output.textContent === '—' ? 'true' : 'false';
-      fieldEl.appendChild(output);
+      if (readonlySuppressedRouteFields.has(fieldName)) fieldEl.style.display = 'none';
     });
 
     section.querySelectorAll('.order-route-items thead th, .order-route-containers-table thead th, .order-business-fee-table thead th').forEach((th) => {
@@ -1673,7 +1801,6 @@
       if (!el.value) el.dataset.empty = 'true'; else delete el.dataset.empty;
       applyReadonlyControlStyle(el);
     });
-    applyReadonlyRouteLayout();
   }
 
   function orderItemsCopyEnabled() {
@@ -1895,6 +2022,358 @@
     closeFeeRouteMenu();
   }
 
+  function orderProductId(item) {
+    return item?.sourceProductId || item?.id || '';
+  }
+
+  function findOrderProduct(productId) {
+    return state.orderProducts.find((item) => orderProductId(item) === productId);
+  }
+
+  function syncOrderProductToRoutes(product) {
+    const productId = orderProductId(product);
+    const productKey = orderProductKey(product);
+    state.routes.forEach((route) => {
+      (route.items || []).forEach((item) => {
+        if (item.linkedRouteId || item.linkedItemId) return;
+        if (orderProductId(item) === productId || orderProductKey(item) === productKey) {
+          Object.assign(item, {
+            name: product.name,
+            description: product.description,
+            standardUnit: product.standardUnit,
+            pieceCountUnit: product.pieceCountUnit,
+            grossWeightUnit: product.grossWeightUnit,
+            volumeUnit: product.volumeUnit,
+            tradeContractNo: product.tradeContractNo,
+            tradeContractType: product.tradeContractType,
+            sourceProductId: productId
+          });
+        }
+      });
+    });
+  }
+
+  function updateOrderProductField(control) {
+    const product = findOrderProduct(control.dataset.productId);
+    if (!product) return;
+    const field = control.dataset.orderProductField;
+    if (!field) return;
+    product[field] = control.value;
+    if (field === 'standardQty') product.count = control.value;
+    if (field === 'grossWeight') product.weight = control.value;
+    if (field === 'volume') product.vol = control.value;
+    syncOrderProductToRoutes(product);
+    document.querySelectorAll('[data-service-requirement-card]').forEach((card) => window.refreshServiceRequirementProducts?.(card));
+  }
+
+  function handleOrderProductAction(button) {
+    if (orderRouteReadonly()) return;
+    const action = button.dataset.orderProductAction;
+    if (action === 'add') {
+      const source = commodityCatalog[0];
+      const now = Date.now();
+      const product = normalizeItem({
+        id: 'P' + now,
+        sourceProductId: 'P' + now,
+        name: source?.name || '新商品',
+        description: source?.desc || '',
+        standardQty: 1,
+        standardUnit: source?.unit || '件',
+        pieceCount: 1,
+        pieceCountUnit: source?.unit || '件',
+        grossWeight: 0,
+        grossWeightUnit: '吨',
+        volume: 0,
+        volumeUnit: 'm³',
+        tradeContractNo: '',
+        tradeContractType: '销售合同',
+        goodsValueUnitPrice: 0,
+        goodsValueAmount: 0,
+        goodsValueCurrency: 'CNY'
+      });
+      state.orderProducts.push(product);
+      render();
+      notify('success', '已新增 1 项订单商品，可继续维护数量及合同信息。');
+      return;
+    }
+    const product = findOrderProduct(button.dataset.productId);
+    if (!product) return;
+    if (action === 'duplicate') {
+      const copy = normalizeItem(JSON.parse(JSON.stringify(product)));
+      copy.id = 'P' + Date.now() + Math.floor(Math.random() * 1000);
+      copy.sourceProductId = copy.id;
+      copy.name = product.name + '（副本）';
+      state.orderProducts.push(copy);
+      render();
+      notify('success', '已复制订单商品。');
+      return;
+    }
+    if (action === 'remove') {
+      state.orderProducts = state.orderProducts.filter((item) => orderProductId(item) !== orderProductId(product));
+      state.routes.forEach((route) => {
+        route.items = (route.items || []).filter((item) => item.linkedRouteId || item.linkedItemId || orderProductId(item) !== orderProductId(product));
+      });
+      render();
+      notify('success', '订单商品已删除，相关服务要求中的商品选择已同步移除。');
+    }
+  }
+
+  function orderProductPickerMarkup(selectedIds) {
+    const rows = state.orderProducts.map((product) => {
+      const productId = orderProductId(product);
+      const checked = selectedIds.includes(productId);
+      return '<tr class="order-product-picker-row' + (checked ? ' selected' : '') + '" data-product-picker-row="' + escapeHtml(productId) + '">' +
+        '<td class="order-product-picker-check"><input type="checkbox" data-product-picker-item="' + escapeHtml(productId) + '" aria-label="选择' + escapeHtml(product.name || '商品') + '"' + (checked ? ' checked' : '') + '></td>' +
+        '<td><strong>' + escapeHtml(product.name || '未命名商品') + '</strong></td>' +
+        '<td><span class="order-product-picker-readonly-text">' + escapeHtml(product.description || '—') + '</span></td>' +
+        '<td class="num">' + escapeHtml(number(product.standardQty ?? product.count)) + '</td>' +
+        '<td>' + escapeHtml(product.standardUnit || '—') + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.pieceCount ?? product.count)) + '</td>' +
+        '<td>' + escapeHtml(product.pieceCountUnit || '—') + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.grossWeight ?? product.weight)) + '</td>' +
+        '<td>' + escapeHtml(product.grossWeightUnit || '—') + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.volume)) + '</td>' +
+        '<td>' + escapeHtml(product.volumeUnit || '—') + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.pieceWeight)) + '</td>' +
+        '<td>' + escapeHtml(product.pieceWeightUnit || '—') + '</td>' +
+        '<td>' + escapeHtml(product.specDimensions || '—') + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.overRate)) + '%</td>' +
+        '<td class="num">' + escapeHtml(number(product.underRate)) + '%</td>' +
+        '<td class="num">' + escapeHtml(number(product.goodsValueUnitPrice)) + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.goodsValueAmount)) + '</td>' +
+        '<td>' + escapeHtml(product.goodsValueCurrency || '—') + '</td>' +
+        '<td>' + escapeHtml(product.englishName || '—') + '</td>' +
+        '<td>' + escapeHtml(product.tradeContractNo || '—') + '</td>' +
+        '<td>' + escapeHtml(product.tradeContractType || '—') + '</td>' +
+      '</tr>';
+    }).join('');
+    return '<div class="order-product-picker-summary" id="orderProductPickerSummary">已选 0 项</div>' +
+      '<div class="order-product-picker-tip">选择后，可在服务要求商品明细中直接编辑标准数量、件数、体积、毛重；单位沿用客户订单商品。</div>' +
+      '<div class="order-product-picker-table-wrap"><table class="order-product-picker-table order-product-picker-table-full"><thead><tr><th></th><th>商品分类</th><th>商品描述</th><th>标准数量</th><th>标准单位</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="order-product-picker-empty">订单商品明细为空，请先在商品明细模块添加商品。</td></tr>') + '</tbody></table></div>';
+  }
+
+  function selectedProductIdsForContext(context) {
+    if (!context) return [];
+    if (context.target === 'route') {
+      const route = findRoute(context.routeId);
+      return (route?.items || []).map((item) => orderProductId(item) || state.orderProducts.find((product) => orderProductKey(product) === orderProductKey(item))?.sourceProductId).filter(Boolean);
+    }
+    if (context.card) {
+      try { return JSON.parse(context.card.dataset.serviceProductIds || '[]'); } catch (error) { return []; }
+    }
+    return [];
+  }
+
+  function updateOrderProductPickerSummary() {
+    if (!orderProductPickerBody) return;
+    const checked = Array.from(orderProductPickerBody.querySelectorAll('input[data-product-picker-item]:checked'));
+    const summary = document.getElementById('orderProductPickerSummary');
+    if (summary) summary.textContent = '已选 ' + checked.length + ' 项，数量请在服务要求中编辑';
+    orderProductPickerBody.querySelectorAll('[data-product-picker-row]').forEach((row) => {
+      row.classList.toggle('selected', Boolean(row.querySelector('input[data-product-picker-item]')?.checked));
+    });
+  }
+
+  function openOrderProductPicker(trigger) {
+    if (!orderProductPicker || !orderProductPickerBody || !state.orderProducts.length) return;
+    const target = trigger.dataset.pickerTarget;
+    const card = trigger.closest('[data-service-requirement-card]');
+    orderProductPickerContext = { target, routeId: trigger.dataset.routeId || '', card };
+    orderProductPickerBody.innerHTML = orderProductPickerMarkup(selectedProductIdsForContext(orderProductPickerContext));
+    updateOrderProductPickerSummary();
+    orderProductPicker.hidden = false;
+    window.requestAnimationFrame(() => orderProductPicker.querySelector('.order-route-preview-dialog')?.focus());
+  }
+
+  function closeOrderProductPicker() {
+    if (orderProductPicker) orderProductPicker.hidden = true;
+    orderProductPickerContext = null;
+  }
+
+  function defaultSelectionFromProduct(product) {
+    return {
+      standardQty: number(product.standardQty ?? product.count),
+      standardUnit: product.standardUnit || product.unit || '',
+      pieceCount: number(product.pieceCount ?? product.count),
+      pieceCountUnit: product.pieceCountUnit || product.unit || '',
+      volume: number(product.volume ?? product.vol),
+      volumeUnit: product.volumeUnit || 'm³',
+      grossWeight: number(product.grossWeight ?? product.weight),
+      grossWeightUnit: product.grossWeightUnit || '吨'
+    };
+  }
+
+  function confirmOrderProductPicker() {
+    if (!orderProductPickerBody || !orderProductPickerContext) return;
+    const checked = Array.from(orderProductPickerBody.querySelectorAll('input[data-product-picker-item]:checked'));
+    if (!checked.length) { notify('error', '请至少选择 1 项订单商品。'); return; }
+    const ids = checked.map((box) => box.dataset.productPickerItem);
+    if (orderProductPickerContext.target === 'route') {
+      const route = findRoute(orderProductPickerContext.routeId);
+      if (!route) { closeOrderProductPicker(); return; }
+      const existing = new Map((route.items || []).map((item) => [orderProductId(item), item]));
+      route.items = ids.map((id, index) => {
+        if (existing.has(id)) return existing.get(id);
+        const product = findOrderProduct(id);
+        return normalizeItem({ ...product, id: 'IT' + Date.now() + index, sourceProductId: id, arrangedQty: 0, ...defaultSelectionFromProduct(product) });
+      });
+      render();
+      notify('success', '已为当前服务要求选择 ' + ids.length + ' 项订单商品，请继续编辑本次数量。');
+    } else if (orderProductPickerContext.card) {
+      const card = orderProductPickerContext.card;
+      let existingSelections = {};
+      try { existingSelections = JSON.parse(card.dataset.serviceProductSelections || '{}'); } catch (error) { existingSelections = {}; }
+      const selections = {};
+      const quantities = {};
+      ids.forEach((id) => {
+        const product = findOrderProduct(id);
+        selections[id] = existingSelections[id] || defaultSelectionFromProduct(product);
+        quantities[id] = selections[id].standardQty;
+      });
+      card.dataset.serviceProductIds = JSON.stringify(ids);
+      card.dataset.serviceProductSelections = JSON.stringify(selections);
+      card.dataset.serviceProductQuantities = JSON.stringify(quantities);
+      window.refreshServiceRequirementProducts?.(card);
+      notify('success', '已关联 ' + ids.length + ' 项订单商品，请继续编辑本次数量。');
+    }
+    closeOrderProductPicker();
+  }
+
+  function positionServiceProductEditor(trigger) {
+    if (!serviceProductEditor || !trigger) return;
+    const rect = trigger.getBoundingClientRect();
+    const width = 390;
+    const height = Math.min(serviceProductEditor.offsetHeight || 260, 320);
+    const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+    const below = rect.bottom + 8;
+    const top = below + height > window.innerHeight - 12 ? Math.max(12, rect.top - height - 8) : below;
+    serviceProductEditor.style.left = left + 'px';
+    serviceProductEditor.style.top = top + 'px';
+  }
+
+  function openServiceProductEditor(trigger) {
+    if (!serviceProductEditor) return;
+    const target = trigger.dataset.editorTarget;
+    let product = null;
+    let selection = null;
+    let route = null;
+    let item = null;
+    let card = null;
+    if (target === 'route') {
+      route = findRoute(trigger.dataset.routeId);
+      item = (route?.items || []).find((entry) => entry.id === trigger.dataset.itemId);
+      product = findOrderProduct(trigger.dataset.productId);
+      if (!route || !item || !product) return;
+      selection = {
+        standardQty: number(item.standardQty), standardUnit: item.standardUnit || product.standardUnit,
+        pieceCount: number(item.pieceCount), pieceCountUnit: item.pieceCountUnit || product.pieceCountUnit,
+        volume: number(item.volume), volumeUnit: item.volumeUnit || product.volumeUnit,
+        grossWeight: number(item.grossWeight), grossWeightUnit: item.grossWeightUnit || product.grossWeightUnit
+      };
+    } else {
+      card = trigger.closest('[data-service-requirement-card]');
+      product = findOrderProduct(trigger.dataset.productId);
+      if (!card || !product) return;
+      let selections = {};
+      try { selections = JSON.parse(card.dataset.serviceProductSelections || '{}'); } catch (error) { selections = {}; }
+      selection = { ...defaultSelectionFromProduct(product), ...(selections[trigger.dataset.productId] || {}) };
+    }
+    serviceProductEditorContext = { target, route, item, card, product, productId: trigger.dataset.productId };
+    serviceProductEditorName.textContent = product.name || '未命名商品';
+    serviceProductEditorLimit.textContent = '订单数量：' + number(product.standardQty ?? product.count) + ' ' + (product.standardUnit || product.unit || '');
+    serviceProductEditorStandardQty.max = number(product.standardQty ?? product.count);
+    serviceProductEditorPieceQty.max = number(product.pieceCount ?? product.count);
+    serviceProductEditorGrossQty.max = number(product.grossWeight ?? product.weight);
+    serviceProductEditorStandardQty.value = selection.standardQty;
+    serviceProductEditorStandardUnit.value = selection.standardUnit || product.standardUnit || product.unit || '';
+    serviceProductEditorPieceQty.value = selection.pieceCount;
+    serviceProductEditorPieceUnit.value = selection.pieceCountUnit || product.pieceCountUnit || product.unit || '';
+    serviceProductEditorGrossQty.value = selection.grossWeight;
+    serviceProductEditorGrossUnit.value = selection.grossWeightUnit || product.grossWeightUnit || '吨';
+    serviceProductEditorValidation.textContent = '';
+    serviceProductEditor.hidden = false;
+    positionServiceProductEditor(trigger);
+  }
+
+  function closeServiceProductEditor() {
+    if (serviceProductEditor) serviceProductEditor.hidden = true;
+    serviceProductEditorContext = null;
+  }
+
+  function saveServiceProductEditor() {
+    if (!serviceProductEditorContext) return;
+    const product = serviceProductEditorContext.product;
+    const selection = {
+      standardQty: number(serviceProductEditorStandardQty.value),
+      standardUnit: serviceProductEditorStandardUnit.value,
+      pieceCount: number(serviceProductEditorPieceQty.value),
+      pieceCountUnit: serviceProductEditorPieceUnit.value,
+      volume: number(serviceProductEditorContext.item?.volume ?? serviceProductEditorContext.product?.volume),
+      volumeUnit: serviceProductEditorContext.item?.volumeUnit || serviceProductEditorContext.product?.volumeUnit || 'm³',
+      grossWeight: number(serviceProductEditorGrossQty.value),
+      grossWeightUnit: serviceProductEditorGrossUnit.value
+    };
+    const standardMax = number(product.standardQty ?? product.count);
+    const pieceMax = number(product.pieceCount ?? product.count);
+    const grossMax = number(product.grossWeight ?? product.weight);
+    if (!selection.standardQty || selection.standardQty > standardMax) {
+      serviceProductEditorValidation.textContent = '本次标准数量需大于 0 且不能超过 ' + standardMax + ' ' + (product.standardUnit || '');
+      return;
+    }
+    if (selection.pieceCount > pieceMax) { serviceProductEditorValidation.textContent = '本次件数不能超过 ' + pieceMax + ' ' + (product.pieceCountUnit || ''); return; }
+    if (selection.grossWeight > grossMax) { serviceProductEditorValidation.textContent = '本次毛重不能超过 ' + grossMax + ' ' + (product.grossWeightUnit || ''); return; }
+    if (serviceProductEditorContext.target === 'route') {
+      Object.assign(serviceProductEditorContext.item, selection, { count: selection.standardQty });
+      render();
+    } else if (serviceProductEditorContext.card) {
+      const card = serviceProductEditorContext.card;
+      let selections = {};
+      try { selections = JSON.parse(card.dataset.serviceProductSelections || '{}'); } catch (error) { selections = {}; }
+      selections[serviceProductEditorContext.productId] = selection;
+      const quantities = {};
+      Object.keys(selections).forEach((id) => { quantities[id] = selections[id].standardQty; });
+      card.dataset.serviceProductSelections = JSON.stringify(selections);
+      card.dataset.serviceProductQuantities = JSON.stringify(quantities);
+      window.refreshServiceRequirementProducts?.(card);
+    }
+    closeServiceProductEditor();
+  }
+
+  function updateServiceProductInlineField(control) {
+    const field = control.dataset.serviceInlineField;
+    const max = number(control.dataset.serviceInlineMax);
+    const value = number(control.value);
+    const invalid = field === 'standardQty' ? (!value || value > max) : (value < 0 || value > max);
+    control.classList.toggle('is-invalid', invalid);
+    control.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+    if (invalid) return;
+    const target = control.dataset.editorTarget;
+    const productId = control.dataset.productId;
+    if (target === 'route') {
+      const route = findRoute(control.dataset.routeId);
+      const item = (route?.items || []).find((entry) => entry.id === control.dataset.itemId);
+      if (!item) return;
+      item[field] = value;
+      if (field === 'standardQty') item.count = value;
+      if (field === 'volume') item.vol = value;
+      if (field === 'grossWeight') item.weight = value;
+      item.sourceProductId = productId;
+      syncHidden(false);
+    } else if (target === 'service') {
+      const card = control.closest('[data-service-requirement-card]');
+      if (!card) return;
+      let selections = {};
+      try { selections = JSON.parse(card.dataset.serviceProductSelections || '{}'); } catch (error) { selections = {}; }
+      const product = findOrderProduct(productId);
+      selections[productId] = { ...defaultSelectionFromProduct(product), ...(selections[productId] || {}) };
+      selections[productId][field] = value;
+      const quantities = {};
+      Object.keys(selections).forEach((id) => { quantities[id] = selections[id].standardQty; });
+      card.dataset.serviceProductSelections = JSON.stringify(selections);
+      card.dataset.serviceProductQuantities = JSON.stringify(quantities);
+    }
+  }
+
   function handleAction(button) {
     const action = button.dataset.routeAction;
     const route = findRoute(button.dataset.routeId);
@@ -2001,17 +2480,41 @@
       render();
       return;
     }
-    if (action === 'add-route-mail') {
-      const name = window.prompt('请输入邮件接收人姓名');
-      if (name && name.trim() && !(route.mailRecipients || []).includes(name.trim())) {
-        route.mailRecipients = route.mailRecipients || [];
-        route.mailRecipients.push(name.trim());
-        render();
+    if (action === 'toggle-route-mail') {
+      const box = button.closest('[data-route-mail-box]');
+      const popover = box?.querySelector('[data-route-mail-popover]');
+      if (!popover) return;
+      popover.hidden = !popover.hidden;
+      button.setAttribute('aria-expanded', String(!popover.hidden));
+      if (!popover.hidden) popover.querySelector('[data-route-mail-name]')?.focus();
+      return;
+    }
+    if (action === 'cancel-route-mail') {
+      const box = button.closest('[data-route-mail-box]');
+      const popover = box?.querySelector('[data-route-mail-popover]');
+      if (popover) {
+        popover.hidden = true;
+        box.querySelector('[data-route-action="toggle-route-mail"]')?.setAttribute('aria-expanded', 'false');
       }
       return;
     }
+    if (action === 'confirm-route-mail') {
+      const box = button.closest('[data-route-mail-box]');
+      const popover = box?.querySelector('[data-route-mail-popover]');
+      const nameInput = popover?.querySelector('[data-route-mail-name]');
+      const emailInput = popover?.querySelector('[data-route-mail-email]');
+      const name = nameInput?.value.trim() || '';
+      const email = emailInput?.value.trim() || '';
+      if (!name || !email) { notify('error', '请填写邮件接收人姓名和邮箱。'); (!name ? nameInput : emailInput)?.focus(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { notify('error', '请输入正确的邮箱地址。'); emailInput?.focus(); return; }
+      route.mailRecipients = (route.mailRecipients || []).map(normalizeMailRecipient).filter(Boolean);
+      if (route.mailRecipients.some((recipient) => recipient.email.toLowerCase() === email.toLowerCase())) { notify('error', '该邮箱已添加，请勿重复添加。'); emailInput?.focus(); return; }
+      route.mailRecipients.push({ name, email });
+      render();
+      return;
+    }
     if (action === 'remove-route-mail') {
-      route.mailRecipients = route.mailRecipients || [];
+      route.mailRecipients = (route.mailRecipients || []).map(normalizeMailRecipient).filter(Boolean);
       route.mailRecipients.splice(Number(button.dataset.mailIndex), 1);
       render();
       return;
@@ -2295,6 +2798,12 @@
     }
   }, true);
   pageScope.addEventListener('click', (event) => {
+    const serviceProductEditTrigger = event.target.closest('[data-service-product-edit]');
+    if (serviceProductEditTrigger) { event.stopPropagation(); openServiceProductEditor(serviceProductEditTrigger); return; }
+    const productPickerTrigger = event.target.closest('[data-order-product-picker]');
+    if (productPickerTrigger) { openOrderProductPicker(productPickerTrigger); return; }
+    const orderProductAction = event.target.closest('[data-order-product-action]');
+    if (orderProductAction) { handleOrderProductAction(orderProductAction); return; }
     const goodsToggle = event.target.closest('[data-goods-toggle]');
     if (goodsToggle) {
       const row = goodsToggle.closest('[data-goods-row]');
@@ -2316,6 +2825,8 @@
     if (button) handleAction(button);
   });
   pageScope.addEventListener('input', (event) => {
+    if (event.target.matches('[data-service-inline-field]')) { updateServiceProductInlineField(event.target); return; }
+    if (event.target.matches('[data-order-product-field]')) { updateOrderProductField(event.target); return; }
     if (hierarchyMode && event.target.matches('[data-arrangement-quantity]')) {
       const arrangement = findRoute(event.target.dataset.routeId);
       if (arrangement) arrangement.hierarchyQuantity = Math.max(0, number(event.target.value));
@@ -2327,7 +2838,26 @@
       refreshDerived();
     }
   });
+  pageScope.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' || !event.target.matches('[data-route-mail-name], [data-route-mail-email]')) return;
+    const box = event.target.closest('[data-route-mail-box]');
+    const nameInput = box?.querySelector('[data-route-mail-name]');
+    const emailInput = box?.querySelector('[data-route-mail-email]');
+    if (!nameInput?.value.trim()) { event.preventDefault(); nameInput?.focus(); return; }
+    if (!emailInput?.value.trim()) { event.preventDefault(); emailInput?.focus(); return; }
+    event.preventDefault();
+    box.querySelector('[data-route-action="confirm-route-mail"]')?.click();
+  });
   pageScope.addEventListener('change', (event) => {
+    if (event.target.matches('[data-service-inline-field]')) {
+      const max = number(event.target.dataset.serviceInlineMax);
+      const value = number(event.target.value);
+      const field = event.target.dataset.serviceInlineField;
+      if ((field === 'standardQty' ? (!value || value > max) : value > max)) event.target.value = max;
+      updateServiceProductInlineField(event.target);
+      return;
+    }
+    if (event.target.matches('[data-order-product-field]')) { updateOrderProductField(event.target); render(); return; }
     if (hierarchyMode && event.target.matches('[data-arrangement-upstream]')) {
       const topRoute = state.routes.find((route) => (route.items || []).some((product) => product.id === event.target.dataset.productId));
       const product = topRoute?.items.find((item) => item.id === event.target.dataset.productId);
@@ -2366,6 +2896,20 @@
   linkPickerCancel.addEventListener('click', closeLinkedItemPicker);
   linkPicker.addEventListener('click', (event) => { if (event.target === linkPicker) closeLinkedItemPicker(); });
   linkPickerConfirm.addEventListener('click', confirmLinkedItems);
+  orderProductPickerClose?.addEventListener('click', closeOrderProductPicker);
+  orderProductPickerCancel?.addEventListener('click', closeOrderProductPicker);
+  orderProductPickerConfirm?.addEventListener('click', confirmOrderProductPicker);
+  orderProductPicker?.addEventListener('click', (event) => { if (event.target === orderProductPicker) closeOrderProductPicker(); });
+  orderProductPickerBody?.addEventListener('change', (event) => { if (event.target.matches('[data-product-picker-item]')) updateOrderProductPickerSummary(); });
+  serviceProductEditorClose?.addEventListener('click', closeServiceProductEditor);
+  serviceProductEditorCancel?.addEventListener('click', closeServiceProductEditor);
+  serviceProductEditorSave?.addEventListener('click', saveServiceProductEditor);
+  document.addEventListener('click', (event) => {
+    if (!serviceProductEditor || serviceProductEditor.hidden) return;
+    if (serviceProductEditor.contains(event.target) || event.target.closest('[data-service-product-edit]')) return;
+    closeServiceProductEditor();
+  });
+  window.addEventListener('resize', closeServiceProductEditor);
   linkPickerBody.addEventListener('change', (event) => {
     if (event.target.matches('input[data-link-source-item]')) updateLinkedPickerSummary();
   });
@@ -2415,7 +2959,9 @@
   });
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
-    if (feeRouteMenu && !feeRouteMenu.hidden) closeFeeRouteMenu();
+    if (serviceProductEditor && !serviceProductEditor.hidden) closeServiceProductEditor();
+    else if (orderProductPicker && !orderProductPicker.hidden) closeOrderProductPicker();
+    else if (feeRouteMenu && !feeRouteMenu.hidden) closeFeeRouteMenu();
     else if (!flowDrawer.hidden) closeFlowDrawer();
     else if (!linkPicker.hidden) closeLinkedItemPicker();
     else if (!preview.hidden) closePreview();
@@ -2427,6 +2973,7 @@
   }
 
   window.OrderRoutesValidation = {
+    getOrderProducts: () => state.orderProducts,
     validateReferences: () => validateReferencedItemQuantities(),
     validateSubmitReferences: () => validateSubmitReferences(),
     getLastError: () => window.__lastOrderReferenceError || '',

@@ -499,38 +499,8 @@
     .order-link-item-row.is-linked td { color:#94a3b8; }
     .order-link-check { width:36px; text-align:center; }
     .order-link-tag { display:inline-flex; height:18px; align-items:center; padding:0 6px; border-radius:9px; background:#f1f5f9; color:#64748b; font-size:10px; }
-    /* ===== 线路卡片只读态：白卡 + 一行四字段 ===== */
-    [data-route-readonly="true"] .order-route-card { border:1px solid #eef1f5; border-radius:12px; background:#fff; box-shadow:0 2px 8px rgba(15,23,42,.04); }
-    [data-route-readonly="true"] .order-route-card-head { padding:14px 18px; background:#fff; border-bottom:1px solid #f2f4f8; }
-    [data-route-readonly="true"] .order-route-card-body { padding:8px 18px 16px; }
-    [data-route-readonly="true"] .order-route-block { margin:0; padding:0; border:0; background:transparent; }
-    [data-route-readonly="true"] .order-route-block + .order-route-block { margin-top:14px; padding-top:12px; border-top:1px solid #f4f6f9; }
-    [data-route-readonly="true"] .order-route-block-head { padding:0 0 4px; border:0; background:transparent; }
-    [data-route-readonly="true"] .order-route-block-title { display:flex; align-items:center; gap:8px; color:#4b5a6e; font-size:12px; font-weight:700; letter-spacing:.2px; }
-    [data-route-readonly="true"] .order-route-block-title::before { content:""; width:3px; height:12px; border-radius:2px; background:#c9d7ee; }
-    [data-route-readonly="true"] .order-route-block-title span { color:#b6c2d1; font-weight:400; }
-    [data-route-readonly="true"] .order-route-transport-requirements > .order-route-block-head { display:none; }
-    [data-route-readonly="true"] .ro-goods-list + .order-route-block { margin-top:12px; padding-top:12px; border-top:1px solid #f4f6f9; }
-
-    /* 字段：一行四个，标签在左、值在右；只读态按业务场景排列 */
-    [data-route-readonly="true"] .order-route-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-flow:row; gap:0 24px; }
-    [data-route-readonly="true"] .order-route-field,
-    [data-route-readonly="true"] .order-route-field.row-start,
-    [data-route-readonly="true"] .order-route-field.span-2,
-    [data-route-readonly="true"] .order-route-field.span-3,
-    [data-route-readonly="true"] .order-route-field.span-4,
-    [data-route-readonly="true"] .order-route-field.span-6 { grid-column:auto / span 1; display:flex; align-items:baseline; gap:8px; min-width:0; padding:6px 0; }
-    [data-route-readonly="true"] .route-readonly-field > label { flex:0 0 88px; margin:0; color:#98a2b3; font-size:11px; font-weight:400; text-align:left; line-height:1.55; }
-    [data-route-readonly="true"] .route-readonly-field > :not(label):not(.route-readonly-value) { display:none !important; }
-    [data-route-readonly="true"] .route-readonly-value { flex:1 1 auto; min-width:0; color:#1f2937; font-size:13px; font-weight:500; line-height:1.55; overflow-wrap:anywhere; white-space:pre-wrap; }
-    [data-route-readonly="true"] .route-readonly-value[data-empty="true"] { color:#aab4c3; font-weight:400; }
-
-    @media(max-width:1200px) {
-      [data-route-readonly="true"] .order-route-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:0 22px; }
-    }
-    @media(max-width:920px) {
-      [data-route-readonly="true"] .order-route-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 24px; }
-    }
+    /* ===== 服务要求只读态：沿用编辑态布局，只读字段灰底 ===== */
+    [data-route-readonly="true"] .route-readonly-value { display:none !important; }
 
     /* 商品明细：摘要行 + 按需横向展开全部字段 */
     .ro-goods-list { display:grid; gap:8px; }
@@ -592,16 +562,14 @@
     [data-route-readonly="true"] .order-route-containers-table th:last-child,
     [data-route-readonly="true"] .order-route-containers-table td:last-child { display:none !important; }
 
-    /* 控件去控件化 */
-    [data-route-readonly="true"] input,
-    [data-route-readonly="true"] select,
-    [data-route-readonly="true"] textarea { border:0 !important; background:transparent !important; box-shadow:none !important; padding:2px 0 !important; color:#1f2937 !important; font-size:13px; font-weight:500; cursor:default; }
-    [data-route-readonly="true"] select { appearance:none; -webkit-appearance:none; background-image:none !important; }
-    [data-route-readonly="true"] select[data-empty] { color:#c3ccda !important; }
-    [data-route-readonly="true"] input::placeholder,
-    [data-route-readonly="true"] textarea::placeholder { color:#c3ccda !important; opacity:1; }
-    [data-route-readonly="true"] .order-route-field label .required { display:none; }
-    [data-route-readonly="true"] .order-route-items .control { height:auto !important; min-height:20px; }
+    /* 只读字段：保留编辑态控件外观，仅使用灰底 */
+    [data-route-readonly="true"] input.control,
+    [data-route-readonly="true"] select.control,
+    [data-route-readonly="true"] textarea.control { border:1px solid #e2e7ef !important; background:#f4f6f8 !important; box-shadow:none !important; color:#64748b !important; cursor:default; }
+    [data-route-readonly="true"] select.control { appearance:auto; -webkit-appearance:auto; background-image:none !important; }
+    [data-route-readonly="true"] input.control::placeholder,
+    [data-route-readonly="true"] textarea.control::placeholder { color:#a8b2c1 !important; opacity:1; }
+    [data-route-readonly="true"] .order-route-field label .required { color:#94a3b8; }
     [data-route-readonly="true"] [data-fee-route-toggle] { border:0 !important; background:transparent !important; padding:0 !important; color:#1f2937 !important; }
     [data-route-readonly="true"] [data-fee-route-toggle] .order-fee-route-chevron { display:none; }
 
@@ -620,6 +588,128 @@
     [data-route-readonly="true"] .order-route-items td:nth-child(7) select,
     [data-route-readonly="true"] .order-route-items td:nth-child(9) select,
     [data-route-readonly="true"] .order-route-items td:nth-child(10) select { color:#9aa8bb !important; }
+
+
+    /* 订单商品主数据与服务要求商品选择 */
+    .order-products-section-head { align-items:center; }
+    .order-product-table-wrap { display:grid; gap:9px; }
+    .order-product-table-note { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:9px 12px; border:1px solid #e7edf5; border-radius:7px; background:#f8fafc; color:#64748b; font-size:11px; }
+    .order-product-table-note b { color:#1d4ed8; font-variant-numeric:tabular-nums; }
+    .order-product-table .control { min-width:64px; height:30px; }
+    .order-product-table th:nth-child(1), .order-product-table td:nth-child(1) { position:sticky; left:0; z-index:2; min-width:168px; background:#fff; }
+    .order-product-table th:nth-child(1) { z-index:4; background:#f8fafc; }
+    .order-product-table th:nth-child(2), .order-product-table td:nth-child(2) { position:sticky; left:168px; z-index:2; min-width:176px; background:#fff; box-shadow:1px 0 0 #eef2f7; }
+    .order-product-table th:nth-child(2) { z-index:4; background:#f8fafc; }
+    .order-product-table td:nth-child(2) .control { min-width:160px; }
+    .order-product-route-ref { display:block; max-width:180px; overflow:hidden; color:#64748b; text-overflow:ellipsis; white-space:nowrap; }
+    .order-product-row-actions { display:flex; align-items:center; justify-content:center; gap:4px; }
+    .order-product-empty { padding:24px !important; color:#94a3b8 !important; text-align:center !important; }
+    .order-service-products-block { margin-top:10px; overflow:hidden; border:1px solid #e8edf4; border-radius:7px; background:#fbfcfe; }
+    .order-service-product-selector { margin-top:10px; }
+    .order-service-products-bar { min-height:42px; display:flex; align-items:center; gap:10px; padding:6px 8px 6px 12px; }
+    .order-service-products-label { flex:0 0 auto; color:#526176; font-size:11px; font-weight:600; white-space:nowrap; }
+    .order-service-products-label span { color:#2563eb; font-variant-numeric:tabular-nums; }
+    .service-product-chip-list { min-width:0; flex:1 1 auto; display:flex; flex-wrap:nowrap; align-items:center; gap:6px; overflow-x:auto; overflow-y:hidden; padding:2px 0; scrollbar-width:thin; scrollbar-color:#cbd5e1 transparent; }
+    .service-product-chip-list::-webkit-scrollbar { height:3px; }
+    .service-product-chip-list::-webkit-scrollbar-thumb { border-radius:2px; background:#cbd5e1; }
+    .service-product-chip { flex:0 0 auto; height:29px; display:inline-flex; align-items:center; gap:6px; min-width:0; max-width:280px; padding:0 5px 0 8px; border:1px solid #dce6f2; border-radius:15px; background:#fff; }
+    .service-product-chip strong { max-width:150px; overflow:hidden; color:#1f2937; font-size:11px; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
+    .service-product-chip-qty { flex:0 0 auto; padding:1px 5px; border-radius:8px; color:#2563eb; background:#eef5ff; font-size:9px; font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .service-product-chip small { max-width:90px; overflow:hidden; color:#94a3b8; font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
+    .service-product-chip-remove { flex:0 0 18px; width:18px; height:18px; display:grid; place-items:center; padding:0; border:0; border-radius:50%; color:#94a3b8; background:transparent; cursor:pointer; }
+    .service-product-chip-remove:hover { color:#c62828; background:#fff1ef; }
+    .service-product-select-btn { flex:0 0 auto; height:28px; padding:0 10px; font-size:11px; }
+    .service-product-empty { padding:2px 4px; color:#94a3b8; font-size:10px; white-space:nowrap; }
+    .order-product-picker-dialog { width:min(1120px,calc(100vw - 40px)); }
+    .order-product-picker-summary { margin-bottom:10px; padding:9px 12px; border:1px solid #dbe7fb; border-radius:6px; color:#2563eb; background:#f5f9ff; font-size:12px; font-weight:600; }
+    .order-product-picker-table-wrap { overflow:auto; border:1px solid #e3eaf3; border-radius:7px; background:#fff; }
+    .order-product-picker-table { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; }
+    .order-product-picker-table th { position:sticky; top:0; z-index:1; height:36px; padding:0 10px; border-bottom:1px solid #e8edf4; color:#64748b; background:#f8fafc; font-size:11px; font-weight:600; text-align:left; white-space:nowrap; }
+    .order-product-picker-table td { padding:10px; border-bottom:1px solid #eef2f7; color:#334155; vertical-align:middle; white-space:nowrap; }
+    .order-product-picker-table tbody tr:last-child td { border-bottom:0; }
+    .order-product-picker-table tbody tr:hover, .order-product-picker-table tbody tr.selected { background:#f7faff; }
+    .order-product-picker-table td:nth-child(3) { min-width:220px; }
+    .order-product-picker-table td:nth-child(3) strong, .order-product-picker-table td:nth-child(3) small { display:block; overflow:hidden; text-overflow:ellipsis; }
+    .order-product-picker-table td:nth-child(3) strong { color:#1f2937; font-size:12px; font-weight:600; }
+    .order-product-picker-table td:nth-child(3) small { margin-top:2px; color:#94a3b8; font-size:10px; }
+    .order-product-picker-tip { margin:-4px 0 10px; color:#8b97a8; font-size:10px; }
+    .order-product-picker-qty-cell { min-width:150px; }
+    .order-product-picker-qty-box { display:inline-flex; align-items:center; gap:6px; }
+    .order-product-picker-qty-input { width:82px; height:30px; padding:0 8px; border:1px solid #d9e1ec; border-radius:5px; color:#334155; background:#fff; font-size:12px; text-align:right; font-variant-numeric:tabular-nums; box-sizing:border-box; }
+    .order-product-picker-qty-input:disabled { color:#a8b2c1; background:#f7f9fc; }
+    .order-product-picker-qty-input:focus { border-color:#8db6ff; outline:2px solid #dbe9ff; outline-offset:0; }
+    .order-product-picker-qty-input.is-invalid { border-color:#e38b84 !important; background:#fff6f5 !important; outline-color:#f9d9d6; }
+    .order-product-picker-qty-box span { min-width:20px; color:#8b97a8; font-size:10px; }
+    .order-product-picker-check { width:38px; text-align:center; }
+    .order-product-picker-empty { padding:30px !important; color:#94a3b8 !important; text-align:center !important; }
+    /* 商品选择弹窗完整字段 */
+    .order-product-picker-table-full { width:max-content; min-width:100%; }
+    .order-product-picker-table-full th,
+    .order-product-picker-table-full td { white-space:nowrap; }
+    .order-product-picker-table-full th:nth-child(1),
+    .order-product-picker-table-full td:nth-child(1) { position:sticky; left:0; z-index:3; background:#fff; }
+    .order-product-picker-table-full th:nth-child(1) { z-index:5; background:#f8fafc; }
+    .order-product-picker-table-full th:nth-child(2),
+    .order-product-picker-table-full td:nth-child(2) { position:sticky; left:38px; z-index:2; min-width:180px; background:#fff; box-shadow:1px 0 0 #eef2f7; }
+    .order-product-picker-table-full th:nth-child(2) { z-index:5; background:#f8fafc; }
+    .order-product-picker-table-full td:nth-child(3) { min-width:170px; max-width:190px; white-space:normal; }
+    .order-product-picker-table-full td:nth-child(14) { min-width:150px; }
+    .order-product-picker-edit { height:30px; padding:0 7px; border:1px solid #d9e1ec; border-radius:5px; color:#334155; background:#fff; font-family:inherit; font-size:11px; box-sizing:border-box; }
+    input.order-product-picker-edit { width:82px; text-align:right; font-variant-numeric:tabular-nums; }
+    select.order-product-picker-edit { width:76px; }
+    .order-product-picker-edit:disabled { color:#a8b2c1; background:#f7f9fc; cursor:default; }
+    .order-product-picker-edit:focus { border-color:#8db6ff; outline:2px solid #dbe9ff; outline-offset:0; }
+    .order-product-picker-edit.is-invalid { border-color:#e38b84 !important; background:#fff6f5 !important; outline-color:#f9d9d6; }
+    .order-product-picker-editable-cell small { display:block; margin-top:3px; color:#9aa6b6; font-size:9px; line-height:1.2; }
+    .order-product-picker-readonly-text { display:block; max-width:170px; overflow:hidden; color:#64748b; text-overflow:ellipsis; }
+    .order-product-picker-row.is-invalid td { background:#fffafa; }
+    .service-product-chip { cursor:help; }
+    .service-product-chip-edit { flex:0 0 18px; width:18px; height:18px; display:grid; place-items:center; padding:0; border:0; border-radius:50%; color:#6f7d90; background:transparent; cursor:pointer; font-size:11px; }
+    .service-product-chip-edit:hover { color:#2563eb; background:#edf5ff; }
+    .order-service-product-editor { position:fixed; z-index:180; width:390px; display:flex; flex-direction:column; gap:12px; padding:14px; border:1px solid #dce4ef; border-radius:9px; background:#fff; box-shadow:0 16px 42px rgba(15,23,42,.2); }
+    .order-service-product-editor[hidden] { display:none; }
+    .order-service-product-editor-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .order-service-product-editor-head strong { display:block; color:#1f2937; font-size:13px; font-weight:700; }
+    .order-service-product-editor-head small { display:block; margin-top:3px; color:#8b97a8; font-size:10px; }
+    .order-service-product-editor-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+    .order-service-product-editor-grid label { min-width:0; }
+    .order-service-product-editor-grid label > span { display:block; margin-bottom:5px; color:#6b7789; font-size:10px; }
+    .order-service-product-editor-control { display:flex; gap:4px; }
+    .order-service-product-editor-control input { width:64px; height:30px; padding:0 7px; border:1px solid #d9e1ec; border-radius:5px; color:#334155; background:#fff; box-sizing:border-box; font-size:11px; text-align:right; }
+    .order-service-product-editor-control select { width:62px; height:30px; padding:0 4px; border:1px solid #d9e1ec; border-radius:5px; color:#334155; background:#fff; box-sizing:border-box; font-size:10px; }
+    .order-service-product-editor-control input:focus, .order-service-product-editor-control select:focus { border-color:#8db6ff; outline:2px solid #dbe9ff; outline-offset:0; }
+    .order-service-product-editor-validation { min-height:16px; color:#c62828; font-size:10px; }
+    .order-service-product-editor-foot { display:flex; justify-content:flex-end; gap:7px; }
+    /* 水运件杂：邮件接收人邮箱 */
+    #orderRoutesSection .order-route-card:has(.route-mail-recipient-popover:not([hidden])) { overflow:visible; z-index:8; }
+    .route-mail-recipient-box .demand-email-recipient-popover { z-index:90; }
+    [data-route-readonly="true"] [data-route-action="toggle-route-mail"],
+    [data-route-readonly="true"] [data-route-action="remove-route-mail"],
+    [data-route-readonly="true"] .route-mail-recipient-popover { display:none !important; }
+    /* 服务要求商品明细：紧凑列表与四项行内编辑 */
+    .order-service-products-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 10px 8px 12px; border-bottom:1px solid #e8edf4; }
+    .service-product-list-wrap { max-height:190px; overflow:auto; }
+    .service-product-list-table { width:100%; border-collapse:separate; border-spacing:0; }
+    .service-product-list-table th { position:sticky; top:0; z-index:2; height:32px; padding:0 9px; border-bottom:1px solid #e8edf4; color:#7a8798; background:#f8fafc; font-size:10px; font-weight:600; text-align:left; white-space:nowrap; }
+    .service-product-list-table td { padding:7px 9px; border-bottom:1px solid #eef2f7; color:#334155; vertical-align:middle; white-space:nowrap; }
+    .service-product-list-table tr:last-child td { border-bottom:0; }
+    .service-product-list-table th:first-child, .service-product-list-table td:first-child { min-width:210px; }
+    .service-product-list-table th:last-child, .service-product-list-table td:last-child { width:34px; text-align:center; }
+    .service-product-list-main { min-width:0; display:flex; flex-direction:column; gap:2px; cursor:help; }
+    .service-product-list-main strong, .service-product-list-main small { max-width:250px; overflow:hidden; text-overflow:ellipsis; }
+    .service-product-list-main strong { color:#1f2937; font-size:11px; font-weight:600; }
+    .service-product-list-main small { color:#8b97a8; font-size:9px; }
+    .service-product-inline-control { display:inline-flex; align-items:center; gap:4px; }
+    .service-product-inline-control span { min-width:18px; color:#8b97a8; font-size:9px; }
+    .service-product-inline-input { width:68px; height:28px; padding:0 5px; border:1px solid #d9e1ec; border-radius:5px; color:#334155; background:#fff; font-size:11px; text-align:right; box-sizing:border-box; font-variant-numeric:tabular-nums; }
+    .service-product-inline-input:focus { border-color:#8db6ff; outline:2px solid #dbe9ff; outline-offset:0; }
+    .service-product-inline-input[readonly] { color:#64748b; background:#f4f6f8; cursor:default; }
+    .service-product-inline-input.is-invalid { border-color:#e38b84 !important; background:#fff6f5 !important; }
+    .service-product-empty { padding:14px 10px !important; color:#94a3b8 !important; text-align:center !important; }
+    body[data-order-readonly="true"] [data-order-product-action="add"],
+    body[data-order-readonly="true"] [data-order-product-picker],
+    body[data-order-readonly="true"] [data-service-product-edit],
+    body[data-order-readonly="true"] [data-service-product-remove] { display:none !important; }
 
 </style>
   <script>
@@ -755,6 +845,7 @@
             <div class="order-module-links">
               <button type="button" data-module-target="organizationSection">组织信息</button>
               <button type="button" data-module-target="basicInfoSection">基础信息</button>
+              <button type="button" data-module-target="orderProductsSection">商品明细</button>
               <button type="button" data-module-target="orderRoutesSection">服务要求</button>
               <button type="button" data-module-target="costProfitSection">预估费用</button>
               <button type="button" data-module-target="systemInfoSection">系统信息</button>
@@ -817,23 +908,9 @@
               <div class="field"><div class="field-label">客户联系人</div><input class="control" autocomplete="off" value="张先生" aria-label="客户联系人"></div>
 
               <div class="field"><div class="field-label">客户联系人电话</div><input class="control" autocomplete="off" value="138 0000 0000" aria-label="客户联系人电话"></div>
-              <div class="field" id="orderContactEmailField">
+              <div class="field">
                 <div class="field-label">客户联系人邮箱</div>
-                <div class="demand-email-recipient-box" id="orderEmailRecipientBox" data-seed-name="张先生" data-seed-email="contact@example.com">
-                  <div class="demand-email-recipient-chips" id="orderEmailRecipientList"></div>
-                  <button class="demand-email-recipient-trigger" id="addOrderEmailRecipientBtn" type="button" aria-expanded="false" aria-controls="orderEmailRecipientPopover">＋ 添加</button>
-                  <div class="demand-email-recipient-popover" id="orderEmailRecipientPopover" hidden>
-                    <div class="demand-email-recipient-popover-fields">
-                      <input id="orderEmailRecipientDraftName" type="text" placeholder="姓名" aria-label="邮件接收人姓名">
-                      <input id="orderEmailRecipientDraftEmail" type="email" placeholder="邮箱" aria-label="邮件接收人邮箱">
-                    </div>
-                    <div class="demand-email-recipient-popover-actions">
-                      <button class="btn" id="cancelOrderEmailRecipientBtn" type="button">取消</button>
-                      <button class="btn primary" id="confirmOrderEmailRecipientBtn" type="button">添加</button>
-                    </div>
-                  </div>
-                </div>
-                <input id="orderContactEmailData" type="hidden" aria-label="客户联系人邮箱数据">
+                <input class="control" id="orderContactEmailInput" type="text" autocomplete="off" value="contact@example.com" placeholder="请输入邮箱，多个邮箱可用逗号分隔" aria-label="客户联系人邮箱">
               </div>
               <div class="field"><div class="field-label">业务类型<span class="required">*</span></div><select class="control" aria-label="业务类型"><option>出口</option><option>进口</option><option>内贸</option><option>转口</option></select></div>
               <div class="field"><div class="field-label">业务日期<span class="required">*</span></div><input class="control" autocomplete="off" type="date" value="2026-10-26" aria-label="业务日期"></div>
@@ -870,6 +947,14 @@
             </div>
           </div>
         </section>
+        <section class="detail-section" id="orderProductsSection" data-collapsible-section aria-labelledby="order-products-title">
+          <div class="detail-section-head order-products-section-head">
+            <div class="detail-section-title" id="order-products-title"><svg><use href="#p-package"/></svg>商品明细</div>
+            <div class="order-route-head-actions"><button class="detail-btn outline-primary" id="addOrderProductBtn" type="button" data-order-product-action="add">+ 添加商品</button></div>
+          </div>
+          <div class="detail-section-body"><div id="orderProductsHost"></div></div>
+        </section>
+
         <section class="detail-section" id="orderRoutesSection" data-collapsible-section aria-labelledby="order-routes-title">
           <div class="detail-section-head order-routes-section-head">
             <div class="detail-section-title" id="order-routes-title"><svg><use href="#p-truck"/></svg>运输服务要求</div>
@@ -909,45 +994,12 @@
         </section>
 
         <template id="universalServiceGoodsTemplate">
-          <div class="order-route-block order-route-goods-block" data-service-goods-block>
-            <div class="order-route-block-head">
-              <div class="order-route-block-title">商品清单 <span data-service-goods-count>(1 项)</span></div>
-              <div class="order-route-block-actions">
-                <button class="detail-btn outline-primary" type="button" data-service-goods-action="add">+ 添加商品</button>
-              </div>
+          <div class="order-route-block order-service-product-selector" data-service-goods-block>
+            <div class="order-service-products-head">
+              <div class="order-service-products-label">关联订单商品 <span data-service-goods-count>(0)</span></div>
+              <button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="service">选择商品</button>
             </div>
-            <div class="order-route-items-wrap">
-              <table class="order-route-items" aria-label="服务要求商品清单">
-                <thead><tr><th>商品分类 *</th><th>商品描述</th><th>标准数量 *</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>关联线路</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead>
-                <tbody>
-                  <tr data-service-item-row>
-                    <td><select class="control" data-service-item-field="name" aria-label="商品分类"><option selected>进口纸浆</option><option>钢材</option><option>玉米</option><option>重卡卡车</option><option>新能源整车</option></select></td>
-                    <td><input class="control" data-service-item-field="description" value="进口纸浆" placeholder="请输入商品描述" aria-label="商品描述"></td>
-                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="standardQty" value="1.20" aria-label="标准数量"></td>
-                    <td><input class="control" type="number" min="0" step="1" data-service-item-field="pieceCount" value="12" aria-label="件数"></td>
-                    <td><select class="control" data-service-item-field="pieceCountUnit" aria-label="件数单位"><option>箱</option><option selected>托</option><option>桶</option><option>台</option><option>件</option></select></td>
-                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="grossWeight" value="1200" aria-label="毛重"></td>
-                    <td><select class="control" data-service-item-field="grossWeightUnit" aria-label="毛重单位"><option>kg</option><option selected>吨</option></select></td>
-                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="volume" value="560" aria-label="体积"></td>
-                    <td><select class="control" data-service-item-field="volumeUnit" aria-label="体积单位"><option selected>m³</option><option>CBM</option></select></td>
-                    <td><select class="control" data-service-item-field="standardUnit" aria-label="标准单位"><option selected>吨</option><option>千克</option><option>立方米</option><option>件</option></select></td>
-                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="pieceWeight" value="100" aria-label="单件重量"></td>
-                    <td><select class="control" data-service-item-field="pieceWeightUnit" aria-label="单件重量单位"><option>kg</option><option selected>吨</option></select></td>
-                    <td><input class="control" data-service-item-field="specDimensions" value="1200 × 1000 × 1100 mm" placeholder="长 × 宽 × 高" aria-label="规格尺寸"></td>
-                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="overRate" value="3" placeholder="%" aria-label="溢装率"></td>
-                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="underRate" value="1" placeholder="%" aria-label="短装率"></td>
-                    <td><input class="control" type="number" min="0" step="0.01" data-service-item-field="goodsValueUnitPrice" value="3200" aria-label="货值单价"></td>
-                    <td><input class="control" type="number" data-service-item-field="goodsValueAmount" value="3840000" readonly aria-label="货值金额"></td>
-                    <td><select class="control" data-service-item-field="goodsValueCurrency" aria-label="货值币种"><option selected>CNY</option><option>USD</option><option>EUR</option></select></td>
-                    <td><span class="order-route-source-ref">—</span></td>
-                    <td><input class="control" data-service-item-field="englishName" value="Imported Pulp" placeholder="请输入商品英文名" aria-label="商品英文名"></td>
-                    <td><input class="control" data-service-item-field="tradeContractNo" value="HT-2026-010" placeholder="请输入合同号" aria-label="贸易合同号"></td>
-                    <td><select class="control" data-service-item-field="tradeContractType" aria-label="贸易合同类型"><option selected>销售合同</option><option>采购合同</option><option>框架合同</option></select></td>
-                    <td><button class="order-route-row-action" type="button" data-service-goods-action="duplicate">复制</button><button class="order-route-icon-btn danger" type="button" data-service-goods-action="remove" aria-label="删除商品">×</button></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <div data-service-selected-products></div>
           </div>
         </template>
 
@@ -1215,6 +1267,28 @@
       <div class="order-route-preview-body" id="orderLinkedItemPickerBody"></div>
       <div class="order-route-preview-foot"><button class="detail-btn" id="orderLinkedItemPickerCancel" type="button">取消</button><button class="detail-btn primary" id="orderLinkedItemPickerConfirm" type="button">确认关联</button></div>
     </section>
+  </div>
+
+  <div class="order-route-preview-backdrop" id="orderProductPicker" hidden>
+    <section class="order-route-preview-dialog order-product-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="orderProductPickerTitle" tabindex="-1">
+      <div class="order-route-preview-head"><div><div class="order-route-preview-title" id="orderProductPickerTitle">选择订单商品</div><div class="order-route-preview-subtitle">从当前客户订单的商品明细中选择，服务要求只引用商品，不重复维护商品资料。</div></div><button class="feedback-preview-close" id="orderProductPickerClose" type="button" aria-label="关闭选择订单商品"><svg><use href="#p-close"/></svg></button></div>
+      <div class="order-route-preview-body" id="orderProductPickerBody"></div>
+      <div class="order-route-preview-foot"><button class="detail-btn" id="orderProductPickerCancel" type="button">取消</button><button class="detail-btn primary" id="orderProductPickerConfirm" type="button">确认选择</button></div>
+    </section>
+  </div>
+
+  <div class="order-service-product-editor" id="serviceProductEditor" role="dialog" aria-labelledby="serviceProductEditorName" hidden>
+    <div class="order-service-product-editor-head">
+      <div><strong id="serviceProductEditorName">商品</strong><small id="serviceProductEditorLimit">订单数量：—</small></div>
+      <button class="feedback-preview-close" id="serviceProductEditorClose" type="button" aria-label="关闭商品数量编辑"><svg><use href="#p-close"/></svg></button>
+    </div>
+    <div class="order-service-product-editor-grid">
+      <label><span>标准数量</span><div class="order-service-product-editor-control"><input id="serviceProductEditorStandardQty" type="number" min="0.01" step="0.01"><select id="serviceProductEditorStandardUnit"><option>吨</option><option>千克</option><option>立方米</option><option>件</option><option>箱</option><option>托</option><option>桶</option><option>台</option></select></div></label>
+      <label><span>件数</span><div class="order-service-product-editor-control"><input id="serviceProductEditorPieceQty" type="number" min="0" step="1"><select id="serviceProductEditorPieceUnit"><option>箱</option><option>托</option><option>桶</option><option>台</option><option>件</option></select></div></label>
+      <label><span>毛重</span><div class="order-service-product-editor-control"><input id="serviceProductEditorGrossQty" type="number" min="0" step="0.01"><select id="serviceProductEditorGrossUnit"><option>kg</option><option>吨</option></select></div></label>
+    </div>
+    <div class="order-service-product-editor-validation" id="serviceProductEditorValidation"></div>
+    <div class="order-service-product-editor-foot"><button class="detail-btn" id="serviceProductEditorCancel" type="button">取消</button><button class="detail-btn primary" id="serviceProductEditorSave" type="button">保存</button></div>
   </div>
 
   <div class="order-flow-backdrop" id="orderRouteFlowDrawer" hidden>
@@ -1611,10 +1685,8 @@
         const consignmentValue = consignmentInput ? consignmentInput.value.trim() : '';
         const consignments = consignmentValue ? [consignmentValue] : [];
         const selectedValues = (name) => Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map((input) => input.value);
-        const emailRecipients = Array.from(document.querySelectorAll('#orderEmailRecipientList [data-order-email-recipient]')).map((chip) => ({
-          name: chip.dataset.recipientName || '',
-          email: chip.dataset.recipientEmail || ''
-        }));
+        const contactEmailText = document.getElementById('orderContactEmailInput')?.value?.trim() || '';
+        const emailRecipients = contactEmailText.split(/[，,;；\s]+/).filter(Boolean).map((email) => ({ name: '', email }));
         const currentVersion = fields['版本号'] || '1.0';
         const nextVersion = incrementOrderVersion(currentVersion);
         const historyRows = readVersionHistory();
@@ -1744,85 +1816,17 @@
         }
       }
 
-      const emailBox = document.getElementById('orderEmailRecipientBox');
-      const emailList = document.getElementById('orderEmailRecipientList');
-      const emailPopover = document.getElementById('orderEmailRecipientPopover');
-      const emailData = document.getElementById('orderContactEmailData');
-      const addEmailBtn = document.getElementById('addOrderEmailRecipientBtn');
-      const draftEmailName = document.getElementById('orderEmailRecipientDraftName');
-      const draftEmailAddress = document.getElementById('orderEmailRecipientDraftEmail');
-      let orderEmailRecipients = [];
-      if (Array.isArray(restoredDraft.emailRecipients)) {
-        orderEmailRecipients = restoredDraft.emailRecipients.filter((item) => item && (item.name || item.email));
-      } else if (Array.isArray(orderRecord?.contactEmails)) {
-        orderEmailRecipients = orderRecord.contactEmails.filter((item) => item && (item.name || item.email));
-      } else if (orderRecord?.email) {
-        orderEmailRecipients = [{ name: orderRecord.contact || '客户联系人', email: orderRecord.email }];
-      } else if (emailBox?.dataset.seedEmail) {
-        orderEmailRecipients = [{ name: emailBox.dataset.seedName || '客户联系人', email: emailBox.dataset.seedEmail }];
+      const contactEmailInput = document.getElementById('orderContactEmailInput');
+      if (contactEmailInput) {
+        const restoredEmails = Array.isArray(restoredDraft.emailRecipients)
+          ? restoredDraft.emailRecipients.map((item) => item && (item.email || item)).filter(Boolean)
+          : [];
+        const recordEmails = Array.isArray(orderRecord?.contactEmails)
+          ? orderRecord.contactEmails.map((item) => item && (item.email || item)).filter(Boolean)
+          : [];
+        const savedEmail = restoredDraft.fields?.['客户联系人邮箱'] || restoredDraft.email || (restoredEmails.length ? restoredEmails.join('，') : '') || (recordEmails.length ? recordEmails.join('，') : '') || orderRecord?.email || 'contact@example.com';
+        contactEmailInput.value = savedEmail;
       }
-
-      const emailRecipientMarkup = (recipient, index) =>
-        '<span class="demand-email-recipient-chip" data-order-email-recipient data-recipient-name="' + escapeHtml(recipient.name) + '" data-recipient-email="' + escapeHtml(recipient.email) + '">' +
-          '<span class="demand-email-recipient-chip-copy"><strong>' + escapeHtml(recipient.name || '未填写姓名') + '</strong><span>&lt;' + escapeHtml(recipient.email || '未填写邮箱') + '&gt;</span></span>' +
-          '<button type="button" data-remove-order-email-recipient="' + index + '" aria-label="删除邮件接收人">×</button>' +
-        '</span>';
-
-      const renderOrderEmailRecipients = () => {
-        if (!emailList) return;
-        emailList.innerHTML = orderEmailRecipients.map(emailRecipientMarkup).join('');
-        if (emailData) emailData.value = JSON.stringify(orderEmailRecipients);
-      };
-      const setOrderEmailPopoverOpen = (open) => {
-        if (!emailPopover) return;
-        emailPopover.hidden = !open;
-        addEmailBtn?.setAttribute('aria-expanded', String(open));
-        if (open) draftEmailName?.focus();
-      };
-
-      renderOrderEmailRecipients();
-      addEmailBtn?.addEventListener('click', () => setOrderEmailPopoverOpen(emailPopover.hidden));
-      document.getElementById('confirmOrderEmailRecipientBtn')?.addEventListener('click', () => {
-        const name = draftEmailName.value.trim();
-        const email = draftEmailAddress.value.trim();
-        if (!name || !email) {
-          UIState.showFormAlert(scope, 'error', '请填写邮件接收人姓名和邮箱。');
-          (!name ? draftEmailName : draftEmailAddress).focus();
-          return;
-        }
-        if (orderEmailRecipients.some((recipient) => recipient.email.toLowerCase() === email.toLowerCase())) {
-          UIState.showFormAlert(scope, 'error', '该邮箱已添加，请勿重复添加。');
-          draftEmailAddress.focus();
-          return;
-        }
-        orderEmailRecipients.push({ name, email });
-        renderOrderEmailRecipients();
-        emailData?.dispatchEvent(new Event('change', { bubbles: true }));
-        setOrderEmailPopoverOpen(false);
-        addEmailBtn?.focus();
-      });
-      document.getElementById('cancelOrderEmailRecipientBtn')?.addEventListener('click', () => {
-        draftEmailName.value = '';
-        draftEmailAddress.value = '';
-        setOrderEmailPopoverOpen(false);
-        addEmailBtn?.focus();
-      });
-      emailList?.addEventListener('click', (event) => {
-        const remove = event.target.closest('[data-remove-order-email-recipient]');
-        if (!remove) return;
-        orderEmailRecipients.splice(Number(remove.dataset.removeOrderEmailRecipient), 1);
-        renderOrderEmailRecipients();
-        emailData?.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-      document.addEventListener('click', (event) => {
-        if (!event.target.closest('#orderContactEmailField') && !emailPopover?.hidden) setOrderEmailPopoverOpen(false);
-      });
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !emailPopover?.hidden) {
-          setOrderEmailPopoverOpen(false);
-          addEmailBtn?.focus();
-        }
-      });
 
       const serviceCheckboxes = Array.from(document.querySelectorAll('input[name="orderServiceScope"]'));
       const transportCheckboxes = Array.from(document.querySelectorAll('input[name="orderTransportType"]'));
@@ -1946,7 +1950,7 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261125f"></script>
+  <script src="../assets/customer-order-routes.js?v=20261126m"></script>
   <script>
     (() => {
       const form = document.getElementById('orderDetailForm');
@@ -1959,7 +1963,7 @@
       ].filter((config) => config.section && config.host && config.add && config.template);
       const scopeInput = (value) => form.querySelector('input[name="orderServiceScope"][value="' + value + '"]');
       const editable = () => ['创建', '驳回'].includes(statusField.textContent.trim()) && form.dataset.sourceRestricted !== 'true';
-      const renumber = (config) => {
+      const escapeServiceHtml = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);      const renumber = (config) => {
         const cards = Array.from(config.host.querySelectorAll('[data-service-requirement-card]'));
         const canEdit = editable();
         cards.forEach((card, index) => {
@@ -1978,60 +1982,127 @@
           config.add.hidden = !canEdit;
           config.host.querySelectorAll('[data-delete-service-requirement]').forEach((button) => { button.hidden = !canEdit; });
           config.host.querySelectorAll('textarea').forEach((textarea) => { textarea.readOnly = !canEdit; });
+          config.host.querySelectorAll('[data-order-product-picker], [data-service-product-edit], [data-service-product-remove]').forEach((button) => { button.hidden = !canEdit; });
           renumber(config);
         });
       };
-      const updateGoodsCount = (card) => {
-        const count = card.querySelectorAll('[data-service-item-row]').length;
-        const label = card.querySelector('[data-service-goods-count]');
-        if (label) label.textContent = '(' + count + ' 项)';
+      const getOrderProducts = () => window.OrderRoutes?.getOrderProducts?.() || [];
+      const parseServiceProductIds = (card) => {
+        try { return JSON.parse(card.dataset.serviceProductIds || '[]'); } catch (error) { return []; }
       };
-      const resetGoodsRow = (row) => {
-        row.querySelectorAll('input').forEach((input) => {
-          if (input.readOnly) return;
-          input.value = '';
-        });
-        row.querySelectorAll('select').forEach((select) => { select.selectedIndex = 0; });
+      const parseServiceProductQuantities = (card) => {
+        try { return JSON.parse(card.dataset.serviceProductQuantities || '{}'); } catch (error) { return {}; }
       };
-      const addGoodsRow = (card, afterRow) => {
-        const tbody = card.querySelector('[data-service-goods-host] .order-route-items tbody');
-        if (!tbody) return;
-        const templateRow = universalServiceGoodsTemplate?.content.querySelector('[data-service-item-row]');
-        const sourceRow = afterRow || tbody.querySelector('[data-service-item-row]') || templateRow;
-        const row = sourceRow?.cloneNode(true);
-        if (!row) return;
-        if (afterRow) {
-          afterRow.after(row);
-        } else {
-          resetGoodsRow(row);
-          tbody.appendChild(row);
+      const parseServiceProductSelections = (card) => {
+        try { return JSON.parse(card.dataset.serviceProductSelections || '{}'); } catch (error) { return {}; }
+      };
+      const defaultServiceSelection = (product) => ({
+        standardQty: product.standardQty ?? product.count ?? 0,
+        standardUnit: product.standardUnit || product.unit || '',
+        pieceCount: product.pieceCount ?? product.count ?? 0,
+        pieceCountUnit: product.pieceCountUnit || product.unit || '',
+        volume: product.volume ?? product.vol ?? 0,
+        volumeUnit: product.volumeUnit || 'm³',
+        grossWeight: product.grossWeight ?? product.weight ?? 0,
+        grossWeightUnit: product.grossWeightUnit || '吨'
+      });
+      const serviceProductHoverText = (product, selection) => {
+        const qty = (value, unit) => (value ?? 0) + (unit ? ' ' + unit : '');
+        return [
+          '商品分类：' + (product.name || '—'),
+          '商品描述：' + (product.description || '—'),
+          '标准数量：' + qty(selection.standardQty, selection.standardUnit),
+          '件数：' + qty(selection.pieceCount, selection.pieceCountUnit),
+          '毛重：' + qty(selection.grossWeight, selection.grossWeightUnit),
+          '体积：' + qty(selection.volume ?? product.volume, selection.volumeUnit || product.volumeUnit),
+          '单件重量：' + qty(product.pieceWeight, product.pieceWeightUnit),
+          '规格尺寸：' + (product.specDimensions || '—'),
+          '贸易合同号：' + (product.tradeContractNo || '—'),
+          '贸易合同类型：' + (product.tradeContractType || '—')
+        ].join('\n');
+      };
+      const renderServiceProducts = (card) => {
+        if (!card) return;
+        const canEdit = editable();
+        const products = getOrderProducts();
+        const selectedIds = parseServiceProductIds(card);
+        const legacyQuantities = parseServiceProductQuantities(card);
+        const savedSelections = parseServiceProductSelections(card);
+        const selected = selectedIds.map((id) => products.find((product) => (product.sourceProductId || product.id) === id)).filter(Boolean);
+        const count = card.querySelector('[data-service-goods-count]');
+        const host = card.querySelector('[data-service-selected-products]');
+        if (count) count.textContent = '(' + selected.length + ')';
+        if (!host) return;
+        const input = (product, selection, field, max, unit) => '<div class="service-product-inline-control"><input class="control service-product-inline-input" type="number" min="0" step="0.01" value="' + escapeServiceHtml(selection[field] ?? 0) + '" max="' + escapeServiceHtml(max || 0) + '" data-service-inline-field="' + field + '" data-editor-target="service" data-product-id="' + escapeServiceHtml(product.sourceProductId || product.id) + '" data-service-inline-max="' + escapeServiceHtml(max || 0) + '" aria-label="' + escapeServiceHtml(field) + '"' + (canEdit ? '' : ' readonly') + '><span>' + escapeServiceHtml(unit || '') + '</span></div>';
+        const rows = selected.map((product) => {
+          const productId = product.sourceProductId || product.id;
+          const selection = { ...defaultServiceSelection(product), ...(savedSelections[productId] || {}), ...(legacyQuantities[productId] != null ? { standardQty: legacyQuantities[productId] } : {}) };
+          const contract = product.tradeContractNo || '未关联合同';
+          const hoverText = serviceProductHoverText(product, selection);
+          return '<tr class="service-product-list-row" data-service-product-row="' + escapeServiceHtml(productId) + '">' +
+            '<td><div class="service-product-list-main" title="' + escapeServiceHtml(hoverText) + '"><strong>' + escapeServiceHtml(product.name || '未命名商品') + '</strong><small>' + escapeServiceHtml(product.description || '—') + (contract ? ' · ' + escapeServiceHtml(contract) : '') + '</small></div></td>' +
+            '<td>' + input(product, selection, 'standardQty', product.standardQty ?? product.count, selection.standardUnit || product.standardUnit || product.unit) + '</td>' +
+            '<td>' + input(product, selection, 'pieceCount', product.pieceCount ?? product.count, selection.pieceCountUnit || product.pieceCountUnit || product.unit) + '</td>' +
+            '<td>' + input(product, selection, 'volume', product.volume ?? product.vol, selection.volumeUnit || product.volumeUnit || 'm³') + '</td>' +
+            '<td>' + input(product, selection, 'grossWeight', product.grossWeight ?? product.weight, selection.grossWeightUnit || product.grossWeightUnit || '吨') + '</td>' +
+            '<td>' + (canEdit ? '<button class="service-product-chip-remove" type="button" data-service-product-remove="' + escapeServiceHtml(productId) + '" aria-label="移除商品">×</button>' : '') + '</td>' +
+          '</tr>';
+        }).join('');
+        host.innerHTML = '<div class="service-product-list-wrap"><table class="service-product-list-table"><thead><tr><th>商品</th><th>标准数量</th><th>件数</th><th>体积</th><th>毛重</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
+      };
+      window.refreshServiceRequirementProducts = renderServiceProducts;
+      const initServiceProductSelection = (card) => {
+        if (!card) return;
+        if (!card.dataset.serviceProductIds) {
+          const products = getOrderProducts();
+          const first = products[0];
+          card.dataset.serviceProductIds = JSON.stringify(first ? [first.sourceProductId || first.id] : []);
+          if (first) {
+            const productId = first.sourceProductId || first.id;
+            const selection = defaultServiceSelection(first);
+            card.dataset.serviceProductSelections = JSON.stringify({ [productId]: selection });
+            card.dataset.serviceProductQuantities = JSON.stringify({ [productId]: selection.standardQty });
+          }
         }
-        updateGoodsCount(card);
+        const selectedIds = parseServiceProductIds(card);
+        const savedSelections = parseServiceProductSelections(card);
+        const savedQuantities = parseServiceProductQuantities(card);
+        selectedIds.forEach((id) => {
+          if (!savedSelections[id]) {
+            const product = getOrderProducts().find((item) => (item.sourceProductId || item.id) === id);
+            if (product) savedSelections[id] = { ...defaultServiceSelection(product), ...(savedQuantities[id] != null ? { standardQty: savedQuantities[id] } : {}) };
+          }
+        });
+        card.dataset.serviceProductSelections = JSON.stringify(savedSelections);
+        renderServiceProducts(card);
       };
       const addCard = (config) => {
         config.host.appendChild(config.template.content.cloneNode(true));
         const card = config.host.lastElementChild;
+        if (card) card.dataset.serviceRequirementType = config.type;
         const goodsHost = card?.querySelector('[data-service-goods-host]');
-        if (goodsHost && universalServiceGoodsTemplate) {
-          goodsHost.appendChild(universalServiceGoodsTemplate.content.cloneNode(true));
-          updateGoodsCount(card);
-        }
+        if (goodsHost && universalServiceGoodsTemplate) goodsHost.appendChild(universalServiceGoodsTemplate.content.cloneNode(true));
+        initServiceProductSelection(card);
         syncState();
       };
+
       configs.forEach((config) => {
         if (!config.host.querySelector('[data-service-requirement-card]')) addCard(config);
         config.add.addEventListener('click', () => addCard(config));
         config.host.addEventListener('click', (event) => {
-          const goodsAction = event.target.closest('[data-service-goods-action]');
-          if (goodsAction) {
-            const card = goodsAction.closest('[data-service-requirement-card]');
-            const action = goodsAction.dataset.serviceGoodsAction;
-            if (action === 'add') addGoodsRow(card, null);
-            if (action === 'duplicate') addGoodsRow(card, goodsAction.closest('[data-service-item-row]'));
-            if (action === 'remove') {
-              goodsAction.closest('[data-service-item-row]')?.remove();
-              updateGoodsCount(card);
-            }
+          const productRemove = event.target.closest('[data-service-product-remove]');
+          if (productRemove) {
+            const card = productRemove.closest('[data-service-requirement-card]');
+            const removeId = productRemove.dataset.serviceProductRemove;
+            const selectedIds = parseServiceProductIds(card).filter((id) => id !== removeId);
+            const selectedQuantities = parseServiceProductQuantities(card);
+            const selectedSelections = parseServiceProductSelections(card);
+            delete selectedQuantities[removeId];
+            delete selectedSelections[removeId];
+            card.dataset.serviceProductIds = JSON.stringify(selectedIds);
+            card.dataset.serviceProductQuantities = JSON.stringify(selectedQuantities);
+            card.dataset.serviceProductSelections = JSON.stringify(selectedSelections);
+            renderServiceProducts(card);
             return;
           }
           const remove = event.target.closest('[data-delete-service-requirement]');
@@ -2251,6 +2322,19 @@
     body[data-order-readonly="true"] #orderInfoView [data-route-action="remove-product"] {
       display:none !important;
     }
+    body[data-order-readonly="true"] #orderInfoView .order-product-table.is-readonly .control {
+      background:#f4f6f8 !important;
+      border:1px solid #e2e7ef !important;
+      color:#64748b !important;
+      opacity:1 !important;
+    }
+    body[data-order-readonly="true"] #orderInfoView .order-product-table.is-readonly select.control {
+      appearance:auto !important;
+      -webkit-appearance:auto !important;
+      background-image:none !important;
+    }
+    body[data-order-readonly="true"] #orderInfoView .order-product-table.is-readonly th:last-child,
+    body[data-order-readonly="true"] #orderInfoView .order-product-table.is-readonly td:last-child { display:none !important; }
     /* 来源类型≠手动创建：仅部分字段可编辑 */
     [data-source-restricted="true"] input.control:read-only,
     [data-source-restricted="true"] textarea.control:read-only,
