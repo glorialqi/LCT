@@ -625,7 +625,9 @@
     .service-product-select-btn { flex:0 0 auto; height:28px; padding:0 10px; font-size:11px; }
     .service-product-empty { padding:2px 4px; color:#94a3b8; font-size:10px; white-space:nowrap; }
     .order-product-picker-dialog { width:min(1120px,calc(100vw - 40px)); }
-    .order-product-picker-summary { margin-bottom:10px; padding:9px 12px; border:1px solid #dbe7fb; border-radius:6px; color:#2563eb; background:#f5f9ff; font-size:12px; font-weight:600; }
+    .order-product-picker-foot { justify-content:space-between !important; }
+    .order-product-picker-summary { margin:0; padding:0; border:0; color:#64748b; background:transparent; font-size:12px; font-weight:500; }
+    .order-product-picker-foot-actions { display:flex; align-items:center; gap:8px; }
     .order-product-picker-table-wrap { overflow:auto; border:1px solid #e3eaf3; border-radius:7px; background:#fff; }
     .order-product-picker-table { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; }
     .order-product-picker-table th { position:sticky; top:0; z-index:1; height:36px; padding:0 10px; border-bottom:1px solid #e8edf4; color:#64748b; background:#f8fafc; font-size:11px; font-weight:600; text-align:left; white-space:nowrap; }
@@ -722,6 +724,8 @@
     .service-product-list-wrap { max-height:220px; overflow:auto; }
     .order-product-table .service-product-inline-input { width:100%; height:30px; padding:0 9px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; }
     .order-product-table .service-product-inline-input[readonly] { color:#64748b; background:#f4f6f8; cursor:default; }
+    .order-product-table .control[readonly],
+    .order-product-table select.control:disabled { background:#f4f6f8 !important; color:#64748b !important; border-color:#e2e7ef !important; opacity:1 !important; cursor:default; }
     body[data-order-readonly="true"] [data-order-product-action="add"],
     body[data-order-readonly="true"] [data-order-product-picker],
     body[data-order-readonly="true"] [data-service-product-edit],
@@ -1413,7 +1417,7 @@
     <section class="order-route-preview-dialog order-product-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="orderProductPickerTitle" tabindex="-1">
       <div class="order-route-preview-head"><div><div class="order-route-preview-title" id="orderProductPickerTitle">选择订单商品</div><div class="order-route-preview-subtitle">从当前客户订单的商品明细中选择，服务要求只引用商品，不重复维护商品资料。</div></div><button class="feedback-preview-close" id="orderProductPickerClose" type="button" aria-label="关闭选择订单商品"><svg><use href="#p-close"/></svg></button></div>
       <div class="order-route-preview-body" id="orderProductPickerBody"></div>
-      <div class="order-route-preview-foot"><button class="detail-btn" id="orderProductPickerCancel" type="button">取消</button><button class="detail-btn primary" id="orderProductPickerConfirm" type="button">确认选择</button></div>
+      <div class="order-route-preview-foot order-product-picker-foot"><span class="order-product-picker-summary" id="orderProductPickerSummary">已选 0 项</span><div class="order-product-picker-foot-actions"><button class="detail-btn" id="orderProductPickerCancel" type="button">取消</button><button class="detail-btn primary" id="orderProductPickerConfirm" type="button">确认选择</button></div></div>
     </section>
   </div>
 
@@ -2092,7 +2096,7 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261126r"></script>
+  <script src="../assets/customer-order-routes.js?v=20261127c"></script>
   <script>
     (() => {
       const form = document.getElementById('orderDetailForm');
@@ -2175,37 +2179,39 @@
         const host = card.querySelector('[data-service-selected-products]');
         if (count) count.textContent = '(' + selected.length + ')';
         if (!host) return;
-        const input = (product, selection, field, max) => '<input class="control service-product-inline-input" type="number" min="0" step="0.01" value="' + escapeServiceHtml(selection[field] ?? 0) + '" max="' + escapeServiceHtml(max || 0) + '" data-service-inline-field="' + field + '" data-editor-target="service" data-product-id="' + escapeServiceHtml(product.sourceProductId || product.id) + '" data-service-inline-max="' + escapeServiceHtml(max || 0) + '" aria-label="' + escapeServiceHtml(field) + '"' + (canEdit ? '' : ' readonly') + '>';
+        const roInput = (value, label, type) => '<input class="control" type="' + (type || 'text') + '" value="' + escapeServiceHtml(value ?? '') + '" readonly aria-label="' + escapeServiceHtml(label) + '">';
+        const roSelect = (options, value, label) => '<select class="control" disabled aria-label="' + escapeServiceHtml(label) + '">' + options.map((option) => '<option' + (String(option) === String(value) ? ' selected' : '') + '>' + escapeServiceHtml(option) + '</option>').join('') + '</select>';
+        const editInput = (product, selection, field, max) => '<input class="control" type="number" min="0" step="0.01" value="' + escapeServiceHtml(selection[field] ?? 0) + '" max="' + escapeServiceHtml(max || 0) + '" data-service-inline-field="' + field + '" data-editor-target="service" data-product-id="' + escapeServiceHtml(product.sourceProductId || product.id) + '" data-service-inline-max="' + escapeServiceHtml(max || 0) + '" aria-label="' + escapeServiceHtml(field) + '"' + (canEdit ? '' : ' readonly') + '>';
         const rows = selected.map((product) => {
           const productId = product.sourceProductId || product.id;
           const selection = { ...defaultServiceSelection(product), ...(savedSelections[productId] || {}), ...(legacyQuantities[productId] != null ? { standardQty: legacyQuantities[productId] } : {}) };
           const hoverText = serviceProductHoverText(product, selection);
           return '<tr class="service-product-list-row" data-service-product-row="' + escapeServiceHtml(productId) + '">' +
-            '<td><div class="service-product-list-main" title="' + escapeServiceHtml(hoverText) + '"><strong>' + escapeServiceHtml(product.name || '未命名商品') + '</strong></div></td>' +
-            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.description || '—') + '</span></td>' +
-            '<td>' + input(product, selection, 'pieceCount', product.pieceCount ?? product.count) + '</td>' +
-            '<td>' + escapeServiceHtml(selection.pieceCountUnit || '—') + '</td>' +
-            '<td>' + input(product, selection, 'grossWeight', product.grossWeight ?? product.weight) + '</td>' +
-            '<td>' + escapeServiceHtml(selection.grossWeightUnit || '—') + '</td>' +
-            '<td>' + input(product, selection, 'volume', product.volume ?? product.vol) + '</td>' +
-            '<td>' + escapeServiceHtml(selection.volumeUnit || '—') + '</td>' +
-            '<td>' + input(product, selection, 'standardQty', product.standardQty ?? product.count) + '</td>' +
-            '<td>' + escapeServiceHtml(selection.standardUnit || '—') + '</td>' +
-            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.pieceWeight || '—') + '</span></td>' +
-            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.specDimensions || '—') + '</span></td>' +
-            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.heightDescription || '—') + '</span></td>' +
-            '<td class="num">' + escapeServiceHtml(product.overRate ?? 0) + '%</td>' +
-            '<td class="num">' + escapeServiceHtml(product.underRate ?? 0) + '%</td>' +
-            '<td class="num">' + escapeServiceHtml(product.goodsValueUnitPrice ?? 0) + '</td>' +
-            '<td class="num">' + escapeServiceHtml(product.goodsValueAmount ?? 0) + '</td>' +
-            '<td>' + escapeServiceHtml(product.goodsValueCurrency || '—') + '</td>' +
-            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.englishName || '—') + '</span></td>' +
-            '<td>' + escapeServiceHtml(product.tradeContractNo || '—') + '</td>' +
-            '<td>' + escapeServiceHtml(product.tradeContractType || '—') + '</td>' +
+            '<td>' + roSelect([product.name || '未命名商品'], product.name, '商品分类') + '</td>' +
+            '<td>' + roInput(product.description || '', '商品描述') + '</td>' +
+            '<td>' + editInput(product, selection, 'pieceCount', product.pieceCount ?? product.count) + '</td>' +
+            '<td>' + roSelect(['箱', '托', '桶', '台', '件'], selection.pieceCountUnit, '件数单位') + '</td>' +
+            '<td>' + editInput(product, selection, 'grossWeight', product.grossWeight ?? product.weight) + '</td>' +
+            '<td>' + roSelect(['kg', '吨'], selection.grossWeightUnit, '毛重单位') + '</td>' +
+            '<td>' + editInput(product, selection, 'volume', product.volume ?? product.vol) + '</td>' +
+            '<td>' + roSelect(['m³', 'CBM'], selection.volumeUnit, '体积单位') + '</td>' +
+            '<td>' + editInput(product, selection, 'standardQty', product.standardQty ?? product.count) + '</td>' +
+            '<td>' + roSelect(['吨', '千克', '立方米', '件', '箱', '托', '桶', '台'], selection.standardUnit, '标准单位') + '</td>' +
+            '<td>' + roInput(product.pieceWeight || '', '单件重量描述') + '</td>' +
+            '<td>' + roInput(product.specDimensions || '', '规格尺寸') + '</td>' +
+            '<td>' + roInput(product.heightDescription || '', '层高描述') + '</td>' +
+            '<td>' + roInput(product.overRate ?? 0, '溢装率', 'number') + '</td>' +
+            '<td>' + roInput(product.underRate ?? 0, '短装率', 'number') + '</td>' +
+            '<td>' + roInput(product.goodsValueUnitPrice ?? 0, '货值单价', 'number') + '</td>' +
+            '<td>' + roInput(product.goodsValueAmount ?? 0, '货值金额', 'number') + '</td>' +
+            '<td>' + roSelect(['CNY', 'USD', 'EUR'], product.goodsValueCurrency, '货值币种') + '</td>' +
+            '<td>' + roInput(product.englishName || '', '商品英文名') + '</td>' +
+            '<td>' + roInput(product.tradeContractNo || '', '贸易合同号') + '</td>' +
+            '<td>' + roSelect(['销售合同', '采购合同', '框架合同'], product.tradeContractType, '贸易合同类型') + '</td>' +
             '<td>' + (canEdit ? '<button class="service-product-chip-remove" type="button" data-service-product-remove="' + escapeServiceHtml(productId) + '" aria-label="移除商品">×</button>' : '') + '</td>' +
           '</tr>';
         }).join('');
-        host.innerHTML = '<div class="order-route-items-wrap service-product-list-wrap"><table class="order-route-items order-product-table service-product-table-inline"><thead><tr><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
+        host.innerHTML = '<div class="order-route-items-wrap service-product-list-wrap"><table class="order-route-items order-product-table service-product-table-inline"><thead><tr><th>商品分类 *</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量 *</th><th>标准单位 *</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
       };
       window.refreshServiceRequirementProducts = renderServiceProducts;
       const initServiceProductSelection = (card) => {
