@@ -686,6 +686,8 @@
     .order-service-product-editor-foot { display:flex; justify-content:flex-end; gap:7px; }
     /* 水运件杂：邮件接收人邮箱 */
     #orderRoutesSection .order-route-card:has(.route-mail-recipient-popover:not([hidden])) { overflow:visible; z-index:8; }
+    .route-mail-error { min-height:14px; margin-top:5px; color:#c62828; font-size:10px; line-height:1.4; }
+    .route-mail-recipient-popover .demand-email-recipient-popover-fields input.is-invalid { border-color:#e38b84 !important; background:#fff6f5 !important; outline:2px solid #f9d9d6; outline-offset:0; }
     .route-mail-recipient-box { overflow:visible !important; }
     .route-mail-recipient-box .demand-email-recipient-popover { z-index:90; top:calc(100% + 8px) !important; right:auto !important; left:0 !important; width:360px !important; max-width:calc(100vw - 24px) !important; }
     [data-route-readonly="true"] [data-route-action="toggle-route-mail"],
@@ -711,6 +713,13 @@
     .service-product-inline-input[readonly] { color:#64748b; background:#f4f6f8; cursor:default; }
     .service-product-inline-input.is-invalid { border-color:#e38b84 !important; background:#fff6f5 !important; }
     .service-product-empty { padding:14px 10px !important; color:#94a3b8 !important; text-align:center !important; }
+    .service-product-list-table-full { width:max-content; min-width:100%; }
+    .service-product-list-table-full th:nth-child(1), .service-product-list-table-full td:nth-child(1) { position:sticky; left:0; z-index:2; min-width:170px; background:#fff; }
+    .service-product-list-table-full th:nth-child(1) { z-index:4; background:#f8fafc; }
+    .service-product-list-table-full th:nth-child(2), .service-product-list-table-full td:nth-child(2) { position:sticky; left:170px; z-index:2; min-width:190px; background:#fff; box-shadow:1px 0 0 #eef2f7; }
+    .service-product-list-table-full th:nth-child(2) { z-index:4; background:#f8fafc; }
+    .service-product-readonly-text { display:block; max-width:190px; overflow:hidden; color:#64748b; text-overflow:ellipsis; }
+    .service-product-list-wrap { max-height:220px; overflow:auto; }
     body[data-order-readonly="true"] [data-order-product-action="add"],
     body[data-order-readonly="true"] [data-order-product-picker],
     body[data-order-readonly="true"] [data-service-product-edit],
@@ -1926,7 +1935,7 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261126n"></script>
+  <script src="../assets/customer-order-routes.js?v=20261126o"></script>
   <script>
     (() => {
       const form = document.getElementById('orderDetailForm');
@@ -2009,22 +2018,37 @@
         const host = card.querySelector('[data-service-selected-products]');
         if (count) count.textContent = '(' + selected.length + ')';
         if (!host) return;
-        const input = (product, selection, field, max, unit) => '<div class="service-product-inline-control"><input class="control service-product-inline-input" type="number" min="0" step="0.01" value="' + escapeServiceHtml(selection[field] ?? 0) + '" max="' + escapeServiceHtml(max || 0) + '" data-service-inline-field="' + field + '" data-editor-target="service" data-product-id="' + escapeServiceHtml(product.sourceProductId || product.id) + '" data-service-inline-max="' + escapeServiceHtml(max || 0) + '" aria-label="' + escapeServiceHtml(field) + '"' + (canEdit ? '' : ' readonly') + '><span>' + escapeServiceHtml(unit || '') + '</span></div>';
+        const input = (product, selection, field, max) => '<input class="control service-product-inline-input" type="number" min="0" step="0.01" value="' + escapeServiceHtml(selection[field] ?? 0) + '" max="' + escapeServiceHtml(max || 0) + '" data-service-inline-field="' + field + '" data-editor-target="service" data-product-id="' + escapeServiceHtml(product.sourceProductId || product.id) + '" data-service-inline-max="' + escapeServiceHtml(max || 0) + '" aria-label="' + escapeServiceHtml(field) + '"' + (canEdit ? '' : ' readonly') + '>';
         const rows = selected.map((product) => {
           const productId = product.sourceProductId || product.id;
           const selection = { ...defaultServiceSelection(product), ...(savedSelections[productId] || {}), ...(legacyQuantities[productId] != null ? { standardQty: legacyQuantities[productId] } : {}) };
-          const contract = product.tradeContractNo || '未关联合同';
           const hoverText = serviceProductHoverText(product, selection);
           return '<tr class="service-product-list-row" data-service-product-row="' + escapeServiceHtml(productId) + '">' +
-            '<td><div class="service-product-list-main" title="' + escapeServiceHtml(hoverText) + '"><strong>' + escapeServiceHtml(product.name || '未命名商品') + '</strong><small>' + escapeServiceHtml(product.description || '—') + (contract ? ' · ' + escapeServiceHtml(contract) : '') + '</small></div></td>' +
-            '<td>' + input(product, selection, 'standardQty', product.standardQty ?? product.count, selection.standardUnit || product.standardUnit || product.unit) + '</td>' +
-            '<td>' + input(product, selection, 'pieceCount', product.pieceCount ?? product.count, selection.pieceCountUnit || product.pieceCountUnit || product.unit) + '</td>' +
-            '<td>' + input(product, selection, 'volume', product.volume ?? product.vol, selection.volumeUnit || product.volumeUnit || 'm³') + '</td>' +
-            '<td>' + input(product, selection, 'grossWeight', product.grossWeight ?? product.weight, selection.grossWeightUnit || product.grossWeightUnit || '吨') + '</td>' +
+            '<td><div class="service-product-list-main" title="' + escapeServiceHtml(hoverText) + '"><strong>' + escapeServiceHtml(product.name || '未命名商品') + '</strong></div></td>' +
+            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.description || '—') + '</span></td>' +
+            '<td>' + input(product, selection, 'standardQty', product.standardQty ?? product.count) + '</td>' +
+            '<td>' + escapeServiceHtml(selection.standardUnit || '—') + '</td>' +
+            '<td>' + input(product, selection, 'pieceCount', product.pieceCount ?? product.count) + '</td>' +
+            '<td>' + escapeServiceHtml(selection.pieceCountUnit || '—') + '</td>' +
+            '<td>' + input(product, selection, 'grossWeight', product.grossWeight ?? product.weight) + '</td>' +
+            '<td>' + escapeServiceHtml(selection.grossWeightUnit || '—') + '</td>' +
+            '<td>' + input(product, selection, 'volume', product.volume ?? product.vol) + '</td>' +
+            '<td>' + escapeServiceHtml(selection.volumeUnit || '—') + '</td>' +
+            '<td class="num">' + escapeServiceHtml(product.pieceWeight ?? 0) + '</td>' +
+            '<td>' + escapeServiceHtml(product.pieceWeightUnit || '—') + '</td>' +
+            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.specDimensions || '—') + '</span></td>' +
+            '<td class="num">' + escapeServiceHtml(product.overRate ?? 0) + '%</td>' +
+            '<td class="num">' + escapeServiceHtml(product.underRate ?? 0) + '%</td>' +
+            '<td class="num">' + escapeServiceHtml(product.goodsValueUnitPrice ?? 0) + '</td>' +
+            '<td class="num">' + escapeServiceHtml(product.goodsValueAmount ?? 0) + '</td>' +
+            '<td>' + escapeServiceHtml(product.goodsValueCurrency || '—') + '</td>' +
+            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.englishName || '—') + '</span></td>' +
+            '<td>' + escapeServiceHtml(product.tradeContractNo || '—') + '</td>' +
+            '<td>' + escapeServiceHtml(product.tradeContractType || '—') + '</td>' +
             '<td>' + (canEdit ? '<button class="service-product-chip-remove" type="button" data-service-product-remove="' + escapeServiceHtml(productId) + '" aria-label="移除商品">×</button>' : '') + '</td>' +
           '</tr>';
         }).join('');
-        host.innerHTML = '<div class="service-product-list-wrap"><table class="service-product-list-table"><thead><tr><th>商品</th><th>标准数量</th><th>件数</th><th>体积</th><th>毛重</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
+        host.innerHTML = '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>标准数量</th><th>标准单位</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
       };
       window.refreshServiceRequirementProducts = renderServiceProducts;
       const initServiceProductSelection = (card) => {

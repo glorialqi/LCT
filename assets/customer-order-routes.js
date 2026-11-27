@@ -1095,7 +1095,7 @@
         field('佣金比例(%)', '<input class="control" type="number" min="0" step="0.01" data-route-field="commissionRate" data-route-id="' + routeId + '" value="' + escapeHtml(route.commissionRate) + '" placeholder="请输入" aria-label="线路' + routeIndex + '佣金比例">') +
         field('订舱经理', '<input class="control" data-route-field="bookingManager" data-route-id="' + routeId + '" value="' + escapeHtml(route.bookingManager) + '" placeholder="请输入" aria-label="线路' + routeIndex + '订舱经理">') +
         field('LAYCAN', '<div class="order-date-range"><input class="control" type="date" data-route-field="laycanStart" data-route-id="' + routeId + '" value="' + escapeHtml(route.laycanStart) + '" aria-label="线路' + routeIndex + 'LAYCAN开始日期"><span class="order-date-range-separator">至</span><input class="control" type="date" data-route-field="laycanEnd" data-route-id="' + routeId + '" value="' + escapeHtml(route.laycanEnd) + '" aria-label="线路' + routeIndex + 'LAYCAN结束日期"></div>', 'span-2') +
-        field('邮件接收人+邮箱', '<div class="demand-email-recipient-box route-mail-recipient-box" data-route-mail-box><div class="demand-email-recipient-chips">' + mailChips + '</div><button class="demand-email-recipient-trigger" type="button" data-route-action="toggle-route-mail" data-route-id="' + routeId + '" aria-expanded="false">＋ 添加</button><div class="demand-email-recipient-popover route-mail-recipient-popover" data-route-mail-popover hidden><div class="demand-email-recipient-popover-fields"><input type="text" data-route-mail-name placeholder="姓名" aria-label="邮件接收人姓名"><input type="email" data-route-mail-email placeholder="邮箱" aria-label="邮件接收人邮箱"></div><div class="demand-email-recipient-popover-actions"><button class="btn" type="button" data-route-action="cancel-route-mail" data-route-id="' + routeId + '">取消</button><button class="btn primary" type="button" data-route-action="confirm-route-mail" data-route-id="' + routeId + '">确定</button></div></div></div>', 'row-start') +
+        field('邮件接收人+邮箱', '<div class="demand-email-recipient-box route-mail-recipient-box" data-route-mail-box><div class="demand-email-recipient-chips">' + mailChips + '</div><button class="demand-email-recipient-trigger" type="button" data-route-action="toggle-route-mail" data-route-id="' + routeId + '" aria-expanded="false">＋ 添加</button><div class="demand-email-recipient-popover route-mail-recipient-popover" data-route-mail-popover hidden><div class="demand-email-recipient-popover-fields"><input type="text" data-route-mail-name placeholder="姓名" aria-label="邮件接收人姓名"><input type="email" data-route-mail-email placeholder="邮箱" aria-label="邮件接收人邮箱"></div><div class="route-mail-error" data-route-mail-error></div><div class="demand-email-recipient-popover-actions"><button class="btn" type="button" data-route-action="cancel-route-mail" data-route-id="' + routeId + '">取消</button><button class="btn primary" type="button" data-route-action="confirm-route-mail" data-route-id="' + routeId + '">确定</button></div></div></div>', 'row-start') +
         field('其他特殊要求', '<textarea class="control" data-route-field="specialNotes" data-route-id="' + routeId + '" placeholder="请输入" aria-label="线路' + routeIndex + '其他特殊要求">' + escapeHtml(route.specialNotes) + '</textarea>') +
       '</div></div>' +
       partiesMarkup(route) +
@@ -1312,18 +1312,34 @@
       };
       const hoverText = productHoverText(product, selection);
       return '<tr class="service-product-list-row" data-service-product-row="' + escapeHtml(productId) + '">' +
-        '<td><div class="service-product-list-main" title="' + escapeHtml(hoverText) + '"><strong>' + escapeHtml(product.name || '未命名商品') + '</strong><small>' + escapeHtml(product.description || '—') + (product.tradeContractNo ? ' · ' + escapeHtml(product.tradeContractNo) : '') + '</small></div></td>' +
-        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.standardQty, max: product.standardQty ?? product.count, field: 'standardQty', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.standardUnit || '') + '</span></div></td>' +
-        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.pieceCount, max: product.pieceCount ?? product.count, field: 'pieceCount', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.pieceCountUnit || '') + '</span></div></td>' +
-        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.volume, max: product.volume, field: 'volume', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.volumeUnit || '') + '</span></div></td>' +
-        '<td><div class="service-product-inline-control">' + serviceInlineInputMarkup({ value: selection.grossWeight, max: product.grossWeight ?? product.weight, field: 'grossWeight', routeId: route.id, itemId: item.id, productId, editable }) + '<span>' + escapeHtml(selection.grossWeightUnit || '') + '</span></div></td>' +
+        '<td><div class="service-product-list-main" title="' + escapeHtml(hoverText) + '"><strong>' + escapeHtml(product.name || '未命名商品') + '</strong></div></td>' +
+        '<td><span class="service-product-readonly-text">' + escapeHtml(product.description || '—') + '</span></td>' +
+        '<td>' + serviceInlineInputMarkup({ value: selection.standardQty, max: product.standardQty ?? product.count, field: 'standardQty', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
+        '<td>' + escapeHtml(selection.standardUnit || '—') + '</td>' +
+        '<td>' + serviceInlineInputMarkup({ value: selection.pieceCount, max: product.pieceCount ?? product.count, field: 'pieceCount', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
+        '<td>' + escapeHtml(selection.pieceCountUnit || '—') + '</td>' +
+        '<td>' + serviceInlineInputMarkup({ value: selection.grossWeight, max: product.grossWeight ?? product.weight, field: 'grossWeight', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
+        '<td>' + escapeHtml(selection.grossWeightUnit || '—') + '</td>' +
+        '<td>' + serviceInlineInputMarkup({ value: selection.volume, max: product.volume, field: 'volume', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
+        '<td>' + escapeHtml(selection.volumeUnit || '—') + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.pieceWeight)) + '</td>' +
+        '<td>' + escapeHtml(product.pieceWeightUnit || '—') + '</td>' +
+        '<td><span class="service-product-readonly-text">' + escapeHtml(product.specDimensions || '—') + '</span></td>' +
+        '<td class="num">' + escapeHtml(number(product.overRate)) + '%</td>' +
+        '<td class="num">' + escapeHtml(number(product.underRate)) + '%</td>' +
+        '<td class="num">' + escapeHtml(number(product.goodsValueUnitPrice)) + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.goodsValueAmount)) + '</td>' +
+        '<td>' + escapeHtml(product.goodsValueCurrency || '—') + '</td>' +
+        '<td><span class="service-product-readonly-text">' + escapeHtml(product.englishName || '—') + '</span></td>' +
+        '<td>' + escapeHtml(product.tradeContractNo || '—') + '</td>' +
+        '<td>' + escapeHtml(product.tradeContractType || '—') + '</td>' +
         '<td>' + (editable ? '<button class="service-product-chip-remove" type="button" data-route-action="remove-item" data-route-id="' + routeId + '" data-item-id="' + escapeHtml(item.id) + '" aria-label="移除商品">×</button>' : '') + '</td>' +
       '</tr>';
     }).join('');
     return '<div class="order-route-block order-service-products-block" data-service-products data-route-id="' + routeId + '">' +
       '<div class="order-service-products-head"><div class="order-service-products-label">关联订单商品 <span>(' + (route.items || []).length + ')</span></div>' +
       (editable ? '<button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="route" data-route-id="' + routeId + '">选择商品</button>' : '') + '</div>' +
-      '<div class="service-product-list-wrap"><table class="service-product-list-table"><thead><tr><th>商品</th><th>标准数量</th><th>件数</th><th>体积</th><th>毛重</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>' +
+      '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>标准数量</th><th>标准单位</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>' +
     '</div>';
   }
 
@@ -2485,6 +2501,9 @@
       if (!popover) return;
       popover.hidden = !popover.hidden;
       button.setAttribute('aria-expanded', String(!popover.hidden));
+      const error = popover.querySelector('[data-route-mail-error]');
+      if (error) error.textContent = '';
+      popover.querySelectorAll('[data-route-mail-name], [data-route-mail-email]').forEach((input) => input.classList.remove('is-invalid'));
       if (!popover.hidden) popover.querySelector('[data-route-mail-name]')?.focus();
       return;
     }
@@ -2504,10 +2523,17 @@
       const emailInput = popover?.querySelector('[data-route-mail-email]');
       const name = nameInput?.value.trim() || '';
       const email = emailInput?.value.trim() || '';
-      if (!name || !email) { notify('error', '请填写邮件接收人姓名和邮箱。'); (!name ? nameInput : emailInput)?.focus(); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { notify('error', '请输入正确的邮箱地址。'); emailInput?.focus(); return; }
+      const errorNode = popover?.querySelector('[data-route-mail-error]');
+      const showError = (message, input) => {
+        if (errorNode) errorNode.textContent = message;
+        [nameInput, emailInput].forEach((field) => field?.classList.remove('is-invalid'));
+        input?.classList.add('is-invalid');
+        input?.focus();
+      };
+      if (!name || !email) { showError('请填写邮件接收人姓名和邮箱。', !name ? nameInput : emailInput); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('请输入正确的邮箱地址。', emailInput); return; }
       route.mailRecipients = (route.mailRecipients || []).map(normalizeMailRecipient).filter(Boolean);
-      if (route.mailRecipients.some((recipient) => recipient.email.toLowerCase() === email.toLowerCase())) { notify('error', '该邮箱已添加，请勿重复添加。'); emailInput?.focus(); return; }
+      if (route.mailRecipients.some((recipient) => recipient.email.toLowerCase() === email.toLowerCase())) { showError('该邮箱已添加，请勿重复添加。', emailInput); return; }
       route.mailRecipients.push({ name, email });
       render();
       return;
@@ -2824,6 +2850,13 @@
     if (button) handleAction(button);
   });
   pageScope.addEventListener('input', (event) => {
+    if (event.target.matches('[data-route-mail-name], [data-route-mail-email]')) {
+      const popover = event.target.closest('[data-route-mail-popover]');
+      const error = popover?.querySelector('[data-route-mail-error]');
+      if (error) error.textContent = '';
+      event.target.classList.remove('is-invalid');
+      return;
+    }
     if (event.target.matches('[data-service-inline-field]')) { updateServiceProductInlineField(event.target); return; }
     if (event.target.matches('[data-order-product-field]')) { updateOrderProductField(event.target); return; }
     if (hierarchyMode && event.target.matches('[data-arrangement-quantity]')) {
@@ -2839,13 +2872,8 @@
   });
   pageScope.addEventListener('keydown', (event) => {
     if (event.key !== 'Enter' || !event.target.matches('[data-route-mail-name], [data-route-mail-email]')) return;
-    const box = event.target.closest('[data-route-mail-box]');
-    const nameInput = box?.querySelector('[data-route-mail-name]');
-    const emailInput = box?.querySelector('[data-route-mail-email]');
-    if (!nameInput?.value.trim()) { event.preventDefault(); nameInput?.focus(); return; }
-    if (!emailInput?.value.trim()) { event.preventDefault(); emailInput?.focus(); return; }
     event.preventDefault();
-    box.querySelector('[data-route-action="confirm-route-mail"]')?.click();
+    event.target.closest('[data-route-mail-box]')?.querySelector('[data-route-action="confirm-route-mail"]')?.click();
   });
   pageScope.addEventListener('change', (event) => {
     if (event.target.matches('[data-service-inline-field]')) {
