@@ -409,6 +409,7 @@
     no: demandNo,
     customer: '青岛绿洲园花生食品有限公司',
     customerType: '外部客户',
+    demandScene: '采购/移仓',
     contactName: '王晓琳',
     contactPhone: '138 5320 7618',
     ourCompany: '厦门建发物流有限公司',
@@ -417,7 +418,6 @@
       { name: '王晓琳', email: 'wangxl@example.com' },
       { name: '苏丽蓉', email: 'sulirong@example.com' }
     ],
-    businessType: '出口',
     businessDate: '2026-10-28',
     serviceScopes: ['运输', '仓储', '报关'],
     serviceItems: ['水运'],
@@ -428,7 +428,6 @@
     pickupDate: '2026-11-03',
     deliveryDate: '2026-11-18',
     serviceRequirement: '全程温控不高于 25℃，使用食品级托盘；报关资料需在装运前 2 个工作日提交审核。',
-    customerRemark: '优先安排直航船期；如发生换船，请同步客户物流委托号。',
     transportRequirement: {
       originPort: '青岛港',
       originRegion: '中国 / 山东省 / 青岛市',
@@ -866,16 +865,13 @@
       ? demand.contactEmailRecipients
       : (demand.contactEmail ? [{ name: demand.contactName, email: demand.contactEmail }] : []);
     $('staticEmailValue').innerHTML = contactEmailRecipientsMarkup(contactRecipients);
-    setText('staticBizTypeValue', demand.businessType);
+    setText('staticDemandSceneValue', demand.demandScene);
     setText('staticBusinessDateValue', demand.businessDate);
     setText('serviceRequirementValue', demand.serviceRequirement);
-    setText('customerRemarkValue', demand.customerRemark);
     $('staticServiceScopeValue').innerHTML = tagMarkup(demand.serviceScopes);
 
     const hasTransport = (demand.serviceScopes || []).includes('运输');
     const hasWaterTransport = hasTransport && (demand.serviceItems || []).includes('水运');
-    if ($('staticTransportTypeField')) $('staticTransportTypeField').hidden = !hasTransport;
-    if ($('staticShippingCategoriesField')) $('staticShippingCategoriesField').hidden = !hasTransport;
     if ($('staticServiceItemsValue')) $('staticServiceItemsValue').innerHTML = hasTransport ? tagMarkup(demand.serviceItems) : '--';
     if ($('staticShippingCategoriesValue')) $('staticShippingCategoriesValue').innerHTML = hasTransport ? tagMarkup(demand.shippingCategories) : '--';
 
@@ -897,7 +893,7 @@
     setText('staticTransportVesselAgeValue', transport.vesselAgeRequirement);
     setText('staticCommissionRateValue', transport.commissionRate == null ? '--' : transport.commissionRate + '%');
     const showWaterBulk = hasWaterTransport && (demand.shippingCategories || []).includes('件杂');
-    if ($('staticBookingExtensionSection')) $('staticBookingExtensionSection').hidden = !showWaterBulk;
+    if ($('staticBookingExtensionSection')) $('staticBookingExtensionSection').hidden = false;
     if ($('staticWaterTransportFields')) $('staticWaterTransportFields').hidden = !showWaterBulk;
 
     const booking = demand.booking || {};
@@ -1401,11 +1397,10 @@
       createCustomerType: demand.customerType,
       createContact: demand.contactName,
       createPhone: demand.contactPhone,
-      createBizType: demand.businessType,
+      createDemandScene: demand.demandScene,
       createBusinessDate: demand.businessDate,
       createTradeTerms: demand.tradeTerms,
-      createServiceRequirement: demand.serviceRequirement,
-      createCustomerRemark: demand.customerRemark
+      createServiceRequirement: demand.serviceRequirement
     };
     Object.entries(values).forEach(([id, value]) => { if ($(id)) $(id).value = value || ''; });
     const org = demand.receiveOrg || {};
@@ -1582,7 +1577,6 @@
     const waterTransport = transportScope && Boolean(document.querySelector('input[name="serviceItems"][value="水运"]')?.checked);
     const pieceCargo = transportScope && Boolean(document.querySelector('input[name="shippingCategories"][value="件杂"]')?.checked);
     const showWaterBulk = waterTransport && pieceCargo;
-    if ($('createBookingExtensionSection')) $('createBookingExtensionSection').hidden = !showWaterBulk;
     if ($('createWaterTransportFields')) $('createWaterTransportFields').hidden = !showWaterBulk;
   }
 
@@ -1640,14 +1634,13 @@
     demand.contactPhone = form.elements.phone.value.trim();
     demand.contactEmailRecipients = readContactEmailRecipients();
     demand.contactEmail = demand.contactEmailRecipients[0]?.email || '';
-    demand.businessType = form.elements.bizType.value;
+    demand.demandScene = form.elements.demandScene.value;
     demand.businessDate = form.elements.businessDate.value;
     demand.serviceScopes = Array.from(form.querySelectorAll('input[name="serviceScopes"]:checked')).map((input) => input.value);
     demand.serviceItems = Array.from(form.querySelectorAll('input[name="serviceItems"]:checked')).map((input) => input.value);
     demand.shippingCategories = Array.from(form.querySelectorAll('input[name="shippingCategories"]:checked')).map((input) => input.value);
     demand.tradeTerms = form.elements.tradeTerms.value;
     demand.serviceRequirement = form.elements.serviceRequirement.value.trim();
-    demand.customerRemark = form.elements.customerRemark.value.trim();
 
     demand.transportRequirement = {
       originPort: form.elements.originPort.value.trim(),

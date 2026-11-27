@@ -3714,3 +3714,8 @@ html.demand-embedded .demand-content {
 .demand-booking-note-field {
   margin-top: 16px;
 }
+
+.demand-form-field.full-row,
+.demand-field.full-row {
+  grid-column: 1 / -1;
+}

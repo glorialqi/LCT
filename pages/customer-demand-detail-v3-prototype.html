@@ -159,7 +159,7 @@
                     </div>
                     <div class="ui-field-message"></div>
                   </div>
-                  <div class="demand-form-field field is-grid-row-start" id="createBizTypeField"><label for="createBizType">业务类型<span class="required">*</span></label><select id="createBizType" name="bizType" required><option>出口</option><option>进口</option><option>内贸</option></select><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field field"><label for="createDemandScene">客户需求场景</label><select id="createDemandScene" name="demandScene"><option value="">请选择客户需求场景</option><option>采购/移仓</option><option>销售</option><option>调拨</option><option>其他</option></select><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createBusinessDate">业务日期<span class="required">*</span></label><input id="createBusinessDate" name="businessDate" type="date" required><div class="ui-field-message"></div></div>
                   <div class="demand-form-field field"><label for="createTradeTerms">贸易条款</label><select id="createTradeTerms" name="tradeTerms"><option>FOB</option><option>CIF</option><option>EXW</option><option>DDP</option></select><div class="ui-field-message"></div></div>
                                     <div class="demand-form-field span-2 field">
@@ -171,32 +171,7 @@
                     </div>
                     <div class="ui-field-message"></div>
                   </div>
-                  <div class="demand-form-field field" id="createTransportTypeField">
-                    <label>运输类型<span class="required">*</span></label>
-                    <details class="demand-multi-select" id="createTransportType" data-multi-select-name="serviceItems">
-                      <summary><span class="demand-multi-select-value" data-multi-select-value data-placeholder="请选择运输类型">请选择运输类型</span><svg aria-hidden="true"><use href="#p-chevron"/></svg></summary>
-                      <div class="demand-multi-select-menu">
-                        <label class="demand-multi-select-option"><input type="checkbox" name="serviceItems" value="水运">水运</label>
-                        <label class="demand-multi-select-option"><input type="checkbox" name="serviceItems" value="汽运">汽运</label>
-                        <label class="demand-multi-select-option"><input type="checkbox" name="serviceItems" value="铁运">铁运</label>
-                      </div>
-                    </details>
-                    <div class="ui-field-message"></div>
-                  </div>
-                  <div class="demand-form-field field" id="createShippingCategoryField">
-                    <label>装运类别<span class="required">*</span></label>
-                    <details class="demand-multi-select" id="createShippingCategory" data-multi-select-name="shippingCategories">
-                      <summary><span class="demand-multi-select-value" data-multi-select-value data-placeholder="请选择装运类别">请选择装运类别</span><svg aria-hidden="true"><use href="#p-chevron"/></svg></summary>
-                      <div class="demand-multi-select-menu">
-                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="散货">散货</label>
-                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="集装箱">集装箱</label>
-                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="件杂">件杂</label>
-                      </div>
-                    </details>
-                    <div class="ui-field-message"></div>
-                  </div>
-                  <div class="demand-form-field span-2 field"><label for="createServiceRequirement">服务内容</label><textarea id="createServiceRequirement" name="serviceRequirement" rows="1" placeholder="请输入服务要求"></textarea><div class="ui-field-message"></div></div>
-                  <div class="demand-form-field span-2 field"><label for="createCustomerRemark">其他特殊要求 / 客户备注</label><textarea id="createCustomerRemark" name="customerRemark" rows="1" placeholder="请输入"></textarea><div class="ui-field-message"></div></div>
+                  <div class="demand-form-field full-row field"><label for="createServiceRequirement">客户备注</label><textarea id="createServiceRequirement" name="serviceRequirement" rows="3" placeholder="请输入客户备注"></textarea><div class="ui-field-message"></div></div>
                 </div>
               </div>
             </section>
@@ -232,11 +207,37 @@
               </div>
             </section>
 
-            <section class="demand-section" id="createBookingExtensionSection" aria-labelledby="createBookingExtensionTitle" hidden>
+            <section class="demand-section" id="createBookingExtensionSection" aria-labelledby="createBookingExtensionTitle">
               <div class="demand-section-head">
-                <h2 class="demand-section-title" id="createBookingExtensionTitle"><svg><use href="#p-contract"/></svg>水运件杂</h2>
+                <h2 class="demand-section-title" id="createBookingExtensionTitle"><svg><use href="#p-contract"/></svg>服务要求</h2>
               </div>
               <div class="demand-section-body">
+                <div class="demand-form-grid">
+                  <div class="demand-form-field span-3 field" id="createTransportTypeField">
+                    <label>运输类型<span class="required">*</span></label>
+                    <details class="demand-multi-select" id="createTransportType" data-multi-select-name="serviceItems">
+                      <summary><span class="demand-multi-select-value" data-multi-select-value data-placeholder="请选择运输类型">请选择运输类型</span><svg aria-hidden="true"><use href="#p-chevron"/></svg></summary>
+                      <div class="demand-multi-select-menu">
+                        <label class="demand-multi-select-option"><input type="checkbox" name="serviceItems" value="水运">水运</label>
+                        <label class="demand-multi-select-option"><input type="checkbox" name="serviceItems" value="汽运">汽运</label>
+                        <label class="demand-multi-select-option"><input type="checkbox" name="serviceItems" value="铁运">铁运</label>
+                      </div>
+                    </details>
+                    <div class="ui-field-message"></div>
+                  </div>
+                  <div class="demand-form-field span-3 field" id="createShippingCategoryField">
+                    <label>装运类别<span class="required">*</span></label>
+                    <details class="demand-multi-select" id="createShippingCategory" data-multi-select-name="shippingCategories">
+                      <summary><span class="demand-multi-select-value" data-multi-select-value data-placeholder="请选择装运类别">请选择装运类别</span><svg aria-hidden="true"><use href="#p-chevron"/></svg></summary>
+                      <div class="demand-multi-select-menu">
+                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="散货">散货</label>
+                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="集装箱">集装箱</label>
+                        <label class="demand-multi-select-option"><input type="checkbox" name="shippingCategories" value="件杂">件杂</label>
+                      </div>
+                    </details>
+                    <div class="ui-field-message"></div>
+                  </div>
+                </div>
                 <div id="createWaterTransportFields" hidden>
                   <div class="demand-form-grid">
                     <div class="demand-form-field field"><label for="createOriginPort">起运港<span class="required">*</span></label><select id="createOriginPort" name="originPort" required><option value="">请选择起运港</option><option>青岛港</option><option>上海港</option><option>宁波舟山港</option><option>天津港</option><option>深圳港</option></select><div class="ui-field-message"></div></div>
@@ -277,13 +278,10 @@
                 <div class="demand-field"><div class="demand-field-label">客户联系人</div><div class="demand-readonly-value" id="staticContactValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">客户联系人电话</div><div class="demand-readonly-value" id="staticPhoneValue"></div></div>
                 <div class="demand-field span-2"><div class="demand-field-label">邮件接收人 + 邮箱</div><div class="demand-readonly-value demand-email-recipient-list" id="staticEmailValue"></div></div>
-                <div class="demand-field is-grid-row-start"><div class="demand-field-label">业务类型</div><div class="demand-readonly-value" id="staticBizTypeValue"></div></div>
+                <div class="demand-field"><div class="demand-field-label">客户需求场景</div><div class="demand-readonly-value" id="staticDemandSceneValue"></div></div>
                 <div class="demand-field"><div class="demand-field-label">业务日期</div><div class="demand-readonly-value" id="staticBusinessDateValue"></div></div>
                                 <div class="demand-field"><div class="demand-field-label">服务范围</div><div class="demand-readonly-value" id="staticServiceScopeValue"></div></div>
-                <div class="demand-field" id="staticTransportTypeField"><div class="demand-field-label">运输类型</div><div class="demand-readonly-value" id="staticServiceItemsValue"></div></div>
-                <div class="demand-field" id="staticShippingCategoriesField"><div class="demand-field-label">装运类别</div><div class="demand-readonly-value" id="staticShippingCategoriesValue"></div></div>
-                <div class="demand-field span-2"><div class="demand-field-label">服务内容</div><div class="demand-readonly-value is-multiline" id="serviceRequirementValue"></div></div>
-                <div class="demand-field span-2"><div class="demand-field-label">其他特殊要求 / 客户备注</div><div class="demand-readonly-value is-multiline" id="customerRemarkValue"></div></div>
+                <div class="demand-field full-row"><div class="demand-field-label">客户备注</div><div class="demand-readonly-value is-multiline" id="serviceRequirementValue"></div></div>
               </div>
             </div>
           </section>
@@ -315,9 +313,13 @@
               </div>
             </div>
           </section>
-          <section class="demand-section" id="staticBookingExtensionSection" aria-labelledby="bookingExtensionTitle" hidden>
-            <div class="demand-section-head"><h2 class="demand-section-title" id="bookingExtensionTitle"><svg><use href="#p-contract"/></svg>水运件杂</h2><span class="status running">水运件杂</span></div>
+          <section class="demand-section" id="staticBookingExtensionSection" aria-labelledby="bookingExtensionTitle">
+            <div class="demand-section-head"><h2 class="demand-section-title" id="bookingExtensionTitle"><svg><use href="#p-contract"/></svg>服务要求</h2><span class="status running">服务要求</span></div>
             <div class="demand-section-body">
+              <div class="demand-readonly-grid">
+                <div class="demand-field span-3" id="staticTransportTypeField"><div class="demand-field-label">运输类型</div><div class="demand-readonly-value" id="staticServiceItemsValue"></div></div>
+                <div class="demand-field span-3" id="staticShippingCategoriesField"><div class="demand-field-label">装运类别</div><div class="demand-readonly-value" id="staticShippingCategoriesValue"></div></div>
+              </div>
               <div id="staticWaterTransportFields" hidden>
                 <div class="demand-readonly-grid">
                   <div class="demand-field"><div class="demand-field-label">起运港</div><div class="demand-readonly-value" id="staticOriginPortValue"></div></div>
