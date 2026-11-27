@@ -1338,9 +1338,9 @@
       '</tr>';
     }).join('');
     return '<div class="order-route-block order-service-products-block" data-service-products data-route-id="' + routeId + '">' +
-      '<div class="order-service-products-head"><div class="order-service-products-label">关联订单商品 <span>(' + (route.items || []).length + ')</span></div>' +
-      (editable ? '<button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="route" data-route-id="' + routeId + '">选择商品</button>' : '') + '</div>' +
-      '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>' +
+      '<div class="order-route-block-head"><div class="order-route-block-title">关联订单商品 <span>(' + (route.items || []).length + ')</span></div>' +
+      (editable ? '<div class="order-route-block-actions"><button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="route" data-route-id="' + routeId + '">选择商品</button></div>' : '') + '</div>' +
+      '<div class="order-route-items-wrap service-product-list-wrap"><table class="order-route-items order-product-table service-product-table-inline"><thead><tr><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>' +
     '</div>';
   }
 

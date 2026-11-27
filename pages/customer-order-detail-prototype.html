@@ -720,6 +720,8 @@
     .service-product-list-table-full th:nth-child(2) { z-index:4; background:#f8fafc; }
     .service-product-readonly-text { display:block; max-width:190px; overflow:hidden; color:#64748b; text-overflow:ellipsis; }
     .service-product-list-wrap { max-height:220px; overflow:auto; }
+    .order-product-table .service-product-inline-input { width:100%; height:30px; padding:0 9px; border:1px solid #d9e0ea; border-radius:5px; color:#334155; background:#fff; font-size:12px; }
+    .order-product-table .service-product-inline-input[readonly] { color:#64748b; background:#f4f6f8; cursor:default; }
     body[data-order-readonly="true"] [data-order-product-action="add"],
     body[data-order-readonly="true"] [data-order-product-picker],
     body[data-order-readonly="true"] [data-service-product-edit],
@@ -1000,9 +1002,9 @@
 
         <template id="universalServiceGoodsTemplate">
           <div class="order-route-block order-service-product-selector" data-service-goods-block>
-            <div class="order-service-products-head">
-              <div class="order-service-products-label">关联订单商品 <span data-service-goods-count>(0)</span></div>
-              <button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="service">选择商品</button>
+            <div class="order-route-block-head">
+              <div class="order-route-block-title">关联订单商品 <span data-service-goods-count>(0)</span></div>
+              <div class="order-route-block-actions"><button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="service">选择商品</button></div>
             </div>
             <div data-service-selected-products></div>
           </div>
@@ -2090,7 +2092,7 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261126q"></script>
+  <script src="../assets/customer-order-routes.js?v=20261126r"></script>
   <script>
     (() => {
       const form = document.getElementById('orderDetailForm');
@@ -2203,7 +2205,7 @@
             '<td>' + (canEdit ? '<button class="service-product-chip-remove" type="button" data-service-product-remove="' + escapeServiceHtml(productId) + '" aria-label="移除商品">×</button>' : '') + '</td>' +
           '</tr>';
         }).join('');
-        host.innerHTML = '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
+        host.innerHTML = '<div class="order-route-items-wrap service-product-list-wrap"><table class="order-route-items order-product-table service-product-table-inline"><thead><tr><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
       };
       window.refreshServiceRequirementProducts = renderServiceProducts;
       const initServiceProductSelection = (card) => {
