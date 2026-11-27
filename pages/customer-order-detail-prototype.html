@@ -683,7 +683,8 @@
     .order-service-product-editor-foot { display:flex; justify-content:flex-end; gap:7px; }
     /* 水运件杂：邮件接收人邮箱 */
     #orderRoutesSection .order-route-card:has(.route-mail-recipient-popover:not([hidden])) { overflow:visible; z-index:8; }
-    .route-mail-recipient-box .demand-email-recipient-popover { z-index:90; }
+    .route-mail-recipient-box { overflow:visible !important; }
+    .route-mail-recipient-box .demand-email-recipient-popover { z-index:90; top:calc(100% + 8px) !important; right:auto !important; left:0 !important; width:360px !important; max-width:calc(100vw - 24px) !important; }
     [data-route-readonly="true"] [data-route-action="toggle-route-mail"],
     [data-route-readonly="true"] [data-route-action="remove-route-mail"],
     [data-route-readonly="true"] .route-mail-recipient-popover { display:none !important; }
