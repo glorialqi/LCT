@@ -379,6 +379,7 @@ const goodsServiceRequirementMap={
   ]
 };
 function goodsServiceRequirementsFor(route){
+  if(route&&Array.isArray(route.requirements)&&route.requirements.length)return route.requirements;
   const key=route&&route.id;
   if(goodsServiceRequirementMap[key])return goodsServiceRequirementMap[key];
   return [{no:'FW202611180001',serviceType:'运输',origin:route?.origin||'—',destination:route?.destination||'—',transportType:route?.transportType||route?.mode||'水运',loadType:route?.loadType||'集装箱',detail:route?.detail||`ETD ${route?.etd||'—'}；ETA ${route?.eta||'—'}；服务条款 ${route?.originTerm||'—'}-${route?.destinationTerm||'—'}`}];
@@ -517,144 +518,35 @@ function pushDemandGoods(rows){const key=demandGoodsKey();const list=demandExtra
 function removeDemandGoods(key){const list=demandExtraGoods.get(demandGoodsKey())||[];demandExtraGoods.set(demandGoodsKey(),list.filter(item=>item.key!==key));}
 function openProductPicker(routeId){
   document.querySelectorAll('.pd-picker-overlay').forEach(node=>node.remove());
-  const rows=productPickerOrders.flatMap(order=>order.products.map((product,index)=>({
-    key:`${order.order}:${index}`,
-    order:order.order,
-    status:order.status||'待安排',
-    customer:order.customer,
-    goods:product.name,
-    total:product.total,
-    totalUnit:product.unit||'吨',
-    arranged:(order.arranged||'0').replace(/[^0-9.]/g,'')||'0',
-    arrangedUnit:product.unit||'吨',
-    unarranged:(product.unarranged||'0').replace(/[^0-9.]/g,'')||'0',
-    unarrangedUnit:product.unit||'吨',
-    origin:order.origin||'厦门',
-    destination:order.destination||'长滩',
-    business:order.business||'内贸',
-    scope:order.scope||'运输',
-    transport:'水运',
-    loadType:'集装箱',
-    sales:'魏勇',
-    company:'厦门建发供应链物流科技有限公司',
-    dept:'海运部',
-    creator:'苏丽蓉',
-    createAt:'2026-11-10 11:43:16',
-    modifier:'苏丽蓉',
-    modifyAt:'2026-11-10 11:43:56',
-    pieces:'50',
-    gross:product.total,
-    volume:'20'
+  const productRows=productPickerOrders.flatMap(order=>order.products.map((product,index)=>({
+    key:`${order.order}:${index}`,order:order.order,status:order.status||'待安排',customer:order.customer,goods:product.name,total:product.total,
+    arranged:(order.arranged||'0').replace(/[^0-9.]/g,'')||'0',unarranged:(product.unarranged||'0').replace(/[^0-9.]/g,'')||'0',
+    origin:order.origin||'厦门',destination:order.destination||'长滩',business:order.business||'内贸',scope:order.scope||'运输',transport:order.transport||'水运',loadType:order.loadType||'集装箱',
+    sales:'魏勇',company:'厦门建发供应链物流科技有限公司',dept:'海运部',creator:'苏丽蓉',createAt:'2026-11-10 11:43:16',modifier:'苏丽蓉',modifyAt:'2026-11-10 11:43:56',pieces:'50',gross:product.total,volume:'20'
   })));
-  const selected=new Set();
-  const overlay=document.createElement('div');
-  overlay.className='pd-picker-overlay';
-  const columns=[
-    ['order','客户订单编号'],['status','状态'],['customer','客户'],['goods','商品名称'],['total','总数量'],
-    ['arranged','已安排数量'],['unarranged','未安排数量'],['origin','起运地'],['destination','目的地'],
-    ['business','业务类型'],['scope','服务范围'],['transport','运输类型'],['loadType','装运方式'],
-    ['sales','业务员'],['company','公司'],['dept','部门'],['creator','创建人'],['createAt','创建时间'],
-    ['modifier','修改人'],['modifyAt','修改时间']
-  ];
+  const orderGroups=productPickerOrders.map((order,orderIndex)=>({...order,orderIndex,goodsSummary:order.products.length>1?`${order.products[0].name} 等 ${order.products.length} 种`:order.products[0].name,productKeys:order.products.map((_,i)=>`${order.order}:${i}`),productRows:productRows.filter(row=>row.order===order.order),origin:order.origin||'厦门',destination:order.destination||'长滩',transport:order.transport||'水运',loadType:order.loadType||'集装箱',sales:'魏勇',company:'厦门建发供应链物流科技有限公司',dept:'海运部',creator:'苏丽蓉',createAt:'2026-11-10 11:43:16',modifier:'苏丽蓉',modifyAt:'2026-11-10 11:43:56'}));
+  const selected=new Set();const expandedOrders=new Set(orderGroups.filter(order=>order.expanded).map(order=>order.order));
+  const columns=[['order','客户订单编号'],['status','状态'],['customer','客户'],['goods','商品名称'],['total','总数量'],['arranged','已安排数量'],['unarranged','未安排数量'],['serviceRequirement','服务要求'],['business','业务类型'],['scope','服务范围'],['sales','业务员'],['company','公司'],['dept','部门'],['creator','创建人'],['createAt','创建时间'],['modifier','修改人'],['modifyAt','修改时间']];
+  const overlay=document.createElement('div');overlay.className='pd-picker-overlay';
   overlay.innerHTML=`<section class="pd-picker-modal" role="dialog" aria-modal="true" aria-labelledby="pdPickerTitle">
     <header class="pd-picker-head"><h2 id="pdPickerTitle">选择商品</h2><button type="button" class="pd-picker-close" data-pd-close aria-label="关闭">&times;</button></header>
-    <div class="pd-picker-body">
-      <section class="pd-picker-query" data-pd-query-card>
-        <div class="pd-picker-query-head"><button type="button" class="pd-picker-query-toggle" data-pd-query-toggle aria-expanded="true"><span class="pd-caret">▾</span>查询条件</button><div class="pd-picker-query-actions"><button type="button" class="btn outline-primary mini" data-pd-reset>重置</button><button type="button" class="btn primary mini" data-pd-search>查询</button></div></div>
-        <div class="pd-picker-query-body" data-pd-query-body>
-          <label class="pd-field"><span>客户订单编号</span><input type="text" data-pd-filter="order" placeholder="请输入"></label>
-          <label class="pd-field"><span>客户</span><select data-pd-filter="customer"><option value="">请选择</option></select></label>
-          <label class="pd-field"><span>商品名称</span><input type="text" data-pd-filter="goods" placeholder="请输入"></label>
-          <label class="pd-field"><span>业务类型</span><select data-pd-filter="business"><option value="">请选择</option></select></label>
-          <label class="pd-field"><span>运输方式</span><select data-pd-filter="transport"><option value="">请选择</option><option>水运</option><option>空运</option><option>汽运</option></select></label>
-        </div>
-      </section>
-      <div class="pd-picker-tablebar"><span class="pd-picker-count" data-pd-count></span><button type="button" class="btn link" data-pd-columns>列</button></div>
-      <div class="pd-picker-tablewrap">
-        <table class="pd-picker-table">
-          <thead><tr><th class="pd-check"><input type="checkbox" data-pd-all aria-label="全选"></th>${columns.map(([key,label])=>`<th>${label}</th>`).join('')}</tr></thead>
-          <tbody data-pd-body></tbody>
-        </table>
-      </div>
-      <div class="pd-picker-pager"><span>共 <b data-pd-total>0</b> 条</span><button type="button" class="pd-page is-active">1</button><span class="pd-page-size">20条/页</span></div>
-    </div>
-    <footer class="pd-picker-foot">
-      <div class="pd-picker-stats"><span>已选订单数<b data-pd-stat-orders>0</b></span><span>已选商品项<b data-pd-stat-items>0</b></span><span>标准数量合计:<b data-pd-stat-qty>0.00</b></span><span>件毛体合计:<b data-pd-stat-measure>0.00/0.00/0.00</b></span></div>
-      <div class="pd-picker-actions"><button type="button" class="btn outline-primary" data-pd-close>取消</button><button type="button" class="btn primary" data-pd-confirm>确认</button></div>
-    </footer>
-  </section>`;
-  document.body.appendChild(overlay);
-  document.body.classList.add('pd-picker-open');
-
-  const body=overlay.querySelector('[data-pd-body]');
-  const countEl=overlay.querySelector('[data-pd-count]');
-  const totalEl=overlay.querySelector('[data-pd-total]');
-  const statOrders=overlay.querySelector('[data-pd-stat-orders]');
-  const statItems=overlay.querySelector('[data-pd-stat-items]');
-  const statQty=overlay.querySelector('[data-pd-stat-qty]');
-  const statMeasure=overlay.querySelector('[data-pd-stat-measure]');
-  const customerSelect=overlay.querySelector('[data-pd-filter="customer"]');
-  const businessSelect=overlay.querySelector('[data-pd-filter="business"]');
-  [...new Set(rows.map(r=>r.customer))].forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;customerSelect.appendChild(o);});
-  [...new Set(rows.map(r=>r.business))].forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;businessSelect.appendChild(o);});
-
-  let visible=rows.slice();
-  const renderRows=()=>{
-    body.innerHTML=visible.map(row=>`<tr data-pd-row="${row.key}"><td class="pd-check"><input type="checkbox" data-pd-row-check="${row.key}" ${selected.has(row.key)?'checked':''} aria-label="选择${esc(row.goods)}"></td>${columns.map(([key])=>{
-      const value=row[key]||'—';
-      if(key==='status')return `<td><span class="pd-status">${esc(value)}</span></td>`;
-      return `<td title="${esc(String(value))}">${esc(String(value))}</td>`;
-    }).join('')}</tr>`).join('')||`<tr><td class="pd-empty" colspan="${columns.length+1}">暂无数据</td></tr>`;
-    countEl.textContent=visible.length===rows.length?'':`筛选结果 ${visible.length} 条`;
-    totalEl.textContent=visible.length;
-    syncStats();
-  };
-  const syncStats=()=>{
-    const picked=rows.filter(r=>selected.has(r.key));
-    const qty=picked.reduce((sum,r)=>sum+(parseFloat(r.total)||0),0);
-    const pieces=picked.reduce((sum,r)=>sum+(parseFloat(r.pieces)||0),0);
-    const gross=picked.reduce((sum,r)=>sum+(parseFloat(r.gross)||0),0);
-    const volume=picked.reduce((sum,r)=>sum+(parseFloat(r.volume)||0),0);
-    statOrders.textContent=new Set(picked.map(r=>r.order)).size;
-    statItems.textContent=picked.length;
-    statQty.textContent=qty.toFixed(2);
-    statMeasure.textContent=`${pieces.toFixed(2)}/${gross.toFixed(2)}/${volume.toFixed(2)}`;
-    const all=overlay.querySelector('[data-pd-all]');
-    if(all){all.checked=visible.length>0&&visible.every(r=>selected.has(r.key));all.indeterminate=!all.checked&&visible.some(r=>selected.has(r.key));}
-  };
+    <div class="pd-picker-body"><section class="pd-picker-query" data-pd-query-card><div class="pd-picker-query-head"><button type="button" class="pd-picker-query-toggle" data-pd-query-toggle aria-expanded="true"><span class="pd-caret">▾</span>查询条件</button><div class="pd-picker-query-actions"><button type="button" class="btn outline-primary mini" data-pd-reset>重置</button><button type="button" class="btn primary mini" data-pd-search>查询</button></div></div><div class="pd-picker-query-body" data-pd-query-body>
+      <label class="pd-field"><span>客户订单编号</span><input type="text" data-pd-filter="order" placeholder="请输入"></label><label class="pd-field"><span>客户</span><select data-pd-filter="customer"><option value="">请选择</option></select></label><label class="pd-field"><span>商品名称</span><input type="text" data-pd-filter="goods" placeholder="请输入"></label><label class="pd-field"><span>业务类型</span><select data-pd-filter="business"><option value="">请选择</option></select></label><label class="pd-field"><span>运输方式</span><select data-pd-filter="transport"><option value="">请选择</option><option>水运</option><option>空运</option><option>汽运</option></select></label>
+    </div></section><div class="pd-picker-tablebar"><span class="pd-picker-count" data-pd-count></span><button type="button" class="btn link" data-pd-columns>列</button></div><div class="pd-picker-tablewrap"><table class="pd-picker-table"><thead><tr><th class="pd-check"><input type="checkbox" data-pd-all aria-label="全选"></th><th class="pd-expand-cell"></th>${columns.map(([,label])=>`<th>${label}</th>`).join('')}</tr></thead><tbody data-pd-body></tbody></table></div><div class="pd-picker-pager"><span>共 <b data-pd-total>0</b> 条</span><button type="button" class="pd-page is-active">1</button><span class="pd-page-size">20条/页</span></div></div>
+    <footer class="pd-picker-foot"><div class="pd-picker-stats"><span>已选订单数<b data-pd-stat-orders>0</b></span><span>已选商品项<b data-pd-stat-items>0</b></span><span>标准数量合计:<b data-pd-stat-qty>0.00</b></span><span>件毛体合计:<b data-pd-stat-measure>0.00/0.00/0.00</b></span></div><div class="pd-picker-actions"><button type="button" class="btn outline-primary" data-pd-close>取消</button><button type="button" class="btn primary" data-pd-confirm>确认</button></div></footer></section>`;
+  document.body.appendChild(overlay);document.body.classList.add('pd-picker-open');
+  const body=overlay.querySelector('[data-pd-body]');const countEl=overlay.querySelector('[data-pd-count]');const totalEl=overlay.querySelector('[data-pd-total]');const statOrders=overlay.querySelector('[data-pd-stat-orders]');const statItems=overlay.querySelector('[data-pd-stat-items]');const statQty=overlay.querySelector('[data-pd-stat-qty]');const statMeasure=overlay.querySelector('[data-pd-stat-measure]');
+  const customerSelect=overlay.querySelector('[data-pd-filter="customer"]');const businessSelect=overlay.querySelector('[data-pd-filter="business"]');[...new Set(orderGroups.map(r=>r.customer))].forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;customerSelect.appendChild(o);});[...new Set(orderGroups.map(r=>r.business))].forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;businessSelect.appendChild(o);});
+  const orderRequirements=order=>{const scopes=String(order.scope||'运输').split(/[、,，\s]+/).filter(Boolean);const list=[];scopes.forEach(scope=>{if(scope==='运输')list.push({serviceType:'运输',origin:order.origin||'—',destination:order.destination||'—',transportType:order.transport||'水运',loadType:order.loadType||'集装箱'});if(scope==='报关')list.push({serviceType:'报关',detail:'报关服务，资料随客户订单提供'});if(scope==='仓储')list.push({serviceType:'仓储',detail:'仓储服务，按客户订单计划入仓'});});return list.length?list:[{serviceType:'运输',origin:order.origin||'—',destination:order.destination||'—',transportType:order.transport||'水运',loadType:order.loadType||'集装箱'}];};
+  const orderServiceContent=item=>item.serviceType==='运输'?`${item.origin} → ${item.destination}（${item.transportType} ${item.loadType}）`:item.serviceType;
+  const mainServiceCell=order=>{const list=orderRequirements(order);const shown=list.slice(0,2);const rest=list.length-shown.length;const title=esc(list.map((item,index)=>`服务要求${index+1} ${orderServiceContent(item)}`).join('\n'));return `<div class="route-cell pd-order-service" title="${title}">${shown.map((item,index)=>`<span class="route-line"><b>服务要求${index+1}</b><span class="route-line-content">${esc(orderServiceContent(item))}</span></span>`).join('')}${rest>0?`<span class="route-more">+${rest} 条服务要求</span>`:''}</div>`;};
+  const childServiceCell=order=>{const requirements=orderRequirements(order).map((item,index)=>({...item,no:`FW20261118${String(order.orderIndex*10+index+1).padStart(4,'0')}`,detail:item.serviceType==='运输'?'ETD 2026-11-20；ETA 2026-11-27；服务条款 CY-CY；是否直航：否':item.detail}));return goodsServiceRequirementCell({requirements});};
+  let visibleOrders=orderGroups.slice();
+  const syncStats=()=>{const picked=productRows.filter(r=>selected.has(r.key));const qty=picked.reduce((sum,r)=>sum+(parseFloat(r.total)||0),0);const pieces=picked.reduce((sum,r)=>sum+(parseFloat(r.pieces)||0),0);const gross=picked.reduce((sum,r)=>sum+(parseFloat(r.gross)||0),0);const volume=picked.reduce((sum,r)=>sum+(parseFloat(r.volume)||0),0);statOrders.textContent=new Set(picked.map(r=>r.order)).size;statItems.textContent=picked.length;statQty.textContent=qty.toFixed(2);statMeasure.textContent=`${pieces.toFixed(2)}/${gross.toFixed(2)}/${volume.toFixed(2)}`;const allCheck=overlay.querySelector('[data-pd-all]');const visibleKeys=visibleOrders.flatMap(order=>order.productKeys);if(allCheck){allCheck.checked=visibleKeys.length>0&&visibleKeys.every(key=>selected.has(key));allCheck.indeterminate=!allCheck.checked&&visibleKeys.some(key=>selected.has(key));}overlay.querySelectorAll('[data-pd-order-check]').forEach(input=>{const order=orderGroups.find(item=>item.order===input.dataset.pdOrderCheck);const count=order.productKeys.filter(key=>selected.has(key)).length;input.checked=count===order.productKeys.length;input.indeterminate=count>0&&count<order.productKeys.length;});};
+  const renderRows=()=>{body.innerHTML=visibleOrders.length?visibleOrders.map(order=>{const expanded=expandedOrders.has(order.order);const orderRow=columns.map(([key])=>{if(key==='status')return `<td><span class="pd-status">${esc(order.status||'待安排')}</span></td>`;if(key==='serviceRequirement')return `<td class="pd-service-cell">${mainServiceCell(order)}</td>`;const value=key==='goods'?order.goodsSummary:(order[key]??'—');return `<td title="${esc(String(value))}">${esc(String(value))}</td>`;}).join('');const childRows=order.productRows.map(row=>`<tr class="pd-product-row" data-pd-product-row="${row.key}" data-pd-parent="${order.order}" ${expanded?'':'hidden'}><td class="pd-check"><input type="checkbox" data-pd-row-check="${row.key}" ${selected.has(row.key)?'checked':''} aria-label="选择${esc(row.goods)}"></td><td></td><td>${esc(row.order)}</td><td></td><td></td><td><span class="pd-product-name">${esc(row.goods)}</span></td><td>${esc(row.total)}</td><td>${esc(row.arranged)}</td><td>${esc(row.unarranged)}</td><td class="pd-service-cell">${childServiceCell(order)}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`).join('');return `<tr class="pd-order-row" data-pd-order-row="${order.order}"><td class="pd-check"><input type="checkbox" data-pd-order-check="${order.order}" aria-label="选择${esc(order.order)}"></td><td class="pd-expand-cell"><button type="button" class="pd-expand-btn" data-pd-expand="${order.order}" aria-label="${expanded?'收起':'展开'}商品">${expanded?'−':'+'}</button></td>${orderRow}</tr>${childRows}`;}).join(''):`<tr><td class="pd-empty" colspan="${columns.length+2}">暂无数据</td></tr>`;countEl.textContent=visibleOrders.length===orderGroups.length?'':`筛选结果 ${visibleOrders.length} 个订单`;totalEl.textContent=visibleOrders.reduce((sum,order)=>sum+order.productKeys.length,0);syncStats();};
   const close=()=>{overlay.remove();document.body.classList.remove('pd-picker-open');};
-
-  overlay.addEventListener('click',event=>{
-    if(event.target===overlay||event.target.closest('[data-pd-close]')){close();return;}
-    const toggle=event.target.closest('[data-pd-query-toggle]');
-    if(toggle){const card=overlay.querySelector('[data-pd-query-card]');card.classList.toggle('is-collapsed');toggle.setAttribute('aria-expanded',String(!card.classList.contains('is-collapsed')));return;}
-    if(event.target.closest('[data-pd-reset]')){overlay.querySelectorAll('[data-pd-filter]').forEach(input=>{input.value='';});visible=rows.slice();renderRows();return;}
-    if(event.target.closest('[data-pd-search]')){visible=rows.filter(row=>[...overlay.querySelectorAll('[data-pd-filter]')].every(input=>{const value=input.value.trim();return !value||String(row[input.dataset.pdFilter]||'').includes(value);}));renderRows();return;}
-    if(event.target.closest('[data-pd-columns]')){toast('已模拟打开列设置');return;}
-    if(event.target.closest('[data-pd-confirm]')){
-      if(!selected.size){toast('请选择商品');return;}
-      const picked=rows.filter(r=>selected.has(r.key)).map(row=>({
-        key:row.key,order:row.order,customer:row.customer,category:'农副产品',desc:'—',
-        pieces:row.pieces,gross:row.gross,volume:row.volume,standard:row.total,
-        lineNo:'1',route:`${row.origin} → ${row.destination}`,loadType:row.loadType
-      }));
-      pushDemandGoods(picked);
-      toast(`已添加 ${picked.length} 个商品行`);
-      close();
-      if(typeof render==='function')render();
-      return;
-    }
-  });
-  overlay.addEventListener('change',event=>{
-    const check=event.target.closest('[data-pd-row-check]');
-    if(check){if(check.checked)selected.add(check.dataset.pdRowCheck);else selected.delete(check.dataset.pdRowCheck);syncStats();return;}
-    if(event.target.closest('[data-pd-all]')){
-      const on=event.target.checked;
-      visible.forEach(row=>{if(on)selected.add(row.key);else selected.delete(row.key);});
-      body.querySelectorAll('[data-pd-row-check]').forEach(input=>{input.checked=on;});
-      syncStats();
-    }
-  });
+  overlay.addEventListener('click',event=>{if(event.target===overlay||event.target.closest('[data-pd-close]')){close();return;}const toggle=event.target.closest('[data-pd-query-toggle]');if(toggle){const card=overlay.querySelector('[data-pd-query-card]');card.classList.toggle('is-collapsed');toggle.setAttribute('aria-expanded',String(!card.classList.contains('is-collapsed')));return;}const expand=event.target.closest('[data-pd-expand]');if(expand){const order=expand.dataset.pdExpand;if(expandedOrders.has(order))expandedOrders.delete(order);else expandedOrders.add(order);renderRows();return;}if(event.target.closest('[data-pd-reset]')){overlay.querySelectorAll('[data-pd-filter]').forEach(input=>{input.value='';});visibleOrders=orderGroups.slice();renderRows();return;}if(event.target.closest('[data-pd-search]')){const filters=[...overlay.querySelectorAll('[data-pd-filter]')];visibleOrders=orderGroups.filter(order=>filters.every(input=>{const value=input.value.trim();if(!value)return true;const key=input.dataset.pdFilter;if(key==='goods')return order.products.some(product=>String(product.name||'').includes(value));if(key==='transport')return String(order.transport||'').includes(value);return String(order[key]||'').includes(value);}));visibleOrders.forEach(order=>expandedOrders.add(order.order));renderRows();return;}if(event.target.closest('[data-pd-columns]')){toast('已模拟打开列设置');return;}if(event.target.closest('[data-pd-confirm]')){if(!selected.size){toast('请选择商品');return;}const picked=productRows.filter(row=>selected.has(row.key)).map(row=>({key:row.key,order:row.order,customer:row.customer,category:'农副产品',desc:'—',pieces:row.pieces,gross:row.gross,volume:row.volume,standard:row.total,lineNo:'1',route:`${row.origin} → ${row.destination}`,loadType:row.loadType}));pushDemandGoods(picked);toast(`已添加 ${picked.length} 个商品行`);close();if(typeof render==='function')render();return;}});
+  overlay.addEventListener('change',event=>{if(event.target.closest('[data-pd-all]')){const on=event.target.checked;visibleOrders.forEach(order=>order.productKeys.forEach(key=>{if(on)selected.add(key);else selected.delete(key);}));renderRows();return;}const orderCheck=event.target.closest('[data-pd-order-check]');if(orderCheck){const order=orderGroups.find(item=>item.order===orderCheck.dataset.pdOrderCheck);order.productKeys.forEach(key=>{if(orderCheck.checked)selected.add(key);else selected.delete(key);});renderRows();return;}const check=event.target.closest('[data-pd-row-check]');if(check){if(check.checked)selected.add(check.dataset.pdRowCheck);else selected.delete(check.dataset.pdRowCheck);syncStats();}});
   renderRows();
 }
 document.addEventListener('click',event=>{

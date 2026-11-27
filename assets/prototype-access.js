@@ -221,6 +221,3 @@
   window.addEventListener('pageshow', scheduleApply);
   new MutationObserver(scheduleApply).observe(document.documentElement, { childList: true, subtree: true });
 })();
-
-
-

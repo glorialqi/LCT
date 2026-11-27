@@ -1,19 +1,17 @@
 /* 合同信息字段组合联动：独立于订单数据水合，新建页与详情页均生效。
    规则：
-   1. 系统自动生成 + 无需签署   → 基础信息（无签约日期、无附件）
-   2. 系统自动生成 + 线下签约   → 基础信息 + 签约日期
-   3. 系统自动生成 + E建签签约  → 基础信息 + 我司签约公司/印章/授权人/盖章关键字
-   4. 手动上传   + 无需签署     → 基础信息 + 合同正本附件上传
-   5. 手动上传   + 线下签约     → 基础信息 + 正本回收 + 合同正本附件上传
-   6. 手动上传   + E建签签约    → 基础信息 + 合同正本附件上传 + 我司签约公司/印章/授权人/盖章关键字
-   是否创建合同=否 → 只保留「是否创建合同」字段 */
+   1. 系统自动生成 + 线下签约 → 基础信息 + 签约日期
+   2. 系统自动生成 + E建签签约 → 基础信息 + 我司签约公司/印章/授权人/盖章关键字
+   3. 手动上传 + 线下签约 → 基础信息 + 正本回收 + 合同正本附件 + 签约日期
+   4. 手动上传 + E建签签约 → 基础信息 + 合同正本附件 + 我司签约公司/印章/授权人/盖章关键字
+   是否生成CRM合同=否 → 只保留「是否生成CRM合同」字段 */
 (function () {
   'use strict';
 
   const section = document.getElementById('contractSection');
   if (!section) return;
 
-  const SIGN_METHOD_LABEL = { elb: 'E建签签约', offline: '线下签约', no_sign: '无需签署' };
+  const SIGN_METHOD_LABEL = { elb: 'E建签签约', offline: '线下签约' };
   const setting = (key) => section.querySelector('[data-contract-setting="' + key + '"]');
   const settingValue = (key, fallback) => {
     const node = setting(key);
@@ -28,28 +26,32 @@
   };
 
   const initialContract = contractRef() || {};
-  const initialMethodKey = Object.keys(SIGN_METHOD_LABEL).find((key) => SIGN_METHOD_LABEL[key] === initialContract.signMethod) || 'no_sign';
+  const initialMethodKey = Object.keys(SIGN_METHOD_LABEL).find((key) => SIGN_METHOD_LABEL[key] === initialContract.signMethod) || 'elb';
   initValue('createContract', initialContract.createContract || 'y');
   initValue('signMethod', initialMethodKey);
   initValue('bodyType', initialContract.bodyType || 'system_auto_generate');
+  initValue('templateType', initialContract.templateType === '非我司范本' ? 'other_template' : 'our_template');
+  initValue('esignUrl', initialContract.esignUrl || '');
 
   function readContractState() {
     return {
       create: settingValue('createContract', 'y'),
       body: settingValue('bodyType', 'system_auto_generate'),
-      method: settingValue('signMethod', 'no_sign'),
-      reclaim: settingValue('reclaim', 'n'),
-      jurisdiction: settingValue('jurisdiction', '法院')
+      method: settingValue('signMethod', 'elb'),
+      reclaim: settingValue('reclaim', 'y'),
+      jurisdiction: settingValue('jurisdiction', '法院'),
+      templateType: settingValue('templateType', 'our_template')
     };
   }
 
   const CONTRACT_RULES = {
     create: (s) => s.create === 'y',
     court: (s) => s.create === 'y' && (s.jurisdiction === '法院' || s.jurisdiction === '商事仲裁'),
-    signDateTop: (s) => s.create === 'y' && s.body === 'system_auto_generate' && s.method === 'offline',
+    signDateTop: (s) => s.create === 'y' && s.body === 'manual_upload' && s.method === 'offline' && s.reclaim === 'y',
     reclaim: (s) => s.create === 'y' && s.body === 'manual_upload' && s.method === 'offline',
     upload: (s) => s.create === 'y' && s.body === 'manual_upload',
-    elb: (s) => s.create === 'y' && s.method === 'elb'
+    elb: (s) => s.create === 'y' && s.method === 'elb',
+    otherTemplate: (s) => s.create === 'y' && s.method === 'elb' && s.templateType === 'other_template'
   };
 
   function applyContractRules() {
@@ -62,6 +64,8 @@
     if (contract) {
       contract.signMethod = SIGN_METHOD_LABEL[state.method];
       contract.bodyType = state.body;
+      contract.templateType = state.templateType === 'other_template' ? '非我司范本' : '我司范本';
+      contract.esignUrl = settingValue('esignUrl', '');
     }
   }
 

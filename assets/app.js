@@ -212,4 +212,3 @@
   restoreSidebarState();
   activatePage(pageFromHash(), false);
 })();
-

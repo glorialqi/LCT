@@ -87,31 +87,28 @@
 
   function fallbackContract() {
     const digits = record.no.replace(/\D/g, '').slice(-10);
-    const inferredStatus = ['履约中', '已完结'].includes(record.status) ? '已生效' : '';
     return {
-      no: 'CON' + digits,
-      version: 'V1.0',
-      status: inferredStatus,
-      signMethod: '线下签约',
-      signMode: '物流平台公司签约',
-      platformCompany: record.company || '厦门建发供应链物流科技有限公司',
+      no: '—',
+      version: '—',
+      status: '未生成',
+      signMethod: 'E建签签约',
+      templateType: '我司范本',
+      esignUrl: '',
       principalName: record.contact || record.sales || '—',
       principalPhone: record.phone || '—',
       principalAddress: '中国厦门市环岛东路1699号建发国际大厦27楼',
       principalEmail: record.email || '—',
-      counterpartyName: '王保君',
-      counterpartyPhone: '15064886112',
-      counterpartyAddress: '亚洲/中国/山东省/青岛市/黄岛区 山东省青岛市黄岛区',
-      counterpartyEmail: 'Richlay@zg-express.com'
+      counterpartyName: record.contact || '—',
+      counterpartyPhone: record.phone || '—',
+      counterpartyAddress: record.address || '—',
+      counterpartyEmail: record.email || '—'
     };
   }
 
   function normalizeContractStatusForOrder(orderStatus, value) {
-    const contractStatuses = ['', '待签约', '签约中', '已生效', '拒签'];
+    const contractStatuses = ['未生成', '创建', '待审', '待签约', '签约中', '已生效'];
     const normalized = contractStatuses.includes(value) ? value : '';
-    if (['创建', '驳回', '待审核'].includes(orderStatus)) return '';
-    if (['已完结', '已取消'].includes(orderStatus)) return ['', '已生效'].includes(normalized) ? normalized : '';
-    return normalized;
+    return normalized || '未生成';
   }
 
   const contract = { ...fallbackContract(), ...(record.contract || {}) };
@@ -137,6 +134,7 @@
 
   function setContractStatus(value) {
     contract.status = value;
+    contract.originalAttached = value === '已生效';
     document.querySelectorAll('[data-contract-field="status"], [data-contract-preview="status"]').forEach((node) => {
       if ('value' in node) node.value = value;
       else node.textContent = value;
@@ -223,8 +221,8 @@
   }
   const contractOverview = document.getElementById('orderContractOverviewStatus');
     if (contractOverview) {
-      contractOverview.textContent = contract.status || '';
-      contractOverview.dataset.status = contract.status || '';
+      contractOverview.textContent = contract.status || '未生成';
+      contractOverview.dataset.status = contract.status || '未生成';
     }
     window.syncOrderDocumentActions?.();
   }
@@ -286,17 +284,13 @@
       return;
     }
     record.statusBeforeCompletion = record.status;
-    record.contractStatusBeforeCompletion = contract.status;
     setOrderStatus('已完结');
-    setContractStatus(contract.status === '已生效' ? '已生效' : '');
-    notify('success', '客户订单已完结。');
+    notify('success', '客户订单已完结；CRM 合同状态不受影响。');
   }
 
   function cancelOrderCompletion() {
     setOrderStatus(record.statusBeforeCompletion || '履约中');
-    setContractStatus(record.contractStatusBeforeCompletion ?? contract.status);
     delete record.statusBeforeCompletion;
-    delete record.contractStatusBeforeCompletion;
     notify('success', '已取消完结，客户订单恢复为履约状态。');
   }
 
@@ -329,6 +323,126 @@
     dialog.hidden = true;
     document.body.classList.remove('contract-modal-open');
     if (contractDialogReturnFocus && typeof contractDialogReturnFocus.focus === 'function') contractDialogReturnFocus.focus();
+  }
+
+  let generateContractDialogReturnFocus = null;
+
+  function setGenerateSelectValue(id, value) {
+    const node = document.getElementById(id);
+    if (!node) return;
+    const normalized = String(value || '');
+    if (Array.from(node.options || []).some((option) => option.value === normalized)) node.value = normalized;
+  }
+
+  function applyGenerateContractRules() {
+    const dialog = document.getElementById('generateContractDialog');
+    if (!dialog) return;
+    const create = document.getElementById('generateContractCreateFlag')?.value || 'y';
+    const bodyType = document.getElementById('generateContractBodyTypeInput')?.value || 'system_auto_generate';
+    const signMethod = document.getElementById('generateContractSignMethodInput')?.value || 'elb';
+    const reclaim = document.getElementById('generateContractReclaimInput')?.value || 'y';
+    const templateType = document.getElementById('generateContractTemplateType')?.value || 'our_template';
+    const dependent = document.getElementById('generateContractDependent');
+    if (dependent) dependent.hidden = create !== 'y';
+    const rules = {
+      create: create === 'y',
+      offline: create === 'y' && signMethod === 'offline',
+      bodyUpload: create === 'y' && bodyType === 'manual_upload' && !(signMethod === 'offline' && reclaim === 'y'),
+      offlineReclaim: create === 'y' && bodyType === 'manual_upload' && signMethod === 'offline' && reclaim === 'y',
+      elb: create === 'y' && signMethod === 'elb',
+      otherTemplate: create === 'y' && signMethod === 'elb' && templateType === 'other_template'
+    };
+    dialog.querySelectorAll('[data-generate-when]').forEach((node) => {
+      const rule = rules[node.dataset.generateWhen];
+      if (rule !== undefined) node.hidden = !rule;
+    });
+    const hint = document.getElementById('generateContractHint');
+    if (hint) hint.textContent = create === 'y'
+      ? '以上信息由客户订单合同信息区自动带出，可返回订单修改后重新生成。'
+      : '选择“否”时不生成 CRM 合同，关闭弹窗后可继续保留当前客户订单状态。';
+  }
+
+  function syncGenerateContractPreview() {
+    const selectedText = (id) => {
+      const node = document.getElementById(id);
+      return node?.selectedOptions?.[0]?.textContent?.trim() || node?.value || '—';
+    };
+    const setText = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value || '—'; };
+    const setValue = (id, value) => { const node = document.getElementById(id); if (node) node.value = value || ''; };
+    setGenerateSelectValue('generateContractCreateFlag', document.getElementById('contractCreateFlag')?.value || 'y');
+    setGenerateSelectValue('generateContractBodyTypeInput', document.getElementById('contractBodyType')?.value || 'system_auto_generate');
+    setGenerateSelectValue('generateContractSignMethodInput', document.getElementById('contractSignMethod')?.value || 'elb');
+    setGenerateSelectValue('generateContractReclaimInput', document.getElementById('contractReclaim')?.value || 'y');
+    setGenerateSelectValue('generateContractTemplateType', document.getElementById('contractTemplateType')?.value || 'our_template');
+    setValue('generateContractEsignUrl', document.getElementById('contractEsignUrl')?.value || '');
+    setText('generateContractOrderNo', record.no || '—');
+    setText('generateContractPrincipalName', document.getElementById('principalName')?.value || '—');
+    setText('generateContractCounterpartyName', document.getElementById('counterpartyName')?.value || '—');
+    setValue('generateOurCompany', document.getElementById('contractOurCompany')?.value || '—');
+    setValue('generateOurSeal', selectedText('contractSupplierSealName'));
+    setValue('generateOurSigner', selectedText('contractOurSigner'));
+    setValue('generateCustomerCompany', record.customer || '—');
+    applyGenerateContractRules();
+  }
+
+  function openGenerateContractDialog() {
+    const dialog = document.getElementById('generateContractDialog');
+    if (!dialog) return;
+    generateContractDialogReturnFocus = document.activeElement;
+    syncGenerateContractPreview();
+    dialog.hidden = false;
+    document.body.classList.add('contract-modal-open');
+    window.setTimeout(() => document.getElementById('generateContractDialogClose')?.focus(), 0);
+  }
+
+  function closeGenerateContractDialog() {
+    const dialog = document.getElementById('generateContractDialog');
+    if (!dialog || dialog.hidden) return;
+    dialog.hidden = true;
+    document.body.classList.remove('contract-modal-open');
+    if (generateContractDialogReturnFocus && typeof generateContractDialogReturnFocus.focus === 'function') generateContractDialogReturnFocus.focus();
+  }
+
+  function generateCrmContract() {
+    if (!guardEditPermission()) return;
+    const createFlag = document.getElementById('generateContractCreateFlag')?.value || 'y';
+    if (createFlag === 'n') {
+      closeGenerateContractDialog();
+      notify('info', '已选择不生成 CRM 合同，客户订单状态保持不变。');
+      return;
+    }
+    const bodyType = document.getElementById('generateContractBodyTypeInput')?.value || 'system_auto_generate';
+    const signMethodValue = document.getElementById('generateContractSignMethodInput')?.value || 'elb';
+    const reclaim = document.getElementById('generateContractReclaimInput')?.value || 'y';
+    const templateType = document.getElementById('generateContractTemplateType')?.value || 'our_template';
+    const esignUrl = document.getElementById('generateContractEsignUrl')?.value?.trim() || '';
+    if (signMethodValue === 'elb' && templateType === 'other_template' && !esignUrl) {
+      notify('error', '范本类型为非我司范本时，请填写 E建签地址');
+      return;
+    }
+    if (bodyType === 'manual_upload' && signMethodValue === 'offline' && reclaim === 'y') {
+      const signDate = document.getElementById('generateContractSignDate')?.value;
+      if (!signDate) {
+        notify('error', '请填写签约日期');
+        return;
+      }
+    }
+    const digits = String(record.no || '').replace(/\D/g, '') || Date.now().toString();
+    contract.no = 'CRM-' + digits;
+    contract.version = 'V1.0';
+    contract.bodyType = bodyType;
+    contract.signMethod = ({ elb: 'E建签签约', offline: '线下签约' })[signMethodValue] || 'E建签签约';
+    contract.templateType = templateType === 'other_template' ? '非我司范本' : '我司范本';
+    contract.esignUrl = esignUrl;
+    contract.status = '待审';
+    contract.originalAttached = false;
+    renderContract();
+    syncStatusActions();
+    closeGenerateContractDialog();
+    const esignMessage = signMethodValue === 'elb'
+      ? (templateType === 'our_template' ? '审批通过后将自动发起 E建签。' : '已关联非我司 E建签地址。')
+      : '请继续完成线下签约。';
+    notify('success', 'CRM 合同已生成，状态已更新为“待审”。' + esignMessage);
   }
 
   function applyRecord() {
@@ -452,7 +566,10 @@
   const cancelOrderBtn = document.getElementById('cancelOrderBtn');
   const withdrawSignBtn = document.getElementById('withdrawSignBtn');
   const reclaimOriginalBtn = document.getElementById('reclaimOriginalBtn');
+  const withdrawReclaimBtn = document.getElementById('withdrawReclaimBtn');
+  const generateCrmContractBtn = document.getElementById('generateCrmContractBtn');
   const contractDialog = document.getElementById('contractDialog');
+  const generateContractDialog = document.getElementById('generateContractDialog');
 
   viewContractBtn?.addEventListener('click', () => {
     const orderStatus = record.status;
@@ -463,7 +580,7 @@
         return;
       }
       const body = '<h2 style="font-family:sans-serif">合同预览（帆软模板）</h2>' +
-        '<p style="font-family:sans-serif;color:#555">客户订单：' + (record.no || '') + '<br>签约方式：' + (contract.signMethod || '—') + '<br>委托方：' + (contract.principalName || '—') + '<br>受托方：' + (contract.counterpartyName || '—') + '</p>';
+        '<p style="font-family:sans-serif;color:#555">客户订单：' + (record.no || '') + '<br>签约方式：' + (contract.signMethod || '—') + '<br>我方：' + (contract.principalName || '—') + '<br>客户：' + (contract.counterpartyName || '—') + '</p>';
       win.document.write(body);
       win.document.close();
       return;
@@ -478,10 +595,24 @@
       win.document.close();
       return;
     }
+    if (contract.status === '未生成') {
+      notify('error', '请先点击【生成CRM合同】创建 CRM 合同');
+      return;
+    }
     notify('error', '无合同附件');
   });
   document.getElementById('contractDialogClose')?.addEventListener('click', closeContractDialog);
   document.getElementById('contractDialogDone')?.addEventListener('click', closeContractDialog);
+  generateCrmContractBtn?.addEventListener('click', openGenerateContractDialog);
+  document.getElementById('generateContractDialogClose')?.addEventListener('click', closeGenerateContractDialog);
+  document.getElementById('generateContractDialogCancel')?.addEventListener('click', closeGenerateContractDialog);
+  document.getElementById('generateContractDialogConfirm')?.addEventListener('click', generateCrmContract);
+  ['generateContractCreateFlag', 'generateContractBodyTypeInput', 'generateContractSignMethodInput', 'generateContractReclaimInput', 'generateContractTemplateType'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('change', applyGenerateContractRules);
+  });
+  generateContractDialog?.addEventListener('click', (event) => {
+    if (event.target === generateContractDialog) closeGenerateContractDialog();
+  });
   contractDialog?.addEventListener('click', (event) => {
     if (event.target === contractDialog) closeContractDialog();
   });
@@ -501,7 +632,7 @@
     }
   });
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeContractDialog();
+    if (event.key === 'Escape') { closeContractDialog(); closeGenerateContractDialog(); }
   });
 
   initiateSignBtn?.addEventListener('click', () => {
@@ -514,10 +645,8 @@
       notify('error', '当前客户订单状态不允许取消');
       return;
     }
-    if (!window.confirm('取消后该客户订单将停止后续签署与履约，确定取消吗？')) return;
-    const retainedContractStatus = contract.status === '已生效' ? '已生效' : '';
+    if (!window.confirm('取消后客户订单将进入已取消状态，CRM 合同状态不受影响，确定取消吗？')) return;
     setOrderStatus('已取消');
-    setContractStatus(retainedContractStatus);
     notify('success', '客户订单已取消。');
   });
   withdrawSignBtn?.addEventListener('click', () => {
@@ -532,15 +661,20 @@
     setContractStatus('已生效');
     notify('success', '已完成正本回收，合同状态已更新为“已生效”。');
   });
+  withdrawReclaimBtn?.addEventListener('click', () => {
+    if (!guardEditPermission()) return;
+    if (!window.confirm('确认撤回正本回收？合同状态将回到“签约中”。')) return;
+    contract.originalAttached = false;
+    setContractStatus('签约中');
+    notify('success', '已撤回正本回收，合同状态已回到“签约中”。');
+  });
 
   /* 合同信息模块：按《合同签约确认单》字段清单做组合联动
-     1. 系统自动生成 + 无需签署      → 基础信息（无签约日期、无附件）
-     2. 系统自动生成 + E建签签约      → 基础信息 + 我司签约设置
-     3. 系统自动生成 + 线下签约       → 基础信息 + 签约日期
-     4. 手动上传   + 线下签约        → 基础信息 + 正本回收 + 签约日期 + 合同正本附件上传
-     5. 手动上传   + E建签签约        → 基础信息 + 合同正本附件上传 + 我司签约设置
-     6. 手动上传   + 无需签署        → 基础信息 + 合同正本附件上传
-     是否创建合同=否 → 只保留「是否创建合同」字段 */
+     1. 系统自动生成 + E建签签约 → 基础信息 + 我司签约设置
+     2. 系统自动生成 + 线下签约 → 基础信息 + 签约日期
+     3. 手动上传 + 线下签约 → 基础信息 + 正本回收 + 签约日期 + 合同正本附件上传
+     4. 手动上传 + E建签签约 → 基础信息 + 合同正本附件上传 + 我司签约设置
+     是否生成CRM合同=否 → 只保留「是否生成CRM合同」字段 */
   window.OrderDetailPage = {
     no: orderNo,
     record,
@@ -550,6 +684,10 @@
     openContractDialog,
     closeContractDialog,
     setStatus: setOrderStatus,
+    setContractStatus,
+    renderContract,
+    openGenerateContractDialog,
+    closeGenerateContractDialog,
     setConfirmationStatus,
     submitOrder: submitOrderForConfirmation,
     confirmOrder: confirmCustomerOrder,
@@ -591,4 +729,3 @@
     window.setTimeout(() => scope.dispatchEvent(new Event('input', { bubbles: true })), 0);
   }
 })();
-

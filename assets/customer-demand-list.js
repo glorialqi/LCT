@@ -556,16 +556,3 @@
   renderRows();
   ui.notifyParent('customer-demand-list', 'list');
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-

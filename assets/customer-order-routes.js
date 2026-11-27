@@ -839,7 +839,7 @@
     }
     window.__lastOrderReferenceError = '';
     return { valid: true };
-  } 
+  }
 
   function detectLinkCycle() {
     const keyOf = (routeId, itemId) => routeId + '::' + itemId;
