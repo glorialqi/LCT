@@ -1264,7 +1264,7 @@
         '<td><div class="order-product-row-actions">' + (editable ? '<button class="order-route-row-action" type="button" data-order-product-action="duplicate" data-product-id="' + escapeHtml(productId) + '">复制</button>' : '') + (editable ? '<button class="order-route-icon-btn danger" type="button" data-order-product-action="remove" data-product-id="' + escapeHtml(productId) + '" aria-label="删除商品">×</button>' : '') + '</div></td>' +
       '</tr>';
     }).join('');
-    return '<div class="order-product-table-wrap"><div class="order-product-table-note"><span>订单商品是服务要求的唯一商品来源，共 <b data-order-product-count>' + state.orderProducts.length + '</b> 项</span><span>' + (readonly ? '当前为只读状态，字段不可编辑' : '字段与商品明细保持一致，服务要求仅引用商品') + '</span></div>' +
+    return '<div class="order-product-table-wrap">' +
       '<div class="order-route-items-wrap"><table class="order-route-items order-product-table' + (readonly ? ' is-readonly' : '') + '" aria-label="客户订单商品明细" aria-readonly="' + readonly + '"><thead><tr><th>商品分类 *</th><th>商品描述</th><th class="num">标准数量 *</th><th class="num">件数</th><th>件数单位</th><th class="num">毛重</th><th>毛重单位</th><th class="num">体积</th><th>体积单位</th><th>标准单位</th><th class="num">单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th class="num">溢装率（%）</th><th class="num">短装率（%）</th><th class="num">货值单价</th><th class="num">货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' + (rows || '<tr class="order-product-empty"><td colspan="22">暂无商品，请先添加客户订单商品。</td></tr>') + '</tbody></table></div></div>';
   }
 
@@ -2148,7 +2148,6 @@
       '</tr>';
     }).join('');
     return '<div class="order-product-picker-summary" id="orderProductPickerSummary">已选 0 项</div>' +
-      '<div class="order-product-picker-tip">选择后，可在服务要求商品明细中直接编辑标准数量、件数、体积、毛重；单位沿用客户订单商品。</div>' +
       '<div class="order-product-picker-table-wrap"><table class="order-product-picker-table order-product-picker-table-full"><thead><tr><th></th><th>商品分类</th><th>商品描述</th><th>标准数量</th><th>标准单位</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="order-product-picker-empty">订单商品明细为空，请先在商品明细模块添加商品。</td></tr>') + '</tbody></table></div>';
   }
 
@@ -2168,7 +2167,7 @@
     if (!orderProductPickerBody) return;
     const checked = Array.from(orderProductPickerBody.querySelectorAll('input[data-product-picker-item]:checked'));
     const summary = document.getElementById('orderProductPickerSummary');
-    if (summary) summary.textContent = '已选 ' + checked.length + ' 项，数量请在服务要求中编辑';
+    if (summary) summary.textContent = '已选 ' + checked.length + ' 项';
     orderProductPickerBody.querySelectorAll('[data-product-picker-row]').forEach((row) => {
       row.classList.toggle('selected', Boolean(row.querySelector('input[data-product-picker-item]')?.checked));
     });

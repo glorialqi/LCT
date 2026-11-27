@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>客户订单详情（PRD对齐版） - OMS原型</title>
+  <title>客户订单详情（PRD对齐版） - OMS</title>
   <link rel="stylesheet" href="../assets/app.css">
   <style>
     :root {
@@ -280,6 +280,9 @@
     .order-route-preview-dialog { width:min(900px,calc(100vw - 48px)); max-height:calc(100vh - 48px); display:flex; flex-direction:column; overflow:hidden; border:1px solid #dce3ed; border-radius:8px; background:#fff; box-shadow:0 24px 60px rgba(15,23,42,.28); }
     .order-route-preview-head { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 17px; border-bottom:1px solid #eef1f5; background:#fafbfc; }
     .order-route-preview-title { color:var(--detail-ink); font-size:15px; font-weight:700; }
+    .order-route-preview-subtitle,
+    .feedback-preview-subtitle { display:none !important; }
+    .order-route-toolbar { justify-content:flex-end; }
     .order-route-preview-subtitle { margin-top:3px; color:#64748b; font-size:11px; }
     .order-route-preview-body { overflow:auto; padding:16px 17px; background:#f8fafc; }
     .order-route-preview-item { margin-bottom:10px; padding:12px 13px; border:1px solid #e1e8f2; border-radius:6px; background:#fff; }
@@ -779,20 +782,15 @@
         <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-db"/></svg></span><span>物流资源池</span></div>
         <div class="nav-group-title nav-muted"><span class="nav-icon"><svg><use href="#p-settings"/></svg></span><span>OMS配置管理</span></div>
       </nav>
-      <div class="sidebar-bottom">
-        <button class="sidebar-action" id="prototypeToggle" type="button" aria-expanded="false">原型说明</button>
-        <div class="sidebar-version">Customer Consignment No. Prototype</div>
-      </div>
+
     </aside>
 
     <section class="workspace">
       <header class="topbar">
         <div class="breadcrumb-wrap">
           <div class="breadcrumb"><span>物流控制塔</span><span class="crumb-separator">/</span><strong>客户订单新增</strong></div>
-          <p>客户订单基础信息、客户单号与运输要求</p>
         </div>
         <div class="topbar-actions">
-          <span class="prototype-pill"><span></span>HTML 原型</span>
           <button class="icon-button" type="button" title="刷新" aria-label="刷新"><svg><use href="#p-refresh"/></svg></button>
           <button class="icon-button" type="button" title="在新窗口打开" aria-label="在新窗口打开"><svg><use href="#p-external"/></svg></button>
           <span class="topbar-divider"></span>
@@ -852,7 +850,7 @@
               <button type="button" data-module-target="costProfitSection">预估费用</button>
               <button type="button" data-module-target="systemInfoSection">系统信息</button>
             </div>
-            <div class="order-quick-statuses" aria-label="订单状态摘要">
+            <div class="order-quick-statuses" aria-label="订单状态摘要" hidden>
               <span class="order-quick-status-item" title="订单状态"><span class="order-quick-status-label">订单</span><span class="order-status-chip status-field-value" id="orderStatusField" data-order-status-field data-order-status-pill data-status="创建">创建</span></span>
               
               <span class="order-quick-status-item" title="安排状态"><span class="order-quick-status-label">安排</span><span class="order-status-chip" id="orderArrangementStatusField" data-order-arrangement-status-field></span></span>
@@ -967,7 +965,7 @@
             </div>
           </div>
           <div class="detail-section-body">
-            <div class="order-route-toolbar"><span id="orderRouteModeCopy">一单多线路：每条线路独立配置运输方式、起止节点、时间要求及关联商品。</span><span id="orderRouteCountLabel">0 条线路</span></div>
+            <div class="order-route-toolbar"><span id="orderRouteCountLabel">0 条线路</span></div>
             <div id="orderRouteCards"></div>
             <input id="orderRoutesData" type="hidden" aria-label="运输线路数据">
           </div>
@@ -1076,10 +1074,6 @@
           </div>
         </section>
 
-        <div class="note-card">
-          <svg><use href="#p-info"/></svg>
-          <div><b>原型说明：</b>客户单号位于“基础信息”服务范围下方；本期为单值文本输入框（占用一个字段宽度），不再支持多值录入。</div>
-        </div>
         </div>
         <section class="detail-section" id="transportRequirementSection" aria-labelledby="transport-title">
           <div class="detail-section-head"><div class="detail-section-title" id="transport-title"><svg><use href="#p-down"/></svg>运输要求</div></div>
@@ -1234,15 +1228,7 @@
       </div>
       <div class="feedback-preview-foot"><button class="detail-btn" id="feedbackAttachmentCancel" type="button">取消</button><button class="detail-btn primary" id="feedbackAttachmentConfirm" type="button" disabled>上传附件</button></div>
     </section>
-  </div>  <aside class="prototype-note" id="prototypeNote" aria-label="原型说明">
-    <h3>为什么放在这里</h3>
-    <p>客户单号是可编辑的单值文本字段，放在“基础信息”表单栅格内比标题行右侧更符合操作习惯。</p>
-    <ul>
-      <li>与“服务范围”同行，不新增整行。</li>
-      <li>2 列宽度可容纳长数字和多个标签。</li>
-      <li>名称与说明可清楚区别于 4PL 自身的物流委托单号。</li>
-    </ul>
-  </aside>
+  </div>  
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="detail-more-menu" id="detailMoreMenu" role="menu" aria-label="更多订单操作" hidden></div>
@@ -1356,18 +1342,6 @@
       }
       document.querySelectorAll('[data-toast]').forEach((button) => {
         button.addEventListener('click', () => showToast(button.dataset.toast));
-      });
-      const prototypeToggle = document.getElementById('prototypeToggle');
-      const prototypeNote = document.getElementById('prototypeNote');
-      prototypeToggle.addEventListener('click', () => {
-        const open = prototypeNote.classList.toggle('open');
-        prototypeToggle.setAttribute('aria-expanded', String(open));
-      });
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-          prototypeNote.classList.remove('open');
-          prototypeToggle.setAttribute('aria-expanded', 'false');
-        }
       });
     })();
   </script>
@@ -1811,7 +1785,7 @@
         if (breadcrumb) breadcrumb.textContent = '客户订单修改单';
         const srTitle = document.querySelector('h1.sr-only');
         if (srTitle) srTitle.textContent = '客户订单修改单';
-        document.title = '客户订单修改单 ' + (sourceNo ? sourceNo + ' ' : '') + version + ' - OMS原型';
+        document.title = '客户订单修改单 ' + (sourceNo ? sourceNo + ' ' : '') + version + ' - OMS';
         const consignmentInput = document.getElementById('customerOrderNoInput');
         if (consignmentInput && Array.isArray(restoredDraft.consignments)) {
           consignmentInput.value = restoredDraft.consignments.filter(Boolean)[0] || '';
@@ -1952,7 +1926,7 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261126m"></script>
+  <script src="../assets/customer-order-routes.js?v=20261126n"></script>
   <script>
     (() => {
       const form = document.getElementById('orderDetailForm');
