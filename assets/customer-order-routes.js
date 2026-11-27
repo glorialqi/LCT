@@ -590,6 +590,7 @@
       pieceWeight: item.pieceWeight ?? 0,
       pieceWeightUnit: item.pieceWeightUnit || 'kg',
       specDimensions: item.specDimensions || '',
+      heightDescription: item.heightDescription || '',
       overRate: item.overRate ?? 0,
       underRate: item.underRate ?? 0,
       goodsValueUnitPrice: item.goodsValueUnitPrice ?? 0,
@@ -1212,8 +1213,8 @@
     return '<input class="control" type="' + (type || 'text') + '" min="0" step="0.01" data-order-product-field="' + key + '" data-product-id="' + escapeHtml(item.sourceProductId || item.id) + '" value="' + value + '" aria-label="' + escapeHtml(label) + '"' + (readonly ? ' readonly' : '') + '>';
   }
 
-  function orderProductSelectMarkup(item, key, label, options, readonly) {
-    return '<select class="control" data-order-product-field="' + key + '" data-product-id="' + escapeHtml(item.sourceProductId || item.id) + '" aria-label="' + escapeHtml(label) + '"' + (readonly ? ' disabled' : '') + '>' + selectOptions(options, item[key]) + '</select>';
+  function orderProductSelectMarkup(item, key, label, options, readonly, required) {
+    return '<select class="control" data-order-product-field="' + key + '" data-product-id="' + escapeHtml(item.sourceProductId || item.id) + '" aria-label="' + escapeHtml(label) + '"' + (readonly ? ' disabled' : '') + (required ? ' required' : '') + '>' + selectOptions(options, item[key]) + '</select>';
   }
 
   function orderProductServiceRefs(productId) {
@@ -1236,23 +1237,23 @@
     const readonly = orderRouteReadonly();
     const editable = !readonly && orderItemsCopyEnabled();
     const field = (item, key, label, type) => orderProductFieldMarkup(item, key, label, type, readonly);
-    const select = (item, key, label, options) => orderProductSelectMarkup(item, key, label, options, readonly);
+    const select = (item, key, label, options, required) => orderProductSelectMarkup(item, key, label, options, readonly, required);
     const rows = state.orderProducts.map((item) => {
       const productId = item.sourceProductId || item.id;
       return '<tr data-order-product-row="' + escapeHtml(productId) + '">' +
         '<td>' + select(item, 'name', '商品分类', commodityCatalog.map((entry) => entry.name)) + '</td>' +
         '<td>' + field(item, 'description', '商品描述') + '</td>' +
-        '<td class="num">' + field(item, 'standardQty', '标准数量', 'number') + '</td>' +
-        '<td>' + select(item, 'standardUnit', '标准单位', ['吨', '千克', '立方米', '件', '箱', '托', '桶', '台']) + '</td>' +
         '<td class="num">' + field(item, 'pieceCount', '件数', 'number') + '</td>' +
         '<td>' + select(item, 'pieceCountUnit', '件数单位', unitOptions) + '</td>' +
         '<td class="num">' + field(item, 'grossWeight', '毛重', 'number') + '</td>' +
         '<td>' + select(item, 'grossWeightUnit', '毛重单位', ['kg', '吨']) + '</td>' +
         '<td class="num">' + field(item, 'volume', '体积', 'number') + '</td>' +
         '<td>' + select(item, 'volumeUnit', '体积单位', ['m³', 'CBM']) + '</td>' +
-        '<td class="num">' + field(item, 'pieceWeight', '单件重量', 'number') + '</td>' +
-        '<td>' + select(item, 'pieceWeightUnit', '单件重量单位', ['kg', '吨']) + '</td>' +
+        '<td class="num">' + field(item, 'standardQty', '标准数量', 'number') + '</td>' +
+        '<td>' + select(item, 'standardUnit', '标准单位', ['吨', '千克', '立方米', '件', '箱', '托', '桶', '台'], true) + '</td>' +
+        '<td>' + field(item, 'pieceWeight', '单件重量描述') + '</td>' +
         '<td>' + field(item, 'specDimensions', '规格尺寸') + '</td>' +
+        '<td>' + field(item, 'heightDescription', '层高描述') + '</td>' +
         '<td class="num">' + field(item, 'overRate', '溢装率', 'number') + '</td>' +
         '<td class="num">' + field(item, 'underRate', '短装率', 'number') + '</td>' +
         '<td class="num">' + field(item, 'goodsValueUnitPrice', '货值单价', 'number') + '</td>' +
@@ -1265,7 +1266,7 @@
       '</tr>';
     }).join('');
     return '<div class="order-product-table-wrap">' +
-      '<div class="order-route-items-wrap"><table class="order-route-items order-product-table' + (readonly ? ' is-readonly' : '') + '" aria-label="客户订单商品明细" aria-readonly="' + readonly + '"><thead><tr><th>商品分类 *</th><th>商品描述</th><th class="num">标准数量 *</th><th>标准单位</th><th class="num">件数</th><th>件数单位</th><th class="num">毛重</th><th>毛重单位</th><th class="num">体积</th><th>体积单位</th><th class="num">单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th class="num">溢装率（%）</th><th class="num">短装率（%）</th><th class="num">货值单价</th><th class="num">货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' + (rows || '<tr class="order-product-empty"><td colspan="22">暂无商品，请先添加客户订单商品。</td></tr>') + '</tbody></table></div></div>';
+      '<div class="order-route-items-wrap"><table class="order-route-items order-product-table' + (readonly ? ' is-readonly' : '') + '" aria-label="客户订单商品明细" aria-readonly="' + readonly + '"><thead><tr><th>商品分类 *</th><th>商品描述</th><th class="num">件数</th><th>件数单位</th><th class="num">毛重</th><th>毛重单位</th><th class="num">体积</th><th>体积单位</th><th class="num">标准数量 *</th><th>标准单位 *</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th class="num">溢装率（%）</th><th class="num">短装率（%）</th><th class="num">货值单价</th><th class="num">货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' + (rows || '<tr class="order-product-empty"><td colspan="22">暂无商品，请先添加客户订单商品。</td></tr>') + '</tbody></table></div></div>';
   }
 
   function renderOrderProductsSection() {
@@ -1314,17 +1315,17 @@
       return '<tr class="service-product-list-row" data-service-product-row="' + escapeHtml(productId) + '">' +
         '<td><div class="service-product-list-main" title="' + escapeHtml(hoverText) + '"><strong>' + escapeHtml(product.name || '未命名商品') + '</strong></div></td>' +
         '<td><span class="service-product-readonly-text">' + escapeHtml(product.description || '—') + '</span></td>' +
-        '<td>' + serviceInlineInputMarkup({ value: selection.standardQty, max: product.standardQty ?? product.count, field: 'standardQty', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
-        '<td>' + escapeHtml(selection.standardUnit || '—') + '</td>' +
         '<td>' + serviceInlineInputMarkup({ value: selection.pieceCount, max: product.pieceCount ?? product.count, field: 'pieceCount', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
         '<td>' + escapeHtml(selection.pieceCountUnit || '—') + '</td>' +
         '<td>' + serviceInlineInputMarkup({ value: selection.grossWeight, max: product.grossWeight ?? product.weight, field: 'grossWeight', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
         '<td>' + escapeHtml(selection.grossWeightUnit || '—') + '</td>' +
         '<td>' + serviceInlineInputMarkup({ value: selection.volume, max: product.volume, field: 'volume', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
         '<td>' + escapeHtml(selection.volumeUnit || '—') + '</td>' +
-        '<td class="num">' + escapeHtml(number(product.pieceWeight)) + '</td>' +
-        '<td>' + escapeHtml(product.pieceWeightUnit || '—') + '</td>' +
+        '<td>' + serviceInlineInputMarkup({ value: selection.standardQty, max: product.standardQty ?? product.count, field: 'standardQty', routeId: route.id, itemId: item.id, productId, editable }) + '</td>' +
+        '<td>' + escapeHtml(selection.standardUnit || '—') + '</td>' +
+        '<td><span class="service-product-readonly-text">' + escapeHtml(product.pieceWeight || '—') + '</span></td>' +
         '<td><span class="service-product-readonly-text">' + escapeHtml(product.specDimensions || '—') + '</span></td>' +
+        '<td><span class="service-product-readonly-text">' + escapeHtml(product.heightDescription || '—') + '</span></td>' +
         '<td class="num">' + escapeHtml(number(product.overRate)) + '%</td>' +
         '<td class="num">' + escapeHtml(number(product.underRate)) + '%</td>' +
         '<td class="num">' + escapeHtml(number(product.goodsValueUnitPrice)) + '</td>' +
@@ -1339,7 +1340,7 @@
     return '<div class="order-route-block order-service-products-block" data-service-products data-route-id="' + routeId + '">' +
       '<div class="order-service-products-head"><div class="order-service-products-label">关联订单商品 <span>(' + (route.items || []).length + ')</span></div>' +
       (editable ? '<button class="detail-btn outline-primary service-product-select-btn" type="button" data-order-product-picker data-picker-target="route" data-route-id="' + routeId + '">选择商品</button>' : '') + '</div>' +
-      '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>标准数量</th><th>标准单位</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>' +
+      '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>' +
     '</div>';
   }
 
@@ -2142,17 +2143,17 @@
         '<td class="order-product-picker-check"><input type="checkbox" data-product-picker-item="' + escapeHtml(productId) + '" aria-label="选择' + escapeHtml(product.name || '商品') + '"' + (checked ? ' checked' : '') + '></td>' +
         '<td><strong>' + escapeHtml(product.name || '未命名商品') + '</strong></td>' +
         '<td><span class="order-product-picker-readonly-text">' + escapeHtml(product.description || '—') + '</span></td>' +
-        '<td class="num">' + escapeHtml(number(product.standardQty ?? product.count)) + '</td>' +
-        '<td>' + escapeHtml(product.standardUnit || '—') + '</td>' +
         '<td class="num">' + escapeHtml(number(product.pieceCount ?? product.count)) + '</td>' +
         '<td>' + escapeHtml(product.pieceCountUnit || '—') + '</td>' +
         '<td class="num">' + escapeHtml(number(product.grossWeight ?? product.weight)) + '</td>' +
         '<td>' + escapeHtml(product.grossWeightUnit || '—') + '</td>' +
         '<td class="num">' + escapeHtml(number(product.volume)) + '</td>' +
         '<td>' + escapeHtml(product.volumeUnit || '—') + '</td>' +
-        '<td class="num">' + escapeHtml(number(product.pieceWeight)) + '</td>' +
-        '<td>' + escapeHtml(product.pieceWeightUnit || '—') + '</td>' +
+        '<td class="num">' + escapeHtml(number(product.standardQty ?? product.count)) + '</td>' +
+        '<td>' + escapeHtml(product.standardUnit || '—') + '</td>' +
+        '<td><span class="order-product-picker-readonly-text">' + escapeHtml(product.pieceWeight || '—') + '</span></td>' +
         '<td>' + escapeHtml(product.specDimensions || '—') + '</td>' +
+        '<td><span class="order-product-picker-readonly-text">' + escapeHtml(product.heightDescription || '—') + '</span></td>' +
         '<td class="num">' + escapeHtml(number(product.overRate)) + '%</td>' +
         '<td class="num">' + escapeHtml(number(product.underRate)) + '%</td>' +
         '<td class="num">' + escapeHtml(number(product.goodsValueUnitPrice)) + '</td>' +
@@ -2164,7 +2165,7 @@
       '</tr>';
     }).join('');
     return '<div class="order-product-picker-summary" id="orderProductPickerSummary">已选 0 项</div>' +
-      '<div class="order-product-picker-table-wrap"><table class="order-product-picker-table order-product-picker-table-full"><thead><tr><th></th><th>商品分类</th><th>商品描述</th><th>标准数量</th><th>标准单位</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="order-product-picker-empty">订单商品明细为空，请先在商品明细模块添加商品。</td></tr>') + '</tbody></table></div>';
+      '<div class="order-product-picker-table-wrap"><table class="order-product-picker-table order-product-picker-table-full"><thead><tr><th></th><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="order-product-picker-empty">订单商品明细为空，请先在商品明细模块添加商品。</td></tr>') + '</tbody></table></div>';
   }
 
   function selectedProductIdsForContext(context) {

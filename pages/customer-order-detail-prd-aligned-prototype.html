@@ -1935,7 +1935,7 @@
       shippingCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { updateOrderMultiSelectSummary('orderShippingCategory'); syncOrderTransportVisibility(); }));
     })();
   </script>
-  <script src="../assets/customer-order-routes.js?v=20261126p"></script>
+  <script src="../assets/customer-order-routes.js?v=20261126q"></script>
   <script>
     (() => {
       const form = document.getElementById('orderDetailForm');
@@ -2000,7 +2000,7 @@
           '件数：' + qty(selection.pieceCount, selection.pieceCountUnit),
           '毛重：' + qty(selection.grossWeight, selection.grossWeightUnit),
           '体积：' + qty(selection.volume ?? product.volume, selection.volumeUnit || product.volumeUnit),
-          '单件重量：' + qty(product.pieceWeight, product.pieceWeightUnit),
+          '单件重量描述：' + (product.pieceWeight || '—'),
           '规格尺寸：' + (product.specDimensions || '—'),
           '贸易合同号：' + (product.tradeContractNo || '—'),
           '贸易合同类型：' + (product.tradeContractType || '—')
@@ -2026,17 +2026,17 @@
           return '<tr class="service-product-list-row" data-service-product-row="' + escapeServiceHtml(productId) + '">' +
             '<td><div class="service-product-list-main" title="' + escapeServiceHtml(hoverText) + '"><strong>' + escapeServiceHtml(product.name || '未命名商品') + '</strong></div></td>' +
             '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.description || '—') + '</span></td>' +
-            '<td>' + input(product, selection, 'standardQty', product.standardQty ?? product.count) + '</td>' +
-            '<td>' + escapeServiceHtml(selection.standardUnit || '—') + '</td>' +
             '<td>' + input(product, selection, 'pieceCount', product.pieceCount ?? product.count) + '</td>' +
             '<td>' + escapeServiceHtml(selection.pieceCountUnit || '—') + '</td>' +
             '<td>' + input(product, selection, 'grossWeight', product.grossWeight ?? product.weight) + '</td>' +
             '<td>' + escapeServiceHtml(selection.grossWeightUnit || '—') + '</td>' +
             '<td>' + input(product, selection, 'volume', product.volume ?? product.vol) + '</td>' +
             '<td>' + escapeServiceHtml(selection.volumeUnit || '—') + '</td>' +
-            '<td class="num">' + escapeServiceHtml(product.pieceWeight ?? 0) + '</td>' +
-            '<td>' + escapeServiceHtml(product.pieceWeightUnit || '—') + '</td>' +
+            '<td>' + input(product, selection, 'standardQty', product.standardQty ?? product.count) + '</td>' +
+            '<td>' + escapeServiceHtml(selection.standardUnit || '—') + '</td>' +
+            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.pieceWeight || '—') + '</span></td>' +
             '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.specDimensions || '—') + '</span></td>' +
+            '<td><span class="service-product-readonly-text">' + escapeServiceHtml(product.heightDescription || '—') + '</span></td>' +
             '<td class="num">' + escapeServiceHtml(product.overRate ?? 0) + '%</td>' +
             '<td class="num">' + escapeServiceHtml(product.underRate ?? 0) + '%</td>' +
             '<td class="num">' + escapeServiceHtml(product.goodsValueUnitPrice ?? 0) + '</td>' +
@@ -2048,7 +2048,7 @@
             '<td>' + (canEdit ? '<button class="service-product-chip-remove" type="button" data-service-product-remove="' + escapeServiceHtml(productId) + '" aria-label="移除商品">×</button>' : '') + '</td>' +
           '</tr>';
         }).join('');
-        host.innerHTML = '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>标准数量</th><th>标准单位</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
+        host.innerHTML = '<div class="service-product-list-wrap"><table class="service-product-list-table service-product-list-table-full"><thead><tr><th>商品分类</th><th>商品描述</th><th>件数</th><th>件数单位</th><th>毛重</th><th>毛重单位</th><th>体积</th><th>体积单位</th><th>标准数量</th><th>标准单位</th><th>单件重量描述</th><th>规格尺寸</th><th>层高描述</th><th>溢装率（%）</th><th>短装率（%）</th><th>货值单价</th><th>货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th></th></tr></thead><tbody>' + (rows || '<tr><td colspan="22" class="service-product-empty">未选择商品</td></tr>') + '</tbody></table></div>';
       };
       window.refreshServiceRequirementProducts = renderServiceProducts;
       const initServiceProductSelection = (card) => {
