@@ -409,6 +409,7 @@
     no: demandNo,
     customer: '青岛绿洲园花生食品有限公司',
     customerType: '外部客户',
+    customerBusinessUnit: '供应链物流科技',
     demandScene: '采购/移仓',
     contactName: '王晓琳',
     contactPhone: '138 5320 7618',
@@ -859,6 +860,7 @@
     setText('staticAdditionalRiskValue', insurance.additionalRisk);
     setText('staticChangeDestinationInsuranceValue', insurance.changeDestination);
     setText('staticCustomerTypeValue', demand.customerType);
+    setText('staticCustomerBusinessUnitValue', demand.customerBusinessUnit);
     setText('staticContactValue', demand.contactName);
     setText('staticPhoneValue', demand.contactPhone);
     const contactRecipients = Array.isArray(demand.contactEmailRecipients) && demand.contactEmailRecipients.length
@@ -1395,6 +1397,7 @@
     const values = {
       createCustomer: demand.customer,
       createCustomerType: demand.customerType,
+      createCustomerBusinessUnit: demand.customerBusinessUnit,
       createContact: demand.contactName,
       createPhone: demand.contactPhone,
       createDemandScene: demand.demandScene,
@@ -1630,6 +1633,7 @@
       salesmanCompany: form.elements.salesmanCompany.value.trim()
     };
     demand.customerType = form.elements.customerType.value;
+    demand.customerBusinessUnit = form.elements.customerBusinessUnit.value;
     demand.contactName = form.elements.contact.value.trim();
     demand.contactPhone = form.elements.phone.value.trim();
     demand.contactEmailRecipients = readContactEmailRecipients();

@@ -3690,10 +3690,10 @@ html.demand-embedded .demand-content {
 }
 
 
-/* Customer info uses seven columns so transport fields sit beside service scope. */
+/* Customer info uses six columns; every row aligns to the standard six-field grid. */
 .demand-form-grid.demand-customer-info-grid,
 .demand-readonly-grid.demand-customer-info-grid {
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 @media (max-width: 1100px) {
@@ -3718,4 +3718,15 @@ html.demand-embedded .demand-content {
 .demand-form-field.full-row,
 .demand-field.full-row {
   grid-column: 1 / -1;
+}
+
+
+/* Customer contacts and recipient entries wrap instead of overflowing narrow columns. */
+.demand-customer-info-grid .demand-form-field > label,
+.demand-customer-info-grid .demand-field-label,
+.demand-customer-info-grid #staticContactValue,
+.demand-customer-info-grid .demand-email-recipient-item {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
