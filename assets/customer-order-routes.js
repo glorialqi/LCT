@@ -1243,13 +1243,13 @@
         '<td>' + select(item, 'name', '商品分类', commodityCatalog.map((entry) => entry.name)) + '</td>' +
         '<td>' + field(item, 'description', '商品描述') + '</td>' +
         '<td class="num">' + field(item, 'standardQty', '标准数量', 'number') + '</td>' +
+        '<td>' + select(item, 'standardUnit', '标准单位', ['吨', '千克', '立方米', '件', '箱', '托', '桶', '台']) + '</td>' +
         '<td class="num">' + field(item, 'pieceCount', '件数', 'number') + '</td>' +
         '<td>' + select(item, 'pieceCountUnit', '件数单位', unitOptions) + '</td>' +
         '<td class="num">' + field(item, 'grossWeight', '毛重', 'number') + '</td>' +
         '<td>' + select(item, 'grossWeightUnit', '毛重单位', ['kg', '吨']) + '</td>' +
         '<td class="num">' + field(item, 'volume', '体积', 'number') + '</td>' +
         '<td>' + select(item, 'volumeUnit', '体积单位', ['m³', 'CBM']) + '</td>' +
-        '<td>' + select(item, 'standardUnit', '标准单位', ['吨', '千克', '立方米', '件', '箱', '托', '桶', '台']) + '</td>' +
         '<td class="num">' + field(item, 'pieceWeight', '单件重量', 'number') + '</td>' +
         '<td>' + select(item, 'pieceWeightUnit', '单件重量单位', ['kg', '吨']) + '</td>' +
         '<td>' + field(item, 'specDimensions', '规格尺寸') + '</td>' +
@@ -1265,7 +1265,7 @@
       '</tr>';
     }).join('');
     return '<div class="order-product-table-wrap">' +
-      '<div class="order-route-items-wrap"><table class="order-route-items order-product-table' + (readonly ? ' is-readonly' : '') + '" aria-label="客户订单商品明细" aria-readonly="' + readonly + '"><thead><tr><th>商品分类 *</th><th>商品描述</th><th class="num">标准数量 *</th><th class="num">件数</th><th>件数单位</th><th class="num">毛重</th><th>毛重单位</th><th class="num">体积</th><th>体积单位</th><th>标准单位</th><th class="num">单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th class="num">溢装率（%）</th><th class="num">短装率（%）</th><th class="num">货值单价</th><th class="num">货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' + (rows || '<tr class="order-product-empty"><td colspan="22">暂无商品，请先添加客户订单商品。</td></tr>') + '</tbody></table></div></div>';
+      '<div class="order-route-items-wrap"><table class="order-route-items order-product-table' + (readonly ? ' is-readonly' : '') + '" aria-label="客户订单商品明细" aria-readonly="' + readonly + '"><thead><tr><th>商品分类 *</th><th>商品描述</th><th class="num">标准数量 *</th><th>标准单位</th><th class="num">件数</th><th>件数单位</th><th class="num">毛重</th><th>毛重单位</th><th class="num">体积</th><th>体积单位</th><th class="num">单件重量</th><th>单件重量单位</th><th>规格尺寸</th><th class="num">溢装率（%）</th><th class="num">短装率（%）</th><th class="num">货值单价</th><th class="num">货值金额</th><th>货值币种</th><th>商品英文名</th><th>贸易合同号</th><th>贸易合同类型</th><th>操作</th></tr></thead><tbody>' + (rows || '<tr class="order-product-empty"><td colspan="22">暂无商品，请先添加客户订单商品。</td></tr>') + '</tbody></table></div></div>';
   }
 
   function renderOrderProductsSection() {
